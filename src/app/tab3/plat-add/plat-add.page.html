@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar>
+    <button (click)="this.reset()">reste</button>
+    <button (click)="this.consoleLogPlat()">console.log</button>
+    <button (click)="this.consoleLogPlatTmp()">console.log(PlatTmp)</button>
+    <ion-title>Ajouter un plat</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form [formGroup]="formgroup" (ngSubmit)="onSubmitForm()">
+  <br>
+  <ion-item>
+    <ion-label>Nom du plat</ion-label>
+    <ion-input formControlName="libelle" placeholder="Nom du plat" ></ion-input>
+  </ion-item>
+
+  <br>
+  <ion-item>
+    <ion-label position="floating">Ingrédient 1</ion-label>
+    <ion-select formControlName="ingredient0">
+      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <br>
+  <ion-item>
+    <ion-label position="floating">Ingrédient 2</ion-label>
+    <ion-select formControlName="ingredient1">
+      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <br>
+  <ion-item>
+    <ion-label position="floating">Ingrédient 3</ion-label>
+    <ion-select formControlName="ingredient2">
+      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <br>
+  <ion-item>
+    <ion-label position="floating">Ingrédient 4</ion-label>
+    <ion-select formControlName="ingredient3">
+      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <br>
+  <ion-item>
+    <ion-label position="floating">Ingrédient 5</ion-label>
+    <ion-select formControlName="ingredient4">
+      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+
+  <!-- <br>
+  <ion-button color="success" (click)="ajouterIngredient()">Ajouter un ingredient</ion-button>
+  <br>
+  <br>
+
+  <span id="newInput"></span> -->
+
+  <ion-button type="submit" expand="full">Ajouter</ion-button>
+  
+</form>
+
+</ion-content>

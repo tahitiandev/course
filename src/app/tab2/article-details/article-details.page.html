@@ -1,0 +1,30 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab2"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+
+
+  <br>
+  <form [formGroup]="articleForm" (ngSubmit)="onSubmit()">
+    <input type="hidden" formControlName="code">
+    <ion-item>
+      <ion-label position="stacked">Libelle</ion-label>
+      <ion-input type="text" formControlName="libelle"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Prix (xpf)</ion-label>
+      <ion-input type="text" formControlName="prix"></ion-input>
+    </ion-item>
+  <br>
+  <ion-button type="submit" expand="block" fill="outline">Enregistrer</ion-button>
+
+  </form>
+
+</ion-content>

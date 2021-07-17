@@ -1,0 +1,20 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+
+  <ion-list *ngFor="let detail of this.coursesDetail.liste">
+    <ion-item>
+      <ion-label>{{ detail.libelle }} {{ detail.prixUnitaire }} {{ detail.quantite }} {{ detail.prixTotal }}</ion-label>
+    </ion-item>
+  </ion-list>
+
+
+</ion-content>

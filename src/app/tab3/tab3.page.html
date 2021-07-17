@@ -1,0 +1,38 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Paramétrages
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-list>
+
+    <ion-item button (click)="this.goToUrl('tab2')">
+      <ion-label>
+        <h3>Article</h3>
+      </ion-label>
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+
+    <ion-item button (click)="this.goToUrl('tab3','famille-list')">
+      <ion-label>
+        <h3>Famille d'article</h3>
+      </ion-label>
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+
+    <ion-item button (click)="this.goToUrl('tab3','plats')">
+      <ion-label>
+        <h3>Plats à préparer</h3>
+      </ion-label>
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+
+
+
+  </ion-list>
+
+</ion-content>

@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Les articles
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  <br>
+
+  <ion-list *ngFor="let article of this.articles; let i = index">
+    <ion-item button (click)="goDetail(i)">
+      <ion-label>
+        <h3>{{ article.code }} {{ article.libelle }}</h3>
+      </ion-label>
+      <h5 slot="end">{{ article.prix }} xpf</h5>
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="ajouterUnArticle()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
