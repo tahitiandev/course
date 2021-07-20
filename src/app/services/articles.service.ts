@@ -60,13 +60,13 @@ export class ArticlesService {
 
     articlesFromLocalStorage : Articles[];
 
-  setArticleToLocalStorage(){
-    this.storage.set(this.utility.localstorage.articles, this.articles)
-  }
+  // setArticleToLocalStorage(){
+  //   this.storage.set(this.utility.localstorage.articles, this.articles)
+  // }
 
-  async setFamilleArticleToLocalStorage(){
-    await this.storage.set(this.utility.localstorage['famille d\'articles'], this.famille)
-  }
+  // async setFamilleArticleToLocalStorage() {
+  //   await this.storage.set(this.utility.localstorage['famille d\'articles'], this.famille)
+  // }
 
   updateArticle(id : number){
     this.storage.get('articles').then(articles => {
@@ -88,9 +88,26 @@ export class ArticlesService {
     return articles;
   }
 
-  async setArticleRealDataToLocalStorage(articles : Articles []){
-    if(articles){
+  // Methode qui fonctionne plus
+  // Il était utilisé dans le tab2
+  // async setArticleRealDataToLocalStorage(articles : Articles []){
+  //   if(articles){
+  //     await this.storage.set(this.utility.localstorage.articles, articles)
+  //   }
+  // }
+  async setArticleRealDataToLocalStorage(newArticle : Articles){
+
+    var articles : Articles [] = [];
+    const articlesLS = await this.getArticleFromLocalStorage();
+
+    if(articlesLS){
+      for(let article of articlesLS){
+        await articles.push(article)
+      }
+
+      await articles.push(newArticle)
       await this.storage.set(this.utility.localstorage.articles, articles)
+
     }
   }
 
@@ -110,7 +127,7 @@ export class ArticlesService {
   }
 
   async getFamilleArticleFromLocalStorage(){
-    const familles = await this.storage.get(this.utility.localstorage['famille d\'articles'])
+    const familles : FamilleArticle [] =  await this.storage.get(this.utility.localstorage['famille d\'articles'])
     return familles;
   }
 

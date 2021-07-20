@@ -108,4 +108,8 @@ export class Tab2Page implements OnInit {
     this.nav.navigateRoot('tabs/tab2/article-details/' + id)
   }
 
+  goToArticleAdd(){
+    this.nav.navigateRoot('tabs/tab2/article-add')
+  }
+
 }

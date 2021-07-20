@@ -1,18 +1,26 @@
-<ion-header translucent>
+<ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/tab2"></ion-back-button>
     </ion-buttons>
-    <ion-title>Detail</ion-title>
+    <ion-title>Ajouter un article</ion-title>
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content>
-
 
   <br>
   <form [formGroup]="articleForm" (ngSubmit)="onSubmit()">
+
+    <ion-item>
+      <ion-label>Famille</ion-label>
+      <ion-select formControlName="familles" placeholder="Choisir une famille">
+        <ion-select-option *ngFor="let famille of familles" value="{{famille.code}}">{{ famille.libelle }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+
+
     <ion-item>
       <ion-label position="stacked">Code</ion-label>
       <ion-input type="text" formControlName="code"></ion-input>

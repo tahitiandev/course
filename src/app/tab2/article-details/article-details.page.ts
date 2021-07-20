@@ -54,23 +54,31 @@ export class ArticleDetailsPage implements OnInit {
 
   async onSubmit(){
     const formValue = this.articleForm.value
-    const articles : Articles [] = await this.articleService.getArticleFromLocalStorage()
-    var articleTemp : Articles []  = []
+    // const articles : Articles [] = await this.articleService.getArticleFromLocalStorage()
+    // var articleTemp : Articles []  = []
 
-    await articleTemp.push({
-      code : formValue.code,
+    // await articleTemp.push({
+    //   code : formValue.code,
+    //   libelle : formValue.libelle,
+    //   prix : Number(formValue.prix)
+    // })
+
+    // for(let article of articles){
+    //   if(article.code != formValue.code){
+    //     await articleTemp.push(article)
+    //   }
+    // }
+
+
+    // await this.articleService.setArticleRealDataToLocalStorage(articleTemp)
+
+    const newArticle : Articles = {
+      code : formValue.code.toUpperCase(),
       libelle : formValue.libelle,
-      prix : Number(formValue.prix)
-    })
-
-    for(let article of articles){
-      if(article.code != formValue.code){
-        await articleTemp.push(article)
-      }
+      prix : formValue.prix 
     }
-
-
-    await this.articleService.setArticleRealDataToLocalStorage(articleTemp)
+    
+    this.articleService.setArticleRealDataToLocalStorage(newArticle)
 
     this.nav.back()
     

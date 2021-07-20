@@ -25,5 +25,9 @@ export class Tab1Page implements OnInit {
     this.nav.navigateRoot('tabs/tab1/course-details/' + id)
   }
 
+  goToCourseAdd(){
+    this.nav.navigateRoot('tabs/tab1/course-add')
+  }
+
 
 }

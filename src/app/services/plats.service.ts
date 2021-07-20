@@ -30,11 +30,14 @@ export class PlatsService {
     }
   ];
 
-  setPlatsToLocalStorage(){
-    this.storage.set(this.utility.localstorage.Plats, this.plats);
+  // setPlatsToLocalStorage(){
+  //   this.storage.set(this.utility.localstorage.Plats, this.plats);
+  // }
+
+  async getPlatFromLocalStorage(){
+    const plats : Plats [] = await this.storage.get(this.utility.localstorage.Plats)
+    return plats;
   }
-
-
 
 
 

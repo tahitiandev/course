@@ -45,9 +45,9 @@ export class PlatAddPage implements OnInit {
     })
   }
 
-  reset(){
-    this.plats.setPlatsToLocalStorage();
-  }
+  // reset(){
+  //   this.plats.setPlatsToLocalStorage();
+  // }
 
   ajouterIngredient(){
 
