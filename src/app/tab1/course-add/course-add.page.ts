@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Articles } from 'src/app/models/articles';
 import { Plats } from 'src/app/models/plats';
 import { ArticlesService } from 'src/app/services/articles.service';
@@ -13,15 +14,20 @@ export class CourseAddPage implements OnInit {
 
   articles : Articles [] = [];
   plats : Plats [] = [];
-
-
+  courseForm : FormGroup;
+  listeArticle : Articles [] = [];
+  // courseForm = new FormGroup ({
+    
+  // });
   constructor(private articleService : ArticlesService,
-              private platsService : PlatsService) {
+              private platsService : PlatsService,
+              private formbuilder : FormBuilder) {
 
    }
 
   ngOnInit() {
     this.loadData()
+    this.initCourseForm()
   }
 
   async loadData(){
@@ -37,6 +43,30 @@ export class CourseAddPage implements OnInit {
   private async getPlats(){
     const plats = await this.platsService.getPlatFromLocalStorage();
     this.plats = plats;
+  }
+
+  initCourseForm(){
+    this.courseForm = this.formbuilder.group({
+      date : '',
+      libelle : '',
+      article : '',
+      platToArticles : ''
+    })
+  }
+
+  async loadArticle(){
+    const formValue = await this.courseForm.value
+    const article = await this.articleService.searchArticleByArticleCode(formValue.article)
+    this.listeArticle.push(article)
+    this.courseForm.patchValue({
+      article : ''
+    })
+  }
+
+  async onSubmit(){
+
+    const formValue = await this.courseForm.value
+
   }
 
 

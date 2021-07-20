@@ -131,7 +131,19 @@ export class ArticlesService {
     return familles;
   }
 
+  async searchArticleByArticleCode(articleCode : string){
+    this.articles = [];
 
+    const articles = await this.getArticleFromLocalStorage();
+    this.articles = articles;
+
+    const result = await this.articles.find((article : Articles) => {
+      return article.code === articleCode
+    })
+
+    return result;
+
+  }
 
 
 

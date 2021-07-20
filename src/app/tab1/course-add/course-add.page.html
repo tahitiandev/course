@@ -6,52 +6,74 @@
 
 <ion-content>
 
-  <ion-item-group>
-    <ion-item-divider>
-      <ion-label><h2>Informations générales</h2></ion-label>
-    </ion-item-divider>
-    <ion-item>
-      <ion-label>Choisir une date</ion-label>
-      <ion-datetime value="1990-02-19" placeholder="Select Date"></ion-datetime>
-    </ion-item>
-    
-    <ion-item>
-      <ion-label position="floating">Nom</ion-label>
-      <ion-input></ion-input>
-    </ion-item>
-  </ion-item-group>
+  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label><h2>Informations générales</h2></ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label>Choisir une date</ion-label>
+        <ion-datetime formControlName="date" value="1990-02-19" placeholder="Select Date"></ion-datetime>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="floating">Libelle</ion-label>
+        <ion-input formControlName="libelle"></ion-input>
+      </ion-item>
+    </ion-item-group>
 
 
-  <ion-item-group>
-    <ion-item-divider>
-      <ion-label><h2>Sélectionner un article</h2></ion-label>
-    </ion-item-divider>
-    <ion-item>
-      <ion-label>Ajouter un article</ion-label>
-      <ion-select placeholder="Selectionner un article">
-        <ion-select-option
-          *ngFor="let article of articles"
-          value="{{article.code}}">{{article.libelle}}</ion-select-option>
-      </ion-select>
-    </ion-item>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label><h2>Sélectionner un article</h2></ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label>Ajouter un article</ion-label>
+        <ion-select formControlName="article" placeholder="Selectionner un article">
+          <ion-select-option
+            *ngFor="let article of articles"
+            value="{{article.code}}">{{article.libelle}}</ion-select-option>
+        </ion-select>
 
-    <ion-item>
-      <ion-label>Ajouter des articles à partir d'un plat</ion-label>
-      <ion-select placeholder="Selectionner un plat">
-        <ion-select-option 
-          *ngFor="let plat of plats" 
-          value="{{plat.libelle}}">
-          {{ plat.libelle }}</ion-select-option>
-      </ion-select>
-    </ion-item>
+        <ion-button (click)="loadArticle()" slot="end" color="success">
+          <ion-icon name="checkmark-outline"></ion-icon>
+        </ion-button>
 
-  </ion-item-group>
-  <ion-item-group>
-    <ion-item-divider>
-      <ion-label>Liste des articles ajoutés</ion-label>
-    </ion-item-divider>
+      </ion-item>
 
-  </ion-item-group>
+      <ion-item>
+        <ion-label>Ajouter des articles à partir d'un plat</ion-label>
+        <ion-select formControlName="platToArticles" placeholder="Selectionner un plat">
+          <ion-select-option 
+            *ngFor="let plat of plats" 
+            value="{{plat.libelle}}">
+            {{ plat.libelle }}</ion-select-option>
+        </ion-select>
+
+        <ion-button slot="end" color="success">
+          <ion-icon name="checkmark-outline"></ion-icon>
+        </ion-button>
+
+      </ion-item>
+
+    </ion-item-group>
+
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Liste des articles ajoutés</ion-label>
+      </ion-item-divider>
+
+      <ion-list *ngIf="listeArticle">
+        <ion-item *ngFor="let article of listeArticle">
+          <ion-label>{{ article.libelle }}</ion-label>
+        </ion-item>
+      </ion-list>
+      
+    </ion-item-group>
+
+  </form>
 
 
 </ion-content>
