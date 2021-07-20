@@ -51,7 +51,7 @@
             {{ plat.libelle }}</ion-select-option>
         </ion-select>
 
-        <ion-button slot="end" color="success">
+        <ion-button (click)="loadArticleFromPlat()" slot="end" color="success">
           <ion-icon name="checkmark-outline"></ion-icon>
         </ion-button>
 

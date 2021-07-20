@@ -63,6 +63,24 @@ export class CourseAddPage implements OnInit {
     })
   }
 
+  async loadArticleFromPlat(){
+    const formValue = await this.courseForm.value
+    const plats = await this.platsService.searchPlatByLibelle(formValue.platToArticles)
+
+    if(plats){
+      for(let article of plats.codeArticle){
+        var articleInPlat = await this.articleService.searchArticleByArticleCode(article)
+        this.listeArticle.push(articleInPlat)
+      }
+      
+      this.courseForm.patchValue({
+        platToArticles : ''
+      })
+
+    }
+
+  }
+
   async onSubmit(){
 
     const formValue = await this.courseForm.value

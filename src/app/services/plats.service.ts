@@ -39,6 +39,19 @@ export class PlatsService {
     return plats;
   }
 
+  async searchPlatByLibelle(libelle : string){
+
+    this.plats = [];
+    const plats = await this.getPlatFromLocalStorage();
+    this.plats = plats;
+
+    const result = await this.plats.find((plats : Plats) => {
+      return plats.libelle === libelle
+    })
+
+    return result;
+
+  }
 
 
 
