@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NavController } from '@ionic/angular';
 import { Articles } from 'src/app/models/articles';
+import { Courses, Liste } from 'src/app/models/courses';
 import { Plats } from 'src/app/models/plats';
 import { ArticlesService } from 'src/app/services/articles.service';
+import { CoursesService } from 'src/app/services/courses.service';
 import { PlatsService } from 'src/app/services/plats.service';
 
 @Component({
@@ -16,18 +19,22 @@ export class CourseAddPage implements OnInit {
   plats : Plats [] = [];
   courseForm : FormGroup;
   listeArticle : Articles [] = [];
+  listeCodeArticle : any [] = [];
   // courseForm = new FormGroup ({
     
   // });
   constructor(private articleService : ArticlesService,
               private platsService : PlatsService,
-              private formbuilder : FormBuilder) {
+              private formbuilder : FormBuilder,
+              private coursesService : CoursesService,
+              private nav :NavController) {
 
    }
 
   ngOnInit() {
     this.loadData()
     this.initCourseForm()
+    // this.coursesService.setTemp();
   }
 
   async loadData(){
@@ -57,6 +64,7 @@ export class CourseAddPage implements OnInit {
   async loadArticle(){
     const formValue = await this.courseForm.value
     const article = await this.articleService.searchArticleByArticleCode(formValue.article)
+    this.listeCodeArticle.push(formValue.article)
     this.listeArticle.push(article)
     this.courseForm.patchValue({
       article : ''
@@ -71,6 +79,7 @@ export class CourseAddPage implements OnInit {
       for(let article of plats.codeArticle){
         var articleInPlat = await this.articleService.searchArticleByArticleCode(article)
         this.listeArticle.push(articleInPlat)
+        this.listeCodeArticle.push(article)
       }
       
       this.courseForm.patchValue({
@@ -83,9 +92,38 @@ export class CourseAddPage implements OnInit {
 
   async onSubmit(){
 
-    const formValue = await this.courseForm.value
+    const formValue = await this.courseForm.value;
+    const codeArticle = await this.listeCodeArticle;
+    var listeArticle = []
+    var liste : Liste [] = [];
+    var course : Courses;
+    const courseId = await this.coursesService.generateCourseId()
 
-  }
+    for(let listes of this.listeArticle){
+      await liste.push({
+        articleId : listes.code,
+        libelle : listes.libelle,
+        prixUnitaire : listes.prix,
+        actif : false
+      })
+    }
+
+    course = {
+      id : courseId,
+      date : formValue.date,
+      actif : true,
+      total : 1000,
+      liste : liste
+    }
+
+    this.coursesService.setCourseInLocalStorage(course)
+
+    this.nav.navigateRoot('tabs/tab1')
+
+  } // onSubmit
+
+  
+  
 
 
 }

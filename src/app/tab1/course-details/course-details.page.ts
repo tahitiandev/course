@@ -15,10 +15,18 @@ export class CourseDetailsPage implements OnInit {
 
   listeId : number;
   coursesDetail : Courses;
+  listeArticle : any[]= [];
 
   ngOnInit() {
     this.listeId = this.route.snapshot.params['id']
-    this.coursesDetail = this.courseService.getCourseById(+this.listeId);
+    this.getCourse()
+  }
+  
+  async getCourse(){
+    const courseDetail = await this.courseService.getCourseById(+this.listeId);
+    this.coursesDetail = courseDetail
+    this.listeArticle = courseDetail.liste;
+    
   }
 
 }

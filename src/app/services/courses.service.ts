@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Courses } from 'src/app/models/courses';
+import { Storage } from '@ionic/storage';
+import { UtilityService } from './utility.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CoursesService {
 
-  constructor() { }
+  constructor(private storage : Storage,
+              private utility : UtilityService) { }
 
 
   private courses : Courses[] = [
@@ -17,18 +20,20 @@ export class CoursesService {
       total : 10000,
       liste : [
         {
-          articleId : 1,
+          articleId : '1',
           libelle : 'Oranges',
           prixUnitaire : 100,
           quantite : 10,
-          prixTotal : 1000
+          prixTotal : 1000,
+          actif : false,
         },
         {
-          articleId : 2,
+          articleId : '2',
           libelle : 'Oranges',
           prixUnitaire : 100,
           quantite : 10,
-          prixTotal : 1000
+          prixTotal : 1000,
+          actif : false,
         }
       ]
     },
@@ -39,47 +44,77 @@ export class CoursesService {
       total : 10000,
       liste : [
         {
-          articleId : 1,
+          articleId : '1',
           libelle : 'Tomates',
           prixUnitaire : 10,
           quantite : 2,
-          prixTotal : 20
+          prixTotal : 20,
+          actif : false,
         },
         {
-          articleId : 2,
+          articleId : '2',
           libelle : 'Oranges',
           prixUnitaire : 100,
           quantite : 10,
-          prixTotal : 1000
+          prixTotal : 1000,
+          actif : false,
         }
       ]
-    },
-    {
-      id : 3,
-      date : '2021-01-08',
-      actif : false,
-      total : 10000
-    },
-    {
-      id : 4,
-      date : '2021-01-06',
-      actif : false,
-      total : 10000
-    },
+    }
   ]
 
-  getCourse(){
-    return this.courses;
+  async setDefaultCourseData(){
+    await this.storage.set(this.utility.localstorage.Courses,this.courses)
   }
 
-  getCourseById(id : number){
+  async getCourseFromLocalStorage(){
+    this.courses = [];
+    const courses : Courses [] =  await this.storage.get(this.utility.localstorage.Courses)
+    this.courses = courses
+    return courses;
+  }
+
+  async getCourse(){
+    return await this.courses;
+  }
+
+
+  async getCourseById(id : number){
+
+    this.courses = [];
+    const courses = await this.getCourseFromLocalStorage()
+    this.courses = courses;
+
     const courseDetail = this.courses.find(s => {
-      return s.id = id
+      return s.id === id
     })
     return courseDetail;
   }
 
+  async setCourseInLocalStorage(course : Courses){
+    var courses : Courses [] = [];
+    const coursesLS : Courses [] = await this.getCourseFromLocalStorage()
+    // if(coursesLS){
+      for(let coursen of coursesLS){
+        courses.push(coursen)
+      }
+      courses.push(course)
+    // }
+    this.storage.set(this.utility.localstorage.Courses, courses)
 
+    // const newResult = await this.getCourseFromLocalStorage()
+    // console.log(newResult)
+  }
+
+  async generateCourseId(){
+    await this.getCourse();
+    const lastId = await this.courses.pop().id
+    var newId = 1;
+    if(lastId){
+      newId = lastId + 1
+    }
+    return newId;
+  }
 
 
 

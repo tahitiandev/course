@@ -60,6 +60,14 @@ export class ArticlesService {
 
     articlesFromLocalStorage : Articles[];
 
+
+  async setDefaultArticleData(){
+    await this.storage.set(this.utility.localstorage.articles, this.articles)
+  }
+  async setDefaultFamilleArticleData(){
+    await this.storage.set(this.utility.localstorage['famille d\'articles'], this.famille)
+  }
+
   // setArticleToLocalStorage(){
   //   this.storage.set(this.utility.localstorage.articles, this.articles)
   // }

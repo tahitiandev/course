@@ -5,6 +5,7 @@ import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Articles } from 'src/app/models/articles';
 import { Plats } from 'src/app/models/plats';
+import { ArticlesService } from 'src/app/services/articles.service';
 import { PlatsService } from 'src/app/services/plats.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
@@ -19,14 +20,17 @@ export class PlatAddPage implements OnInit {
   constructor(private storage : Storage,
               private utility : UtilityService,
               private formbuilder : FormBuilder,
-              private plats : PlatsService,
-              private nav :  NavController
+              private platsService : PlatsService,
+              private nav :  NavController,
+              private articleService : ArticlesService
               ) {
                 
                }
 
   articles : Articles [];
   formgroup : FormGroup;
+  ingredients : any[] = [];
+  ListeCodeArticle : any[] = [];
 
   ngOnInit() {
     // this.plats.setPlatsToLocalStorage();
@@ -37,12 +41,24 @@ export class PlatAddPage implements OnInit {
   init(){
     this.formgroup = this.formbuilder.group({
       libelle : '',
-      ingredient0 : '',
-      ingredient1 : '',
-      ingredient2 : '',
-      ingredient3 : '',
-      ingredient4 : ''
+      ingredient : ''
+      // ingredient0 : '',
+      // ingredient1 : '',
+      // ingredient2 : '',
+      // ingredient3 : '',
+      // ingredient4 : ''
     })
+  }
+
+  async loadIngredient(){
+    const articleCode = await this.formgroup.get('ingredient').value
+    const ingredientDetail = await this.articleService.searchArticleByArticleCode(articleCode)
+    await this.ingredients.push(ingredientDetail)
+    await this.ListeCodeArticle.push(articleCode)
+    this.formgroup.patchValue({
+      ingredient : ''
+    })
+    
   }
 
   // reset(){
@@ -78,36 +94,44 @@ export class PlatAddPage implements OnInit {
 
   async onSubmitForm(){
 
-      const formValues = this.formgroup.value;
-      const libelle = formValues['libelle'];
-      var ingredients = [];
-      var plats : Plats[] = []
+    const formValues = this.formgroup.value;
+    const libelle = formValues['libelle'];
 
-      // Ajouter les ingrédients
-      for(var i = 0; i < 4; i++){
-        if(formValues['ingredient'+i]){
-          await ingredients.push(formValues['ingredient'+i])
-        }
-      }//for
+    var plat : Plats = {
+      libelle : libelle,
+      codeArticle : this.ListeCodeArticle
+    }
+    
+    this.platsService.setPlatToLocalStorage(plat)
 
-      // Initialise la variable plats avec celle du localstorage
-      const platsLS = await this.storage.get(this.utility.localstorage.Plats)
-      for(let plat of platsLS){
-        await this.platTmp.push(plat)
-      }
-      
-      // Rajoute le nouveau plat
-      this.platTmp.push({
-        libelle : libelle,
-        codeArticle : ingredients
-      })
-      
-      // this.storage.set('plats', plats).then(()=>{
-      //   this.storage.get('plats').then(s => console.log(s))
+      // var ingredients = [];
+      // var plats : Plats[] = []
+
+      // // Ajouter les ingrédients
+      // for(var i = 0; i < 4; i++){
+      //   if(formValues['ingredient'+i]){
+      //     await ingredients.push(formValues['ingredient'+i])
+      //   }
+      // }//for
+
+      // // Initialise la variable plats avec celle du localstorage
+      // const platsLS = await this.storage.get(this.utility.localstorage.Plats)
+      // for(let plat of platsLS){
+      //   await this.platTmp.push(plat)
       // }
-      // );
+      
+      // // Rajoute le nouveau plat
+      // this.platTmp.push({
+      //   libelle : libelle,
+      //   codeArticle : ingredients
+      // })
+      
+      // // this.storage.set('plats', plats).then(()=>{
+      // //   this.storage.get('plats').then(s => console.log(s))
+      // // }
+      // // );
 
-      this.saveInLocalStorage()
+      // this.saveInLocalStorage()
 
       this.utility.goToUrl('tab3','plats');
     

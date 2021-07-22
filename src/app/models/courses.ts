@@ -7,9 +7,10 @@ export interface  Courses{
 }
 
 export interface Liste{
-    articleId : number;
+    articleId : string;
     libelle :  string;
     quantite? : number;
     prixUnitaire? : number;
     prixTotal? : number;
+    actif : boolean;
 }

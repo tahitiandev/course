@@ -1,22 +1,57 @@
 <ion-header>
   <ion-toolbar>
-    <!-- <button (click)="this.reset()">reste</button>
-    <button (click)="this.consoleLogPlat()">console.log</button>
-    <button (click)="this.consoleLogPlatTmp()">console.log(PlatTmp)</button> -->
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3/plats"></ion-back-button>
+    </ion-buttons>
     <ion-title>Ajouter un plat</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
-  <form [formGroup]="formgroup" (ngSubmit)="onSubmitForm()">
   <br>
+  <form [formGroup]="formgroup" (ngSubmit)="onSubmitForm()">
+
+  <ion-item-group>
   <ion-item>
     <ion-label>Nom du plat</ion-label>
     <ion-input formControlName="libelle" placeholder="Nom du plat" ></ion-input>
   </ion-item>
 
   <br>
+  <ion-item>
+    <ion-label position="floating">Ajouter un Ingrédient</ion-label>
+    <ion-select formControlName="ingredient">
+      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
+    </ion-select>
+
+    <ion-button (click)="loadIngredient()" slot="end" color="success">
+      <ion-icon name="checkmark-outline"></ion-icon>
+    </ion-button>
+
+  </ion-item>
+  <br>
+  <section>
+
+    <ion-button type="submit" expand="full">Enregistrer</ion-button>
+
+  </section>
+</ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Liste des articles ajoutés</ion-label>
+    </ion-item-divider>
+
+    <ion-list>
+      <ion-item *ngFor="let ingredient of ingredients">
+        <ion-label>{{ ingredient.libelle }}</ion-label>
+      </ion-item>
+    </ion-list>
+    
+  </ion-item-group>
+
+
+  <!-- <br>
   <ion-item>
     <ion-label position="floating">Ingrédient 1</ion-label>
     <ion-select formControlName="ingredient0">
@@ -54,7 +89,7 @@
     <ion-select formControlName="ingredient4">
       <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
     </ion-select>
-  </ion-item>
+  </ion-item> -->
 
 
   <!-- <br>
@@ -63,8 +98,6 @@
   <br>
 
   <span id="newInput"></span> -->
-
-  <ion-button type="submit" expand="full">Ajouter</ion-button>
   
 </form>
 

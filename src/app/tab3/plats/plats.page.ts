@@ -18,10 +18,17 @@ export class PlatsPage implements OnInit {
               private alertController: AlertController,
               private storage : Storage,
               private utility : UtilityService,
-              private nav : NavController) { }
+              private nav : NavController) {
+                this.getPlats()
+               }
 
   ngOnInit() {
-    this.storage.get(this.utility.localstorage.Plats).then(plats => this.plats = plats)
+    this.getPlats()
+  }
+
+  async getPlats(){
+    const plats = await this.platsService.getPlatFromLocalStorage()
+    this.plats = plats;
   }
 
   goDetail(libelle : string, autresChemin? : string){

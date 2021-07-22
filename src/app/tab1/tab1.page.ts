@@ -18,7 +18,11 @@ export class Tab1Page implements OnInit {
   courses : Courses[];
 
   ngOnInit(){
-    this.courses = this.coursesService.getCourse();
+    this.getCourse()
+  }
+  
+  async getCourse(){
+    this.courses = await this.coursesService.getCourseFromLocalStorage();
   }
 
   goDetail(id : number){

@@ -34,6 +34,10 @@ export class PlatsService {
   //   this.storage.set(this.utility.localstorage.Plats, this.plats);
   // }
 
+  async setDefaultPlatData(){
+    await this.storage.set(this.utility.localstorage.Plats, this.plats)
+  }
+
   async getPlatFromLocalStorage(){
     const plats : Plats [] = await this.storage.get(this.utility.localstorage.Plats)
     return plats;
@@ -51,6 +55,21 @@ export class PlatsService {
 
     return result;
 
+  }
+
+  async setPlatToLocalStorage(newPlat : Plats){
+    var plats : Plats [] = [];
+
+    const platsLS : Plats[] = await this.getPlatFromLocalStorage();
+    
+    if(platsLS){
+      for(let plat of platsLS){
+        await plats.push(plat)
+      }
+    }
+
+    await plats.push(newPlat)
+    await this.storage.set(this.utility.localstorage.Plats, plats)
   }
 
 
