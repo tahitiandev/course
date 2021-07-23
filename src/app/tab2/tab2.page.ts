@@ -20,12 +20,7 @@ export class Tab2Page implements OnInit {
   articles : Articles [];
 
   ngOnInit(){
-    // this.articleService.setArticleToLocalStorage()
-    this.storage.get(this.u.localstorage.articles).then(articles => {
-      this.articles = articles
-      // console.log(articles)
-    })
-
+    this.getArticle();
   }
 
   async ajouterUnArticle(){
@@ -99,7 +94,7 @@ export class Tab2Page implements OnInit {
     
   }
 
-  async refreshArticleList(){
+  async getArticle(){
     const articles = await this.storage.get(this.u.localstorage.articles);
     this.articles = articles;
   }

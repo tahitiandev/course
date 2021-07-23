@@ -15,56 +15,41 @@ export class CoursesService {
   private courses : Courses[] = [
     {
       id : 1,
-      date : '2021-01-06',
+      date : '21/07/2021',
       actif : true,
-      total : 10000,
+      total : 1050,
       liste : [
         {
-          articleId : '1',
-          libelle : 'Oranges',
-          prixUnitaire : 100,
-          quantite : 10,
-          prixTotal : 1000,
-          actif : false,
-        },
-        {
-          articleId : '2',
-          libelle : 'Oranges',
-          prixUnitaire : 100,
-          quantite : 10,
-          prixTotal : 1000,
-          actif : false,
+          articleId : '',
+          libelle : '',
+          quantite : 2,
+          prixUnitaire : 10,
+          actif : false
         }
       ]
-    },
+    }
+  ]
+
+  private defaultData : Courses [] = [
     {
-      id : 2,
-      date : '2021-01-07',
+      id : 1,
+      date : '21/07/2021',
       actif : true,
-      total : 10000,
+      total : 1050,
       liste : [
         {
-          articleId : '1',
-          libelle : 'Tomates',
-          prixUnitaire : 10,
+          articleId : 'FLORA',
+          libelle : 'test Oranges',
           quantite : 2,
-          prixTotal : 20,
-          actif : false,
-        },
-        {
-          articleId : '2',
-          libelle : 'Oranges',
-          prixUnitaire : 100,
-          quantite : 10,
-          prixTotal : 1000,
-          actif : false,
+          prixUnitaire : 10,
+          actif : false
         }
       ]
     }
   ]
 
   async setDefaultCourseData(){
-    await this.storage.set(this.utility.localstorage.Courses,this.courses)
+    await this.storage.set(this.utility.localstorage.Courses, this.defaultData)
   }
 
   async getCourseFromLocalStorage(){
@@ -109,6 +94,7 @@ export class CoursesService {
   async generateCourseId(){
     await this.getCourse();
     const lastId = await this.courses.pop().id
+    // console.log(lastId)
     var newId = 1;
     if(lastId){
       newId = lastId + 1

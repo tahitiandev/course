@@ -74,7 +74,7 @@ export class ArticleDetailsPage implements OnInit {
 
     const newArticle : Articles = {
       code : formValue.code.toUpperCase(),
-      libelle : formValue.libelle,
+      libelle : this.utility.premierLettreEnMajuscule(formValue.libelle),
       prix : formValue.prix 
     }
     

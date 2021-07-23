@@ -1,9 +1,27 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>famille-detail</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3/famille-list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Modifier une famille</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+
+  <br>
+  <form [formGroup]="familleForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="stacked">Code</ion-label>
+      <ion-input type="text" formControlName="code"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Libelle</ion-label>
+      <ion-input type="text" formControlName="libelle"></ion-input>
+    </ion-item>
+  <br>
+  <ion-button type="submit" expand="block" fill="outline">Enregistrer</ion-button>
+
+  </form>
 
 </ion-content>

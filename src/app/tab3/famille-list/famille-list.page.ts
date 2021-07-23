@@ -3,7 +3,7 @@ import { ArticlesService } from 'src/app/services/articles.service';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from 'src/app/services/utility.service';
 import { FamilleArticle } from 'src/app/models/articles';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-famille-list',
@@ -15,7 +15,8 @@ export class FamilleListPage implements OnInit {
   constructor(private articleService : ArticlesService,
               private storage : Storage,
               private utility : UtilityService,
-              private alertController: AlertController) {
+              private alertController: AlertController,
+              private nav : NavController) {
                 this.initFamilleFromDataLocalStorage()
                }
 
@@ -71,7 +72,9 @@ export class FamilleListPage implements OnInit {
 
   } //
 
-
+  goDetail(code : string){
+    this.nav.navigateRoot('tabs/tab3/famille-detail/' + code)
+  }
 
 
 }

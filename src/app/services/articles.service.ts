@@ -110,7 +110,9 @@ export class ArticlesService {
 
     if(articlesLS){
       for(let article of articlesLS){
-        await articles.push(article)
+        if(article.code != newArticle.code){
+          await articles.push(article)
+        }
       }
 
       await articles.push(newArticle)
@@ -125,12 +127,30 @@ export class ArticlesService {
     const familles = await this.storage.get(this.utility.localstorage['famille d\'articles'])
 
     for(let famille of familles){
-      await temp.push(famille)
+      if(famille.code != familleArticle.code){
+        await temp.push(famille)
+      }
+    }
+    
+    const newFamilleArticle : FamilleArticle = {
+      code : familleArticle.code.toUpperCase(),
+      libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle)
     }
 
-    await temp.push(familleArticle)
+    await temp.push(newFamilleArticle)
 
     this.storage.set(this.utility.localstorage['famille d\'articles'], temp)
+
+  }
+
+  async searchFamilleByCode(code : string){
+
+    const famille = await this.getFamilleArticleFromLocalStorage();
+    const result = await famille.find((famille : FamilleArticle) => {
+      return famille.code == code
+    })
+
+    return result;
 
   }
 

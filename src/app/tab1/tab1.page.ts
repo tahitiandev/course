@@ -3,6 +3,7 @@ import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Courses } from '../models/courses';
 import { CoursesService } from '../services/courses.service';
+import { UtilityService } from '../services/utility.service';
 
 @Component({
   selector: 'app-tab1',
@@ -13,7 +14,8 @@ export class Tab1Page implements OnInit {
 
   constructor(private storage : Storage,
               private nav : NavController,
-              private coursesService : CoursesService) {}
+              private coursesService : CoursesService,
+              private utility : UtilityService) {}
 
   courses : Courses[];
 
@@ -22,7 +24,8 @@ export class Tab1Page implements OnInit {
   }
   
   async getCourse(){
-    this.courses = await this.coursesService.getCourseFromLocalStorage();
+    const courses = await this.storage.get(this.utility.localstorage.Courses)
+    this.courses = courses
   }
 
   goDetail(id : number){

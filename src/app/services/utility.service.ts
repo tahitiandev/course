@@ -24,7 +24,11 @@ export class UtilityService {
     }
   }
 
+  premierLettreEnMajuscule(Mot : string){
 
+    return (Mot+'').charAt(0).toUpperCase()+Mot.substr(1);
+
+  }
 
 
 
