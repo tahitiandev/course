@@ -14,7 +14,19 @@ const routes: Routes = [
   {
     path: 'article-add',
     loadChildren: () => import('./article-add/article-add.module').then( m => m.ArticleAddPageModule)
+  },  {
+    path: 'article-list',
+    loadChildren: () => import('./article-list/article-list.module').then( m => m.ArticleListPageModule)
+  },
+  {
+    path: 'menu-list',
+    loadChildren: () => import('./menu-list/menu-list.module').then( m => m.MenuListPageModule)
+  },
+  {
+    path: 'menu-today',
+    loadChildren: () => import('./menu-today/menu-today.module').then( m => m.MenuTodayPageModule)
   }
+
 ];
 
 @NgModule({

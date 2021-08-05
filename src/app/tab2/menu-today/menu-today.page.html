@@ -1,0 +1,245 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Menu du jour</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="slide-content">
+
+  <ion-slides [options]="slideOpts" style="margin-top: 30%;">
+    <ion-slide>
+      <ion-card>
+        
+        
+        <ion-card-header>
+          <ion-card-title>Lundi</ion-card-title>
+        </ion-card-header>
+        
+        <ion-card-content class="card-position">
+
+          <form [formGroup]="lundiForm">
+          
+          <ion-item>
+              <ion-label>Choisissez un plat</ion-label>
+
+              <ion-select formControlName="plat" placeholder="Sélection">
+                <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
+              </ion-select>
+
+              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('lundi')">+</ion-button>
+            </ion-item>
+            
+          </form>
+
+            <ion-item>
+              Le plats actuel :  
+            </ion-item>
+
+              <h2 class="showPlat"> {{ lundi.libelle }} </h2>      
+            
+          </ion-card-content>
+      </ion-card>
+    </ion-slide>
+    <ion-slide>
+      <ion-card>
+        
+        
+        <ion-card-header>
+          <ion-card-title>Mardi</ion-card-title>
+        </ion-card-header>
+        
+        <ion-card-content class="card-position">
+
+          <form [formGroup]="mardiForm">
+          
+          <ion-item>
+              <ion-label>Choisissez un plat</ion-label>
+
+              <ion-select formControlName="plat" placeholder="Sélection">
+                <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
+              </ion-select>
+
+              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('mardi')">+</ion-button>
+            </ion-item>
+            
+          </form>
+
+            <ion-item>
+              Le plats actuel :  
+            </ion-item>
+
+              <h2 class="showPlat"> {{ mardi.libelle }} </h2>      
+            
+          </ion-card-content>
+      </ion-card>
+    </ion-slide>
+    <ion-slide>
+      <ion-card>
+        
+        
+        <ion-card-header>
+          <ion-card-title>Mercredi</ion-card-title>
+        </ion-card-header>
+        
+        <ion-card-content class="card-position">
+
+          <form [formGroup]="mercrediForm">
+          
+          <ion-item>
+              <ion-label>Choisissez un plat</ion-label>
+
+              <ion-select formControlName="plat" placeholder="Sélection">
+                <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
+              </ion-select>
+
+              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('mercredi')">+</ion-button>
+            </ion-item>
+            
+          </form>
+
+            <ion-item>
+              Le plats actuel :  
+            </ion-item>
+
+              <h2 class="showPlat"> {{ mercredi.libelle }} </h2>      
+            
+          </ion-card-content>
+      </ion-card>
+    </ion-slide>
+    <ion-slide>
+      <ion-card>
+        
+        
+        <ion-card-header>
+          <ion-card-title>Jeudi</ion-card-title>
+        </ion-card-header>
+        
+        <ion-card-content class="card-position">
+
+          <form [formGroup]="jeudiForm">
+          
+          <ion-item>
+              <ion-label>Choisissez un plat</ion-label>
+
+              <ion-select formControlName="plat" placeholder="Sélection">
+                <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
+              </ion-select>
+
+              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('jeudi')">+</ion-button>
+            </ion-item>
+            
+          </form>
+
+            <ion-item>
+              Le plats actuel :  
+            </ion-item>
+
+              <h2 class="showPlat"> {{ jeudi.libelle }} </h2>      
+            
+          </ion-card-content>
+      </ion-card>
+    </ion-slide>
+    <ion-slide>
+      <ion-card>
+        
+        
+        <ion-card-header>
+          <ion-card-title>Vendredi</ion-card-title>
+        </ion-card-header>
+        
+        <ion-card-content class="card-position">
+
+          <form [formGroup]="vendrediForm">
+          
+          <ion-item>
+              <ion-label>Choisissez un plat</ion-label>
+
+              <ion-select formControlName="plat" placeholder="Sélection">
+                <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
+              </ion-select>
+
+              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('vendredi')">+</ion-button>
+            </ion-item>
+            
+          </form>
+
+            <ion-item>
+              Le plats actuel :  
+            </ion-item>
+
+              <h2 class="showPlat"> {{ vendredi.libelle }} </h2>      
+            
+          </ion-card-content>
+      </ion-card>
+    </ion-slide>
+    <ion-slide>
+      <ion-card>
+        
+        
+        <ion-card-header>
+          <ion-card-title>Samedi</ion-card-title>
+        </ion-card-header>
+        
+        <ion-card-content class="card-position">
+
+          <form [formGroup]="samediForm">
+          
+          <ion-item>
+              <ion-label>Choisissez un plat</ion-label>
+
+              <ion-select formControlName="plat" placeholder="Sélection">
+                <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
+              </ion-select>
+
+              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('samedi')">+</ion-button>
+            </ion-item>
+            
+          </form>
+
+            <ion-item>
+              Le plats actuel :  
+            </ion-item>
+
+              <h2 class="showPlat"> {{ samedi.libelle }} </h2>      
+            
+          </ion-card-content>
+      </ion-card>
+    </ion-slide>
+    <ion-slide>
+      <ion-card>
+        
+        
+        <ion-card-header>
+          <ion-card-title>Dimanche</ion-card-title>
+        </ion-card-header>
+        
+        <ion-card-content class="card-position">
+
+          <form [formGroup]="dimancheForm">
+          
+          <ion-item>
+              <ion-label>Choisissez un plat</ion-label>
+
+              <ion-select formControlName="plat" placeholder="Sélection">
+                <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
+              </ion-select>
+
+              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('dimanche')">+</ion-button>
+            </ion-item>
+            
+          </form>
+
+            <ion-item>
+              Le plats actuel :  
+            </ion-item>
+
+              <h2 class="showPlat"> {{ dimanche.libelle }} </h2>      
+            
+          </ion-card-content>
+      </ion-card>
+    </ion-slide>
+    
+  </ion-slides>
+
+
+</ion-content>

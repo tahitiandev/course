@@ -8,7 +8,7 @@ import { ExploreContainerComponentModule } from '../explore-container/explore-co
 
 import { Tab2PageRoutingModule } from './tab2-routing.module';
 import { ArticleDetailsPipe } from './article-details.pipe';
-
+import { MenuTodayPage } from './menu-today/menu-today.page';
 @NgModule({
   imports: [
     IonicModule,
@@ -16,8 +16,9 @@ import { ArticleDetailsPipe } from './article-details.pipe';
     FormsModule,
     ReactiveFormsModule,
     ExploreContainerComponentModule,
-    Tab2PageRoutingModule
+    Tab2PageRoutingModule,
+    // MenuTodayPage
   ],
-  declarations: [Tab2Page, ArticleDetailsPipe]
+  declarations: [Tab2Page, ArticleDetailsPipe, MenuTodayPage]
 })
 export class Tab2PageModule {}

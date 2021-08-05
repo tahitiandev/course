@@ -12,7 +12,8 @@ export class UtilityService {
     'articles' : 'articles',
     'famille d\'articles' : 'familles',
     'Plats' : 'plats',
-    'Courses' : 'courses'
+    'Courses' : 'courses',
+    'menu de la semaine' : 'menus'
   }
 
   goToUrl(tabNumber : string, pageName? : string){

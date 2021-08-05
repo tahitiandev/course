@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { ArticlesService } from './services/articles.service';
 import { CoursesService } from './services/courses.service';
+import { MenuService } from './services/menu.service';
 import { PlatsService } from './services/plats.service';
 @Component({
   selector: 'app-root',
@@ -12,7 +13,8 @@ export class AppComponent implements OnInit {
   constructor(private storage : Storage,
               private articleService : ArticlesService,
               private platService : PlatsService,
-              private courseService : CoursesService) {}
+              private courseService : CoursesService,
+              private menuService : MenuService) {}
 
   ngOnInit(){
     this.loadDefaultData()
@@ -47,6 +49,12 @@ export class AppComponent implements OnInit {
     const courses = await this.courseService.getCourseFromLocalStorage()
     if(courses === null){
       await this.courseService.setDefaultCourseData()
+    }
+  }
+  async setMenu(){
+    const menues = await this.menuService.getMenuFromLocaoStorage()
+    if(menues === null){
+      await this.menuService.setDefaultValue()
     }
   }
 
