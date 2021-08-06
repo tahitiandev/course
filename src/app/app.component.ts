@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
     this.setFamilleArticle()
     this.setPlat()
     this.setCourse()
+    this.setMenu()
   }
 
   async setArticle(){

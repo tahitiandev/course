@@ -70,7 +70,67 @@ export class MenuTodayPage implements OnInit {
   ngOnInit() {
     this.getPlat()
     this.initForm()
+
+    this.loadMenuOfTheWeek()
   }
+
+
+
+  async loadMenuOfTheWeek(){
+    
+    var date = await new Date();
+
+    var jourTmp = date.getDate();
+    var jour = jourTmp.toString()
+    if(jourTmp < 10){
+      jour = '0' + jour;
+    }
+
+    var moisTmp = date.getMonth() + 1;
+    var mois = moisTmp.toString()
+
+    if(moisTmp < 10){
+      mois = '0' + mois;
+    }
+
+    var today = jour + "/" + mois+ "/" + date.getFullYear();
+
+    const menu = await this.storage.get('menus')
+    const lastMenu = await menu.slice(-1)[0];
+
+    // var test = '05/08/2021'
+
+    // if(today >= lastMenu.dateDebut && today <= lastMenu.dateFin){
+
+        this.lundi = lastMenu.lundi;
+        this.mardi = lastMenu.mardi;
+        this.mercredi = lastMenu.mercredi;
+        this.jeudi = lastMenu.jeudi;
+        this.vendredi = lastMenu.vendredi;
+        this.samedi = lastMenu.samedi;
+        this.dimanche = lastMenu.dimanche;
+        this.dimanche = lastMenu.dimanche;
+        this.dimanche = lastMenu.dimanche;
+
+        // this.menuDeLaSemaine.lundi = lastMenu.lundi;
+        // this.menuDeLaSemaine.mardi = lastMenu.mardi;
+        // this.menuDeLaSemaine.mercredi = lastMenu.mercredi;
+        // this.menuDeLaSemaine.jeudi = lastMenu.jeudi;
+        // this.menuDeLaSemaine.vendredi = lastMenu.vendredi;
+        // this.menuDeLaSemaine.samedi = lastMenu.samedi;
+        // this.menuDeLaSemaine.dimanche = lastMenu.dimanche;
+        // this.menuDeLaSemaine.dateDebut = lastMenu.dateDebut;
+        // this.menuDeLaSemaine.dateFin = lastMenu.dateFin;
+
+    // }
+
+
+
+
+
+
+  }
+
 
   initForm(){
     this.lundiForm = this.formbuilder.group({

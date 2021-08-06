@@ -20,8 +20,8 @@ export class MenuService {
     vendredi : 'ccc',
     samedi : 'ddd',
     dimanche : 'eeee',
-    dateDebut : '02/08/2021',
-    dateFin : '08/08/2021'
+    dateDebut : '19/07/2021',
+    dateFin : '25/07/2021'
   },
   {
     lundi : 'aaaaaaaaaa',
@@ -31,8 +31,8 @@ export class MenuService {
     vendredi : 'sssssssscc',
     samedi : 'dddsqfqsdfd',
     dimanche : 'eesqdfqsdfqsdee',
-    dateDebut : '09/08/2021',
-    dateFin : '16/08/2021'
+    dateDebut : '26/07/2021',
+    dateFin : '01/08/2021'
   },
   {
     lundi : 'qsdfqsdfsqdf',
@@ -42,8 +42,8 @@ export class MenuService {
     vendredi : 'ccsqdfqsdfc',
     samedi : 'sqssddd',
     dimanche : 'eessssdee',
-    dateDebut : '17/08/2021',
-    dateFin : '24/08/2021'
+    dateDebut : '02/08/2021',
+    dateFin : '06/08/2021'
   },
  ]
 
