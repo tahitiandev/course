@@ -7,9 +7,122 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="slide-content">
 
-  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+  <ion-slides #slides [options]="slideOpts" style="padding-top: 50%; padding-bottom: 50%; background-color:">
+    
+
+    <!-- SLIDE 1 -->
+    <ion-slide >
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h1>Choisir une date</h1>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-datetime placeholder="Cliquez ici"></ion-datetime>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+    </ion-slide>
+
+    <!-- SLIDE 2 -->
+    <ion-slide >
+
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h1>Souhaitez-vous ajouter des articles relatifs au<br>
+              <kbd>menu de la semaine </kbd>
+            </h1>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button color="primary" (click)="loadInCourseMenuDeLaSemaine()">Oui</ion-button>
+            <ion-button color="danger">Non</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+    </ion-slide>
+
+    <!-- SLIDE 3 -->
+    <ion-slide >
+
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h1>Souhaitez-vous ajouter des articles en fonction d'un<br>
+              <kbd>Plat</kbd>
+            </h1>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button color="primary" (click)="loadSlideListePlat(slides)">Oui</ion-button>
+            <ion-button color="danger">Non</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+    </ion-slide>
+
+    <!-- SLIDE 4 -->
+    <ion-slide *ngIf="hideSlidePlat">
+
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h1>Sélectionner un plat</h1>
+            <br>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-list style="margin: 5%;width: 100%;">
+            <ion-item *ngFor="let plat of plats">
+              <ion-button slot="end" color="light">
+                <ion-icon name="add-circle-outline"></ion-icon>
+              </ion-button>
+              <ion-label>{{ plat.libelle }}</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-row>
+      </ion-grid>
+
+    </ion-slide>
+
+    <!-- SLIDE 4 -->
+    <ion-slide>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h1>Valider vos choix</h1>
+            <br>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button color="primary">Oui</ion-button>
+            <ion-button color="danger">Non</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+
+  </ion-slides>
+
+
+
+
+
+
+  <!-- <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
 
     <ion-item-group>
       <ion-item-divider>
@@ -81,7 +194,7 @@
       
     </ion-item-group>
 
-  </form>
+  </form> -->
 
 
 </ion-content>
