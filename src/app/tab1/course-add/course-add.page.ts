@@ -7,6 +7,7 @@ import { Plats } from 'src/app/models/plats';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { PlatsService } from 'src/app/services/plats.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-course-add',
@@ -20,6 +21,7 @@ export class CourseAddPage implements OnInit {
   courseForm : FormGroup;
   listeArticle : Articles [] = [];
   listeCodeArticle : any [] = [];
+  hideSlidePlat : boolean = false;
   // courseForm = new FormGroup ({
     
   // });
@@ -27,7 +29,8 @@ export class CourseAddPage implements OnInit {
               private platsService : PlatsService,
               private formbuilder : FormBuilder,
               private coursesService : CoursesService,
-              private nav :NavController) {
+              private nav :NavController,
+              private alertController : AlertController) {
 
    }
 
@@ -123,7 +126,48 @@ export class CourseAddPage implements OnInit {
   } // onSubmit
 
   
+  slideOpts = {
+    initialSlide: 0,
+    speed: 100,
+    autoHeight: true
+  };
+
+
+  async loadInCourseMenuDeLaSemaine(){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      message: 'Le menu de la semaine a bien été ajouté',
+      buttons: ['Ok']
+    });
+
+    await alert.present();
+  }
+
+
+  async loadSlideListePlat(slides){
+    this.hideSlidePlat = await true;
+    setTimeout(() => {
+      slides.slideNext()
+    }, 1000);
+  }
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

@@ -1,6 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Menu du jour</ion-title>
+    <ion-title>Menu de la semaine</ion-title>
+    <p style="text-align: center;">{{ menuDeLaSemaine.dateDebut }} - {{ menuDeLaSemaine.dateFin }}</p>
   </ion-toolbar>
 </ion-header>
 
@@ -35,7 +36,7 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ lundi.libelle }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.lundi }} </h2>      
             
           </ion-card-content>
       </ion-card>
@@ -68,7 +69,7 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ mardi.libelle }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.mardi }} </h2>      
             
           </ion-card-content>
       </ion-card>
@@ -101,7 +102,7 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ mercredi.libelle }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.mercredi }} </h2>      
             
           </ion-card-content>
       </ion-card>
@@ -134,7 +135,7 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ jeudi.libelle }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.jeudi }} </h2>      
             
           </ion-card-content>
       </ion-card>
@@ -167,7 +168,7 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ vendredi.libelle }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.vendredi }} </h2>      
             
           </ion-card-content>
       </ion-card>
@@ -200,7 +201,7 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ samedi.libelle }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.samedi}} </h2>      
             
           </ion-card-content>
       </ion-card>
@@ -233,7 +234,7 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ dimanche.libelle }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.dimanche }} </h2>      
             
           </ion-card-content>
       </ion-card>

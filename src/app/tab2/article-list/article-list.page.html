@@ -13,23 +13,7 @@
   
   <br>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col *ngFor="let article of this.articles" class="colSize">
-        {{ article.libelle }}<br>{{ article.prix }} xpf
-      </ion-col>
-      <!-- <ion-col class="colSize">
-        {{ article.libelle }}<br>{{ article.prix }} xpf
-      </ion-col>
-      <ion-col class="colSize">
-        {{ article.libelle }}<br>{{ article.prix }} xpf
-      </ion-col>
-      <ion-col class="colSize">
-        {{ article.libelle }}<br>{{ article.prix }} xpf
-      </ion-col> -->
-    </ion-row>
-  </ion-grid>
-  <!-- <ion-list *ngFor="let article of this.articles; let i = index">
+  <ion-list *ngFor="let article of this.articles; let i = index">
     <ion-item button (click)="goDetail(i)">
       <ion-label>
         <h3>{{ article.code }} {{ article.libelle }}</h3>
@@ -44,6 +28,6 @@
     <ion-fab-button (click)="goToArticleAdd()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
-  </ion-fab> -->
+  </ion-fab>
 
 </ion-content>

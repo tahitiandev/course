@@ -5,6 +5,8 @@ import { Plats } from 'src/app/models/plats';
 import { PlatsService } from 'src/app/services/plats.service';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from 'src/app/services/utility.service';
+import { MenuDelaSemaine } from 'src/app/models/menuDeLaSemaine';
+import { MenuService } from 'src/app/services/menu.service';
 
 @Component({
   selector: 'app-menu-today',
@@ -21,28 +23,7 @@ export class MenuTodayPage implements OnInit {
   };
 
   plats : Plats [];
-  lundi : Plats = {
-    libelle : ''
-  };
-  mardi : Plats = {
-    libelle : ''
-  };
-  mercredi : Plats = {
-    libelle : ''
-  };
-  jeudi : Plats = {
-    libelle : ''
-  };
-  vendredi : Plats = {
-    libelle : ''
-  };
-  samedi : Plats = {
-    libelle : ''
-  };
-  dimanche : Plats = {
-    libelle : ''
-  };
-
+  
   lundiForm : FormGroup;
   mardiForm : FormGroup;
   mercrediForm : FormGroup;
@@ -51,7 +32,7 @@ export class MenuTodayPage implements OnInit {
   samediForm : FormGroup;
   dimancheForm : FormGroup;
 
-  menuDeLaSemaine = {
+  public menuDeLaSemaine : MenuDelaSemaine = {
     lundi : '',
     mardi : '',
     mercredi : '',
@@ -59,25 +40,105 @@ export class MenuTodayPage implements OnInit {
     vendredi : '',
     samedi : '',
     dimanche : '',
-    dateDebut : '02/08/2021',
-    dateFin : '08/08/2021'}
+    dateDebut : '',
+    dateFin : ''}
 
   constructor(private platservice : PlatsService,
               private formbuilder : FormBuilder,
               private storage : Storage,
-              private utility : UtilityService) { }
+              private utility : UtilityService,
+              private menuService : MenuService) { }
 
   ngOnInit() {
     this.getPlat()
     this.initForm()
-
     this.loadMenuOfTheWeek()
+    this.initPeriodeSemaine()
   }
 
+  private miseEnformeDate(dateRenseigne : Date){
 
+    var jourTmp = dateRenseigne.getDate()
+    var jour = jourTmp.toString()
+    if(jourTmp < 10){
+      jour = '0' + jour;
+    }
 
-  async loadMenuOfTheWeek(){
+    var moisTmp = dateRenseigne.getMonth() + 1;
+    var mois = moisTmp.toString()
+
+    if(moisTmp < 10){
+      mois = '0' + mois;
+    }
+
+    var today = jour + "/" + mois+ "/" + dateRenseigne.getFullYear();
+
+    var infoDate = {
+      'jour' : jour,
+      'mois' : mois,
+      'annnee' : dateRenseigne.getFullYear(),
+      'dateComplete' : today
+    }
+
+    return infoDate
+
+  }
+
+  private ajoutOuSupprimeDesJoursDuneDate(jour : number, date : Date){
+
+    var finDeSemaine = new Date()
+    finDeSemaine.setDate(date.getDate() + jour)
+    var NewFinDeSemaine = this.miseEnformeDate(finDeSemaine).dateComplete
+    return NewFinDeSemaine
+
+  }
+
+  async initPeriodeSemaine(){
+
+    var jourToday=new Date()
+    var jourDeLaSemaine=new Array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi");
+    const today = await this.generateDateAujourdhui()
     
+    var aujourrhui = new Date(Date.parse(today.mois + '/' + today.jour + '/' + today.annnee))
+
+    switch(jourDeLaSemaine[jourToday.getDay()]){
+      case 'Lundi':
+        this.menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(0,aujourrhui)
+        this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
+        break;
+      case 'Mardi':
+
+        this.menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-1,aujourrhui)
+        this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
+
+        break;
+      case 'Mercredi':
+        this.menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-2,aujourrhui)
+        this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(4,aujourrhui)
+        break;
+      case 'Jeudi':
+        this.menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-3,aujourrhui)
+        this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(3,aujourrhui)
+        break;
+      case 'Vendredi':
+        this.menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-4,aujourrhui)
+        this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(2,aujourrhui)
+        break;
+      case 'Samedi':
+        this.menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-5,aujourrhui)
+        this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(1,aujourrhui)
+        break;
+      case 'Dimanche':
+        this.menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-6,aujourrhui)
+        this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(0,aujourrhui)
+        break;
+    }
+
+
+
+  }
+
+  private async generateDateAujourdhui(){
     var date = await new Date();
 
     var jourTmp = date.getDate();
@@ -93,41 +154,40 @@ export class MenuTodayPage implements OnInit {
       mois = '0' + mois;
     }
 
-    var today = jour + "/" + mois+ "/" + date.getFullYear();
+    var today = await jour + "/" + mois+ "/" + date.getFullYear();
 
+    var infoDate = {
+      'jour' : jour,
+      'mois' : mois,
+      'annnee' : date.getFullYear(),
+      'dateComplete' : today
+    }
+
+    return infoDate;
+
+  }
+
+
+
+  async loadMenuOfTheWeek(){
+    
+    const today = await (await this.generateDateAujourdhui()).dateComplete
     const menu = await this.storage.get('menus')
     const lastMenu = await menu.slice(-1)[0];
 
-    // var test = '05/08/2021'
+    if(today >= lastMenu.dateDebut && today <= lastMenu.dateFin){
 
-    // if(today >= lastMenu.dateDebut && today <= lastMenu.dateFin){
+        this.menuDeLaSemaine.lundi = await lastMenu.lundi;
+        this.menuDeLaSemaine.mardi = await lastMenu.mardi;
+        this.menuDeLaSemaine.mercredi = await lastMenu.mercredi;
+        this.menuDeLaSemaine.jeudi = await lastMenu.jeudi;
+        this.menuDeLaSemaine.vendredi = await lastMenu.vendredi;
+        this.menuDeLaSemaine.samedi = await lastMenu.samedi;
+        this.menuDeLaSemaine.dimanche = await lastMenu.dimanche;
+        this.menuDeLaSemaine.dateDebut = await lastMenu.dateDebut;
+        this.menuDeLaSemaine.dateFin = await lastMenu.dateFin;
 
-        this.lundi = lastMenu.lundi;
-        this.mardi = lastMenu.mardi;
-        this.mercredi = lastMenu.mercredi;
-        this.jeudi = lastMenu.jeudi;
-        this.vendredi = lastMenu.vendredi;
-        this.samedi = lastMenu.samedi;
-        this.dimanche = lastMenu.dimanche;
-        this.dimanche = lastMenu.dimanche;
-        this.dimanche = lastMenu.dimanche;
-
-        // this.menuDeLaSemaine.lundi = lastMenu.lundi;
-        // this.menuDeLaSemaine.mardi = lastMenu.mardi;
-        // this.menuDeLaSemaine.mercredi = lastMenu.mercredi;
-        // this.menuDeLaSemaine.jeudi = lastMenu.jeudi;
-        // this.menuDeLaSemaine.vendredi = lastMenu.vendredi;
-        // this.menuDeLaSemaine.samedi = lastMenu.samedi;
-        // this.menuDeLaSemaine.dimanche = lastMenu.dimanche;
-        // this.menuDeLaSemaine.dateDebut = lastMenu.dateDebut;
-        // this.menuDeLaSemaine.dateFin = lastMenu.dateFin;
-
-    // }
-
-
-
-
-
+    }
 
   }
 
@@ -164,49 +224,30 @@ export class MenuTodayPage implements OnInit {
   async getPlatByLibelle(libelle : string, jour : string){
     const result = await this.platservice.searchPlatByLibelle(libelle);
     if(jour === 'lundi'){
-      this.lundi = result;
       this.menuDeLaSemaine.lundi = result.libelle
     }
     if(jour === 'mardi'){
-      this.mardi = result;
       this.menuDeLaSemaine.mardi = result.libelle
     }
     if(jour === 'mercredi'){
-      this.mercredi = result;
       this.menuDeLaSemaine.mercredi = result.libelle
     }
     if(jour === 'jeudi'){
-      this.jeudi = result;
       this.menuDeLaSemaine.jeudi = result.libelle
     }
     if(jour === 'vendredi'){
-      this.vendredi = result;
       this.menuDeLaSemaine.vendredi = result.libelle
     }
     if(jour === 'samedi'){
-      this.samedi = result;
       this.menuDeLaSemaine.samedi = result.libelle
     }
     if(jour === 'dimanche'){
-      this.dimanche = result;
       this.menuDeLaSemaine.dimanche = result.libelle
     }
   }
 
-  saveDataToLocalStorage(){
-    var menuDeLaSemaine = {
-      lundi : this.lundi,
-      mardi : this.mardi,
-      mercredi : this.mercredi,
-      jeudi : this.jeudi,
-      vendredi : this.vendredi,
-      samedi : this.samedi,
-      dimanche : this.dimanche,
-      dateDebut : '02/08/2021',
-      dateFin : '08/08/2021'
-    }
-
-    this.storage.set(this.utility.localstorage['menu de la semaine'], this.menuDeLaSemaine)
+  async saveDataToLocalStorage(){
+    await this.menuService.saveMenuToLocalStorage(this.menuDeLaSemaine)
 
   }
 
