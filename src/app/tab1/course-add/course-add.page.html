@@ -9,8 +9,11 @@
 
 <ion-content class="slide-content">
 
-  <ion-slides #slides [options]="slideOpts" style="padding-top: 50%; padding-bottom: 50%; background-color:">
-    
+
+
+  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+
+  <ion-slides #slides [options]="slideOpts" style="padding-top: 50%; padding-bottom: 50%;">
 
     <!-- SLIDE 1 -->
     <ion-slide >
@@ -23,7 +26,7 @@
         <ion-row>
           <ion-col>
             <ion-item>
-              <ion-datetime placeholder="Cliquez ici"></ion-datetime>
+              <ion-datetime formControlName="date" placeholder="Cliquez ici"></ion-datetime>
             </ion-item>
           </ion-col>
         </ion-row>
@@ -44,8 +47,8 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-button color="primary" (click)="loadInCourseMenuDeLaSemaine()">Oui</ion-button>
-            <ion-button color="danger">Non</ion-button>
+            <ion-button color="primary" (click)="loadInCourseMenuDeLaSemaine(slides)">Oui</ion-button>
+            <ion-button color="danger" (click)="nextSlide(slides)">Non</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -86,9 +89,9 @@
         <ion-row>
           <ion-list style="margin: 5%;width: 100%;">
             <ion-item *ngFor="let plat of plats">
-              <ion-button slot="end" color="light">
-                <ion-icon name="add-circle-outline"></ion-icon>
-              </ion-button>
+              <!-- <ion-button slot="end" color="light"> -->
+                <ion-icon (click)="loadArticleFromOnePlat(plat.codeArticle)" slot="end" name="add-circle-outline"></ion-icon>
+              <!-- </ion-button> -->
               <ion-label>{{ plat.libelle }}</ion-label>
             </ion-item>
           </ion-list>
@@ -97,8 +100,32 @@
 
     </ion-slide>
 
-    <!-- SLIDE 4 -->
+    <!-- SLIDE 5 -->
     <ion-slide>
+
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h1>Ajouter des articles</h1>
+            <br>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-list style="margin: 5%;width: 100%;">
+            <ion-item *ngFor="let article of articles">
+              <!-- <ion-button slot="end" color="light"> -->
+                <ion-icon (click)="loadOneArticle(article)" slot="end" name="add-circle-outline"></ion-icon>
+              <!-- </ion-button> -->
+              <ion-label>{{ article.libelle }}</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-row>
+      </ion-grid>
+
+    </ion-slide>
+
+    <!-- SLIDE 6 -->
+    <ion-slide >
       <ion-grid>
         <ion-row>
           <ion-col>
@@ -108,7 +135,7 @@
         </ion-row>
         <ion-row>
           <ion-col>
-            <ion-button color="primary">Oui</ion-button>
+            <ion-button color="primary" (click)="onSubmitSlide()">Oui</ion-button>
             <ion-button color="danger">Non</ion-button>
           </ion-col>
         </ion-row>
@@ -117,6 +144,7 @@
 
   </ion-slides>
 
+  </form>
 
 
 

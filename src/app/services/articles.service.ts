@@ -160,15 +160,16 @@ export class ArticlesService {
   }
 
   async searchArticleByArticleCode(articleCode : string){
+    // Je vide articles
     this.articles = [];
-
+    // J'ajoute les données du localstorage
     const articles = await this.getArticleFromLocalStorage();
     this.articles = articles;
-
+    // Je recherche l'article en question
     const result = await this.articles.find((article : Articles) => {
       return article.code === articleCode
     })
-
+    // Je retourne le resultat
     return result;
 
   }

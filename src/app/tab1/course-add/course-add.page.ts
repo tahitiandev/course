@@ -64,6 +64,12 @@ export class CourseAddPage implements OnInit {
     })
   }
 
+  loadOneArticle(article : Articles){
+
+    this.listeArticle.push(article)
+    
+  }
+
   async loadArticle(){
     const formValue = await this.courseForm.value
     const article = await this.articleService.searchArticleByArticleCode(formValue.article)
@@ -73,6 +79,17 @@ export class CourseAddPage implements OnInit {
       article : ''
     })
   }
+
+
+  async loadArticleFromOnePlat(codeArticle : any[]){
+    
+    for(let article of codeArticle){
+      const articles = await this.articleService.searchArticleByArticleCode(article)
+      this.listeArticle.push(articles)
+    }
+
+  }
+
 
   async loadArticleFromPlat(){
     const formValue = await this.courseForm.value
@@ -90,6 +107,38 @@ export class CourseAddPage implements OnInit {
       })
 
     }
+
+  }
+
+  async onSubmitSlide(){
+
+    const courseId = await this.coursesService.generateCourseId();
+    const date = this.courseForm.get('date').value;
+    var liste : Liste [] = [];
+
+    for(let listes of this.listeArticle){
+      await liste.push({
+        articleId : listes.code,
+        libelle : listes.libelle,
+        prixUnitaire : listes.prix,
+        actif : false
+      })
+    }
+
+    var coursess = await {
+      id : courseId,
+      date : date,
+      actif : true,
+      total : 1000,
+      liste : liste
+    }
+
+    this.coursesService.setCourseInLocalStorage(coursess)
+
+    setTimeout(() => {
+      this.nav.navigateRoot('tabs/tab1/course-details/' + courseId)
+    }, 1000);
+
 
   }
 
@@ -128,46 +177,41 @@ export class CourseAddPage implements OnInit {
   
   slideOpts = {
     initialSlide: 0,
-    speed: 100,
+    speed: 500,
     autoHeight: true
   };
 
+  slideOff : boolean = true;
 
-  async loadInCourseMenuDeLaSemaine(){
+
+  async loadInCourseMenuDeLaSemaine(slides?){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Information',
       message: 'Le menu de la semaine a bien été ajouté',
-      buttons: ['Ok']
+      buttons: [
+        {
+          text: 'Okay',
+          handler: () => {
+            this.nextSlide(slides)
+          }
+        }
+      ]
     });
 
     await alert.present();
   }
 
+  nextSlide(slides){
+    slides.slideNext()
+  }
 
   async loadSlideListePlat(slides){
     this.hideSlidePlat = await true;
     setTimeout(() => {
-      slides.slideNext()
+      this.nextSlide(slides)
     }, 1000);
   }
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
