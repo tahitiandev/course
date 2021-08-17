@@ -9,8 +9,6 @@
 
 <ion-content class="slide-content">
 
-
-
   <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
 
   <ion-slides #slides [options]="slideOpts" style="padding-top: 50%; padding-bottom: 50%;">
@@ -20,7 +18,7 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h1>Choisir une date</h1>
+            <h1 (click)="loadInCourseMenuDeLaSemaine()">Choisir une date</h1>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -40,7 +38,7 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h1>Souhaitez-vous ajouter des articles relatifs au<br>
+            <h1>Ajouter les articles du<br>
               <kbd>menu de la semaine </kbd>
             </h1>
           </ion-col>
@@ -69,7 +67,7 @@
         <ion-row>
           <ion-col>
             <ion-button color="primary" (click)="loadSlideListePlat(slides)">Oui</ion-button>
-            <ion-button color="danger">Non</ion-button>
+            <ion-button color="danger" (click)="nextSlide(slides)">Non</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -88,13 +86,19 @@
         </ion-row>
         <ion-row>
           <ion-list style="margin: 5%;width: 100%;">
-            <ion-item *ngFor="let plat of plats">
+            <ion-item *ngFor="let plat of plats; let index = index" id="test-{{index}}">
               <!-- <ion-button slot="end" color="light"> -->
-                <ion-icon (click)="loadArticleFromOnePlat(plat.codeArticle)" slot="end" name="add-circle-outline"></ion-icon>
+                <!-- (click)="loadArticleFromOnePlat(plat.codeArticle)" -->
+                <ion-icon (click)="loadArticleFromOnePlat(plat.codeArticle, index)" slot="end" name="add-circle-outline"></ion-icon>
               <!-- </ion-button> -->
               <ion-label>{{ plat.libelle }}</ion-label>
             </ion-item>
           </ion-list>
+        </ion-row>
+        <ion-row>
+          <ion-button (click)="nextSlide(slides)" class="slidebtnNext" color="light">Suivant
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </ion-button>
         </ion-row>
       </ion-grid>
 

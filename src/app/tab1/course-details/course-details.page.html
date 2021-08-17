@@ -9,8 +9,32 @@
 
 <ion-content>
 
+  <ion-list style="margin-top: 5%;">
+    <ion-item-sliding *ngFor="let detail of listeArticle">
+      <ion-item-options side="start">
+        <ion-item-option >Favorite</ion-item-option>
+        <ion-item-option color="danger" >Share</ion-item-option>
+      </ion-item-options>
+  
+      <ion-item>
+        <ion-label>{{ detail.libelle }}</ion-label>
+        <ion-label style="text-align: right;">Qté:{{ detail.quantite }}</ion-label>
+        <ion-label style="text-align: right;">PU:{{ detail.prixUnitaire }} xpf</ion-label>
+        <ion-label style="text-align: right;"> {{ (detail.quantite-0) * (detail.prixUnitaire-0) }} xpf</ion-label>
+        <ion-checkbox style="margin-left: 30px;" [checked]="detail.actif"></ion-checkbox>
+      </ion-item>
+  
+      <ion-item-options side="end">
+        <ion-item-option >Unread</ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
 
-  <ion-list>
+
+
+
+
+  <!-- <ion-list>
     <ion-item *ngFor="let detail of listeArticle">
       <ion-grid>
         <ion-row>
@@ -26,7 +50,7 @@
         </ion-row>
       </ion-grid>
     </ion-item>
-  </ion-list>
+  </ion-list> -->
 
 
 </ion-content>

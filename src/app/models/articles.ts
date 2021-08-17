@@ -3,6 +3,7 @@ export interface Articles{
     libelle : string;
     prix : number;
     prixModifier? : number;
+    quantite?:number;
 }
 
 export interface FamilleArticle{

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Courses } from '../models/courses';
@@ -10,7 +10,7 @@ import { UtilityService } from '../services/utility.service';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page implements OnInit {
+export class Tab1Page implements OnInit, OnChanges {
 
   constructor(private storage : Storage,
               private nav : NavController,
@@ -21,6 +21,10 @@ export class Tab1Page implements OnInit {
 
   ngOnInit(){
     this.getCourse()
+  }
+
+  ngOnChanges(changes : SimpleChanges){
+    console.log(changes)
   }
   
   async getCourse(){

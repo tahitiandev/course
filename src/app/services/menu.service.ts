@@ -24,13 +24,13 @@ export class MenuService {
     dateFin : '25/07/2021'
   },
   {
-    lundi : 'aaaaaaaaaa',
-    mardi : 'teaaaaaaaaaaaaastes',
-    mercredi : 'aabbbbbbbbaaa',
-    jeudi : 'bbddddddb',
-    vendredi : 'sssssssscc',
-    samedi : 'dddsqfqsdfd',
-    dimanche : 'eesqdfqsdfqsdee',
+    lundi : 'Pâte carbonara',
+    mardi : 'Steak pâte',
+    mercredi : 'Hamburger',
+    jeudi : 'Hamburger',
+    vendredi : 'Boeuf braisé',
+    samedi : 'Steak pâte',
+    dimanche : 'Boeuf braisé',
     dateDebut : '26/07/2021',
     dateFin : '01/08/2021'
   },
