@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Articles } from 'src/app/models/articles';
-import { Plats } from 'src/app/models/plats';
+import { CodeArticle, Plats } from 'src/app/models/plats';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { PlatsService } from 'src/app/services/plats.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -41,7 +41,8 @@ export class PlatAddPage implements OnInit {
   init(){
     this.formgroup = this.formbuilder.group({
       libelle : '',
-      ingredient : ''
+      ingredient : '',
+      quantite : 1
       // ingredient0 : '',
       // ingredient1 : '',
       // ingredient2 : '',
@@ -52,11 +53,14 @@ export class PlatAddPage implements OnInit {
 
   async loadIngredient(){
     const articleCode = await this.formgroup.get('ingredient').value
+    const quantite = await this.formgroup.get('quantite').value
     const ingredientDetail = await this.articleService.searchArticleByArticleCode(articleCode)
+    ingredientDetail.quantite = quantite
     await this.ingredients.push(ingredientDetail)
     await this.ListeCodeArticle.push(articleCode)
     this.formgroup.patchValue({
-      ingredient : ''
+      ingredient : '',
+      quantite : '1'
     })
     
   }
@@ -96,13 +100,23 @@ export class PlatAddPage implements OnInit {
 
     const formValues = this.formgroup.value;
     const libelle = formValues['libelle'];
+    const ingredient : CodeArticle [] = []
+    
+    for(let ingre of this.ingredients){
+      ingredient.push({
+        codeArticle : ingre.code,
+        quantite : ingre.quantite
+      })
+    }
+
 
     var plat : Plats = {
       libelle : libelle,
-      codeArticle : this.ListeCodeArticle
+      codeArticle : ingredient
     }
     
     this.platsService.setPlatToLocalStorage(plat)
+    this.utility.goToUrl('tab3','plats');
 
       // var ingredients = [];
       // var plats : Plats[] = []
@@ -133,7 +147,6 @@ export class PlatAddPage implements OnInit {
 
       // this.saveInLocalStorage()
 
-      this.utility.goToUrl('tab3','plats');
     
   }
 
@@ -143,5 +156,48 @@ export class PlatAddPage implements OnInit {
     return data;
 
   }
+
+  slideOpts = {
+    initialSlide: 0,
+    speed: 500,
+    autoHeight: true
+  };
+
+  slideNext(slides){
+    slides.slideNext()
+  }
+  slideBack(slides){
+    slides.slideBack()
+  }
+
+  slideUn(slides){
+    const input = document.getElementById('slideUn');
+    input.addEventListener('focusout', () => {
+      slides.slideNext()
+    } )
+  }
+
+  slideDeux(slides){
+    const input = document.getElementById('slideDeux');
+    input.addEventListener('focusin', () => {
+      slides.slideNext()
+    } )
+  }
+
+  slidetrois(slides){
+    const input = document.getElementById('slidetrois');
+    input.addEventListener('focusout', () => {
+      this.loadIngredient()
+      slides.slideTo(1)
+    } )
+  }
+
+  slideQuatre(slides){
+    const input = document.getElementById('slideQuatre');
+    input.addEventListener('focusout', () => {
+      slides.slideNext()
+    } )
+  }
+
 
 }

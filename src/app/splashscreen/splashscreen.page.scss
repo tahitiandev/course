@@ -1,0 +1,47 @@
+#splash-content{
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgb(12, 255, 235);
+}
+
+#icone-size{
+    height: 150px;
+    display: block;
+    margin: auto;
+    margin-top: 40%;
+    -webkit-animation: scale-up-center 0.7s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+	        animation: scale-up-center 0.7s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
+@-webkit-keyframes scale-up-center {
+    0% {
+      -webkit-transform: scale(0.5);
+              transform: scale(0.5);
+    }
+    100% {
+      -webkit-transform: scale(1);
+              transform: scale(1);
+    }
+  }
+  @keyframes scale-up-center {
+    0% {
+      -webkit-transform: scale(0.5);
+              transform: scale(0.5);
+    }
+    100% {
+      -webkit-transform: scale(1);
+              transform: scale(1);
+    }
+  }
+  
+  
+
+
+
+
+
+h1{
+    text-align: center;
+    color: black;
+    font-weight: bold;
+}

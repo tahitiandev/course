@@ -1,4 +1,9 @@
 export interface Plats {
     libelle : string;
-    codeArticle? : any [];
+    codeArticle? : CodeArticle [];
+}
+
+export interface CodeArticle {
+    codeArticle : string;
+    quantite? : number;
 }

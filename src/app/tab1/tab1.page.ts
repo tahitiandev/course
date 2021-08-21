@@ -40,5 +40,32 @@ export class Tab1Page implements OnInit, OnChanges {
     this.nav.navigateRoot('tabs/tab1/course-add')
   }
 
+  async cloturer(index : number){
+
+    const courses = await this.storage.get(this.utility.localstorage.Courses)
+    var newCourse : Courses[] = [];
+
+    
+    for(let i = 0; i < courses.length; i++){
+      if(i === index){
+        var add : Courses = {
+          id : courses[i].id,
+          date : courses[i].date,
+          actif : !courses[i].actif,
+          total : courses[i].total,
+          liste : courses[i].liste
+        }
+        newCourse.push(add)
+      }
+      if(i !== index){
+        newCourse.push(courses[i])
+      }
+    } // for
+
+    this.courses = newCourse
+    this.storage.set(this.utility.localstorage.Courses, newCourse)
+
+  }
+
 
 }

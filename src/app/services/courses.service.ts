@@ -33,7 +33,7 @@ export class CoursesService {
   private defaultData : Courses [] = [
     {
       id : 1,
-      date : '21/07/2021',
+      date : '2021-08-17T10:55:41.500-10:00',
       actif : true,
       total : 1050,
       liste : [
@@ -79,26 +79,47 @@ export class CoursesService {
   async setCourseInLocalStorage(course : Courses){
     var courses : Courses [] = [];
     const coursesLS : Courses [] = await this.getCourseFromLocalStorage()
-    // if(coursesLS){
+
       for(let coursen of coursesLS){
         courses.push(coursen)
       }
       courses.push(course)
-    // }
+
     this.storage.set(this.utility.localstorage.Courses, courses)
 
-    // const newResult = await this.getCourseFromLocalStorage()
-    // console.log(newResult)
+
+  }
+
+  async updateCourseInLocalStorage(course : Courses){
+
+    var coursesLS : Courses [] = await this.getCourseFromLocalStorage()
+    var newData : Courses [] = [];
+    
+    for(let courseUnite of coursesLS){
+      if(courseUnite.id != course.id){
+        newData.push(courseUnite)
+      }
+      if(courseUnite.id === course.id){
+        newData.push(course)
+      }
+    }
+
+    this.storage.set(this.utility.localstorage.Courses, newData)
+
   }
 
   async generateCourseId(){
-    await this.getCourse();
-    const lastId = await this.courses.pop().id
-    // console.log(lastId)
+
+    const listeOfCourse = await this.getCourseFromLocalStorage();
+    const lastId = await listeOfCourse.pop().id
     var newId = 1;
+
     if(lastId){
       newId = lastId + 1
+    }else{
+      newId = 1
     }
+
     return newId;
   }
 

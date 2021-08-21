@@ -56,9 +56,47 @@ export class ArticleAddPage implements OnInit {
 
     this.nav.back()
 
+  }
 
+  slideOpts = {
+    initialSlide: 0,
+    speed: 500,
+    autoHeight: true
+  };
 
+  slideNext(slides){
+    slides.slideNext()
+  }
+  slideBack(slides){
+    slides.slideBack()
+  }
 
+  slideUn(slides){
+    const input = document.getElementById('slideUn');
+    input.addEventListener('focusout', () => {
+      slides.slideNext()
+    } )
+  }
+
+  slideDeux(slides){
+    const input = document.getElementById('slideDeux');
+    input.addEventListener('focusin', () => {
+      slides.slideNext()
+    } )
+  }
+
+  slidetrois(slides){
+    const input = document.getElementById('slidetrois');
+    input.addEventListener('focusout', () => {
+      slides.slideNext()
+    } )
+  }
+
+  slideQuatre(slides){
+    const input = document.getElementById('slideQuatre');
+    input.addEventListener('focusout', () => {
+      slides.slideNext()
+    } )
   }
 
 }

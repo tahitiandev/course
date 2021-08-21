@@ -7,35 +7,126 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="slide-content">
 
   <br>
   <form [formGroup]="articleForm" (ngSubmit)="onSubmit()">
 
-    <ion-item>
-      <ion-label>Famille</ion-label>
-      <ion-select formControlName="familles" placeholder="Choisir une famille">
-        <ion-select-option *ngFor="let famille of familles" value="{{famille.code}}">{{ famille.libelle }}</ion-select-option>
-      </ion-select>
-    </ion-item>
+
+    <ion-slides #slides [options]="slideOpts" style="padding-top: 50%; padding-bottom: 50%;">
+
+      <!-- SLIDE 1 -->
+      <ion-slide >
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Choisir<br>un nom de l'article</h1>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-input (click)="slideUn(slides)" id="slideUn" type="text" placeholder="Ecrire ici" formControlName="libelle"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
 
 
+      </ion-slide>
 
-    <ion-item>
-      <ion-label position="stacked">Code</ion-label>
-      <ion-input type="text" formControlName="code"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="stacked">Libelle</ion-label>
-      <ion-input type="text" formControlName="libelle"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="stacked">Prix (xpf)</ion-label>
-      <ion-input type="text" formControlName="prix"></ion-input>
-    </ion-item>
-  <br>
-  <ion-button type="submit" expand="block" fill="outline">Enregistrer</ion-button>
+      <!-- SLIDE 2 -->
+      <ion-slide >
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Choisir<br>une famille d'article</h1>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <!-- <ion-label>Famille</ion-label> -->
+                <ion-select (click)="slideDeux(slides)" id="slideDeux" formControlName="familles" placeholder="Choisir une famille">
+                  <ion-select-option *ngFor="let famille of familles" value="{{famille.code}}">{{ famille.libelle }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+      </ion-slide>
+
+      <!-- SLIDE 3 -->
+      <ion-slide>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Choisir<br>un code article</h1>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-input (click)="slidetrois(slides)" id="slidetrois" type="text" formControlName="code"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+      </ion-slide>
+
+      <!-- SLIDE 4 -->
+      <ion-slide>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Combien coût-il ?</h1>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-input (click)="slideQuatre(slides)" id="slideQuatre" type="text" formControlName="prix"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+      </ion-slide>
+      <!-- SLIDE 5 -->
+    <ion-slide >
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h1>Valider vos choix</h1>
+            <br>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button type="submit" color="primary">Oui</ion-button>
+            <ion-button color="danger">Non</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+
+    </ion-slides>
 
   </form>
+
+  <ion-fab vertical="bottom" (click)="slideNext(slides)" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="arrow-forward-circle"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <!-- <ion-fab vertical="bottom" (click)="slideBack(slides)" horizontal="start" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="arrow-forward-circle"></ion-icon>
+    </ion-fab-button>
+  </ion-fab> -->
 
 </ion-content>

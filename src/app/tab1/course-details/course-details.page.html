@@ -10,22 +10,22 @@
 <ion-content>
 
   <ion-list style="margin-top: 5%;">
-    <ion-item-sliding *ngFor="let detail of listeArticle">
+    <ion-item-sliding *ngFor="let detail of listeArticle; let index = index">
       <ion-item-options side="start">
-        <ion-item-option >Favorite</ion-item-option>
-        <ion-item-option color="danger" >Share</ion-item-option>
+        <ion-item-option >Modifier<br>article</ion-item-option>
       </ion-item-options>
-  
+      
       <ion-item>
         <ion-label>{{ detail.libelle }}</ion-label>
-        <ion-label style="text-align: right;">Qté:{{ detail.quantite }}</ion-label>
-        <ion-label style="text-align: right;">PU:{{ detail.prixUnitaire }} xpf</ion-label>
-        <ion-label style="text-align: right;"> {{ (detail.quantite-0) * (detail.prixUnitaire-0) }} xpf</ion-label>
-        <ion-checkbox style="margin-left: 30px;" [checked]="detail.actif"></ion-checkbox>
+        <!-- <ion-label style="text-align: right;">Qté:{{ detail.quantite === null ? detail.quantite : 1 }}</ion-label> -->
+        <ion-label style="text-align: right;">{{ detail.prixUnitaire }} xpf (x{{ detail.quantite != null ? detail.quantite : 1 }})</ion-label>
+        <ion-label style="text-align: right;"> {{ detail.quantite != null ? (detail.quantite-0) * (detail.prixUnitaire-0) : detail.prixUnitaire }} xpf</ion-label>
+        <ion-checkbox style="margin-left: 30px;" (click)="clickCheckBox(index)" [checked]="detail.actif"></ion-checkbox>
       </ion-item>
-  
+      
       <ion-item-options side="end">
-        <ion-item-option >Unread</ion-item-option>
+        <ion-item-option (click)="updateArticle(detail, index)">Modifier</ion-item-option>
+        <ion-item-option (click)="supprimerArticle(index)" color="danger" >Supprimer</ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>

@@ -72,19 +72,40 @@ export class IngredientPage implements OnInit {
 
   }
 
+  // private async searchArticleByCode(code : string){
+
+
+
+  // }
+
   private async getIngredient(codeArticle : any []){
 
     await this.getArticleFromLocalStorage()
+    // console.log(this.articles)
 
-    for(var x = 0; x < codeArticle.length; x++){
-                    
-      this.articles.find(s => {
-        if(s.code === codeArticle[x]){
-          this.ingredients.push(s)
+    for(let article of codeArticle){
+
+      // console.log(article)
+
+      this.articles.find(async s => {
+        // console.log(s)
+        if(s.code == article.codeArticle){
+          // console.log('s.code')
+          const articless = await this.articleService.searchArticleByArticleCode(article.codeArticle)
+          // console.log(articless)
+          const ingred = {
+            codeArticle : article.codeArticle,
+            quantite : article.quantite,
+            prix : articless.prix,
+            libelle : articless.libelle
+          }
+  
+          this.ingredients.push(ingred)
+          // console.log(this.ingredients)
         }
       })
 
-    } //for
+    }
 
   }//getIngredient
 

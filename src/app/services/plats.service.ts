@@ -14,19 +14,43 @@ export class PlatsService {
   private plats : Plats [] = [
     {
       libelle : 'Pâte carbonara',
-      codeArticle : ['FLCAR','VCJAM']
-    },
-    {
-      libelle : 'Steak pâte',
-      codeArticle : ['BOILAI','VCJAM']
+      codeArticle : [{
+        codeArticle : 'FLCAR',
+        quantite : 2
+      },{
+        codeArticle : 'VCJAM',
+        quantite : 5
+      }]
     },
     {
       libelle : 'Hamburger',
-      codeArticle : ['FLORA','FLORA']
+      codeArticle : [{
+        codeArticle : 'FLORA',
+        quantite : 1
+      },{
+        codeArticle : 'FLORA',
+        quantite : 5
+      }]
+    },
+    {
+      libelle : 'Steak pâte',
+      codeArticle : [{
+        codeArticle : 'FLCAR',
+        quantite : 2
+      },{
+        codeArticle : 'VCJAM',
+        quantite : 5
+      }]
     },
     {
       libelle : 'Boeuf braisé',
-      codeArticle : ['FLTOM','FLORA']
+      codeArticle : [{
+        codeArticle : 'FLTOM',
+        quantite : 1
+      },{
+        codeArticle : 'FLORA',
+        quantite : 9
+      }]
     }
   ];
 

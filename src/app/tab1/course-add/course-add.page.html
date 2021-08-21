@@ -18,13 +18,13 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h1 (click)="loadInCourseMenuDeLaSemaine()">Choisir une date</h1>
+            <h1>Choisir une date</h1>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
             <ion-item>
-              <ion-datetime formControlName="date" placeholder="Cliquez ici"></ion-datetime>
+              <ion-datetime id="dateinput" (click)="siDaterenseigneChangeSlide(slides)" formControlName="date" placeholder="Cliquez ici"></ion-datetime>
             </ion-item>
           </ion-col>
         </ion-row>
@@ -85,6 +85,13 @@
           </ion-col>
         </ion-row>
         <ion-row>
+          <ion-button (click)="nextSlide(slides)" class="slidebtnNext" color="light">Suivant
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </ion-button>
+        </ion-row>
+        <br>
+        <br>
+        <ion-row>
           <ion-list style="margin: 5%;width: 100%;">
             <ion-item *ngFor="let plat of plats; let index = index" id="test-{{index}}">
               <!-- <ion-button slot="end" color="light"> -->
@@ -94,11 +101,6 @@
               <ion-label>{{ plat.libelle }}</ion-label>
             </ion-item>
           </ion-list>
-        </ion-row>
-        <ion-row>
-          <ion-button (click)="nextSlide(slides)" class="slidebtnNext" color="light">Suivant
-            <ion-icon name="chevron-forward-outline"></ion-icon>
-          </ion-button>
         </ion-row>
       </ion-grid>
 
@@ -115,10 +117,17 @@
           </ion-col>
         </ion-row>
         <ion-row>
+          <ion-button (click)="nextSlide(slides)" class="slidebtnNext" color="light">Suivant
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </ion-button>
+          <br>
+          <br>
+        </ion-row>
+        <ion-row>
           <ion-list style="margin: 5%;width: 100%;">
-            <ion-item *ngFor="let article of articles">
+            <ion-item id="testAricle-{{index}}" *ngFor="let article of articles; let index = index">
               <!-- <ion-button slot="end" color="light"> -->
-                <ion-icon (click)="loadOneArticle(article)" slot="end" name="add-circle-outline"></ion-icon>
+                <ion-icon (click)="loadOneArticle(article, index)" slot="end" name="add-circle-outline"></ion-icon>
               <!-- </ion-button> -->
               <ion-label>{{ article.libelle }}</ion-label>
             </ion-item>

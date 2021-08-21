@@ -76,19 +76,20 @@ export class ArticlesService {
   //   await this.storage.set(this.utility.localstorage['famille d\'articles'], this.famille)
   // }
 
-  updateArticle(id : number){
-    this.storage.get('articles').then(articles => {
+  async updateArticle(newArticle : Articles){
+    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+    var articleUpdate : Articles [] = [];
 
-      if(articles){
+    for(let article of articles){
 
-        this.articles = [];
-
-
-        this.articles.push(articles)
-
+      if(article.code != newArticle.code){
+        articleUpdate.push(article)
       }
-
-    })
+      if(article.code === newArticle.code){
+        articleUpdate.push(newArticle)
+      }
+    }
+    this.storage.set(this.utility.localstorage.articles, articleUpdate)
   }
 
   async getArticleFromLocalStorage (){
@@ -172,6 +173,16 @@ export class ArticlesService {
     // Je retourne le resultat
     return result;
 
+  }
+
+  async searchArticleByLibelle(libelle : string){
+
+    const articles : Articles [] = await this.getArticleFromLocalStorage()
+    const result : Articles = articles.find((res : Articles) => {
+      return res.libelle == libelle
+    })
+    console.log(articles)
+    return result
   }
 
 

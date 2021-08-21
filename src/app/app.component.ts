@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { ArticlesService } from './services/articles.service';
 import { CoursesService } from './services/courses.service';
@@ -14,18 +15,35 @@ export class AppComponent implements OnInit {
               private articleService : ArticlesService,
               private platService : PlatsService,
               private courseService : CoursesService,
-              private menuService : MenuService) {}
-
+              private menuService : MenuService,
+              private route : NavController) {}
+  
+  splashscreen : boolean = true;
+  
+  
   ngOnInit(){
+    this.initSplashscreen()
     this.loadDefaultData()
   }
 
+  initSplashscreen(){
+    document.addEventListener('deviceready', () => {
+      this.loadDefaultData()
+    })
+  }
+
   loadDefaultData(){
-    this.setArticle()
-    this.setFamilleArticle()
-    this.setPlat()
-    this.setCourse()
-    this.setMenu()
+
+    if(this.splashscreen){
+      this.splashscreen = false;
+      this.route.navigateRoot('splashscreen')
+    }else{
+      this.setArticle()
+      this.setFamilleArticle()
+      this.setPlat()
+      this.setCourse()
+      this.setMenu()
+    }
   }
 
   async setArticle(){

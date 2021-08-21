@@ -7,35 +7,141 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="slide-content">
   <br>
   <form [formGroup]="formgroup" (ngSubmit)="onSubmitForm()">
 
-  <ion-item-group>
-  <ion-item>
-    <ion-label>Nom du plat</ion-label>
-    <ion-input formControlName="libelle" placeholder="Nom du plat" ></ion-input>
-  </ion-item>
+
+    <ion-slides #slides [options]="slideOpts" style="padding-top: 50%; padding-bottom: 50%;">
+
+      <!-- SLIDE 1 -->
+      <ion-slide >
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Choisir<br>un nom du plat</h1>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-input (click)="slideUn(slides)" id="slideUn" type="text" placeholder="Ecrire ici" formControlName="libelle"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+
+      </ion-slide>
+
+      <!-- SLIDE 2 -->
+      <ion-slide>
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Ingredient</h1>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating">Ajouter un Ingrédient</ion-label>
+                <ion-select (click)="slideDeux(slides)" id="slideDeux" formControlName="ingredient">
+                  <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+
+      </ion-slide>
+
+      <ion-slide >
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Choisir<br>une quantité</h1>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-input (click)="slidetrois(slides)" id="slidetrois" type="number" placeholder="Ecrire ici" formControlName="quantite"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+
+      </ion-slide>
+
+      <!-- SLIDE 5 -->
+    <ion-slide >
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h1>Valider vos choix</h1>
+            <br>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button type="submit" color="primary">Oui</ion-button>
+            <ion-button color="danger">Non</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+
+
+
+
+    </ion-slides>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- <ion-item-group>
+
+
+
+  <br>
+  
 
   <br>
   <ion-item>
-    <ion-label position="floating">Ajouter un Ingrédient</ion-label>
-    <ion-select formControlName="ingredient">
-      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
-    </ion-select>
-
-    <ion-button (click)="loadIngredient()" slot="end" color="success">
-      <ion-icon name="checkmark-outline"></ion-icon>
-    </ion-button>
-
+    <ion-label>Quantité</ion-label>
+    <ion-input type="number" placeholder="Quantité" formControlName="quantite"></ion-input>
   </ion-item>
+
   <br>
+
   <section>
 
-    <ion-button type="submit" expand="full">Enregistrer</ion-button>
+    <ion-button (click)="loadIngredient()" expand="full">Ajouter</ion-button>
 
   </section>
+  
 </ion-item-group>
+
+
+  <section>
+    <ion-button type="submit" expand="full">Enregistrer</ion-button>
+  </section>
+
 
   <ion-item-group>
     <ion-item-divider>
@@ -45,60 +151,13 @@
     <ion-list>
       <ion-item *ngFor="let ingredient of ingredients">
         <ion-label>{{ ingredient.libelle }}</ion-label>
+        <ion-label>Qté : {{ ingredient.quantite }}</ion-label>
       </ion-item>
     </ion-list>
     
-  </ion-item-group>
+  </ion-item-group> -->
 
 
-  <!-- <br>
-  <ion-item>
-    <ion-label position="floating">Ingrédient 1</ion-label>
-    <ion-select formControlName="ingredient0">
-      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
-    </ion-select>
-  </ion-item>
-
-  <br>
-  <ion-item>
-    <ion-label position="floating">Ingrédient 2</ion-label>
-    <ion-select formControlName="ingredient1">
-      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
-    </ion-select>
-  </ion-item>
-
-  <br>
-  <ion-item>
-    <ion-label position="floating">Ingrédient 3</ion-label>
-    <ion-select formControlName="ingredient2">
-      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
-    </ion-select>
-  </ion-item>
-
-  <br>
-  <ion-item>
-    <ion-label position="floating">Ingrédient 4</ion-label>
-    <ion-select formControlName="ingredient3">
-      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
-    </ion-select>
-  </ion-item>
-
-  <br>
-  <ion-item>
-    <ion-label position="floating">Ingrédient 5</ion-label>
-    <ion-select formControlName="ingredient4">
-      <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
-    </ion-select>
-  </ion-item> -->
-
-
-  <!-- <br>
-  <ion-button color="success" (click)="ajouterIngredient()">Ajouter un ingredient</ion-button>
-  <br>
-  <br>
-
-  <span id="newInput"></span> -->
-  
 </form>
 
 </ion-content>
