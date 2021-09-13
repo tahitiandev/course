@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
+import { Setting } from './models/setting';
 import { ArticlesService } from './services/articles.service';
 import { CoursesService } from './services/courses.service';
 import { MenuService } from './services/menu.service';
 import { PlatsService } from './services/plats.service';
+import { UtilityService } from './services/utility.service';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -16,9 +18,11 @@ export class AppComponent implements OnInit {
               private platService : PlatsService,
               private courseService : CoursesService,
               private menuService : MenuService,
-              private route : NavController) {}
+              private route : NavController,
+              private utility : UtilityService) {}
   
   splashscreen : boolean = true;
+  settings : Setting;
   
   
   ngOnInit(){
@@ -43,6 +47,8 @@ export class AppComponent implements OnInit {
       this.setPlat()
       this.setCourse()
       this.setMenu()
+      this.initSetting()
+      this.initTheme()
     }
   }
 
@@ -77,5 +83,32 @@ export class AppComponent implements OnInit {
     }
   }
 
+  initSetting() {
+
+    this.storage.get(this.utility.localstorage.Setting).then(s => {
+      if(!s){
+        this.settings = {
+          theme : true
+        }
+        this.storage.set(this.utility.localstorage.Setting, this.settings)
+      }
+    })
+  }
+
+  async initTheme(){
+
+    const setting = await this.storage.get(this.utility.localstorage.Setting);
+
+    if(setting){
+      if(setting.theme === true){
+        document.body.setAttribute('color-theme','dark');
+      }else{
+        document.body.setAttribute('color-theme','light');
+      }
+    }else{
+      document.body.setAttribute('color-theme','light');
+    }
+
+  }
 
 }

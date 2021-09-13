@@ -13,7 +13,8 @@ export class UtilityService {
     'famille d\'articles' : 'familles',
     'Plats' : 'plats',
     'Courses' : 'courses',
-    'menu de la semaine' : 'menus'
+    'menu de la semaine' : 'menus',
+    'Setting' : 'setting'
   }
 
   goToUrl(tabNumber : string, pageName? : string){
