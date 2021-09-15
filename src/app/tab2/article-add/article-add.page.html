@@ -21,13 +21,14 @@
         <ion-grid>
           <ion-row>
             <ion-col>
-              <h1>Choisir<br>un nom de l'article</h1>
+              <h1>Renseigner<br>le nom de l'article</h1>
+              <h5>1/5</h5>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-input (click)="slideUn(slides)" id="slideUn" type="text" placeholder="Ecrire ici" formControlName="libelle"></ion-input>
+                <ion-input (click)="slideUn(slides)" oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.substr(1);" id="slideUn" type="text" placeholder="Ecrire ici" formControlName="libelle"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -43,6 +44,7 @@
           <ion-row>
             <ion-col>
               <h1>Choisir<br>une famille d'article</h1>
+              <h5>2/5</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -65,12 +67,13 @@
           <ion-row>
             <ion-col>
               <h1>Choisir<br>un code article</h1>
+              <h5>3/5</h5>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-input (click)="slidetrois(slides)" id="slidetrois" type="text" formControlName="code"></ion-input>
+                <ion-input (click)="slidetrois(slides)" oninput="this.value=this.value.toUpperCase()" id="slidetrois" type="text" formControlName="code"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -83,7 +86,8 @@
         <ion-grid>
           <ion-row>
             <ion-col>
-              <h1>Combien coût-il ?</h1>
+              <h1>Renseigner<br>le prix</h1>
+              <h5>4/5</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -102,6 +106,7 @@
         <ion-row>
           <ion-col>
             <h1>Valider vos choix</h1>
+            <h5>5/5</h5>
             <br>
           </ion-col>
         </ion-row>
