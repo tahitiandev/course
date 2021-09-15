@@ -19,7 +19,24 @@ export class Tab3Page {
   }
 
   constructor(private utility : UtilityService,
-              private storage : Storage) {}
+              private storage : Storage) {
+
+                this.storage.get('setting').then((setting : Setting) => {
+                  if(setting){
+                    this.setting = setting
+            
+                    // Init thème
+                    if(this.setting.theme === true){
+                      this.darkModeBtn = true
+                    }else{
+                      this.darkModeBtn = false
+                    }
+                  }else{
+                    console.log('Erreur d\'initialisation du setting du localstorage')
+                  }
+                })
+
+              }
 
   goToUrl(tabNumber : string, pageName? : string){
     this.utility.goToUrl(tabNumber, pageName);    
