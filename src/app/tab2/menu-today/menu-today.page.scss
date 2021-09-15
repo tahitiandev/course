@@ -2,7 +2,7 @@
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     // height: 1500px;
-    // background: chartreuse;
+    // background: rgb(176, 173, 187);
 }
 
 .card-position{
@@ -15,4 +15,19 @@
     font-size: 45px;
     height: 100px;
     line-height: 100px;
+}
+
+.detail-image{
+    width: 180px;
+    margin-bottom: 40px;
+}
+
+.slide-dimension{
+    // background: blue;
+    height: 100%;
+}
+
+.card-dimension{
+    margin-top: 20%;
+    height: 80%;
 }

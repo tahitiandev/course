@@ -72,10 +72,11 @@ export class PlatsService {
     this.plats = [];
     const plats = await this.getPlatFromLocalStorage();
     this.plats = plats;
-
+    
     const result = await this.plats.find((plats : Plats) => {
       return plats.libelle === libelle
     })
+    // console.log(libelle)
 
     return result;
 

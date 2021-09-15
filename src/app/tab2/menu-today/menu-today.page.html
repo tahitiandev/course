@@ -7,9 +7,10 @@
 
 <ion-content class="slide-content">
 
-  <ion-slides [options]="slideOpts" style="margin-top: 30%;">
-    <ion-slide>
-      <ion-card>
+  <ion-slides #slides [options]="slideOpts" style="height: 100%;">
+
+    <ion-slide class="slide-dimension">
+      <ion-card class="card-dimension">
         
         
         <ion-card-header>
@@ -22,12 +23,13 @@
           
           <ion-item>
               <ion-label>Choisissez un plat</ion-label>
-
-              <ion-select formControlName="plat" placeholder="Sélection">
-                <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
+              
+              <ion-select formControlName="plat" (ionChange)="loadAndSavePlatDuJour('lundi')" placeholder="Sélection">
+              <!-- <ion-select formControlName="plat" placeholder="Sélection" > -->
+                <ion-select-option *ngFor="let plat of plats" [value]="plat">{{ plat.libelle }}</ion-select-option>
               </ion-select>
 
-              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('lundi')">+</ion-button>
+              <!-- <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('lundi')">+</ion-button> -->
             </ion-item>
             
           </form>
@@ -36,13 +38,16 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ menuDeLaSemaine.lundi }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.lundi }} </h2>    
+              
+              <img *ngIf="menuDeLaSemaine.lundi" class="detail-image" src="assets/plat.png" alt="Détail en image">
             
           </ion-card-content>
       </ion-card>
     </ion-slide>
-    <ion-slide>
-      <ion-card>
+
+    <ion-slide class="slide-dimension">
+      <ion-card class="card-dimension">
         
         
         <ion-card-header>
@@ -56,11 +61,12 @@
           <ion-item>
               <ion-label>Choisissez un plat</ion-label>
 
-              <ion-select formControlName="plat" placeholder="Sélection">
+              <ion-select formControlName="plat" (ionChange)="loadAndSavePlatDuJour('mardi')" placeholder="Sélection">
+              <!-- <ion-select formControlName="plat" placeholder="Sélection"> -->
                 <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
               </ion-select>
 
-              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('mardi')">+</ion-button>
+              <!-- <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('mardi')">+</ion-button> -->
             </ion-item>
             
           </form>
@@ -69,13 +75,15 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ menuDeLaSemaine.mardi }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.mardi }} </h2>
+
+              <img *ngIf="menuDeLaSemaine.mardi" class="detail-image" src="assets/plat.png" alt="Détail en image">
             
           </ion-card-content>
       </ion-card>
     </ion-slide>
-    <ion-slide>
-      <ion-card>
+    <ion-slide class="slide-dimension">
+      <ion-card class="card-dimension">
         
         
         <ion-card-header>
@@ -89,11 +97,12 @@
           <ion-item>
               <ion-label>Choisissez un plat</ion-label>
 
-              <ion-select formControlName="plat" placeholder="Sélection">
+              <ion-select formControlName="plat" (ionChange)="loadAndSavePlatDuJour('mercredi')" placeholder="Sélection">
+              <!-- <ion-select formControlName="plat" placeholder="Sélection"> -->
                 <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
               </ion-select>
 
-              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('mercredi')">+</ion-button>
+              <!-- <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('mercredi')">+</ion-button> -->
             </ion-item>
             
           </form>
@@ -102,13 +111,15 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ menuDeLaSemaine.mercredi }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.mercredi }} </h2>
+              
+              <img *ngIf="menuDeLaSemaine.mercredi" class="detail-image" src="assets/plat.png" alt="Détail en image">
             
           </ion-card-content>
       </ion-card>
     </ion-slide>
-    <ion-slide>
-      <ion-card>
+    <ion-slide class="slide-dimension">
+      <ion-card class="card-dimension">
         
         
         <ion-card-header>
@@ -122,11 +133,12 @@
           <ion-item>
               <ion-label>Choisissez un plat</ion-label>
 
-              <ion-select formControlName="plat" placeholder="Sélection">
+              <ion-select formControlName="plat" (ionChange)="loadAndSavePlatDuJour('jeudi')" placeholder="Sélection">
+              <!-- <ion-select formControlName="plat" placeholder="Sélection"> -->
                 <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
               </ion-select>
 
-              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('jeudi')">+</ion-button>
+              <!-- <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('jeudi')">+</ion-button> -->
             </ion-item>
             
           </form>
@@ -135,13 +147,15 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ menuDeLaSemaine.jeudi }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.jeudi }} </h2>
+
+              <img *ngIf="menuDeLaSemaine.jeudi" class="detail-image" src="assets/plat.png" alt="Détail en image">
             
           </ion-card-content>
       </ion-card>
     </ion-slide>
-    <ion-slide>
-      <ion-card>
+    <ion-slide class="slide-dimension">
+      <ion-card class="card-dimension">
         
         
         <ion-card-header>
@@ -155,11 +169,12 @@
           <ion-item>
               <ion-label>Choisissez un plat</ion-label>
 
-              <ion-select formControlName="plat" placeholder="Sélection">
+              <ion-select formControlName="plat" (ionChange)="loadAndSavePlatDuJour('vendredi')" placeholder="Sélection">
+              <!-- <ion-select formControlName="plat" placeholder="Sélection"> -->
                 <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
               </ion-select>
 
-              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('vendredi')">+</ion-button>
+              <!-- <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('vendredi')">+</ion-button> -->
             </ion-item>
             
           </form>
@@ -168,13 +183,15 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ menuDeLaSemaine.vendredi }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.vendredi }} </h2>
+
+              <img *ngIf="menuDeLaSemaine.vendredi" class="detail-image" src="assets/plat.png" alt="Détail en image">
             
           </ion-card-content>
       </ion-card>
     </ion-slide>
-    <ion-slide>
-      <ion-card>
+    <ion-slide class="slide-dimension">
+      <ion-card class="card-dimension">
         
         
         <ion-card-header>
@@ -188,11 +205,12 @@
           <ion-item>
               <ion-label>Choisissez un plat</ion-label>
 
-              <ion-select formControlName="plat" placeholder="Sélection">
+              <ion-select formControlName="plat" (ionChange)="loadAndSavePlatDuJour('samedi')" placeholder="Sélection">
+              <!-- <ion-select formControlName="plat" placeholder="Sélection"> -->
                 <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
               </ion-select>
 
-              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('samedi')">+</ion-button>
+              <!-- <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('samedi')">+</ion-button> -->
             </ion-item>
             
           </form>
@@ -201,13 +219,15 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ menuDeLaSemaine.samedi}} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.samedi}} </h2>
+
+              <img *ngIf="menuDeLaSemaine.samedi" class="detail-image" src="assets/plat.png" alt="Détail en image">
             
           </ion-card-content>
       </ion-card>
     </ion-slide>
-    <ion-slide>
-      <ion-card>
+    <ion-slide class="slide-dimension">
+      <ion-card class="card-dimension">
         
         
         <ion-card-header>
@@ -221,11 +241,12 @@
           <ion-item>
               <ion-label>Choisissez un plat</ion-label>
 
-              <ion-select formControlName="plat" placeholder="Sélection">
+              <ion-select formControlName="plat" (ionChange)="loadAndSavePlatDuJour('dimanche')" placeholder="Sélection">
+              <!-- <ion-select formControlName="plat" placeholder="Sélection"> -->
                 <ion-select-option *ngFor="let plat of plats">{{ plat.libelle }}</ion-select-option>
               </ion-select>
 
-              <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('dimanche')">+</ion-button>
+              <!-- <ion-button expand="full" (click)="this.loadAndSavePlatDuJour('dimanche')">+</ion-button> -->
             </ion-item>
             
           </form>
@@ -234,7 +255,9 @@
               Le plats actuel :  
             </ion-item>
 
-              <h2 class="showPlat"> {{ menuDeLaSemaine.dimanche }} </h2>      
+              <h2 class="showPlat"> {{ menuDeLaSemaine.dimanche }} </h2>
+
+              <img *ngIf="menuDeLaSemaine.dimanche" class="detail-image" src="assets/plat.png" alt="Détail en image">
             
           </ion-card-content>
       </ion-card>
@@ -242,5 +265,15 @@
     
   </ion-slides>
 
+  <ion-fab vertical="bottom" (click)="slideNext(slides)" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="arrow-forward-circle"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-fab vertical="bottom" (click)="slideBack(slides)" horizontal="start" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="arrow-back-circle"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 
 </ion-content>

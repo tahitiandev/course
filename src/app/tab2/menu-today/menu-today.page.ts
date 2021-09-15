@@ -18,7 +18,7 @@ export class MenuTodayPage implements OnInit {
 
   slideOpts = {
     initialSlide: 0,
-    speed: 100,
+    speed: 500,
     autoHeight: true
   };
 
@@ -223,6 +223,7 @@ export class MenuTodayPage implements OnInit {
   
   async getPlatByLibelle(libelle : string, jour : string){
     const result = await this.platservice.searchPlatByLibelle(libelle);
+    // console.log(result)
     if(jour === 'lundi'){
       this.menuDeLaSemaine.lundi = result.libelle
     }
@@ -254,7 +255,8 @@ export class MenuTodayPage implements OnInit {
   loadAndSavePlatDuJour(jour : string){
 
     if(jour === 'lundi'){
-      const selectedValue = this.lundiForm.get('plat').value
+      const selectedValue = this.lundiForm.get('plat').value.libelle
+      // console.log(selectedValue)
       this.getPlatByLibelle(selectedValue, jour)
     }
     if(jour === 'mardi'){
@@ -286,5 +288,19 @@ export class MenuTodayPage implements OnInit {
 
   }
 
+  // onChange(event, jour){
+
+  //   if(jour === 'lundi'){
+  //     console.log(event.target.value)
+  //   }
+  //   // this.loadAndSavePlatDuJour(jour)
+  // }
+
+  slideNext(slides){
+    slides.slideNext()
+  }
+  slideBack(slides){
+    slides.slidePrev()
+  }
 
 }

@@ -38,10 +38,10 @@ export class AppComponent implements OnInit {
 
   loadDefaultData(){
 
-    if(this.splashscreen){
-      this.splashscreen = false;
-      this.route.navigateRoot('splashscreen')
-    }else{
+    // if(this.splashscreen){
+    //   this.splashscreen = false;
+    //   this.route.navigateRoot('splashscreen')
+    // }else{
       this.setArticle()
       this.setFamilleArticle()
       this.setPlat()
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
       this.setMenu()
       this.initSetting()
       this.initTheme()
-    }
+    // }
   }
 
   async setArticle(){
@@ -83,7 +83,18 @@ export class AppComponent implements OnInit {
     }
   }
 
-  initSetting() {
+  async initSetting() {
+
+    const setting = await this.storage.get(this.utility.localstorage.Setting);
+    
+    if(!setting){
+      // Je met à jour le thème
+      this.settings = {
+        theme : true
+      }
+      // je met à jour le LS
+      this.storage.set(this.utility.localstorage.Setting, this.settings)
+    }
 
     this.storage.get(this.utility.localstorage.Setting).then(s => {
       if(!s){
