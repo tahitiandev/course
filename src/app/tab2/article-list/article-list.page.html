@@ -21,7 +21,9 @@
         <ion-label>
           <h3>{{ article.code }} {{ article.libelle }}</h3>
         </ion-label>
-        <h5 slot="end">{{ article.prix }} xpf</h5>
+        <ion-label>
+          <h3 slot="end" style="text-align: right;">{{ article.prix }} xpf</h3>
+        </ion-label>
         <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
       </ion-item>
 
