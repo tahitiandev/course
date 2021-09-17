@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { Articles } from 'src/app/models/articles';
 import { Courses, Liste } from 'src/app/models/courses';
-import { Plats } from 'src/app/models/plats';
+import { CodeArticle, Plats } from 'src/app/models/plats';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { PlatsService } from 'src/app/services/plats.service';
@@ -117,11 +117,11 @@ export class CourseAddPage implements OnInit, OnChanges {
   }
 
 
-  async loadArticleFromOnePlat(codeArticle : any[], index){
+  async loadArticleFromOnePlat(codeArticle : CodeArticle[], index){
 
     // Ajout du plat demandé
     for(let article of codeArticle){
-      const result = await this.articleService.searchArticleByArticleCode(article.codeArticle)
+      const result = await this.articleService.searchArticleByArticleCodeForPageCourseAdd(article)
       this.listeArticle.push(result)
     }
 

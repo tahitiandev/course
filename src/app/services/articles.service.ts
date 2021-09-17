@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Articles, FamilleArticle } from '../models/articles';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from './utility.service';
+import { CodeArticle } from '../models/plats';
 
 @Injectable({
   providedIn: 'root'
@@ -214,24 +215,55 @@ export class ArticlesService {
     return familles;
   }
 
-  async searchArticleByArticleCode(articleCode : string){
-    // Je vide articles
-    this.articles = [];
-    
-    // J'ajoute les données du localstorage
-    const articles = await this.getArticleFromLocalStorage();
-    this.articles = articles;
-    
-    // Init données à renvoyer
-    var resultat : Articles;
-
-    for(let article of this.articles){
+  // A utiliser uniquement pour la page course-add-page.ts
+  async searchArticleByArticleCodeForPageCourseAdd(articleCode : CodeArticle){
+      // Je vide articles
+      this.articles = [];
       
-      if(article.code == articleCode){
-          resultat = article
+      // J'ajoute les données du localstorage
+      const articles = await this.getArticleFromLocalStorage();
+      this.articles = articles;
+      
+      // Init données à renvoyer
+      var resultat : Articles;
+  
+      for(let article of this.articles){
+        
+        if(article.code == articleCode.codeArticle){
+            resultat = {
+              code : article.code,
+              libelle : article.libelle,
+              prix : article.prix,
+              prixModifier : article.prixModifier,
+              quantite : articleCode.quantite
+            }
+        }
+  
+      }
+    return resultat;
+  }
+
+    async searchArticleByArticleCode(articleCode : string){
+      // Je vide articles
+      this.articles = [];
+      
+      // J'ajoute les données du localstorage
+      const articles = await this.getArticleFromLocalStorage();
+      this.articles = articles;
+      
+      // Init données à renvoyer
+      var resultat : Articles;
+  
+      for(let article of this.articles){
+        
+        if(article.code == articleCode){
+            resultat = article
+        }
+  
       }
 
-    }
+    const plats = await this.storage.get(this.utility.localstorage.Plats)
+    console.log(plats)
 
     // Je recherche l'article en question
     // const result = await this.articles.find((article : Articles) => {
