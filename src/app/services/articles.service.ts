@@ -36,7 +36,7 @@ export class ArticlesService {
       code : 'BOILAI',
       libelle : 'Lait Vai Ora',
       prix : 95
-    },
+    }
   ];
 
   private famille : FamilleArticle[] = [
@@ -56,6 +56,58 @@ export class ArticlesService {
       code : 'OUT',
       libelle : 'Outillage'
     },
+    {
+      code : 'FRIA',
+      libelle : 'Ffriandise'
+    },
+    {
+      code : 'BEB',
+      libelle : 'Article bébé'
+    },
+    {
+      code : 'FRU',
+      libelle : 'Fruits'
+    },
+    {
+      code : 'LEG',
+      libelle : 'Légumes'
+    },
+    {
+      code : 'VIAN',
+      libelle : 'Viandes'
+    },
+    {
+      code : 'MUL',
+      libelle : 'Multi-médias'
+    },
+    {
+      code : 'COUV',
+      libelle : 'Couverts'
+    },
+    {
+      code : 'LIV',
+      libelle : 'Papeterie'
+    },
+    {
+      code : 'LESSI',
+      libelle : 'Lessives'
+    },
+    {
+      code : 'MENAG',
+      libelle : 'Produits ménagers'
+    },
+    {
+      code : 'BAIN',
+      libelle : 'Articles de bain (ex savons)'
+    },
+    {
+      code : 'CHAR',
+      libelle : 'Charcuterie'
+    },
+    {
+      code : 'REF',
+      libelle : 'Produits réfrigéré'
+    }
   ]
 
     articlesFromLocalStorage : Articles[];
@@ -131,14 +183,16 @@ export class ArticlesService {
       if(famille.code != familleArticle.code){
         await temp.push(famille)
       }
-    }
-    
-    const newFamilleArticle : FamilleArticle = {
-      code : familleArticle.code.toUpperCase(),
-      libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle)
-    }
+      if(famille.code === familleArticle.code){
 
-    await temp.push(newFamilleArticle)
+        const newFamilleArticle : FamilleArticle = {
+          code : familleArticle.code.toUpperCase(),
+          libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle)
+        }
+        await temp.push(newFamilleArticle)
+        
+      }
+    }
 
     this.storage.set(this.utility.localstorage['famille d\'articles'], temp)
 

@@ -55,7 +55,6 @@ export class FamilleListPage implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Cancel');
           }
         }, {
           text: 'Ok',
@@ -71,6 +70,49 @@ export class FamilleListPage implements OnInit {
     await alert.present();
 
   } //
+
+  async updateFamille(famille : FamilleArticle){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Nouvelle famille d\'article',
+      inputs: [
+        {
+          name: 'code',
+          type: 'text',
+          placeholder: 'Code',
+          value : famille.code,
+          disabled : true
+        },
+        {
+          name: 'libelle',
+          type: 'text',
+          placeholder: 'Libelle',
+          value : famille.libelle
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        }, {
+          text: 'Ok',
+          handler: (data : FamilleArticle) => {
+            this.articleService.setFamilleArticleRealDataToLocalStorage(data)
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+
+  }
+
+
+
 
   goDetail(code : string){
     this.nav.navigateRoot('tabs/tab3/famille-detail/' + code)

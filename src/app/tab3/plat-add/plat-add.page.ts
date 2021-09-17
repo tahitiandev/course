@@ -167,7 +167,7 @@ export class PlatAddPage implements OnInit {
     slides.slideNext()
   }
   slideBack(slides){
-    slides.slideBack()
+    slides.slidePrev()
   }
 
   slideUn(slides){
@@ -179,7 +179,7 @@ export class PlatAddPage implements OnInit {
 
   slideDeux(slides){
     const input = document.getElementById('slideDeux');
-    input.addEventListener('focusin', () => {
+    input.addEventListener('focusout', () => {
       slides.slideNext()
     } )
   }
@@ -188,7 +188,8 @@ export class PlatAddPage implements OnInit {
     const input = document.getElementById('slidetrois');
     input.addEventListener('focusout', () => {
       this.loadIngredient()
-      slides.slideTo(1)
+        slides.slidePrev()
+        slides.slidePrev()
     } )
   }
 
@@ -197,6 +198,12 @@ export class PlatAddPage implements OnInit {
     input.addEventListener('focusout', () => {
       slides.slideNext()
     } )
+  }
+
+  terminerSlideTrois(slides){
+    this.loadIngredient()
+    slides.slideNext()
+
   }
 
 

@@ -38,8 +38,11 @@ export class PlatsPage implements OnInit {
       this.nav.navigateRoot('tabs/tab3/'+ libelle)
     }
   }
-  
 
+  async actualiser(){
+    const plats = await this.storage.get(this.utility.localstorage.Plats)
+    this.plats = plats
+  }
 
 
 }

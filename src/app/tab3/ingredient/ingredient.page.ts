@@ -43,6 +43,7 @@ export class IngredientPage implements OnInit {
     this.plats = plats
     await this.getLibelle();
     await this.getPlatByLibelle(this.libelle)
+    // console.log(this.platDetail.codeArticle)
     await this.getIngredient(this.platDetail.codeArticle)
 
   }
@@ -81,31 +82,53 @@ export class IngredientPage implements OnInit {
   private async getIngredient(codeArticle : any []){
 
     await this.getArticleFromLocalStorage()
-    // console.log(this.articles)
+    
+    for(let code of codeArticle){
 
-    for(let article of codeArticle){
+      for(let article of this.articles){
 
-      // console.log(article)
+        if(code.codeArticle === article.code){
 
-      this.articles.find(async s => {
-        // console.log(s)
-        if(s.code == article.codeArticle){
-          // console.log('s.code')
-          const articless = await this.articleService.searchArticleByArticleCode(article.codeArticle)
-          // console.log(articless)
+          const articless = await this.articleService.searchArticleByArticleCode(code.codeArticle)
           const ingred = {
-            codeArticle : article.codeArticle,
-            quantite : article.quantite,
+            codeArticle : code.codeArticle,
+            quantite : code.quantite,
             prix : articless.prix,
             libelle : articless.libelle
           }
   
           this.ingredients.push(ingred)
-          // console.log(this.ingredients)
+
         }
-      })
+
+      }
 
     }
+
+
+    // for(let article of codeArticle){
+
+    //   this.articles.find(async s => {
+    //     console.log(s.code)
+    //     console.log(article.codeArticle)
+
+    //     if(s.code == article.codeArticle){
+    //       const articless = await this.articleService.searchArticleByArticleCode(article.codeArticle)
+    //       // console.log(articless)
+    //       const ingred = {
+    //         codeArticle : article.codeArticle,
+    //         quantite : article.quantite,
+    //         prix : articless.prix,
+    //         libelle : articless.libelle
+    //       }
+  
+    //       this.ingredients.push(ingred)
+    //       // console.log(this.ingredients)
+    //     }
+    //   })
+    // }
+
+
 
   }//getIngredient
 

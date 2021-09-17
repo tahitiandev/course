@@ -33,7 +33,8 @@ export class ArticleListPage implements OnInit {
           name: 'code',
           type: 'text',
           placeholder: 'Code article',
-          value : articles.code
+          value : articles.code,
+          disabled : true
         },
         {
           name: 'libelle',
@@ -54,7 +55,6 @@ export class ArticleListPage implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
         handler: () => {
-          console.log('Confirm Cancel');
         }
         }, {
         text: 'Ok',

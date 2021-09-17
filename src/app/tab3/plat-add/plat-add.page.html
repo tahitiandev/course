@@ -21,12 +21,13 @@
           <ion-row>
             <ion-col>
               <h1>Choisir<br>un nom du plat</h1>
+              <h5>1/4</h5>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-input (click)="slideUn(slides)" id="slideUn" type="text" placeholder="Ecrire ici" formControlName="libelle"></ion-input>
+                <ion-input (click)="slideUn(slides)" id="slideUn" type="text" placeholder="Ecrire ici" formControlName="libelle" oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.substr(1);"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -41,14 +42,15 @@
         <ion-grid>
           <ion-row>
             <ion-col>
-              <h1>Ingredient</h1>
+              <h1>Ajouter<br>un ingredient</h1>
+              <h5>2/4</h5>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col>
               <ion-item>
                 <ion-label position="floating">Ajouter un Ingrédient</ion-label>
-                <ion-select (click)="slideDeux(slides)" id="slideDeux" formControlName="ingredient">
+                <ion-select (ionChange)="slideNext(slides)" id="slideDeux" formControlName="ingredient">
                   <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
                 </ion-select>
               </ion-item>
@@ -65,6 +67,7 @@
           <ion-row>
             <ion-col>
               <h1>Choisir<br>une quantité</h1>
+              <h5>3/4</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -73,6 +76,9 @@
                 <ion-input (click)="slidetrois(slides)" id="slidetrois" type="number" placeholder="Ecrire ici" formControlName="quantite"></ion-input>
               </ion-item>
             </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-button style="position:absolute; right: 20px; margin-top: 20px;" (click)="this.terminerSlideTrois(slides)" color="warning">Terminer</ion-button>
           </ion-row>
         </ion-grid>
 
@@ -85,6 +91,7 @@
         <ion-row>
           <ion-col>
             <h1>Valider vos choix</h1>
+            <h5>4/4</h5>
             <br>
           </ion-col>
         </ion-row>
