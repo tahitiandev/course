@@ -38,7 +38,6 @@ export class CourseAddPage implements OnInit, OnChanges {
 
    }
    ngOnChanges(change : SimpleChanges){
-     console.log(change)
    }
 
   ngOnInit() {
@@ -241,47 +240,60 @@ export class CourseAddPage implements OnInit, OnChanges {
             const codeArticle : any [] = [];
 
             const lundi = await this.platsService.searchPlatByLibelle(lastMenu.lundi)
-            for(let article of lundi.codeArticle){
-              codeArticle.push(article)
+            if(lundi){
+              for(let article of lundi.codeArticle){
+                codeArticle.push(article)
+              }
             }
 
             const mardi = await this.platsService.searchPlatByLibelle(lastMenu.mardi)
-            for(let article of mardi.codeArticle){
-              codeArticle.push(article)
+            if(mardi){
+              for(let article of mardi.codeArticle){
+                codeArticle.push(article)
+              }
             }
 
             const mercredi = await this.platsService.searchPlatByLibelle(lastMenu.mercredi)
-            for(let article of mercredi.codeArticle){
-              codeArticle.push(article)
+            if(mercredi){
+              for(let article of mercredi.codeArticle){
+                codeArticle.push(article)
+              }
             }
-
+            
             const jeudi = await this.platsService.searchPlatByLibelle(lastMenu.jeudi)
-            for(let article of jeudi.codeArticle){
-              codeArticle.push(article)
+            if(jeudi){
+              for(let article of jeudi.codeArticle){
+                codeArticle.push(article)
+              }
             }
 
             const vendredi = await this.platsService.searchPlatByLibelle(lastMenu.vendredi)
-            for(let article of vendredi.codeArticle){
-              codeArticle.push(article)
+            if(vendredi){
+              for(let article of vendredi.codeArticle){
+                codeArticle.push(article)
+              }
             }
 
             const samedi = await this.platsService.searchPlatByLibelle(lastMenu.samedi)
-            for(let article of samedi.codeArticle){
-              codeArticle.push(article)
+            if(samedi){
+              for(let article of samedi.codeArticle){
+                codeArticle.push(article)
+              }
             }
 
             const dimanche = await this.platsService.searchPlatByLibelle(lastMenu.dimanche)
-            for(let article of dimanche.codeArticle){
-              codeArticle.push(article)
-            }
-            
+            if(dimanche){
+              for(let article of dimanche.codeArticle){
+                codeArticle.push(article)
+              }
+            }        
             
             for(let article of codeArticle){
               const articles = await this.articleService.searchArticleByArticleCode(article.codeArticle)
               articles.quantite = article.quantite              
               this.listeArticle.push(articles)
-            }            
-            // this.alerteInfoMessage('Le menu de la semaine a bien été ajouté au course')
+            }
+
             this.nextSlide(slides)
           }
         }
