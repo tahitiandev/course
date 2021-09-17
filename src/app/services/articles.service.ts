@@ -217,15 +217,29 @@ export class ArticlesService {
   async searchArticleByArticleCode(articleCode : string){
     // Je vide articles
     this.articles = [];
+    
     // J'ajoute les données du localstorage
     const articles = await this.getArticleFromLocalStorage();
     this.articles = articles;
+    
+    // Init données à renvoyer
+    var resultat : Articles;
+
+    for(let article of this.articles){
+      
+      if(article.code == articleCode){
+          resultat = article
+      }
+
+    }
+
     // Je recherche l'article en question
-    const result = await this.articles.find((article : Articles) => {
-      return article.code === articleCode
-    })
+    // const result = await this.articles.find((article : Articles) => {
+    //   return article.code === articleCode
+    // })
+
     // Je retourne le resultat
-    return result;
+    return resultat;
 
   }
 

@@ -118,12 +118,14 @@ export class CourseAddPage implements OnInit, OnChanges {
 
 
   async loadArticleFromOnePlat(codeArticle : any[], index){
-    
+
+    // Ajout du plat demandé
     for(let article of codeArticle){
-      const articles = await this.articleService.searchArticleByArticleCode(article)
-      this.listeArticle.push(articles)
+      const result = await this.articleService.searchArticleByArticleCode(article.codeArticle)
+      this.listeArticle.push(result)
     }
 
+    // Faire disparaitre le bouton d'ajout
     const button = document.getElementById('test-' + index)
     button.classList.add("addArticle");
 
@@ -154,7 +156,6 @@ export class CourseAddPage implements OnInit, OnChanges {
     const courseId = await this.coursesService.generateCourseId();
     const date = this.courseForm.get('date').value;
     var liste : Liste [] = [];
-
     
     for(let listes of this.listeArticle){
       await liste.push({
