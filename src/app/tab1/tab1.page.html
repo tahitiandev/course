@@ -22,7 +22,7 @@
         
         <ion-label>
           <h3>{{ course.date | date :'dd/MM/yyyy' }}</h3>
-          <h3>{{ course.total }}</h3>
+          <h3>{{ this.calculeTotal(course) }} xpf</h3>
         </ion-label>
 
         <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>

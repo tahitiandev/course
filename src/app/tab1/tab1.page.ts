@@ -30,6 +30,15 @@ export class Tab1Page implements OnInit, OnChanges {
   async getCourse(){
     const courses = await this.storage.get(this.utility.localstorage.Courses)
     this.courses = courses
+    console.log(courses)
+  }
+
+  calculeTotal(course : Courses){
+    var total : number = 0;
+    for(let article of course.liste){
+      total += (article.prixUnitaire-0) * (article.quantite-0)
+    }
+    return total.toLocaleString();
   }
 
   goDetail(id : number){
