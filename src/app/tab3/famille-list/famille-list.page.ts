@@ -80,7 +80,7 @@ export class FamilleListPage implements OnInit {
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Nouvelle famille d\'article',
+      header: 'Modifier une famille d\'article',
       inputs: [
         {
           name: 'code',
@@ -115,9 +115,6 @@ export class FamilleListPage implements OnInit {
     await alert.present();
 
   }
-
-
-
 
   goDetail(code : string){
     this.nav.navigateRoot('tabs/tab3/famille-detail/' + code)

@@ -15,9 +15,7 @@
   <ion-list>
     <ion-item-sliding *ngFor="let article of this.articles; let i = index">
     
-      <!-- <ion-item button (click)="goDetail(i)"> -->
       <ion-item button (click)="modifierUnArticle(article)">
-      <!-- <ion-item> -->
         <ion-label>
           <h3>{{ article.code }} {{ article.libelle }}</h3>
         </ion-label>
@@ -28,7 +26,8 @@
       </ion-item>
 
       <ion-item-options side="end">
-        <ion-item-option (click)="AjouterUnArticle()">Ajouter</ion-item-option>
+        <!-- <ion-item-option (click)="AjouterUnArticle()">Ajouter</ion-item-option> -->
+        <ion-item-option (click)="goToArticleAdd()">Ajouter</ion-item-option>
         <ion-item-option color="danger" (click)="modifierUnArticle(article)">Modifier</ion-item-option>
       </ion-item-options>
 
