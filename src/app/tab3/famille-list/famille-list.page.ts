@@ -58,10 +58,15 @@ export class FamilleListPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: (data : FamilleArticle) => {
-            this.articleService.setFamilleArticleRealDataToLocalStorage(data).then(() => {
-              this.initFamilleFromDataLocalStorage()
-            })
+          handler: async (data : FamilleArticle) => {
+
+            const newFamille = await this.articleService.addNewFamilleArticleRealDataToLocalStorage(data)
+            this.initFamilleFromDataLocalStorage()
+
+
+          //   this.articleService.setFamilleArticleRealDataToLocalStorage(data).then(() => {
+          //     this.initFamilleFromDataLocalStorage()
+          //   })
           }
         }
       ]

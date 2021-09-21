@@ -43,7 +43,6 @@ export class IngredientPage implements OnInit {
     this.plats = plats
     await this.getLibelle();
     await this.getPlatByLibelle(this.libelle)
-    // console.log(this.platDetail.codeArticle)
     await this.getIngredient(this.platDetail.codeArticle)
 
   }
