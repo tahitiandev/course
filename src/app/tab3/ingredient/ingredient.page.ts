@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Plats } from 'src/app/models/plats';
+import { CodeArticle, Plats } from 'src/app/models/plats';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Articles } from 'src/app/models/articles';
@@ -72,12 +72,6 @@ export class IngredientPage implements OnInit {
 
   }
 
-  // private async searchArticleByCode(code : string){
-
-
-
-  // }
-
   private async getIngredient(codeArticle : any []){
 
     await this.getArticleFromLocalStorage()
@@ -104,31 +98,31 @@ export class IngredientPage implements OnInit {
 
     }
 
-
-    // for(let article of codeArticle){
-
-    //   this.articles.find(async s => {
-    //     console.log(s.code)
-    //     console.log(article.codeArticle)
-
-    //     if(s.code == article.codeArticle){
-    //       const articless = await this.articleService.searchArticleByArticleCode(article.codeArticle)
-    //       // console.log(articless)
-    //       const ingred = {
-    //         codeArticle : article.codeArticle,
-    //         quantite : article.quantite,
-    //         prix : articless.prix,
-    //         libelle : articless.libelle
-    //       }
-  
-    //       this.ingredients.push(ingred)
-    //       // console.log(this.ingredients)
-    //     }
-    //   })
-    // }
-
-
-
   }//getIngredient
+
+
+
+  async deleteArticle(index : number){
+
+    const plat = await this.plats.find(s => {
+      return s.libelle === this.libelle
+    })
+
+    var newIngredient = [];
+
+    // à finir
+    for(let ingredient of plat.codeArticle){
+      
+      console.log(ingredient)
+
+    }
+
+  }
+
+
+
+
+
+
 
 }
