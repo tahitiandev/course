@@ -1,7 +1,7 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { NavController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Articles } from 'src/app/models/articles';
 import { CodeArticle, Plats } from 'src/app/models/plats';
@@ -22,7 +22,8 @@ export class PlatAddPage implements OnInit {
               private formbuilder : FormBuilder,
               private platsService : PlatsService,
               private nav :  NavController,
-              private articleService : ArticlesService
+              private articleService : ArticlesService,
+              private alertController : AlertController
               ) {
                 
                }
@@ -31,6 +32,7 @@ export class PlatAddPage implements OnInit {
   formgroup : FormGroup;
   ingredients : any[] = [];
   ListeCodeArticle : any[] = [];
+  platTmp : Plats [] = [];
 
   ngOnInit() {
     // this.plats.setPlatsToLocalStorage();
@@ -85,17 +87,6 @@ export class PlatAddPage implements OnInit {
 
   }
 
-  consoleLogPlat(){
-    this.storage.get('plats').then(s => console.log(s))
-  }
-
-  platTmp : Plats [] = [];
-  
-  consoleLogPlatTmp(){
-    console.log(this.platTmp)
-  }
-
-
   async onSubmitForm(){
 
     const formValues = this.formgroup.value;
@@ -117,36 +108,6 @@ export class PlatAddPage implements OnInit {
     
     this.platsService.setPlatToLocalStorage(plat)
     this.utility.goToUrl('tab3','plats');
-
-      // var ingredients = [];
-      // var plats : Plats[] = []
-
-      // // Ajouter les ingrédients
-      // for(var i = 0; i < 4; i++){
-      //   if(formValues['ingredient'+i]){
-      //     await ingredients.push(formValues['ingredient'+i])
-      //   }
-      // }//for
-
-      // // Initialise la variable plats avec celle du localstorage
-      // const platsLS = await this.storage.get(this.utility.localstorage.Plats)
-      // for(let plat of platsLS){
-      //   await this.platTmp.push(plat)
-      // }
-      
-      // // Rajoute le nouveau plat
-      // this.platTmp.push({
-      //   libelle : libelle,
-      //   codeArticle : ingredients
-      // })
-      
-      // // this.storage.set('plats', plats).then(()=>{
-      // //   this.storage.get('plats').then(s => console.log(s))
-      // // }
-      // // );
-
-      // this.saveInLocalStorage()
-
     
   }
 
@@ -184,14 +145,42 @@ export class PlatAddPage implements OnInit {
     } )
   }
 
-  slidetrois(slides){
-    const input = document.getElementById('slidetrois');
-    input.addEventListener('focusout', () => {
-      this.loadIngredient()
-        slides.slidePrev()
-        slides.slidePrev()
+  async slidetrois(slides){
+
+    
+    
+    const input = await document.getElementById('slidetrois');
+    input.addEventListener('focusout', async () => {
+
+      const alert = await this.alertController.create({
+        cssClass: 'my-custom-class',
+        header: 'Information',
+        message: 'Souhaitez-vous rajouter un nouvelle ingrédient ?',
+        buttons: [
+          {
+            text: 'Non',
+            role: 'cancel',
+            cssClass: 'secondary',
+            handler: () => {
+              // this.loadIngredient()
+              // slides.slideNext()
+            }
+          }, {
+            text: 'Oui',
+            handler: () => {
+              this.loadIngredient()
+              slides.slidePrev()
+              slides.slidePrev()
+            }
+          }
+        ]
+      });
+
+      await alert.present();
+
+
     } )
-  }
+  } 
 
   slideQuatre(slides){
     const input = document.getElementById('slideQuatre');

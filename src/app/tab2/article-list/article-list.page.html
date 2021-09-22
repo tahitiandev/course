@@ -36,6 +36,10 @@
 
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="this.getArticle()">
+      <ion-icon name="sync-outline"></ion-icon>
+    </ion-fab-button>
+    <br>
     <ion-fab-button (click)="goToArticleAdd()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

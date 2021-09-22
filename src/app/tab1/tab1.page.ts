@@ -24,13 +24,11 @@ export class Tab1Page implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes : SimpleChanges){
-    console.log(changes)
   }
   
   async getCourse(){
     const courses = await this.storage.get(this.utility.localstorage.Courses)
     this.courses = courses
-    console.log(courses)
   }
 
   calculeTotal(course : Courses){

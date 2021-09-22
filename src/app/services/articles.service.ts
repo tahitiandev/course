@@ -282,7 +282,6 @@ export class ArticlesService {
       }
 
     const plats = await this.storage.get(this.utility.localstorage.Plats)
-    console.log(plats)
 
     // Je recherche l'article en question
     // const result = await this.articles.find((article : Articles) => {
@@ -300,7 +299,6 @@ export class ArticlesService {
     const result : Articles = articles.find((res : Articles) => {
       return res.libelle == libelle
     })
-    console.log(articles)
     return result
   }
 
