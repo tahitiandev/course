@@ -104,18 +104,48 @@ export class IngredientPage implements OnInit {
 
   async deleteArticle(index : number){
 
+    // 1 - Recherche le plat en cours
     const plat = await this.plats.find(s => {
       return s.libelle === this.libelle
     })
 
+
+    // 2- Init varaible qui stock les nouveaux ingrédients
     var newIngredient = [];
 
-    // à finir
-    for(let ingredient of plat.codeArticle){
-      
-      console.log(ingredient)
-
+    // 3- Ajouter les nouveaux ingédients
+    for(var x = 0; x < plat.codeArticle.length; x++){
+      // On Vérifique qu'on ne prenne bien pas en compte l'ingédient en cours
+      if(x != index){
+        newIngredient.push(plat.codeArticle[x])
+      }
     }
+
+    // 4- On rajoute le libellé et le prix et le libellé
+    this.ingredients = []
+    this.getIngredient(newIngredient)
+
+    // 4- On set le plat avec les nouveaux ingrédients
+    var newPlat : Plats = {
+      libelle : this.libelle,
+      codeArticle : this.ingredients
+    }
+
+    // 5- On met à jour le nouveau plat dans la liste complète
+    var newAllPlat : Plats [] = [];
+    
+    for(let plat of this.plats){
+      if(plat.libelle != newPlat.libelle){
+        newAllPlat.push(plat)
+      }
+      if(plat.libelle === newPlat.libelle){
+        newAllPlat.push(newPlat)
+      }
+    }
+
+    // 6- On met à jour le localstorage
+    this.storage.set(this.utility.localstorage.Plats, newAllPlat)
+
 
   }
 
