@@ -6,4 +6,4 @@ export interface Plats {
 export interface CodeArticle {
     codeArticle : string;
     quantite? : number;
-}
+    }
