@@ -52,7 +52,72 @@ export class PlatsService {
         codeArticle : 'FLORA',
         quantite : 9
       }]
-    }
+    },
+    {
+      libelle : 'Lentille',
+      codeArticle : [{
+        codeArticle : 'FLTOM',
+        quantite : 1
+      },{
+        codeArticle : 'FLORA',
+        quantite : 9
+      }]
+    },
+    {
+      libelle : 'Sashimis',
+      codeArticle : [{
+        codeArticle : 'FLTOM',
+        quantite : 1
+      },{
+        codeArticle : 'FLORA',
+        quantite : 9
+      }]
+    },
+    {
+      libelle : 'Charcuterie',
+      codeArticle : [{
+        codeArticle : 'FLTOM',
+        quantite : 1
+      },{
+        codeArticle : 'FLORA',
+        quantite : 9
+      }]
+    },
+    {
+      libelle : 'Poulet rôti',
+      codeArticle : [{
+        codeArticle : 'FLTOM',
+        quantite : 1
+      },{
+        codeArticle : 'FLORA',
+        quantite : 9
+      }]
+    },
+    {
+      libelle : 'Poulet blanc',
+      codeArticle : [{
+        codeArticle : 'FLTOM',
+        quantite : 1
+      },{
+        codeArticle : 'FLORA',
+        quantite : 9
+      }]
+    },
+    {
+      libelle : 'Quiche',
+      codeArticle : [{
+        codeArticle : 'FLTOM',
+        quantite : 1
+      },{
+        codeArticle : 'FLORA',
+        quantite : 9
+      }]
+    },
+
+
+
+
+
   ];
 
   // setPlatsToLocalStorage(){

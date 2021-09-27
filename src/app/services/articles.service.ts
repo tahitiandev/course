@@ -29,15 +29,85 @@ export class ArticlesService {
       prix : 500
     },
     {
+      code : 'FLSALA',
+      libelle : 'Salade',
+      prix : 500
+    },
+    {
+      code : 'FLAUBER',
+      libelle : 'Aubergines',
+      prix : 500
+    },
+    {
+      code : 'FLPOIV',
+      libelle : 'Poivron',
+      prix : 500
+    },
+    {
       code : 'VCJAM',
       libelle : 'Jambon',
+      prix : 109
+    },
+    {
+      code : 'VCLAR',
+      libelle : 'Lardon',
+      prix : 109
+    },
+    {
+      code : 'VCRACL',
+      libelle : 'Fromage à raclette',
+      prix : 109
+    },
+    {
+      code : 'VCSAUON',
+      libelle : 'Saucisson',
+      prix : 109
+    },
+    {
+      code : 'VCSAUFU',
+      libelle : 'Saumon fumé',
       prix : 109
     },
     {
       code : 'BOILAI',
       libelle : 'Lait Vai Ora',
       prix : 95
-    }
+    },
+    {
+      code : 'BOICOC',
+      libelle : 'Coca',
+      prix : 95
+    },
+    {
+      code : 'BOIVOLF',
+      libelle : 'Volvic aux fruits',
+      prix : 95
+    },
+    {
+      code : 'BOIVAI',
+      libelle : 'Vaimato',
+      prix : 95
+    },
+    {
+      code : 'VIANSTE',
+      libelle : 'Steck',
+      prix : 95
+    },
+    {
+      code : 'VIANTRAV',
+      libelle : 'Travers de porc',
+      prix : 95
+    },
+    {
+      code : 'VIANSAUC',
+      libelle : 'Saucisse',
+      prix : 95
+    },
+    {
+      code : 'VIANPOUL',
+      libelle : 'Poulet',
+      prix : 95
+    },
   ];
 
   private famille : FamilleArticle[] = [
@@ -59,7 +129,7 @@ export class ArticlesService {
     },
     {
       code : 'FRIA',
-      libelle : 'Ffriandise'
+      libelle : 'Friandise'
     },
     {
       code : 'BEB',
