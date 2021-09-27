@@ -17,7 +17,7 @@ export class FamilleListPage implements OnInit {
               private utility : UtilityService,
               private alertController: AlertController,
               private nav : NavController) {
-                this.initFamilleFromDataLocalStorage()
+                // this.initFamilleFromDataLocalStorage()
                }
 
   familles : FamilleArticle [] = [];
