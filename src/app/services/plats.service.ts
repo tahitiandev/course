@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Plats } from '../models/plats';
 import { UtilityService } from './utility.service';
 import { Storage } from '@ionic/storage';
+import { calcPossibleSecurityContexts } from '@angular/compiler/src/template_parser/binding_parser';
 
 @Injectable({
   providedIn: 'root'
@@ -95,7 +96,26 @@ export class PlatsService {
     await plats.push(newPlat)
     await this.storage.set(this.utility.localstorage.Plats, plats)
   }
+  
+  async updatePlatToLocalStorage(platupdate : Plats){
+    
+    var plats : Plats [] = [];
+    const platsLS : Plats[] = await this.getPlatFromLocalStorage();
 
-
-
+    // console.log(platsLS)
+    // console.log(platupdate)
+    
+    for(let plat of platsLS){
+      if(plat.libelle === platupdate.libelle){
+        await plats.push(platupdate)
+      }
+      if(plat.libelle != platupdate.libelle){
+        await plats.push(plat)
+      }
+    }
+    // console.log(plats)
+    await this.storage.set(this.utility.localstorage.Plats, plats)  
+    
+  }
+  
 }

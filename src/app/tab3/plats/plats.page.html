@@ -23,6 +23,7 @@
       <ion-item-options side="end">
         <ion-item-option (click)="this.goDetail('plat-add')">Ajouter</ion-item-option>
         <ion-item-option (click)="this.goDetail(plat.libelle, 'ingredient')" color="danger">Modifier</ion-item-option>
+        <ion-item-option (click)="supprimerPlat(i)" color="dark">Supprimer</ion-item-option>
       </ion-item-options>
 
     </ion-item-sliding>

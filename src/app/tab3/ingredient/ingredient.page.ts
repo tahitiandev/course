@@ -5,6 +5,9 @@ import { Storage } from '@ionic/storage';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Articles } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
+import { AlertController } from '@ionic/angular';
+import { AlertInput } from '@ionic/core';
+import { PlatsService } from 'src/app/services/plats.service';
 
 @Component({
   selector: 'app-ingredient',
@@ -26,11 +29,14 @@ export class IngredientPage implements OnInit {
   platDetail : Plats;
   ingredients = [];
   articles : Articles [] = [];
+  newIngredient : Articles;
 
   constructor(private snap : ActivatedRoute,
               private storage : Storage,
               private utility : UtilityService,
-              private articleService : ArticlesService) { }
+              private articleService : ArticlesService,
+              private alertController: AlertController,
+              private platsservice : PlatsService) { }
 
   ngOnInit() {
     // this.articleService.setArticleToLocalStorage()
@@ -100,9 +106,11 @@ export class IngredientPage implements OnInit {
 
   }//getIngredient
 
+  
 
 
-  async deleteArticle(index : number){
+
+  async deleteArticletest(index : number){
 
     // 1 - Recherche le plat en cours
     const plat = await this.plats.find(s => {
@@ -125,34 +133,238 @@ export class IngredientPage implements OnInit {
     this.ingredients = []
     this.getIngredient(newIngredient)
 
-    // 4- On set le plat avec les nouveaux ingrédients
-    var newPlat : Plats = {
-      libelle : this.libelle,
-      codeArticle : this.ingredients
+    var newCodeArticle : CodeArticle[] = []
+    for(let code of this.ingredients){
+      newCodeArticle.push({
+        codeArticle : code.codeArticle,
+        quantite : code.quantite
+      })
     }
 
+    // 4- On set le plat avec les nouveaux ingrédients
+    var newPlat : Plats = await {
+      libelle : this.libelle,
+      codeArticle : newCodeArticle
+    }
+    // console.log(newPlat)
+
     // 5- On met à jour le nouveau plat dans la liste complète
-    var newAllPlat : Plats [] = [];
+    var newAllPlat : Plats [] = await [];
     
     for(let plat of this.plats){
       if(plat.libelle != newPlat.libelle){
-        newAllPlat.push(plat)
+        await newAllPlat.push(plat)
       }
       if(plat.libelle === newPlat.libelle){
-        newAllPlat.push(newPlat)
+        await newAllPlat.push(newPlat)
       }
     }
 
+    console.log(newAllPlat)
+
     // 6- On met à jour le localstorage
-    this.storage.set(this.utility.localstorage.Plats, newAllPlat)
+    await this.storage.set(this.utility.localstorage.Plats, newAllPlat)
+    console.log(newAllPlat)
 
 
   }
 
+  async addIngredient(){
+
+    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles)
+    var radioOption : AlertInput [] = [];
+    
+    for(let article of articles){
+      radioOption.push({
+        type : 'radio',
+        name : article.code,
+        label : article.libelle + ' ' + article.prix + ' xpf',
+        value : {
+          code : article.code,
+          libelle : article.libelle,
+          prix : article.prix
+        }
+      })
+    }
+
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Sélectionner un article',
+      inputs: radioOption,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: async (ingredient : Articles) => {
+
+            // console.log(ingredient)
+
+            var newIngredient = {
+              code : ingredient.code,
+              libelle : ingredient.libelle,
+              prix : ingredient.prix
+            };
+
+            this.newIngredient = newIngredient
+            this.addIngredientQuantite()
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+
+  } // addIngredient
+
+  private async addIngredientQuantite(){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Sélectionner un article',
+      inputs: [
+        {
+          type : 'number',
+          name : 'quantite'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: async (resultat) => {
+            this.newIngredient = {
+              code : this.newIngredient.code,
+              libelle : this.newIngredient.libelle,
+              prix : this.newIngredient.prix,
+              quantite : resultat.quantite
+            }
+
+            // 1 - Recherche le plat en cours
+            const plat = await this.plats.find(s => {
+                return s.libelle === this.libelle
+            })
+
+            plat.codeArticle.push({
+               codeArticle : this.newIngredient.code,
+               quantite : this.newIngredient.quantite
+            })
+
+            this.newIngredient = {
+              code : '',
+              libelle : '',
+              prix : 0,
+              quantite : 0
+            }
+
+            var plats : Plats [] = [];
+
+            for(let plattmp of this.plats){
+
+              if(plattmp.libelle === this.libelle){
+                plats.push(plat)
+              }
+
+              if(plattmp.libelle != this.libelle){
+                plats.push(plattmp)
+              }
+            }
+
+            this.storage.set(this.utility.localstorage.Plats, plats)
+            this.ingredients = plat.codeArticle
+            
+            // 4- On rajoute le libellé et le prix et le libellé
+            this.ingredients = []
+            this.getIngredient(plat.codeArticle)
+
+            }
+
+        }
+      ]
+    });
+
+    await alert.present();
+
+  } // addIngredientQuantite
 
 
 
+  async updateQuantite(index : number){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Sélectionner un article',
+      inputs: [
+        {
+          type : 'text',
+          name : 'libelle',
+          value : this.ingredients[index].libelle
+        },
+        {
+          type : 'number',
+          name : 'quantite',
+          value : this.ingredients[index].quantite
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        },
+        {
+          text: 'Ok',
+          handler: async (resultat : CodeArticle) => {
+
+            var codeArticles : CodeArticle [] = [];
+
+            for(var i = 0; i < this.ingredients.length; i++){
+              if(i === index){
+                codeArticles.push(resultat)
+              }else{
+                codeArticles.push({
+                  codeArticle :this.ingredients[i].codeArticle,
+                  quantite : this.ingredients[i].quantite
+                })
+              }
+            }
+
+            var plat : Plats = {
+              libelle : this.libelle,
+              codeArticle : codeArticles
+            }
+
+            // console.log(plat)
+            
+            this.platsservice.updatePlatToLocalStorage(plat)
+
+            // 4- On rajoute le libellé et le prix et le libellé
+            this.ingredients = []
+            this.getIngredient(plat.codeArticle)
 
 
+            
+        }
+      }
+      ]
+    });
+
+    await alert.present();
+  }
 
 }

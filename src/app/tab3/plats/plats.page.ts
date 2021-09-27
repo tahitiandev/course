@@ -44,5 +44,19 @@ export class PlatsPage implements OnInit {
     this.plats = plats
   }
 
+  supprimerPlat(index : number){
+    var platTemp : Plats [] = [];
+    for(let plat of this.plats){
+      if(plat.libelle != this.plats[index].libelle){
+        platTemp.push(plat)
+      } // if
+    } // for
+
+    this.plats = []
+    this.plats = platTemp
+
+    this.storage.set(this.utility.localstorage.Plats, platTemp)
+
+  } // supprimerPlat
 
 }
