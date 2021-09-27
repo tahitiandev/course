@@ -107,7 +107,41 @@ export class IngredientPage implements OnInit {
   }//getIngredient
 
   
+  async deleteArticle(index : number){
+    
+    var codeArticleCorrige : CodeArticle [] = []
 
+    for(let i = 0; i < this.platDetail.codeArticle.length; i++){
+      if(i != index){
+        await codeArticleCorrige.push(this.platDetail.codeArticle[i])
+      }
+    }
+
+    var platDetailCorrige : Plats = await {
+      libelle : this.libelle,
+      codeArticle : codeArticleCorrige
+    }
+
+    this.ingredients = []
+    this.getIngredient(codeArticleCorrige)
+
+    var platsCorrige : Plats [] = [];
+
+    for(let plat of this.plats){
+
+      if(plat.libelle === this.libelle){
+        platsCorrige.push(platDetailCorrige)
+      }
+
+      if(plat.libelle != this.libelle){
+        platsCorrige.push(plat)
+      }
+
+    }
+
+    this.storage.set(this.utility.localstorage.Plats, platsCorrige)
+
+  }
 
 
   async deleteArticletest(index : number){
@@ -160,12 +194,8 @@ export class IngredientPage implements OnInit {
       }
     }
 
-    console.log(newAllPlat)
-
     // 6- On met à jour le localstorage
     await this.storage.set(this.utility.localstorage.Plats, newAllPlat)
-    console.log(newAllPlat)
-
 
   }
 
