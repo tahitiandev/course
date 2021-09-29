@@ -8,9 +8,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { IonicStorageModule } from '@ionic/storage';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { OrderByArticlePipe } from './pipes/order-by-article.pipe';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, OrderByArticlePipe],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,
     FormsModule,

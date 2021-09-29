@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
-import { Articles } from 'src/app/models/articles';
+import { Articles, FamilleArticle } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Storage } from '@ionic/storage';
@@ -19,6 +19,7 @@ export class ArticleListPage implements OnInit {
     private nav : NavController) {}
 
     articles : Articles [];
+    familles : FamilleArticle [];
 
     ngOnInit(){
       this.getArticle();
@@ -166,8 +167,38 @@ export class ArticleListPage implements OnInit {
 
     //   }
 
+
+
       async getArticle(){
-      const articles = await this.storage.get(this.u.localstorage.articles);
+      const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
+      const famillesLS : FamilleArticle [] = await this.storage.get(this.u.localstorage['famille d\'articles'])
+      const familles = this.articleService.sortByLibelleFamilleArticle(famillesLS)
+      this.familles = familles;
+      var groupByArticle : Articles[] = []
+
+
+      for(let i = 0 ; i < familles.length; i++){
+
+        for(let article of articlesLS){
+
+          if(article.code.substring(0,3) === familles[i].code.substring(0,3)){
+            
+            var articleGroup : Articles = {
+              code : article.code,
+              libelle : article.libelle,
+              prix : article.prix,
+              prixModifier : article.prixModifier,
+              quantite : article.quantite,
+              famille : familles[i].libelle
+            }
+
+            groupByArticle.push(articleGroup)
+          } // if          
+        }
+
+      } // for 1      
+
+      const articles = await this.articleService.sortByArticleName(groupByArticle)
       this.articles = articles;
       }
 

@@ -372,7 +372,31 @@ export class ArticlesService {
     return result
   }
 
+  sortByArticleName(articles : Array<Articles>){
+    return articles.sort((a,b) => {
+      let x  = a.libelle.toLowerCase();
+      let y  = b.libelle.toLowerCase();
+      if(x < y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
+  }
 
+  sortByLibelleFamilleArticle(familles:FamilleArticle[]){
+    return familles.sort((a,b) => {
+      let x  = a.libelle.toLowerCase();
+      let y  = b.libelle.toLowerCase();
+      if(x < y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
+  }
 
 
 }

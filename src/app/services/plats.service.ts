@@ -182,5 +182,18 @@ export class PlatsService {
     await this.storage.set(this.utility.localstorage.Plats, plats)  
     
   }
+
+  sortByLibelleFamilleArticle(plats:Plats[]){
+    return plats.sort((a,b) => {
+      let x  = a.libelle.toLowerCase();
+      let y  = b.libelle.toLowerCase();
+      if(x < y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
+  }
   
 }

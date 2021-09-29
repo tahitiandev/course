@@ -28,7 +28,8 @@ export class FamilleListPage implements OnInit {
   }
 
   async initFamilleFromDataLocalStorage(){
-    const familles = await this.storage.get(this.utility.localstorage['famille d\'articles'])
+    const famillesLS = await this.storage.get(this.utility.localstorage['famille d\'articles'])
+    const familles = await this.articleService.sortByLibelleFamilleArticle(famillesLS)
     this.familles = familles
   }
 

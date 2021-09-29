@@ -4,6 +4,7 @@ export interface Articles{
     prix : number;
     prixModifier? : number;
     quantite?:number;
+    famille? : string;
 }
 
 export interface FamilleArticle{

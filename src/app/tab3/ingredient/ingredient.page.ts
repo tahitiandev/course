@@ -199,9 +199,23 @@ export class IngredientPage implements OnInit {
 
   }
 
+  private sortByArticleName(articles : Array<Articles>){
+    return articles.sort((a,b) => {
+      let x  = a.libelle.toLowerCase();
+      let y  = b.libelle.toLowerCase();
+      if(x < y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
+  }
+
   async addIngredient(){
 
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles)
+    const articlesToLocalStorage : Articles [] = await this.storage.get(this.utility.localstorage.articles)
+    const articles = await this.sortByArticleName(articlesToLocalStorage)
     var radioOption : AlertInput [] = [];
     
     for(let article of articles){
