@@ -34,12 +34,14 @@ export class ArticleAddPage implements OnInit {
   }
 
   async getFamilleFromLocalStorage(){
-    const famille = await this.articleService.getFamilleArticleFromLocalStorage()
-    this.familles = famille
+    const familleLS = await this.articleService.getFamilleArticleFromLocalStorage()
+    const familles = await this.articleService.sortByLibelleFamilleArticle(familleLS)
+    this.familles = familles
   }
 
   async getArticleToLocalStorage(){
-    const articles = await this.articleService.getArticleFromLocalStorage()
+    const articlesLS = await this.articleService.getArticleFromLocalStorage()
+    const articles = await this.articleService.sortByArticleName(articlesLS)
     this.articlesLS = articles
   }
 
@@ -85,11 +87,25 @@ export class ArticleAddPage implements OnInit {
     } )
   }
 
-  slidetrois(slides){
-    const input = document.getElementById('slidetrois');
-    input.addEventListener('focusout', () => {
-      slides.slideNext()
-    } )
+  async slidetrois(slides){
+    const input = await document.getElementById('slidetrois');
+
+    input.addEventListener('focusout', async () => {
+
+      // fonctionne pas
+      const ifCodeExiste = await this.articlesLS.find((artilces) => {
+        return artilces.code.substring(3, artilces.code.length - 3) === this.articleForm.get('code').value
+      })
+  
+      if(ifCodeExiste){ // fonctionne pas
+        alert('Ce code existe déjà')
+        this.articleForm.patchValue({
+          code : ''
+        })
+      }else{
+        slides.slideNext()
+      }
+    })
   }
 
   slideQuatre(slides){

@@ -26,8 +26,23 @@ export class Tab1Page implements OnInit, OnChanges {
   ngOnChanges(changes : SimpleChanges){
   }
   
+  private orderByDesc(course :  Courses[]){
+    return course.sort((a,b) => {
+      let x  = a.id;
+      let y  = b.id;
+      if(x < y){
+        return 1;
+      }else{
+        return -1;
+      }
+      return 0;
+    })
+  }
+
+
   async getCourse(){
-    const courses = await this.storage.get(this.utility.localstorage.Courses)
+    const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
+    const courses = await this.orderByDesc(coursesLS)
     this.courses = courses
   }
 
@@ -46,6 +61,8 @@ export class Tab1Page implements OnInit, OnChanges {
   goToCourseAdd(){
     this.nav.navigateRoot('tabs/tab1/course-add')
   }
+
+  
 
   async cloturer(index : number){
 

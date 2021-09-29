@@ -8,10 +8,74 @@
 </ion-header>
 
 <ion-content class="slide-content">
-
+  
   <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+    
+    
+    
+    <ion-slides #slides [options]="slideOpts" style="padding-top: 50%; padding-bottom: 50%;">
 
-  <ion-slides #slides [options]="slideOpts" style="padding-top: 50%; padding-bottom: 50%;">
+    <!-- SLIDE 5 -->
+    <ion-slide>
+
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h1>Ajouter des articles</h1>
+            <br>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-toolbar>
+            <ion-searchbar formControlName="searchBar" (keyup)="this.filtreArticleResult()" [(ngModel)]="searchValue"></ion-searchbar>
+          </ion-toolbar>
+        </ion-row>
+
+        <!-- {{searchValue}} -->
+        <!-- <ion-row>
+          <ion-button (click)="nextSlide(slides)" class="slidebtnNext" color="light">Suivant
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </ion-button>
+          <br>
+          <br>
+        </ion-row> -->
+        <ion-row>
+          <ion-list style="margin: 5%;width: 100%;">
+            <ion-item id="testAricle-{{index}}" *ngFor="let article of articles; let index = index">
+              <!-- <ion-button slot="end" color="light"> -->
+                <ion-icon (click)="loadOneArticle(article, index)" slot="end" name="add-circle-outline"></ion-icon>
+              <!-- </ion-button> -->
+              <ion-label>{{ article.libelle }}</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-row>
+      </ion-grid>
+
+    </ion-slide>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
 
     <!-- SLIDE 1 -->
     <ion-slide >
@@ -94,10 +158,7 @@
         <ion-row>
           <ion-list style="margin: 5%;width: 100%;">
             <ion-item *ngFor="let plat of plats; let index = index" id="test-{{index}}">
-              <!-- <ion-button slot="end" color="light"> -->
-                <!-- (click)="loadArticleFromOnePlat(plat.codeArticle)" -->
                 <ion-icon (click)="loadArticleFromOnePlat(plat.codeArticle, index)" slot="end" name="add-circle-outline"></ion-icon>
-              <!-- </ion-button> -->
               <ion-label>{{ plat.libelle }}</ion-label>
             </ion-item>
           </ion-list>

@@ -25,6 +25,7 @@ export class CourseAddPage implements OnInit, OnChanges {
   listeArticle : Articles [] = [];
   listeCodeArticle : any [] = [];
   hideSlidePlat : boolean = false;
+  searchValue
   // courseForm = new FormGroup ({
     
   // });
@@ -52,12 +53,14 @@ export class CourseAddPage implements OnInit, OnChanges {
   }
   
   private async getArticles(){
-    const articles = await this.articleService.getArticleFromLocalStorage();
+    const articlesLS = await this.articleService.getArticleFromLocalStorage();
+    const articles = await this.articleService.sortByArticleName(articlesLS)
     this.articles = articles;
   }
 
   private async getPlats(){
-    const plats = await this.platsService.getPlatFromLocalStorage();
+    const platsLS = await this.platsService.getPlatFromLocalStorage();
+    const plats = await this.platsService.sortByLibelleFamilleArticle(platsLS)
     this.plats = plats;
     this.platsTemp = plats;
     return plats;
@@ -68,8 +71,36 @@ export class CourseAddPage implements OnInit, OnChanges {
       date : '',
       libelle : '',
       article : '',
-      platToArticles : ''
+      platToArticles : '',
+      searchBar : ''
     })
+  }
+
+  public async filtreArticleResult(){
+    const searchValues = await this.courseForm.get('searchBar').value
+    const serachValue = searchValues.toLowerCase()
+
+    const articleSearch : Articles [] = []
+
+    const result = await this.articles.filter((articles : Articles) => {
+      return articles.libelle.indexOf(serachValue) > 0
+    })
+
+    // console.log(result)
+
+
+    // for(let article of this.articles){
+    //   const x = await article.libelle.toLowerCase()
+      // if(x.indexOf(this.searchValue) > 0){
+      //   console.log(article)
+      //   // articleSearch.push(article)
+      // }
+    // }
+
+    // console.log(articleSearch)
+
+    this.articles = []
+    this.articles = result;
   }
 
   async loadOneArticle(article : Articles, index : number){
