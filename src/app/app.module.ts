@@ -9,14 +9,23 @@ import { AppComponent } from './app.component';
 import { IonicStorageModule } from '@ionic/storage';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrderByArticlePipe } from './pipes/order-by-article.pipe';
+import { ArticlesFilterPipe } from './pipes/articles-filter.pipe';
+import { ArticleListPageModule } from './tab2/article-list/article-list.module';
 
 @NgModule({
-  declarations: [AppComponent, OrderByArticlePipe],
+  declarations: [
+    AppComponent,
+    OrderByArticlePipe,
+    // ArticlesFilterPipe
+  ],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,
     FormsModule,
     ReactiveFormsModule
-    ,IonicStorageModule.forRoot()
+    ,IonicStorageModule.forRoot(),
+  ],
+  exports : [
+    
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

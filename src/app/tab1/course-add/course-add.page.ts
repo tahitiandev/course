@@ -25,7 +25,7 @@ export class CourseAddPage implements OnInit, OnChanges {
   listeArticle : Articles [] = [];
   listeCodeArticle : any [] = [];
   hideSlidePlat : boolean = false;
-  searchValue
+  searchValue : string = "";
   // courseForm = new FormGroup ({
     
   // });

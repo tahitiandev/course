@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { CourseAddPageRoutingModule } from './course-add-routing.module';
 
 import { CourseAddPage } from './course-add.page';
+import { AppModule } from 'src/app/app.module';
+import { ArticlesFilterPipe } from 'src/app/pipes/articles-filter.pipe';
 
 @NgModule({
   imports: [
@@ -14,8 +16,11 @@ import { CourseAddPage } from './course-add.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    CourseAddPageRoutingModule
+    CourseAddPageRoutingModule,
+    // ArticlesFilterPipe
   ],
-  declarations: [CourseAddPage]
+  exports:[],
+  declarations: [CourseAddPage,
+  ArticlesFilterPipe]
 })
 export class CourseAddPageModule {}
