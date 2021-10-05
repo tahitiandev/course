@@ -94,7 +94,7 @@
         <br>
         <br>
         <ion-row>
-          <ion-list style="margin: 5%;width: 100%;">
+          <ion-list style="margin: 5%;width: 100%; height: 260px; overflow: scroll;">
             <ion-item *ngFor="let plat of plats; let index = index" id="test-{{index}}">
                 <ion-icon (click)="loadArticleFromOnePlat(plat.codeArticle, index)" slot="end" name="add-circle-outline"></ion-icon>
               <ion-label>{{ plat.libelle }}</ion-label>

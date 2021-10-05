@@ -20,6 +20,7 @@ export class ArticleListPage implements OnInit {
 
     articles : Articles [];
     familles : FamilleArticle [];
+    searchValue : string = "";
 
     ngOnInit(){
       this.getArticle();
@@ -169,7 +170,7 @@ export class ArticleListPage implements OnInit {
 
 
 
-      async getArticle(){
+        async getArticle(){
       const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
       const famillesLS : FamilleArticle [] = await this.storage.get(this.u.localstorage['famille d\'articles'])
       const familles = this.articleService.sortByLibelleFamilleArticle(famillesLS)
@@ -209,6 +210,33 @@ export class ArticleListPage implements OnInit {
       goToArticleAdd(){
       this.nav.navigateRoot('tabs/tab2/article-add')
       }
+
+
+
+
+      async isFamilleContainsAritcle(famille :  FamilleArticle){
+
+        const result : Articles [] = [];
+        
+        for(let i = 0;  i < this.articles.length; i++){
+          if(this.articles[i].famille === famille.libelle){
+            result.push(this.articles[i])
+          }
+        }
+
+        var showFamille : boolean =  true
+
+        if(result.length > 0){
+          showFamille = true
+        }else{
+          showFamille = false
+        }
+
+        return showFamille
+
+      }
+  
+
 
 
 }

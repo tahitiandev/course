@@ -107,7 +107,7 @@ export class ArticlesService {
       code : 'VIANPOUL',
       libelle : 'Poulet',
       prix : 95
-    },
+    }
   ];
 
   private famille : FamilleArticle[] = [
