@@ -14,7 +14,7 @@ export class UtilityService {
     'Plats' : 'plats',
     'Courses' : 'courses',
     'menu de la semaine' : 'menus',
-    'Setting' : 'setting'
+    'Setting' : 'settings'
   }
 
   goToUrl(tabNumber : string, pageName? : string){
@@ -30,6 +30,13 @@ export class UtilityService {
 
     return (Mot+'').charAt(0).toUpperCase()+Mot.substr(1);
 
+  }
+
+  transformArraytoObject(arr) {
+    var rv = {};
+    for (var i = 0; i < arr.length; ++i)
+      rv[i] = arr[i];
+    return rv;
   }
 
 

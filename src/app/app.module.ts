@@ -12,6 +12,22 @@ import { OrderByArticlePipe } from './pipes/order-by-article.pipe';
 import { ArticlesFilterPipe } from './pipes/articles-filter.pipe';
 import { ArticleListPageModule } from './tab2/article-list/article-list.module';
 
+// import { AngularFireModule } from '@angular/fire/';
+// import { AngularFirestoreModule } from '@angular/fire/firestore/';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore/';
+
+var firebaseConfig = {
+  apiKey: "AIzaSyAdclpMG7P3oABNQk02ZfvqVWG_wJMQBdY",
+  authDomain: "course-94b87.firebaseapp.com",
+  projectId: "course-94b87",
+  storageBucket: "course-94b87.appspot.com",
+  messagingSenderId: "411521934916",
+  appId: "1:411521934916:web:3b37819ad2aedb52fe7e11",
+  measurementId: "G-XC0RJ57TEX"
+};
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,6 +39,8 @@ import { ArticleListPageModule } from './tab2/article-list/article-list.module';
     FormsModule,
     ReactiveFormsModule
     ,IonicStorageModule.forRoot(),
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFirestoreModule
   ],
   exports : [
     
