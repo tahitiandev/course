@@ -69,9 +69,24 @@ export class Tab3Page {
 
   async sendDataToFireStore(){
 
-    var article = await  this.utility.localstorage.articles
-    const artices = await this.storage.get(article)
-    this.firestore.collection(article).add(this.utility.transformArraytoObject(artices))
+    var obj = this.utility.localstorage
+    var result = Object.keys(obj).map((key) => [Number(key), obj[key]]);
+    var data : any [] = []
+
+      for(let i of result){
+        data.push(i[1])
+      }
+
+    for(let localStorageName of data){
+      this.deleteCollection(localStorageName)
+      this.firestore.collection(localStorageName).add(this.utility.transformArraytoObject(this.storage.get(localStorageName)))
+    }
+    
+
+    // var article = await  this.utility.localstorage.articles
+    // const articles = await this.storage.get(article)
+    // this.firestore.collection(article).add(this.utility.transformArraytoObject(articles))
+
     this.popupInformation('Les données ont bien été envoyées sur Firebase')
   }
 
@@ -94,18 +109,33 @@ export class Tab3Page {
   }
 
   private async MAJdataLocalStorageFromDataFromFireStore(collectionName : string){
+
     this.firestore.collection(collectionName).snapshotChanges().subscribe(async(res)=>{
 
-      var obj = res[0].payload.doc.data()
-      var result = Object.keys(obj).map((key) => [Number(key), obj[key]]);
+      var obj = await res[0].payload.doc.data()
+      var result = await Object.keys(obj).map((key) => [Number(key), obj[key]]);
       var data : any [] = []
 
       for(let i of result){
         data.push(i[1])
       }
 
+      this.storage.set(collectionName, data)
+
     })
-    // .unsubscribe()
+
+  }
+
+  private async deleteCollection(collectionName : string){
+    this.firestore.collection('articles').snapshotChanges().subscribe((res)=>{
+
+      // Supprimer une collection
+      var documentid = res[0].payload.doc.id
+      if(documentid != undefined){
+        this.firestore.collection(collectionName).doc(documentid).delete()
+      }
+
+    })
   }
 
   async popupInformation(message : string){
