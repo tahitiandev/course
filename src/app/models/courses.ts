@@ -4,6 +4,7 @@ export interface  Courses{
     actif : boolean;
     total : number;
     liste? : Liste[];
+    firebase : boolean;
 }
 
 export interface Liste{

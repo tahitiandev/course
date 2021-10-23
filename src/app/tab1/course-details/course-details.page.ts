@@ -58,7 +58,8 @@ export class CourseDetailsPage implements OnInit {
       date : this.coursesDetail.date,
       actif : this.coursesDetail.actif,
       total : this.coursesDetail.total,
-      liste : newListe
+      liste : newListe,
+      firebase : false
     }
 
     this.listeArticle = newListe
@@ -86,7 +87,8 @@ export class CourseDetailsPage implements OnInit {
       date : this.coursesDetail.date,
       actif : this.coursesDetail.actif,
       total : this.coursesDetail.total,
-      liste : newListe
+      liste : newListe,
+      firebase : false
     }
 
     this.listeArticle = newListe
@@ -154,7 +156,8 @@ export class CourseDetailsPage implements OnInit {
               date : this.coursesDetail.date,
               actif : this.coursesDetail.actif,
               total : this.coursesDetail.total,
-              liste : newListe
+              liste : newListe,
+              firebase : false
             }
         
             this.listeArticle = newListe

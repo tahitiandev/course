@@ -41,7 +41,8 @@ export class MenuTodayPage implements OnInit {
     samedi : '',
     dimanche : '',
     dateDebut : '',
-    dateFin : ''}
+    dateFin : '',
+    firebase : false}
 
   constructor(private platservice : PlatsService,
               private formbuilder : FormBuilder,

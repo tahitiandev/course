@@ -5,9 +5,11 @@ export interface Articles{
     prixModifier? : number;
     quantite?:number;
     famille? : string;
+    firebase : boolean;
 }
 
 export interface FamilleArticle{
     code : string;
     libelle : string;
+    firebase : boolean
 }

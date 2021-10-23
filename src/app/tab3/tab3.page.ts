@@ -29,23 +29,26 @@ export class Tab3Page {
               private firestore : AngularFirestore,
               private alertController : AlertController) {
 
-                this.storage.get('setting').then((setting : Setting) => {
-                  if(setting){
-                    this.setting = setting
-            
-                    // Init thème
-                    if(this.setting.theme === true){
-                      this.darkModeBtn = true
-                    }else{
-                      this.darkModeBtn = false
-                    }
-                  }else{
-                    console.log('Erreur d\'initialisation du setting du localstorage')
-                  }
-                })
-               
-
+                this.initSetting()
               } // constructor
+  
+  async initSetting(){
+    const setting = await this.storage.get('settings')
+
+    if(setting){
+      this.setting = setting
+
+      // Init thème
+      if(this.setting.theme === true){
+        this.darkModeBtn = true
+      }else{
+        this.darkModeBtn = false
+      }
+    }else{
+      console.log('Erreur d\'initialisation du setting du localstorage')
+    }
+  }
+
 
   goToUrl(tabNumber : string, pageName? : string){
     this.utility.goToUrl(tabNumber, pageName);    
@@ -67,7 +70,33 @@ export class Tab3Page {
     }
   }
 
-  async sendDataToFireStore(){
+
+  async addDataToFireStore(){
+    
+    const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
+
+    localStorageNames.forEach( async(localStorageName) => {
+
+      if(localStorageName[1] != 'settings'){
+
+        // console.log(localStorageName[1])
+
+        var datafromLocalName = await this.storage.get(localStorageName[1])        
+        datafromLocalName.forEach( async (data) => {
+
+          if(!data.firebase){
+            await this.firestore.collection(localStorageName[1])
+                                .add(data)
+          }
+          
+        }); // foreach datafromLocalName
+      }//if
+
+  }); // foreach localStorageNames
+
+  }
+
+  async sendDataToFireStorePLUSUTILISE(){ // PLUS UTILISé
 
     var obj = this.utility.localstorage
     var result = Object.keys(obj).map((key) => [Number(key), obj[key]]);
@@ -78,7 +107,7 @@ export class Tab3Page {
       }
 
     for(let localStorageName of data){
-      this.deleteCollection(localStorageName)
+      // this.deleteCollection(localStorageName)
       this.firestore.collection(localStorageName).add(this.utility.transformArraytoObject(this.storage.get(localStorageName)))
     }
     
@@ -90,7 +119,36 @@ export class Tab3Page {
     this.popupInformation('Les données ont bien été envoyées sur Firebase')
   }
 
-  async getDataFromFirestore(){
+   async getDataFromFireStore(collectionName){
+
+    const alldata = []
+
+    this.firestore.collection(collectionName)
+                  .snapshotChanges()
+                  .subscribe((result) => {
+                    result.forEach(async (data) => {
+                      await alldata.push(data.payload.doc.data())
+                    })
+                  })
+
+    // this.storage.set(collectionName, alldata)
+
+    return alldata;
+  }
+
+  async getAllData(){
+
+    const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
+    localStorageNames.forEach( async(localStorageName) => {
+
+      this.getDataFromFireStore(localStorageName)
+
+    }); 
+
+  }
+
+
+  async getDataFromFirestorePLUSUTILISE(){ // PLUS UTILISé
 
     var obj = this.utility.localstorage
     var result = Object.keys(obj).map((key) => [Number(key), obj[key]]);
@@ -115,6 +173,7 @@ export class Tab3Page {
       var obj = await res[0].payload.doc.data()
       var result = await Object.keys(obj).map((key) => [Number(key), obj[key]]);
       var data : any [] = []
+      console.log(data)
 
       for(let i of result){
         data.push(i[1])
@@ -122,21 +181,50 @@ export class Tab3Page {
 
       this.storage.set(collectionName, data)
 
+
     })
 
   }
 
-  private async deleteCollection(collectionName : string){
-    this.firestore.collection('articles').snapshotChanges().subscribe((res)=>{
+  testget(collectionName? : string){
+    this.MAJdataLocalStorageFromDataFromFireStore('articles')
+  }
+
+  async testsend(){
+
+    const articles = await this.storage.get('articles');
+    this.firestore.collection('articles')
+    .add(this.utility.transformArraytoObject(articles))
+  }
+
+  testdelete(){
+    this.firestore.collection('articles').snapshotChanges().subscribe(async (res)=>{
 
       // Supprimer une collection
-      var documentid = res[0].payload.doc.id
-      if(documentid != undefined){
-        this.firestore.collection(collectionName).doc(documentid).delete()
-      }
+      var documentid = await res[0].payload.doc.id
+      var documentids = await documentid.toString()
+      // console.log(documentid.toString())
+      // if(res[0].payload.doc.id != undefined){
+      //   var documentid = await res[0].payload.doc.id
+        this.firestore.collection('articles').doc(documentids).delete()
+      // }
 
+        
     })
   }
+
+  async deleteCollection(collectionName : string){
+    this.firestore.collection('articles').snapshotChanges().subscribe(async (res)=>{
+
+      // Supprimer une collection
+      if(res[0].payload.doc.id != undefined){
+        var documentid = await res[0].payload.doc.id
+        this.firestore.collection(collectionName).doc(documentid).delete()
+      }
+        
+    })
+  }
+  
 
   async popupInformation(message : string){
     const alert = await this.alertController.create({

@@ -59,19 +59,35 @@
       <ion-label>Firebase</ion-label>
     </ion-item-divider>
 
-    <ion-item button (click)="this.sendDataToFireStore()">
+    <ion-item button (click)="this.addDataToFireStore()">
       <ion-label>
         <h3>Envoyer vos données</h3>
       </ion-label>
       <ion-icon name="paper-plane"></ion-icon>
     </ion-item>
 
-    <ion-item button (click)="this.getDataFromFirestore()">
+    <ion-item button (click)="this.getAllData()">
       <ion-label>
         <h3>Récupérer les données</h3>
       </ion-label>
       <ion-icon name="sync"></ion-icon>
     </ion-item>
+
+  </ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>test</ion-label>
+    </ion-item-divider>
+
+    <ion-item button (click)="this.getDataFromFireStore('')">
+      <ion-label>
+        <h3>test get</h3>
+      </ion-label>
+      <ion-icon name="sync"></ion-icon>
+    </ion-item>
+
+
 
   </ion-item-group>
 

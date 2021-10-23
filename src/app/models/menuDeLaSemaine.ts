@@ -8,4 +8,5 @@ export interface MenuDelaSemaine{
     dimanche : string;
     dateDebut : string;
     dateFin : string;
+    firebase : boolean;
 }

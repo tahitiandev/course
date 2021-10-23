@@ -26,7 +26,8 @@ export class CoursesService {
           prixUnitaire : 10,
           actif : false
         }
-      ]
+      ],
+      firebase : false
     }
   ]
 
@@ -44,7 +45,8 @@ export class CoursesService {
           prixUnitaire : 10,
           actif : false
         }
-      ]
+      ],
+      firebase : false
     }
   ]
 

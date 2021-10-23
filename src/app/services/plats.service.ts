@@ -21,7 +21,8 @@ export class PlatsService {
       },{
         codeArticle : 'VCJAM',
         quantite : 5
-      }]
+      }],
+      firebase : false
     },
     {
       libelle : 'Hamburger',
@@ -31,7 +32,8 @@ export class PlatsService {
       },{
         codeArticle : 'FLORA',
         quantite : 5
-      }]
+      }],
+      firebase : false
     },
     {
       libelle : 'Steak pâte',
@@ -41,7 +43,8 @@ export class PlatsService {
       },{
         codeArticle : 'VCJAM',
         quantite : 5
-      }]
+      }],
+      firebase : false
     },
     {
       libelle : 'Boeuf braisé',
@@ -51,7 +54,8 @@ export class PlatsService {
       },{
         codeArticle : 'FLORA',
         quantite : 9
-      }]
+      }],
+      firebase : false
     },
     {
       libelle : 'Lentille',
@@ -61,7 +65,8 @@ export class PlatsService {
       },{
         codeArticle : 'FLORA',
         quantite : 9
-      }]
+      }],
+      firebase : false
     },
     {
       libelle : 'Sashimis',
@@ -71,7 +76,8 @@ export class PlatsService {
       },{
         codeArticle : 'FLORA',
         quantite : 9
-      }]
+      }],
+      firebase : false
     },
     {
       libelle : 'Charcuterie',
@@ -81,7 +87,8 @@ export class PlatsService {
       },{
         codeArticle : 'FLORA',
         quantite : 9
-      }]
+      }],
+      firebase : false
     },
     {
       libelle : 'Poulet rôti',
@@ -91,7 +98,8 @@ export class PlatsService {
       },{
         codeArticle : 'FLORA',
         quantite : 9
-      }]
+      }],
+      firebase : false
     },
     {
       libelle : 'Poulet blanc',
@@ -101,7 +109,8 @@ export class PlatsService {
       },{
         codeArticle : 'FLORA',
         quantite : 9
-      }]
+      }],
+      firebase : false
     },
     {
       libelle : 'Quiche',
@@ -111,7 +120,8 @@ export class PlatsService {
       },{
         codeArticle : 'FLORA',
         quantite : 9
-      }]
+      }],
+      firebase : false
     },
 
 

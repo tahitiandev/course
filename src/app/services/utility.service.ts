@@ -39,6 +39,8 @@ export class UtilityService {
     return rv;
   }
 
-
+  transformToObject(obj){
+    return Object.keys(obj).map((key) => [Number(key), obj[key]]);
+  }
 
 }

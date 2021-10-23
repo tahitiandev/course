@@ -103,7 +103,8 @@ export class PlatAddPage implements OnInit {
 
     var plat : Plats = {
       libelle : libelle,
-      codeArticle : ingredient
+      codeArticle : ingredient,
+      firebase : false
     }
     
     this.platsService.setPlatToLocalStorage(plat)

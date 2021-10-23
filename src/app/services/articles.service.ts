@@ -16,168 +16,204 @@ export class ArticlesService {
     {
       code : 'FLORA',
       libelle : 'Oranges',
-      prix : 100
+      prix : 100,
+      firebase : false
     },
     {
       code : 'FLTOM',
       libelle : 'Tomates',
-      prix : 10
+      prix : 10,
+      firebase : false
     },
     {
       code : 'FLCAR',
       libelle : 'Carrotte',
-      prix : 500
+      prix : 500,
+      firebase : false
     },
     {
       code : 'FLSALA',
       libelle : 'Salade',
-      prix : 500
+      prix : 500,
+      firebase : false
     },
     {
       code : 'FLAUBER',
       libelle : 'Aubergines',
-      prix : 500
+      prix : 500,
+      firebase : false
     },
     {
       code : 'FLPOIV',
       libelle : 'Poivron',
-      prix : 500
+      prix : 500,
+      firebase : false
     },
     {
       code : 'VCJAM',
       libelle : 'Jambon',
-      prix : 109
+      prix : 109,
+      firebase : false
     },
     {
       code : 'VCLAR',
       libelle : 'Lardon',
-      prix : 109
+      prix : 109,
+      firebase : false
     },
     {
       code : 'VCRACL',
       libelle : 'Fromage à raclette',
-      prix : 109
+      prix : 109,
+      firebase : false
     },
     {
       code : 'VCSAUON',
       libelle : 'Saucisson',
-      prix : 109
+      prix : 109,
+      firebase : false
     },
     {
       code : 'VCSAUFU',
       libelle : 'Saumon fumé',
-      prix : 109
+      prix : 109,
+      firebase : false
     },
     {
       code : 'BOILAI',
       libelle : 'Lait Vai Ora',
-      prix : 95
+      prix : 95,
+      firebase : false
     },
     {
       code : 'BOICOC',
       libelle : 'Coca',
-      prix : 95
+      prix : 95,
+      firebase : false
     },
     {
       code : 'BOIVOLF',
       libelle : 'Volvic aux fruits',
-      prix : 95
+      prix : 95,
+      firebase : false
     },
     {
       code : 'BOIVAI',
       libelle : 'Vaimato',
-      prix : 95
+      prix : 95,
+      firebase : false
     },
     {
       code : 'VIANSTE',
       libelle : 'Steck',
-      prix : 95
+      prix : 95,
+      firebase : false
     },
     {
       code : 'VIANTRAV',
       libelle : 'Travers de porc',
-      prix : 95
+      prix : 95,
+      firebase : false
     },
     {
       code : 'VIANSAUC',
       libelle : 'Saucisse',
-      prix : 95
+      prix : 95,
+      firebase : false
     },
     {
       code : 'VIANPOUL',
       libelle : 'Poulet',
-      prix : 95
+      prix : 95,
+      firebase : false
     }
   ];
 
   private famille : FamilleArticle[] = [
     {
       code : 'CON',
-      libelle : 'Congelé'
+      libelle : 'Congelé',
+      firebase : false
     },
     {
       code : 'BOI',
-      libelle : 'Boisson'
+      libelle : 'Boisson',
+      firebase : false
     },
     {
       code : 'PDJ',
-      libelle : 'Petit déjeuner'
+      libelle : 'Petit déjeuner',
+      firebase : false
     },
     {
       code : 'OUT',
-      libelle : 'Outillage'
+      libelle : 'Outillage',
+      firebase : false
     },
     {
       code : 'FRIA',
-      libelle : 'Friandise'
+      libelle : 'Friandise',
+      firebase : false
     },
     {
       code : 'BEB',
-      libelle : 'Article bébé'
+      libelle : 'Article bébé',
+      firebase : false
     },
     {
       code : 'FRU',
-      libelle : 'Fruits'
+      libelle : 'Fruits',
+      firebase : false
     },
     {
       code : 'LEG',
-      libelle : 'Légumes'
+      libelle : 'Légumes',
+      firebase : false
     },
     {
       code : 'VIAN',
-      libelle : 'Viandes'
+      libelle : 'Viandes',
+      firebase : false
     },
     {
       code : 'MUL',
-      libelle : 'Multi-médias'
+      libelle : 'Multi-médias',
+      firebase : false
     },
     {
       code : 'COUV',
-      libelle : 'Couverts'
+      libelle : 'Couverts',
+      firebase : false
     },
     {
       code : 'LIV',
-      libelle : 'Papeterie'
+      libelle : 'Papeterie',
+      firebase : false
     },
     {
       code : 'LESSI',
-      libelle : 'Lessives'
+      libelle : 'Lessives',
+      firebase : false
     },
     {
       code : 'MENAG',
-      libelle : 'Produits ménagers'
+      libelle : 'Produits ménagers',
+      firebase : false
     },
     {
       code : 'BAIN',
-      libelle : 'Articles de bain (ex savons)'
+      libelle : 'Articles de bain (ex savons)',
+      firebase : false
     },
     {
       code : 'CHAR',
-      libelle : 'Charcuterie'
+      libelle : 'Charcuterie',
+      firebase : false
     },
     {
       code : 'REF',
-      libelle : 'Produits réfrigéré'
+      libelle : 'Produits réfrigéré',
+      firebase : false
     }
   ]
 
@@ -258,7 +294,8 @@ export class ArticlesService {
 
         const newFamilleArticle : FamilleArticle = {
           code : familleArticle.code.toUpperCase(),
-          libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle)
+          libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle),
+          firebase : false
         }
         await temp.push(newFamilleArticle)
         
@@ -280,7 +317,8 @@ export class ArticlesService {
     
     const newFamilleArticle : FamilleArticle = {
       code : familleArticle.code.toUpperCase(),
-      libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle)
+      libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle),
+      firebase : false
     }
     await temp.push(newFamilleArticle)
 
@@ -324,7 +362,8 @@ export class ArticlesService {
               libelle : article.libelle,
               prix : article.prix,
               prixModifier : article.prixModifier,
-              quantite : articleCode.quantite
+              quantite : articleCode.quantite,
+              firebase : false
             }
         }
   

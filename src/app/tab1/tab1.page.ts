@@ -77,7 +77,8 @@ export class Tab1Page implements OnInit, OnChanges {
           date : courses[i].date,
           actif : !courses[i].actif,
           total : courses[i].total,
-          liste : courses[i].liste
+          liste : courses[i].liste,
+          firebase : false
         }
         newCourse.push(add)
       }

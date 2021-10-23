@@ -203,7 +203,8 @@ export class CourseAddPage implements OnInit, OnChanges {
       date : date,
       actif : true,
       total : 1000,
-      liste : liste
+      liste : liste,
+      firebase : false
     }
 
     this.coursesService.setCourseInLocalStorage(coursess)
@@ -238,7 +239,8 @@ export class CourseAddPage implements OnInit, OnChanges {
       date : formValue.date,
       actif : true,
       total : 1000,
-      liste : liste
+      liste : liste,
+      firebase : false
     }
 
     this.coursesService.setCourseInLocalStorage(course)

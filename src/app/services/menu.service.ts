@@ -21,7 +21,8 @@ export class MenuService {
     samedi : 'ddd',
     dimanche : 'eeee',
     dateDebut : '19/07/2021',
-    dateFin : '25/07/2021'
+    dateFin : '25/07/2021',
+    firebase : false
   },
   {
     lundi : 'Pâte carbonara',
@@ -32,7 +33,8 @@ export class MenuService {
     samedi : 'Steak pâte',
     dimanche : 'Boeuf braisé',
     dateDebut : '26/07/2021',
-    dateFin : '01/08/2021'
+    dateFin : '01/08/2021',
+    firebase : false
   },
   {
     lundi : 'qsdfqsdfsqdf',
@@ -43,7 +45,8 @@ export class MenuService {
     samedi : 'sqssddd',
     dimanche : 'eessssdee',
     dateDebut : '02/08/2021',
-    dateFin : '08/08/2021'
+    dateFin : '08/08/2021',
+    firebase : false
   },
   {
     lundi : 'lundi',
@@ -54,7 +57,8 @@ export class MenuService {
     samedi : 'samedi',
     dimanche : 'dimanche',
     dateDebut : '07/08/2021',
-    dateFin : '08/08/2021'
+    dateFin : '08/08/2021',
+    firebase : false
   },
  ]
 

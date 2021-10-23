@@ -119,7 +119,8 @@ export class IngredientPage implements OnInit {
 
     var platDetailCorrige : Plats = await {
       libelle : this.libelle,
-      codeArticle : codeArticleCorrige
+      codeArticle : codeArticleCorrige,
+      firebase : false
     }
 
     this.ingredients = []
@@ -178,7 +179,8 @@ export class IngredientPage implements OnInit {
     // 4- On set le plat avec les nouveaux ingrédients
     var newPlat : Plats = await {
       libelle : this.libelle,
-      codeArticle : newCodeArticle
+      codeArticle : newCodeArticle,
+      firebase : false
     }
     // console.log(newPlat)
 
@@ -253,7 +255,8 @@ export class IngredientPage implements OnInit {
             var newIngredient = {
               code : ingredient.code,
               libelle : ingredient.libelle,
-              prix : ingredient.prix
+              prix : ingredient.prix,
+              firebase : false
             };
 
             this.newIngredient = newIngredient
@@ -294,7 +297,8 @@ export class IngredientPage implements OnInit {
               code : this.newIngredient.code,
               libelle : this.newIngredient.libelle,
               prix : this.newIngredient.prix,
-              quantite : resultat.quantite
+              quantite : resultat.quantite,
+              firebase : false
             }
 
             // 1 - Recherche le plat en cours
@@ -311,7 +315,8 @@ export class IngredientPage implements OnInit {
               code : '',
               libelle : '',
               prix : 0,
-              quantite : 0
+              quantite : 0,
+              firebase : false
             }
 
             var plats : Plats [] = [];
@@ -390,7 +395,8 @@ export class IngredientPage implements OnInit {
 
             var plat : Plats = {
               libelle : this.libelle,
-              codeArticle : codeArticles
+              codeArticle : codeArticles,
+              firebase : false
             }
 
             // console.log(plat)

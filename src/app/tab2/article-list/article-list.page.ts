@@ -66,7 +66,8 @@ export class ArticleListPage implements OnInit {
             articleAJour = {
               code : result.code,
               libelle : result.libelle,
-              prix : result.prix
+              prix : result.prix,
+              firebase : false
             }
 
             this.articleService.updateArticle(articleAJour).then(() => {
@@ -124,7 +125,8 @@ export class ArticleListPage implements OnInit {
         articleTemp.push({
           code : newArticle.code,
           libelle : newArticle.libelle,
-          prix : newArticle.prix
+          prix : newArticle.prix,
+          firebase : false
         })
 
         this.storage.set(this.u.localstorage.articles, articleTemp).then(() => this.getArticle())
@@ -190,7 +192,8 @@ export class ArticleListPage implements OnInit {
               prix : article.prix,
               prixModifier : article.prixModifier,
               quantite : article.quantite,
-              famille : familles[i].libelle
+              famille : familles[i].libelle,
+              firebase : false
             }
 
             groupByArticle.push(articleGroup)

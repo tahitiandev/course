@@ -75,7 +75,8 @@ export class ArticleDetailsPage implements OnInit {
     const newArticle : Articles = {
       code : formValue.code.toUpperCase(),
       libelle : this.utility.premierLettreEnMajuscule(formValue.libelle),
-      prix : formValue.prix 
+      prix : formValue.prix ,
+      firebase : false
     }
     
     this.articleService.setArticleRealDataToLocalStorage(newArticle)
