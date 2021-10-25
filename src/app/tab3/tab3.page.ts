@@ -128,7 +128,7 @@ export class Tab3Page {
     this.popupInformation('Les données ont bien été envoyées sur Firebase')
   }
 
-   async getDataFromFireStore(collectionName){
+   private async getDataFromFireStore(collectionName){
 
     const alldata = []
 
@@ -140,7 +140,7 @@ export class Tab3Page {
                     })
                   })
 
-    // this.storage.set(collectionName, alldata)
+    this.storage.set(collectionName,alldata)
 
     return alldata;
   }
@@ -150,7 +150,7 @@ export class Tab3Page {
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     localStorageNames.forEach( async(localStorageName) => {
 
-      this.getDataFromFireStore(localStorageName)
+      this.getDataFromFireStore(localStorageName[1])
 
     }); 
 
