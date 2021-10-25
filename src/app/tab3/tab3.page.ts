@@ -74,22 +74,31 @@ export class Tab3Page {
   async addDataToFireStore(){
     
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
+    var dataAjour : any [] = [];
 
     localStorageNames.forEach( async(localStorageName) => {
 
       if(localStorageName[1] != 'settings'){
 
-        // console.log(localStorageName[1])
-
         var datafromLocalName = await this.storage.get(localStorageName[1])        
         datafromLocalName.forEach( async (data) => {
 
+          // si data non envoyé dans firebase
           if(!data.firebase){
+            data.firebase = true;
             await this.firestore.collection(localStorageName[1])
                                 .add(data)
+            dataAjour.push(data)
+          }
+          else{
+            dataAjour.push(data)
           }
           
         }); // foreach datafromLocalName
+
+        this.storage.set(localStorageName[1],dataAjour);
+        dataAjour= [];
+
       }//if
 
   }); // foreach localStorageNames
