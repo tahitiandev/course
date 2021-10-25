@@ -145,6 +145,15 @@ export class Tab3Page {
     return alldata;
   }
 
+  private async verifieSiToutesLesDataSontEnvoye(localName : string){
+
+    const dataFromLocalStora = await this.storage.get(localName);
+    return dataFromLocalStora.find(data => {
+        return data.firebase === true;
+    }
+
+  }
+
   async getAllData(){
 
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
