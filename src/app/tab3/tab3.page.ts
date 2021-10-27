@@ -28,7 +28,6 @@ export class Tab3Page {
               private storage : Storage,
               private firestore : AngularFirestore,
               private alertController : AlertController) {
-
                 this.initSetting()
               } // constructor
   
@@ -71,7 +70,7 @@ export class Tab3Page {
   }
 
 
-  async addDataToFireStore(){
+  async postDataToFireStore(){
     
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     var dataAjour : any [] = [];
@@ -103,46 +102,79 @@ export class Tab3Page {
 
   }); // foreach localStorageNames
 
+  this.popupInformation('Les données ont bien été envoyées sur firebase')
+
   }
 
-  async sendDataToFireStorePLUSUTILISE(){ // PLUS UTILISé
+   alldataFromFireBase : any [] = []
 
-    var obj = this.utility.localstorage
-    var result = Object.keys(obj).map((key) => [Number(key), obj[key]]);
-    var data : any [] = []
-
-      for(let i of result){
-        data.push(i[1])
-      }
-
-    for(let localStorageName of data){
-      // this.deleteCollection(localStorageName)
-      this.firestore.collection(localStorageName).add(this.utility.transformArraytoObject(this.storage.get(localStorageName)))
-    }
+   public async getDataFromFireStore(collectionName){
     
-
-    // var article = await  this.utility.localstorage.articles
-    // const articles = await this.storage.get(article)
-    // this.firestore.collection(article).add(this.utility.transformArraytoObject(articles))
-
-    this.popupInformation('Les données ont bien été envoyées sur Firebase')
-  }
-
-   private async getDataFromFireStore(collectionName){
-
-    const alldata = []
-
     this.firestore.collection(collectionName)
                   .snapshotChanges()
                   .subscribe((result) => {
-                    result.forEach(async (data) => {
-                      await alldata.push(data.payload.doc.data())
-                    })
+
+                    var alldata = [];
+                    for(let data of result){
+                      alldata.push(data.payload.doc.data())
+                    }
+
+                    this.storage.set(collectionName, alldata)
+
                   })
 
-    this.storage.set(collectionName,alldata)
+    // if(getResult){
+    //   await this.saveOnLocalStorage(collectionName, this.alldataFromFireBase).then(() => {
+    //     this.alldataFromFireBase = []
+    //      this.popupInformation('Les données ont bien été récupérées')
+    //   })
 
-    return alldata;
+    //   getResult.unsubscribe()
+      
+    // }
+
+    // setTimeout(() => {
+    //    this.saveOnLocalStorage(collectionName, this.alldataFromFireBase);
+    //    setTimeout(() => {
+    //      this.alldataFromFireBase = []
+    //      this.popupInformation('Les données ont bien été récupérées')
+    //    }, 1000);
+    // }, 1000);
+    
+  }
+
+  private async saveOnLocalStorage(collectionName : string, data){
+    await this.storage.set(collectionName,data)
+  }
+
+  async clearLocalStorage(){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Attention',
+      message: 'Souhaitez-vous réellement supprimer vos données ?',
+      buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Oui',
+          handler: () => {
+            this.storage.clear()
+                .catch((e) => console.log(e))
+                .finally(() =>{
+                  this.popupInformation('Les données local ont été supprimé')
+                })
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   private async verifieSiToutesLesDataSontEnvoye(localName : string){
@@ -150,7 +182,7 @@ export class Tab3Page {
     const dataFromLocalStora = await this.storage.get(localName);
     return dataFromLocalStora.find(data => {
         return data.firebase === true;
-    }
+    });
 
   }
 
@@ -158,29 +190,15 @@ export class Tab3Page {
 
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     localStorageNames.forEach( async(localStorageName) => {
+      if(localStorageName[1] != 'settings')
+      await this.getDataFromFireStore(localStorageName[1])
+    });
 
-      this.getDataFromFireStore(localStorageName[1])
-
-    }); 
-
-  }
-
-
-  async getDataFromFirestorePLUSUTILISE(){ // PLUS UTILISé
-
-    var obj = this.utility.localstorage
-    var result = Object.keys(obj).map((key) => [Number(key), obj[key]]);
-    var data : any [] = []
-
-      for(let i of result){
-        data.push(i[1])
-      }
-
-    for(let localStorageName of data){
-      this.MAJdataLocalStorageFromDataFromFireStore(localStorageName)
-    }
-
-    this.popupInformation('Les données ont bien été récupéré de Firebase')
+    // this.getDataFromFireStore(this.utility.localstorage.Courses)
+    // this.getDataFromFireStore(this.utility.localstorage.Plats)
+    // this.getDataFromFireStore(this.utility.localstorage['famille d\'articles'])
+    // this.getDataFromFireStore(this.utility.localstorage['menu de la semaine'])
+    // this.getDataFromFireStore(this.utility.localstorage.articles)
 
   }
 
@@ -204,47 +222,7 @@ export class Tab3Page {
 
   }
 
-  testget(collectionName? : string){
-    this.MAJdataLocalStorageFromDataFromFireStore('articles')
-  }
-
-  async testsend(){
-
-    const articles = await this.storage.get('articles');
-    this.firestore.collection('articles')
-    .add(this.utility.transformArraytoObject(articles))
-  }
-
-  testdelete(){
-    this.firestore.collection('articles').snapshotChanges().subscribe(async (res)=>{
-
-      // Supprimer une collection
-      var documentid = await res[0].payload.doc.id
-      var documentids = await documentid.toString()
-      // console.log(documentid.toString())
-      // if(res[0].payload.doc.id != undefined){
-      //   var documentid = await res[0].payload.doc.id
-        this.firestore.collection('articles').doc(documentids).delete()
-      // }
-
-        
-    })
-  }
-
-  async deleteCollection(collectionName : string){
-    this.firestore.collection('articles').snapshotChanges().subscribe(async (res)=>{
-
-      // Supprimer une collection
-      if(res[0].payload.doc.id != undefined){
-        var documentid = await res[0].payload.doc.id
-        this.firestore.collection(collectionName).doc(documentid).delete()
-      }
-        
-    })
-  }
-  
-
-  async popupInformation(message : string){
+  private async popupInformation(message : string){
     const alert = await this.alertController.create({
     cssClass: 'my-custom-class',
     header: 'Information',

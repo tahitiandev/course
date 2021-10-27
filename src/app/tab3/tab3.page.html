@@ -59,7 +59,7 @@
       <ion-label>Firebase</ion-label>
     </ion-item-divider>
 
-    <ion-item button (click)="this.addDataToFireStore()">
+    <ion-item button (click)="this.postDataToFireStore()">
       <ion-label>
         <h3>Envoyer vos données</h3>
       </ion-label>
@@ -68,28 +68,77 @@
 
     <ion-item button (click)="this.getAllData()">
       <ion-label>
-        <h3>Récupérer les données</h3>
+        <h3>Récupérer vos données</h3>
       </ion-label>
       <ion-icon name="sync"></ion-icon>
     </ion-item>
 
+    <!-- <ion-item button (click)="this.getDataFromFireStore('articles')">
+      <ion-label>
+        <h3>Récupérer les articles</h3>
+      </ion-label>
+      <ion-icon name="sync"></ion-icon>
+    </ion-item>
+
+    <ion-item button (click)="this.getDataFromFireStore('familles')">
+      <ion-label>
+        <h3>Récupérer les familles d'articles</h3>
+      </ion-label>
+      <ion-icon name="sync"></ion-icon>
+    </ion-item>
+
+    <ion-item button (click)="this.getDataFromFireStore('plats')">
+      <ion-label>
+        <h3>Récupérer les plats</h3>
+      </ion-label>
+      <ion-icon name="sync"></ion-icon>
+    </ion-item>
+
+    <ion-item button (click)="this.getDataFromFireStore('menus')">
+      <ion-label>
+        <h3>Récupérer le menu de la semaine</h3>
+      </ion-label>
+      <ion-icon name="sync"></ion-icon>
+    </ion-item>
+
+    <ion-item button (click)="this.getDataFromFireStore('courses')">
+      <ion-label>
+        <h3>Récupérer les listes des courses</h3>
+      </ion-label>
+      <ion-icon name="sync"></ion-icon>
+    </ion-item> -->
+
+    <ion-item button (click)="this.clearLocalStorage()">
+      <ion-label>
+        <h3>Vider les données</h3>
+      </ion-label>
+      <ion-icon name="trash-outline"></ion-icon>
+    </ion-item>
+
   </ion-item-group>
 
-  <ion-item-group>
+  <!-- <ion-item-group>
     <ion-item-divider>
       <ion-label>test</ion-label>
     </ion-item-divider>
 
-    <ion-item button (click)="this.getDataFromFireStore('')">
+    <ion-item button (click)="this.getDataFromFireStore('familles')">
       <ion-label>
-        <h3>test get</h3>
+        <h3>test firebase</h3>
+      </ion-label>
+      <ion-icon name="sync"></ion-icon>
+    </ion-item>
+
+    <ion-item button (click)="this.asupprimer('familles')">
+      <ion-label>
+        <h3>test localstorage</h3>
       </ion-label>
       <ion-icon name="sync"></ion-icon>
     </ion-item>
 
 
 
-  </ion-item-group>
+  </ion-item-group> -->
 
 </ion-content>
 
