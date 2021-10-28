@@ -108,7 +108,7 @@ export class Tab3Page {
 
    alldataFromFireBase : any [] = []
 
-   public async getDataFromFireStore(collectionName){
+   private async getDataFromFireStore(collectionName){
     
     this.firestore.collection(collectionName)
                   .snapshotChanges()
@@ -121,26 +121,7 @@ export class Tab3Page {
 
                     this.storage.set(collectionName, alldata)
 
-                  })
-
-    // if(getResult){
-    //   await this.saveOnLocalStorage(collectionName, this.alldataFromFireBase).then(() => {
-    //     this.alldataFromFireBase = []
-    //      this.popupInformation('Les données ont bien été récupérées')
-    //   })
-
-    //   getResult.unsubscribe()
-      
-    // }
-
-    // setTimeout(() => {
-    //    this.saveOnLocalStorage(collectionName, this.alldataFromFireBase);
-    //    setTimeout(() => {
-    //      this.alldataFromFireBase = []
-    //      this.popupInformation('Les données ont bien été récupérées')
-    //    }, 1000);
-    // }, 1000);
-    
+                  })    
   }
 
   private async saveOnLocalStorage(collectionName : string, data){
@@ -194,11 +175,7 @@ export class Tab3Page {
       await this.getDataFromFireStore(localStorageName[1])
     });
 
-    // this.getDataFromFireStore(this.utility.localstorage.Courses)
-    // this.getDataFromFireStore(this.utility.localstorage.Plats)
-    // this.getDataFromFireStore(this.utility.localstorage['famille d\'articles'])
-    // this.getDataFromFireStore(this.utility.localstorage['menu de la semaine'])
-    // this.getDataFromFireStore(this.utility.localstorage.articles)
+    this.popupInformation('Les données ont bien été récupérées')
 
   }
 

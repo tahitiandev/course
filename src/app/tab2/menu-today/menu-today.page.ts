@@ -51,6 +51,10 @@ export class MenuTodayPage implements OnInit {
               private menuService : MenuService) { }
 
   ngOnInit() {
+    this.initialize()
+  }
+
+  initialize(){
     this.getPlat()
     this.initForm()
     this.loadMenuOfTheWeek()
