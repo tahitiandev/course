@@ -9,4 +9,6 @@ export interface MenuDelaSemaine{
     dateDebut : string;
     dateFin : string;
     firebase : boolean;
+    isModified? : boolean;
+    documentId? : string;
 }

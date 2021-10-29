@@ -5,6 +5,8 @@ export interface  Courses{
     total : number;
     liste? : Liste[];
     firebase : boolean;
+    isModified? : boolean;
+    documentId? : string;
 }
 
 export interface Liste{

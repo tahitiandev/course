@@ -61,14 +61,26 @@ export class ArticleListPage implements OnInit {
         }, {
         text: 'Ok',
         handler: (result : Articles) => {
+          var articleAJour : Articles;
 
-            var articleAJour : Articles;
+          if(result.firebase){
             articleAJour = {
               code : result.code,
               libelle : result.libelle,
               prix : result.prix,
-              firebase : false
+              firebase : true,
+              isModified : true
             }
+          }
+          else {
+            articleAJour = {
+              code : result.code,
+              libelle : result.libelle,
+              prix : result.prix,
+              firebase : false,
+              isModified : false
+            }
+          }
 
             this.articleService.updateArticle(articleAJour).then(() => {
               this.getArticle()

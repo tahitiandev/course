@@ -279,7 +279,8 @@ export class IngredientPage implements OnInit {
       inputs: [
         {
           type : 'number',
-          name : 'quantite'
+          name : 'quantite',
+          value : 1
         }
       ],
       buttons: [
