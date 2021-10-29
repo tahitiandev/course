@@ -93,7 +93,12 @@ export class Tab3Page {
 
             // Si la données a été modifié
             if(data.isModified){
-              this.firestore.collection(localStorageName[1]).doc(data.documentId).delete()
+              console.log(data.documentId)
+              await this.firestore.collection(localStorageName[1])
+                                  .doc(data.documentId)
+                                  .delete()
+              await this.firestore.collection(localStorageName[1])
+                                  .add(data)
             }
             dataAjour.push(data)
             
@@ -126,22 +131,6 @@ export class Tab3Page {
                     }
 
                     this.storage.set(collectionName, alldata)
-
-                  })    
-  }
-
-   public async getArticleFromFireStore(collectionName){
-    
-    this.firestore.collection(collectionName)
-                  .snapshotChanges()
-                  .subscribe((result) => {
-
-                    var alldata : Articles[] = [];
-                    for(let data of result){
-                      alldata.push()
-                    }
-
-                    // this.storage.set(collectionName, alldata)
 
                   })    
   }

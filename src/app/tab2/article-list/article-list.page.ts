@@ -60,16 +60,22 @@ export class ArticleListPage implements OnInit {
         }
         }, {
         text: 'Ok',
-        handler: (result : Articles) => {
+        handler: async (result : Articles) => {
           var articleAJour : Articles;
 
-          if(result.firebase){
+          var allArticle = await this.storage.get(this.u.localstorage.articles);
+          var oldDataArticle = await allArticle.find(s => {
+            return s.code === result.code;
+          })
+
+          if(oldDataArticle.firebase){
             articleAJour = {
               code : result.code,
               libelle : result.libelle,
               prix : result.prix,
               firebase : true,
-              isModified : true
+              isModified : true,
+              documentId :oldDataArticle.documentId
             }
           }
           else {
@@ -78,7 +84,8 @@ export class ArticleListPage implements OnInit {
               libelle : result.libelle,
               prix : result.prix,
               firebase : false,
-              isModified : false
+              isModified : false,
+              documentId :oldDataArticle.documentId
             }
           }
 
@@ -122,7 +129,6 @@ export class ArticleListPage implements OnInit {
         role: 'cancel',
         cssClass: 'secondary',
       handler: () => {
-        console.log('Confirm Cancel');
       }
       }, {
       text: 'Ok',
@@ -184,7 +190,7 @@ export class ArticleListPage implements OnInit {
 
 
 
-        async getArticle(){
+    async getArticle(){
       const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
       const famillesLS : FamilleArticle [] = await this.storage.get(this.u.localstorage['famille d\'articles'])
       const familles = this.articleService.sortByLibelleFamilleArticle(famillesLS)
@@ -205,14 +211,16 @@ export class ArticleListPage implements OnInit {
               prixModifier : article.prixModifier,
               quantite : article.quantite,
               famille : familles[i].libelle,
-              firebase : false
+              firebase : article.firebase,
+              isModified : article.isModified,
+              documentId : article.documentId
             }
 
             groupByArticle.push(articleGroup)
           } // if          
         }
 
-      } // for 1      
+      } // for 1
 
       const articles = await this.articleService.sortByArticleName(groupByArticle)
       this.articles = articles;
