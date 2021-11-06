@@ -25,8 +25,9 @@ export class PlatsPage implements OnInit {
                }
 
   ngOnInit() {
-    this.getPlats()
     this.getArticle()
+    this.setTotal()
+    this.getPlats()
   }
 
   async getArticle(){
@@ -53,7 +54,7 @@ export class PlatsPage implements OnInit {
     this.plats = plats
   }
 
-  calculeTotal(plat : Plats){
+  private calculeTotal(plat : Plats){
     var total : number = 0;
     
     for(let article of plat.codeArticle){
@@ -62,7 +63,33 @@ export class PlatsPage implements OnInit {
       })
       total += (articleInfo.prix-0) * (article.quantite-0)
     }
-    return total.toLocaleString();
+    return total;
+  }
+
+  private async setTotal(){
+
+    const platsLS = await this.platsService.getPlatFromLocalStorage();
+    const plats = await this.platsService.sortByLibelleFamilleArticle(platsLS)
+    const platsWithPrix : Plats[] = [];
+
+    for(let plat of plats){
+
+      var prix = this.calculeTotal(plat)
+
+      platsWithPrix.push({
+        libelle : plat.libelle,
+        codeArticle : plat.codeArticle,
+        prix : prix,
+        firebase : plat.firebase,
+        isModified : plat.isModified,
+        documentId : plat.documentId
+      })
+
+    }//for
+    
+    this.storage.set(this.utility.localstorage.Plats, platsWithPrix)
+    // this.plats = await platsWithPrix
+
   }
 
   supprimerPlat(index : number){

@@ -294,20 +294,19 @@ export class IngredientPage implements OnInit {
         }, {
           text: 'Ok',
           handler: async (resultat) => {
-            // 1- rajouter la quantite
             this.newIngredient = {
               code : this.newIngredient.code,
               libelle : this.newIngredient.libelle,
               prix : this.newIngredient.prix,
-              quantite : resultat.quantite // permet d'ajouter ça
+              quantite : resultat.quantite,
+              firebase : false
             }
 
-            // 2 - Recherche le plat en cours
+            // 1 - Recherche le plat en cours
             const plat = await this.plats.find(s => {
                 return s.libelle === this.libelle
             })
 
-            // 2-1 je rajouter le nouvelle ingréditn
             plat.codeArticle.push({
                codeArticle : this.newIngredient.code,
                quantite : this.newIngredient.quantite
@@ -360,7 +359,7 @@ export class IngredientPage implements OnInit {
       inputs: [
         {
           type : 'text',
-          name : 'libelle',
+          name : 'codeArticle',
           value : this.ingredients[index].libelle
         },
         {
@@ -395,31 +394,22 @@ export class IngredientPage implements OnInit {
               }
             }
 
-            var platSelected =  await this.platsservice.searchPlatByLibelle(this.libelle)
+            // console.log(codeArticles)
+            
 
-            if(platSelected.firebase){
-              var plat : Plats = {
-                libelle : this.libelle,
-                codeArticle : codeArticles,
-                firebase : platSelected.firebase,
-                isModified : true,
-                documentId : platSelected.documentId
-              }
-            }else{
-              var plat : Plats = {
-                libelle : this.libelle,
-                codeArticle : codeArticles,
-                firebase : false,
-                isModified : true,
-                documentId : platSelected.documentId
-              }
+            var plat : Plats = {
+              libelle : this.libelle,
+              codeArticle : codeArticles,
+              firebase : false
             }
 
-            console.log(plat)
+            // console.log(plat)
             
-            // this.platsservice.updatePlatToLocalStorage(plat)
-            // this.ingredients = []
-            // this.getIngredient(plat.codeArticle)
+            this.platsservice.updatePlatToLocalStorage(plat)
+
+            // 4- On rajoute le libellé et le prix et le libellé
+            this.ingredients = []
+            this.getIngredient(plat.codeArticle)
 
 
             
