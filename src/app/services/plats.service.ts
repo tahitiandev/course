@@ -188,7 +188,7 @@ export class PlatsService {
         await plats.push(plat)
       }
     }
-    // console.log(plats)
+    console.log(plats)
     await this.storage.set(this.utility.localstorage.Plats, plats)  
     
   }

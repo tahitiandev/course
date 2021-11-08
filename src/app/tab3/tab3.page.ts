@@ -93,7 +93,6 @@ export class Tab3Page {
 
             // Si la données a été modifié
             if(data.isModified){
-              console.log(data.documentId)
               await this.firestore.collection(localStorageName[1])
                                   .doc(data.documentId)
                                   .delete()

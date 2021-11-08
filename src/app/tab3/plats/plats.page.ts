@@ -36,7 +36,7 @@ export class PlatsPage implements OnInit {
   }  
 
   async getPlats(){
-    const platsLS = await this.platsService.getPlatFromLocalStorage()
+    const platsLS = await this.storage.get(this.utility.localstorage.Plats)
     const plats = await this.platsService.sortByLibelleFamilleArticle(platsLS)
     this.plats = plats;
   }
