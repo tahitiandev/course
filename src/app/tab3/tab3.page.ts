@@ -7,6 +7,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 import { Articles } from '../models/articles';
+import { Deleted } from '../models/deleted';
 
 @Component({
   selector: 'app-tab3',
@@ -29,6 +30,7 @@ export class Tab3Page {
               private firestore : AngularFirestore,
               private alertController : AlertController) {
                 this.initSetting()
+
               } // constructor
   
   async initSetting(){
@@ -112,6 +114,25 @@ export class Tab3Page {
 
   }); // foreach localStorageNames
 
+  // Suppression des données dans firebase
+  const deletedData : Deleted [] = await this.storage.get('deleted');
+
+  if(deletedData.length > 0){
+    for(let data of deletedData){
+       await this.firestore.collection(data.collectionName)
+                           .doc(data.documentId)
+                           .delete()
+    } // for
+
+    // Je vide le localstorage deleted
+    const tableauVide : Deleted [] = []
+    this.storage.set('deleted',tableauVide)
+
+  }
+
+  // Récupérer les données de firebase
+  this.getAllData(false)
+
   this.popupInformation('Les données ont bien été envoyées sur firebase')
 
   }
@@ -177,7 +198,7 @@ export class Tab3Page {
 
   }
 
-  async getAllData(){
+  async getAllData(showAlerte : boolean = true){
 
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     localStorageNames.forEach( async(localStorageName) => {
@@ -185,7 +206,9 @@ export class Tab3Page {
       await this.getDataFromFireStore(localStorageName[1])
     });
 
-    this.popupInformation('Les données ont bien été récupérées')
+    if(showAlerte){
+      this.popupInformation('Les données ont bien été récupérées')
+    }
 
   }
 

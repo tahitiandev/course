@@ -3,6 +3,7 @@ import { Articles, FamilleArticle } from '../models/articles';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from './utility.service';
 import { CodeArticle } from '../models/plats';
+import { Deleted } from '../models/deleted';
 
 @Injectable({
   providedIn: 'root'
@@ -292,11 +293,22 @@ export class ArticlesService {
       }
       if(famille.code === familleArticle.code){
 
+        const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code)
+
         const newFamilleArticle : FamilleArticle = {
           code : familleArticle.code.toUpperCase(),
           libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle),
-          firebase : false
+          firebase : false,
+          isModified : familleInfo.isModified,
+          documentId : familleInfo.documentId
         }
+
+        if(familleInfo.firebase){
+          newFamilleArticle.isModified =  true;
+        }else{
+          newFamilleArticle.isModified = false;
+        }
+
         await temp.push(newFamilleArticle)
         
       }
@@ -304,6 +316,35 @@ export class ArticlesService {
 
     this.storage.set(this.utility.localstorage['famille d\'articles'], temp)
 
+  }
+
+  async deleteFamilleArticle(familleArticle : FamilleArticle){
+    const familles : FamilleArticle[] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    const famillesNew : FamilleArticle [] = [];
+    for(let famille of familles){
+      if(famille.code != familleArticle.code){
+        famillesNew.push(famille)
+      }
+    }
+    
+    this.storage.set(this.utility.localstorage['famille d\'articles'], famillesNew)
+    
+    // Supprimer dans firebase
+    const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code);
+    if(familleInfo.firebase){
+      const deleted : Deleted = {
+        collectionName : this.utility.localstorage['famille d\'articles'],
+        documentId : familleInfo.documentId
+      }
+
+      var deletedInfo : Deleted [] = await this.storage.get('deleted');
+      deletedInfo.push(deleted)
+
+      console.log(deletedInfo)
+
+      this.storage.set('deleted', deletedInfo);
+    }
+    
   }
 
   async addNewFamilleArticleRealDataToLocalStorage(familleArticle : FamilleArticle){
