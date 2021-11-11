@@ -135,25 +135,24 @@ export class Tab3Page {
 
   this.popupInformation('Les données ont bien été envoyées sur firebase')
 
-  }
-   private async getDataFromFireStore(collectionName){
-    
-    this.firestore.collection(collectionName)
-                  .snapshotChanges()
-                  .subscribe((result) => {
+  }//postDataToFireStore
 
-                    var alldata = [];
-                    for(let data of result){
-                      var parseData : any = data.payload.doc.data();
-                      parseData.documentId = data.payload.doc.id
-                      
-                      alldata.push(parseData)
-                    }
 
-                    this.storage.set(collectionName, alldata)
-
-                  })    
-  }
+  private async getDataFromFireStore(collectionName){
+   
+   this.firestore.collection(collectionName)
+                 .snapshotChanges()
+                 .subscribe((result) => {
+                   var alldata = [];
+                   for(let data of result){
+                     var parseData : any = data.payload.doc.data();
+                     parseData.documentId = data.payload.doc.id
+                     
+                     alldata.push(parseData)
+                   }
+                   this.storage.set(collectionName, alldata)
+                 })    
+  } //getDataFromFireStore
 
   private async saveOnLocalStorage(collectionName : string, data){
     await this.storage.set(collectionName,data)

@@ -258,8 +258,15 @@ export class ArticleListPage implements OnInit {
         return showFamille
 
       }
-  
 
+      async deleteArticle(article : Articles){
+        
+        this.articleService.deleteArticle(article);
+        this.getArticle();
+
+      }
+  
+  
 
 
 }

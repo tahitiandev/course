@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { UtilityService } from './utility.service';
 import { CodeArticle } from '../models/plats';
 import { Deleted } from '../models/deleted';
+import { FirebaseService } from './firebase.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,8 @@ import { Deleted } from '../models/deleted';
 export class ArticlesService {
 
   constructor(private storage : Storage,
-              private utility : UtilityService) { }
+              private utility : UtilityService,
+              private firebaseService : FirebaseService) { }
 
     private articles : Articles [] = [
     {
@@ -318,6 +320,23 @@ export class ArticlesService {
 
   }
 
+  async deleteArticle(articleDeleted : Articles){
+
+    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+    const articlesNew : Articles [] = [];
+    for(let article of articles){
+      if(article.code != articleDeleted.code){
+        articlesNew.push(article)
+      }
+    }
+
+    this.storage.set(this.utility.localstorage.articles, articlesNew);
+
+    const articleInfo = await this.searchArticleByArticleCode(articleDeleted.code);
+    this.firebaseService.postToLocalStorageDeleted(articleInfo.firebase, this.utility.localstorage.articles, articleInfo.documentId);
+
+  }
+
   async deleteFamilleArticle(familleArticle : FamilleArticle){
     const familles : FamilleArticle[] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
     const famillesNew : FamilleArticle [] = [];
@@ -331,19 +350,7 @@ export class ArticlesService {
     
     // Supprimer dans firebase
     const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code);
-    if(familleInfo.firebase){
-      const deleted : Deleted = {
-        collectionName : this.utility.localstorage['famille d\'articles'],
-        documentId : familleInfo.documentId
-      }
-
-      var deletedInfo : Deleted [] = await this.storage.get('deleted');
-      deletedInfo.push(deleted)
-
-      console.log(deletedInfo)
-
-      this.storage.set('deleted', deletedInfo);
-    }
+    this.firebaseService.postToLocalStorageDeleted(familleInfo.firebase, this.utility.localstorage['famille d\'articles'], familleInfo.documentId);
     
   }
 

@@ -112,9 +112,60 @@ export class MenuService {
 
     // Je sauvegarde dans le localstorage
     await this.storage.set(this.utility.localstorage['menu de la semaine'], menuTmp)
+
+    
     
 
   }
+
+
+  async loadMenuOfTheWeek(){
+    
+    const today = await (await this.generateDateAujourdhui()).dateComplete
+    const menu = await this.storage.get('menus')
+    const lastMenu = await menu.slice(-1)[0];
+
+    if(today >= lastMenu.dateDebut && today <= lastMenu.dateFin){
+
+        return lastMenu
+
+    }else{
+      return null
+    }
+
+  }// loadMenuOfTheWeek
+
+  async generateDateAujourdhui(){
+    var date = await new Date();
+
+    // JOUR
+    var jourTmp = date.getDate();
+    var jour = jourTmp.toString()
+    if(jourTmp < 10){
+      jour = '0' + jour;
+    }
+    
+    // MOIS
+    var moisTmp = date.getMonth() + 1;
+    var mois = moisTmp.toString()
+    
+    if(moisTmp < 10){
+      mois = '0' + mois;
+    }
+    
+    // DATE COMPLETE
+    var today = await jour + "/" + mois+ "/" + date.getFullYear();
+
+    var infoDate = {
+      'jour' : jour,
+      'mois' : mois,
+      'annnee' : date.getFullYear(),
+      'dateComplete' : today
+    }
+
+    return infoDate;
+
+  } // generateDateAujourdhui
 
 
 

@@ -146,19 +146,22 @@ export class MenuTodayPage implements OnInit {
   private async generateDateAujourdhui(){
     var date = await new Date();
 
+    // JOUR
     var jourTmp = date.getDate();
     var jour = jourTmp.toString()
     if(jourTmp < 10){
       jour = '0' + jour;
     }
-
+    
+    // MOIS
     var moisTmp = date.getMonth() + 1;
     var mois = moisTmp.toString()
-
+    
     if(moisTmp < 10){
       mois = '0' + mois;
     }
-
+    
+    // DATE COMPLETE
     var today = await jour + "/" + mois+ "/" + date.getFullYear();
 
     var infoDate = {
@@ -172,30 +175,20 @@ export class MenuTodayPage implements OnInit {
 
   }
 
-
-
   async loadMenuOfTheWeek(){
-    
-    const today = await (await this.generateDateAujourdhui()).dateComplete
-    const menu = await this.storage.get('menus')
-    const lastMenu = await menu.slice(-1)[0];
-
-    if(today >= lastMenu.dateDebut && today <= lastMenu.dateFin){
-
-        this.menuDeLaSemaine.lundi = await lastMenu.lundi;
-        this.menuDeLaSemaine.mardi = await lastMenu.mardi;
-        this.menuDeLaSemaine.mercredi = await lastMenu.mercredi;
-        this.menuDeLaSemaine.jeudi = await lastMenu.jeudi;
-        this.menuDeLaSemaine.vendredi = await lastMenu.vendredi;
-        this.menuDeLaSemaine.samedi = await lastMenu.samedi;
-        this.menuDeLaSemaine.dimanche = await lastMenu.dimanche;
-        this.menuDeLaSemaine.dateDebut = await lastMenu.dateDebut;
-        this.menuDeLaSemaine.dateFin = await lastMenu.dateFin;
-
+    const menuDuJour : MenuDelaSemaine = await this.menuService.loadMenuOfTheWeek();
+    if(menuDuJour != null){
+        this.menuDeLaSemaine.lundi = await menuDuJour.lundi;
+        this.menuDeLaSemaine.mardi = await menuDuJour.mardi;
+        this.menuDeLaSemaine.mercredi = await menuDuJour.mercredi;
+        this.menuDeLaSemaine.jeudi = await menuDuJour.jeudi;
+        this.menuDeLaSemaine.vendredi = await menuDuJour.vendredi;
+        this.menuDeLaSemaine.samedi = await menuDuJour.samedi;
+        this.menuDeLaSemaine.dimanche = await menuDuJour.dimanche;
+        this.menuDeLaSemaine.dateDebut = await menuDuJour.dateDebut;
+        this.menuDeLaSemaine.dateFin = await menuDuJour.dateFin;
     }
-
   }
-
 
   initForm(){
     this.lundiForm = this.formbuilder.group({
@@ -292,14 +285,6 @@ export class MenuTodayPage implements OnInit {
     this.saveDataToLocalStorage()
 
   }
-
-  // onChange(event, jour){
-
-  //   if(jour === 'lundi'){
-  //     console.log(event.target.value)
-  //   }
-  //   // this.loadAndSavePlatDuJour(jour)
-  // }
 
   slideNext(slides){
     slides.slideNext()

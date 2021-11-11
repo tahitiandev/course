@@ -92,18 +92,11 @@ export class PlatsPage implements OnInit {
 
   }
 
-  supprimerPlat(index : number){
-    var platTemp : Plats [] = [];
-    for(let plat of this.plats){
-      if(plat.libelle != this.plats[index].libelle){
-        platTemp.push(plat)
-      } // if
-    } // for
-
+  async supprimerPlat(index : number){
+    
+    const platsNew = await this.platsService.deletePlat(index);
     this.plats = []
-    this.plats = platTemp
-
-    this.storage.set(this.utility.localstorage.Plats, platTemp)
+    this.plats = platsNew
 
   } // supprimerPlat
 

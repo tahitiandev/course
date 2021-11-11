@@ -3,6 +3,8 @@ import { Plats } from '../models/plats';
 import { UtilityService } from './utility.service';
 import { Storage } from '@ionic/storage';
 import { calcPossibleSecurityContexts } from '@angular/compiler/src/template_parser/binding_parser';
+import { Deleted } from '../models/deleted';
+import { FirebaseService } from './firebase.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,8 @@ import { calcPossibleSecurityContexts } from '@angular/compiler/src/template_par
 export class PlatsService {
 
   constructor(private utility : UtilityService,
-              private storage : Storage) { }
+              private storage : Storage,
+              private firebaseService : FirebaseService) { }
 
   private plats : Plats [] = [
     {
@@ -204,6 +207,28 @@ export class PlatsService {
       }
       return 0;
     })
+  }
+
+  async deletePlat(index : number){
+
+    const plats : Plats [] = await this.storage.get(this.utility.localstorage.Plats);
+    const platsNew : Plats [] = [];
+
+    for(let i = 0; i < plats.length; i++){
+      if(i != index){
+        platsNew.push(plats[i]);
+      }
+    }
+
+    this.storage.set(this.utility.localstorage.Plats, platsNew)
+
+    // delete to firebase
+    const platInfo : Plats = await this.searchPlatByLibelle(plats[index].libelle);
+    this.firebaseService.postToLocalStorageDeleted(platInfo.firebase, this.utility.localstorage.Plats, platInfo.documentId)
+
+    return platsNew;
+
+
   }
   
 }
