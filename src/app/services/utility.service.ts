@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
+import { Deleted } from '../models/deleted';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilityService {
 
-  constructor(public nav : NavController) { }
+  constructor(public nav : NavController,
+              private storage : Storage) { }
 
   public localstorage = {
     'articles' : 'articles',
@@ -42,5 +45,7 @@ export class UtilityService {
   transformToObject(obj){
     return Object.keys(obj).map((key) => [Number(key), obj[key]]);
   }
+
+  
 
 }
