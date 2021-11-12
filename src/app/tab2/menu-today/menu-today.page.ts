@@ -247,14 +247,12 @@ export class MenuTodayPage implements OnInit {
 
   async saveDataToLocalStorage(){
     await this.menuService.saveMenuToLocalStorage(this.menuDeLaSemaine)
-
   }
 
   loadAndSavePlatDuJour(jour : string){
 
     if(jour === 'lundi'){
       const selectedValue = this.lundiForm.get('plat').value.libelle
-      // console.log(selectedValue)
       this.getPlatByLibelle(selectedValue, jour)
     }
     if(jour === 'mardi'){

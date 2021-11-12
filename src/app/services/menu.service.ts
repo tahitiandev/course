@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { MenuDelaSemaine } from '../models/menuDeLaSemaine';
+import { FirebaseService } from './firebase.service';
 import { UtilityService } from './utility.service';
 
 @Injectable({
@@ -9,7 +10,8 @@ import { UtilityService } from './utility.service';
 export class MenuService {
 
   constructor(private storage :Storage,
-              private utility : UtilityService) { }
+              private utility : UtilityService,
+              private firebaseService : FirebaseService) { }
 
  private menuDeLaSemaine : MenuDelaSemaine [] = [
   {
@@ -68,8 +70,8 @@ export class MenuService {
       return data;
   }
 
-  async setDefaultValue(){
-    this.storage.set(this.utility.localstorage['menu de la semaine'], this.menuDeLaSemaine)
+  async setDefaultValue(menuDeLaSemaine : MenuDelaSemaine){
+    this.storage.set(this.utility.localstorage['menu de la semaine'], menuDeLaSemaine)
 
   }
 
@@ -77,7 +79,7 @@ export class MenuService {
   async saveMenuToLocalStorage(newMenu : MenuDelaSemaine){
 
     const menu = await this.storage.get(this.utility.localstorage['menu de la semaine']);
-    const lastMenu = await menu.find((result) => {
+    const lastMenu : MenuDelaSemaine = await menu.find((result) => {
       return result.dateDebut === newMenu.dateDebut && result.dateFin === newMenu.dateFin
     })
 
@@ -108,12 +110,19 @@ export class MenuService {
       // je rajoute le nouveau menu avec la nouvelle période
       await menuTmp.push(newMenu)
 
+      // Sync to firebase
+      if(lastMenu.firebase){
+        this.utility.
+      }
+
     }
 
     // Je sauvegarde dans le localstorage
     await this.storage.set(this.utility.localstorage['menu de la semaine'], menuTmp)
 
-    
+    // Sauvegarde to firebase
+
+
     
 
   }
@@ -167,7 +176,101 @@ export class MenuService {
 
   } // generateDateAujourdhui
 
+  async semaineEnCours(){
 
+    var jourToday=new Date()
+    var jourDeLaSemaine=new Array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi");
+    const today = await this.generateDateAujourdhui()
+    
+    var aujourrhui = new Date(Date.parse(today.mois + '/' + today.jour + '/' + today.annnee))
 
+    var menuDeLaSemaine : MenuDelaSemaine = {
+      lundi : '',
+      mardi : '',
+      mercredi : '',
+      jeudi : '',
+      vendredi : '',
+      samedi : '',
+      dimanche : '',
+      dateDebut : '',
+      dateFin : '',
+      firebase : false}
+
+    switch(jourDeLaSemaine[jourToday.getDay()]){
+      case 'Lundi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(0,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
+        break;
+      case 'Mardi':
+
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-1,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
+
+        break;
+      case 'Mercredi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-2,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(4,aujourrhui)
+        break;
+      case 'Jeudi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-3,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(3,aujourrhui)
+        break;
+      case 'Vendredi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-4,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(2,aujourrhui)
+        break;
+      case 'Samedi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-5,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(1,aujourrhui)
+        break;
+      case 'Dimanche':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-6,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(0,aujourrhui)
+        break;
+    }
+
+    return menuDeLaSemaine;
+
+  }
+
+  private ajoutOuSupprimeDesJoursDuneDate(jour : number, date : Date){
+
+    var finDeSemaine = new Date()
+    finDeSemaine.setDate(date.getDate() + jour)
+    var NewFinDeSemaine = this.miseEnformeDate(finDeSemaine).dateComplete
+    return NewFinDeSemaine
+
+  }
+
+  private miseEnformeDate(dateRenseigne : Date){
+
+    // JOUR
+    var jourTmp = dateRenseigne.getDate()
+    var jour = jourTmp.toString()
+    if(jourTmp < 10){
+      jour = '0' + jour;
+    }
+    
+    // MOIS
+    var moisTmp = dateRenseigne.getMonth() + 1;
+    var mois = moisTmp.toString()
+
+    if(moisTmp < 10){
+      mois = '0' + mois;
+    }
+
+    // DATE COMPLETE
+    var today = jour + "/" + mois+ "/" + dateRenseigne.getFullYear();
+
+    var infoDate = {
+      'jour' : jour,
+      'mois' : mois,
+      'annnee' : dateRenseigne.getFullYear(),
+      'dateComplete' : today
+    }
+
+    return infoDate
+
+  }
 
 }
