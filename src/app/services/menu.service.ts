@@ -70,11 +70,10 @@ export class MenuService {
       return data;
   }
 
-  async setDefaultValue(menuDeLaSemaine : MenuDelaSemaine){
-    this.storage.set(this.utility.localstorage['menu de la semaine'], menuDeLaSemaine)
+  async setDefaultValue(){
+    this.storage.set(this.utility.localstorage['menu de la semaine'], this.menuDeLaSemaine)
 
   }
-
 
   async saveMenuToLocalStorage(newMenu : MenuDelaSemaine){
 
@@ -86,8 +85,10 @@ export class MenuService {
     var menuTmp : MenuDelaSemaine[] = [];
     const menuLS = await this.storage.get(this.utility.localstorage['menu de la semaine'])
 
+    console.log(this.utility.isUndefined(lastMenu))
+
     // Si le menu n'existe pas pour la semaine en cours
-    if(lastMenu === 'undefined'){
+    if(this.utility.isUndefined(lastMenu)){
 
       // Je charge le menu existant
       for(let menus of menuLS){
@@ -99,7 +100,9 @@ export class MenuService {
     }
 
     // Si le menu existe déjà pour la semaine en cours
-    if(lastMenu != 'undefined'){
+    if(!this.utility.isUndefined(lastMenu)){
+
+      console.log(lastMenu)
 
       for(let menus of menuLS){
         if(menus.dateDebut != newMenu.dateDebut && menus.dateFin != newMenu.dateFin){
@@ -111,19 +114,16 @@ export class MenuService {
       await menuTmp.push(newMenu)
 
       // Sync to firebase
-      if(lastMenu.firebase){
-        this.utility.
-      }
+      this.firebaseService.postToLocalStorageDeleted(
+        lastMenu.firebase,
+        this.utility.localstorage['menu de la semaine'],
+        lastMenu.documentId
+      )
 
     }
 
     // Je sauvegarde dans le localstorage
-    await this.storage.set(this.utility.localstorage['menu de la semaine'], menuTmp)
-
-    // Sauvegarde to firebase
-
-
-    
+    await this.storage.set(this.utility.localstorage['menu de la semaine'], menuTmp)    
 
   }
 

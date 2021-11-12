@@ -46,6 +46,13 @@ export class UtilityService {
     return Object.keys(obj).map((key) => [Number(key), obj[key]]);
   }
 
+  isUndefined(anyData : any){
+    if(anyData === 'undefined'){
+      return true;
+    }else{
+      return false;
+    }
+  }
   
 
 }

@@ -7,6 +7,7 @@ import { Storage } from '@ionic/storage';
 import { UtilityService } from 'src/app/services/utility.service';
 import { MenuDelaSemaine } from 'src/app/models/menuDeLaSemaine';
 import { MenuService } from 'src/app/services/menu.service';
+import { Deleted } from 'src/app/models/deleted';
 
 @Component({
   selector: 'app-menu-today',

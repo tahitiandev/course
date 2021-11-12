@@ -17,9 +17,12 @@ export class FirebaseService {
       }
 
       var deletedInfo : Deleted [] = await this.storage.get('deleted');
-      deletedInfo.push(deleted)
 
-      console.log(deletedInfo)
+      for(let element of deletedInfo){
+        if(element.documentId != documentId){
+          deletedInfo.push(element)
+        }
+      }
 
       this.storage.set('deleted', deletedInfo);
     }
