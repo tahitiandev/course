@@ -29,7 +29,7 @@ export class IngredientPage implements OnInit {
   platDetail : Plats;
   ingredients = [];
   articles : Articles [] = [];
-  newIngredient : Articles;
+  newIngredient : any;
 
   constructor(private snap : ActivatedRoute,
               private storage : Storage,
@@ -39,7 +39,6 @@ export class IngredientPage implements OnInit {
               private platsservice : PlatsService) { }
 
   ngOnInit() {
-    // this.articleService.setArticleToLocalStorage()
     this.loadPlatsFromLocalStorage();
   }
 
@@ -75,6 +74,7 @@ export class IngredientPage implements OnInit {
 
     const articles = await this.storage.get(this.utility.localstorage.articles)
     this.articles = articles
+    return articles;
 
   }
 
@@ -102,7 +102,7 @@ export class IngredientPage implements OnInit {
 
       }
 
-    }
+    } // for
 
   }//getIngredient
 
@@ -248,15 +248,12 @@ export class IngredientPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: async (ingredient : Articles) => {
-
-            // console.log(ingredient)
+          handler: async (ingredient : any) => {
 
             var newIngredient = {
-              code : ingredient.code,
+              codeArticle : ingredient.code,
               libelle : ingredient.libelle,
-              prix : ingredient.prix,
-              firebase : false
+              prix : ingredient.prix
             };
 
             this.newIngredient = newIngredient
@@ -279,7 +276,8 @@ export class IngredientPage implements OnInit {
       inputs: [
         {
           type : 'number',
-          name : 'quantite'
+          name : 'quantite',
+          value : 1
         }
       ],
       buttons: [
@@ -294,7 +292,7 @@ export class IngredientPage implements OnInit {
           text: 'Ok',
           handler: async (resultat) => {
             this.newIngredient = {
-              code : this.newIngredient.code,
+              codeArticle : this.newIngredient.codeArticle,
               libelle : this.newIngredient.libelle,
               prix : this.newIngredient.prix,
               quantite : resultat.quantite,
@@ -307,16 +305,21 @@ export class IngredientPage implements OnInit {
             })
 
             plat.codeArticle.push({
-               codeArticle : this.newIngredient.code,
+               codeArticle : this.newIngredient.codeArticle,
                quantite : this.newIngredient.quantite
             })
+
+            if(plat.firebase){
+              plat.isModified = true;
+            }else{
+              plat.isModified = false;
+            }
 
             this.newIngredient = {
               code : '',
               libelle : '',
               prix : 0,
-              quantite : 0,
-              firebase : false
+              quantite : 0
             }
 
             var plats : Plats [] = [];
@@ -358,6 +361,11 @@ export class IngredientPage implements OnInit {
       inputs: [
         {
           type : 'text',
+          name : 'codeArticle',
+          value : this.ingredients[index].codeArticle
+        },
+        {
+          type : 'text',
           name : 'libelle',
           value : this.ingredients[index].libelle
         },
@@ -378,13 +386,16 @@ export class IngredientPage implements OnInit {
         },
         {
           text: 'Ok',
-          handler: async (resultat : CodeArticle) => {
+          handler: async (resultat : any) => {
 
             var codeArticles : CodeArticle [] = [];
 
             for(var i = 0; i < this.ingredients.length; i++){
               if(i === index){
-                codeArticles.push(resultat)
+                codeArticles.push({
+                  codeArticle :resultat.codeArticle,
+                  quantite : resultat.quantite
+                })
               }else{
                 codeArticles.push({
                   codeArticle :this.ingredients[i].codeArticle,
@@ -393,13 +404,26 @@ export class IngredientPage implements OnInit {
               }
             }
 
+            const platsInfo = await this.articles.find(s => {
+              return s.libelle === this.libelle;
+            })
+
             var plat : Plats = {
               libelle : this.libelle,
               codeArticle : codeArticles,
-              firebase : false
+              prix : platsInfo.prix,
+              firebase : platsInfo.firebase,
+              isModified : platsInfo.isModified,
+              documentId : platsInfo.documentId
             }
 
-            // console.log(plat)
+            if(platsInfo.firebase){
+              plat.isModified = true;
+            }else{
+              plat.isModified = false;
+            }
+            
+
             
             this.platsservice.updatePlatToLocalStorage(plat)
 

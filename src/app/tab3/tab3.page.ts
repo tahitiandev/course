@@ -7,6 +7,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 import { Articles } from '../models/articles';
+import { Deleted } from '../models/deleted';
 
 @Component({
   selector: 'app-tab3',
@@ -29,6 +30,7 @@ export class Tab3Page {
               private firestore : AngularFirestore,
               private alertController : AlertController) {
                 this.initSetting()
+
               } // constructor
   
   async initSetting(){
@@ -88,9 +90,19 @@ export class Tab3Page {
             await this.firestore.collection(localStorageName[1])
                                 .add(data)
             dataAjour.push(data)
-          }
+          }// si la donnée a déjà été envoyé dans firebase
           else{
+
+            // Si la données a été modifié
+            if(data.isModified){
+              await this.firestore.collection(localStorageName[1])
+                                  .doc(data.documentId)
+                                  .delete()
+              await this.firestore.collection(localStorageName[1])
+                                  .add(data)
+            }
             dataAjour.push(data)
+            
           }
           
         }); // foreach datafromLocalName
@@ -102,27 +114,45 @@ export class Tab3Page {
 
   }); // foreach localStorageNames
 
+  // Suppression des données dans firebase
+  const deletedData : Deleted [] = await this.storage.get('deleted');
+
+  if(deletedData.length > 0){
+    for(let data of deletedData){
+       await this.firestore.collection(data.collectionName)
+                           .doc(data.documentId)
+                           .delete()
+    } // for
+
+    // Je vide le localstorage deleted
+    const tableauVide : Deleted [] = []
+    this.storage.set('deleted',tableauVide)
+
+  }
+
+  // Récupérer les données de firebase
+  this.getAllData(false)
+
   this.popupInformation('Les données ont bien été envoyées sur firebase')
 
-  }
+  }//postDataToFireStore
 
-   alldataFromFireBase : any [] = []
 
-   private async getDataFromFireStore(collectionName){
-    
-    this.firestore.collection(collectionName)
-                  .snapshotChanges()
-                  .subscribe((result) => {
-
-                    var alldata = [];
-                    for(let data of result){
-                      alldata.push(data.payload.doc.data())
-                    }
-
-                    this.storage.set(collectionName, alldata)
-
-                  })    
-  }
+  private async getDataFromFireStore(collectionName){
+   
+   this.firestore.collection(collectionName)
+                 .snapshotChanges()
+                 .subscribe((result) => {
+                   var alldata = [];
+                   for(let data of result){
+                     var parseData : any = data.payload.doc.data();
+                     parseData.documentId = data.payload.doc.id
+                     
+                     alldata.push(parseData)
+                   }
+                   this.storage.set(collectionName, alldata)
+                 })    
+  } //getDataFromFireStore
 
   private async saveOnLocalStorage(collectionName : string, data){
     await this.storage.set(collectionName,data)
@@ -167,7 +197,7 @@ export class Tab3Page {
 
   }
 
-  async getAllData(){
+  async getAllData(showAlerte : boolean = true){
 
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     localStorageNames.forEach( async(localStorageName) => {
@@ -175,7 +205,9 @@ export class Tab3Page {
       await this.getDataFromFireStore(localStorageName[1])
     });
 
-    this.popupInformation('Les données ont bien été récupérées')
+    if(showAlerte){
+      this.popupInformation('Les données ont bien été récupérées')
+    }
 
   }
 

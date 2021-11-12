@@ -121,5 +121,10 @@ export class FamilleListPage implements OnInit {
     this.nav.navigateRoot('tabs/tab3/famille-detail/' + code)
   }
 
+  deleteFamilleArticle(famille : FamilleArticle){
+    this.articleService.deleteFamilleArticle(famille)
+    this.initFamilleFromDataLocalStorage()
+  }
+
 
 }

@@ -3,6 +3,8 @@ import { Articles, FamilleArticle } from '../models/articles';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from './utility.service';
 import { CodeArticle } from '../models/plats';
+import { Deleted } from '../models/deleted';
+import { FirebaseService } from './firebase.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,8 @@ import { CodeArticle } from '../models/plats';
 export class ArticlesService {
 
   constructor(private storage : Storage,
-              private utility : UtilityService) { }
+              private utility : UtilityService,
+              private firebaseService : FirebaseService) { }
 
     private articles : Articles [] = [
     {
@@ -292,11 +295,22 @@ export class ArticlesService {
       }
       if(famille.code === familleArticle.code){
 
+        const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code)
+
         const newFamilleArticle : FamilleArticle = {
           code : familleArticle.code.toUpperCase(),
           libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle),
-          firebase : false
+          firebase : false,
+          isModified : familleInfo.isModified,
+          documentId : familleInfo.documentId
         }
+
+        if(familleInfo.firebase){
+          newFamilleArticle.isModified =  true;
+        }else{
+          newFamilleArticle.isModified = false;
+        }
+
         await temp.push(newFamilleArticle)
         
       }
@@ -304,6 +318,40 @@ export class ArticlesService {
 
     this.storage.set(this.utility.localstorage['famille d\'articles'], temp)
 
+  }
+
+  async deleteArticle(articleDeleted : Articles){
+
+    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+    const articlesNew : Articles [] = [];
+    for(let article of articles){
+      if(article.code != articleDeleted.code){
+        articlesNew.push(article)
+      }
+    }
+
+    this.storage.set(this.utility.localstorage.articles, articlesNew);
+
+    const articleInfo = await this.searchArticleByArticleCode(articleDeleted.code);
+    this.firebaseService.postToLocalStorageDeleted(articleInfo.firebase, this.utility.localstorage.articles, articleInfo.documentId);
+
+  }
+
+  async deleteFamilleArticle(familleArticle : FamilleArticle){
+    const familles : FamilleArticle[] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    const famillesNew : FamilleArticle [] = [];
+    for(let famille of familles){
+      if(famille.code != familleArticle.code){
+        famillesNew.push(famille)
+      }
+    }
+    
+    this.storage.set(this.utility.localstorage['famille d\'articles'], famillesNew)
+    
+    // Supprimer dans firebase
+    const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code);
+    this.firebaseService.postToLocalStorageDeleted(familleInfo.firebase, this.utility.localstorage['famille d\'articles'], familleInfo.documentId);
+    
   }
 
   async addNewFamilleArticleRealDataToLocalStorage(familleArticle : FamilleArticle){

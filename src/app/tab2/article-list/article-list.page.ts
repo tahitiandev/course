@@ -60,15 +60,34 @@ export class ArticleListPage implements OnInit {
         }
         }, {
         text: 'Ok',
-        handler: (result : Articles) => {
+        handler: async (result : Articles) => {
+          var articleAJour : Articles;
 
-            var articleAJour : Articles;
+          var allArticle = await this.storage.get(this.u.localstorage.articles);
+          var oldDataArticle = await allArticle.find(s => {
+            return s.code === result.code;
+          })
+
+          if(oldDataArticle.firebase){
             articleAJour = {
               code : result.code,
               libelle : result.libelle,
               prix : result.prix,
-              firebase : false
+              firebase : true,
+              isModified : true,
+              documentId :oldDataArticle.documentId
             }
+          }
+          else {
+            articleAJour = {
+              code : result.code,
+              libelle : result.libelle,
+              prix : result.prix,
+              firebase : false,
+              isModified : false,
+              documentId :oldDataArticle.documentId
+            }
+          }
 
             this.articleService.updateArticle(articleAJour).then(() => {
               this.getArticle()
@@ -110,7 +129,6 @@ export class ArticleListPage implements OnInit {
         role: 'cancel',
         cssClass: 'secondary',
       handler: () => {
-        console.log('Confirm Cancel');
       }
       }, {
       text: 'Ok',
@@ -172,7 +190,7 @@ export class ArticleListPage implements OnInit {
 
 
 
-        async getArticle(){
+    async getArticle(){
       const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
       const famillesLS : FamilleArticle [] = await this.storage.get(this.u.localstorage['famille d\'articles'])
       const familles = this.articleService.sortByLibelleFamilleArticle(famillesLS)
@@ -193,14 +211,16 @@ export class ArticleListPage implements OnInit {
               prixModifier : article.prixModifier,
               quantite : article.quantite,
               famille : familles[i].libelle,
-              firebase : false
+              firebase : article.firebase,
+              isModified : article.isModified,
+              documentId : article.documentId
             }
 
             groupByArticle.push(articleGroup)
           } // if          
         }
 
-      } // for 1      
+      } // for 1
 
       const articles = await this.articleService.sortByArticleName(groupByArticle)
       this.articles = articles;
@@ -238,8 +258,15 @@ export class ArticleListPage implements OnInit {
         return showFamille
 
       }
-  
 
+      async deleteArticle(article : Articles){
+        
+        this.articleService.deleteArticle(article);
+        this.getArticle();
+
+      }
+  
+  
 
 
 }

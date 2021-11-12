@@ -5,11 +5,15 @@ export interface Articles{
     prixModifier? : number;
     quantite?:number;
     famille? : string;
-    firebase : boolean;
+    firebase? : boolean;
+    isModified? : boolean;
+    documentId? : string;
 }
 
 export interface FamilleArticle{
     code : string;
     libelle : string;
-    firebase : boolean
+    firebase : boolean;
+    isModified? : boolean;
+    documentId? : string;
 }
