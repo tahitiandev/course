@@ -49,6 +49,7 @@ export class AppComponent implements OnInit {
       this.setMenu()
       this.initSetting()
       this.initTheme()
+      this.setDeletedElement()
     // }
   }
 
@@ -80,6 +81,12 @@ export class AppComponent implements OnInit {
     const menues = await this.menuService.getMenuFromLocaoStorage()
     if(menues === null){
       await this.menuService.setDefaultValue()
+    }
+  }
+  async setDeletedElement(){
+    const deletedElement = await this.storage.get('deleted')
+    if(deletedElement === null){
+      this.storage.set('deleted',[])
     }
   }
 

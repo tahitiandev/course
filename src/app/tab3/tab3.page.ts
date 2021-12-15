@@ -6,8 +6,10 @@ import { Storage } from '@ionic/storage';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
-import { Articles } from '../models/articles';
+import { Articles, FamilleArticle } from '../models/articles';
 import { Deleted } from '../models/deleted';
+import { ArticlesService } from '../services/articles.service';
+import { FirebaseService } from '../services/firebase.service';
 
 @Component({
   selector: 'app-tab3',
@@ -28,11 +30,35 @@ export class Tab3Page {
   constructor(private utility : UtilityService,
               private storage : Storage,
               private firestore : AngularFirestore,
-              private alertController : AlertController) {
+              private alertController : AlertController,
+              private articleService : ArticlesService,
+              private firebaseService : FirebaseService) {
                 this.initSetting()
-
+                // this.storage.set('deleted',[])
               } // constructor
   
+  async step(){
+    const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
+    for(let divers of localStorageNames){
+      if(divers[1] != 'settings'){
+        this.articleService.changeValueiSModified(divers[1], false)
+      }
+    }
+  }
+
+  async consoleLog(){
+    const articlesLS : Articles[] = await this.storage.get('articles');
+    // console.log(articlesLS)
+    const articles : Articles [] = this.articleService.sortByArticleCode(articlesLS)
+    console.log(articles)
+
+  }
+  async consoleLogFamile(){
+    const familles : FamilleArticle []  = await this.storage.get('familles');
+    console.log(familles)
+
+  }
+
   async initSetting(){
     const setting = await this.storage.get('settings')
 
@@ -116,7 +142,8 @@ export class Tab3Page {
 
   // Suppression des données dans firebase
   const deletedData : Deleted [] = await this.storage.get('deleted');
-
+  // console.log(deletedData.length)
+  // ICI
   if(deletedData.length > 0){
     for(let data of deletedData){
        await this.firestore.collection(data.collectionName)
@@ -201,9 +228,16 @@ export class Tab3Page {
 
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     localStorageNames.forEach( async(localStorageName) => {
-      if(localStorageName[1] != 'settings')
-      await this.getDataFromFireStore(localStorageName[1])
+      if(localStorageName[1] != 'settings'){
+        await this.getDataFromFireStore(localStorageName[1])
+      }      
     });
+    
+    for(let storageName of localStorageNames){
+      if(storageName[1] != 'settings'){
+        this.articleService.changeValueiSModified(storageName[1], false)
+      }
+    }
 
     if(showAlerte){
       this.popupInformation('Les données ont bien été récupérées')
@@ -241,7 +275,5 @@ export class Tab3Page {
 
   await alert.present()
 }
-
-
 
 }

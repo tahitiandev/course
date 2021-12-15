@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { ArticleListPageRoutingModule } from './article-list-routing.module';
 
 import { ArticleListPage } from './article-list.page';
-import { OrderByArticlePipe } from 'src/app/pipes/order-by-article.pipe';
+import { ArticlesFilterPipe } from 'src/app/pipes/articles-filter.pipe';
 
 @NgModule({
   imports: [
@@ -16,6 +16,6 @@ import { OrderByArticlePipe } from 'src/app/pipes/order-by-article.pipe';
     IonicModule,
     ArticleListPageRoutingModule
   ],
-  declarations: [ArticleListPage]
+  declarations: [ArticleListPage,ArticlesFilterPipe]
 })
 export class ArticleListPageModule {}

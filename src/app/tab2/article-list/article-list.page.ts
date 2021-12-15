@@ -64,7 +64,7 @@ export class ArticleListPage implements OnInit {
           var articleAJour : Articles;
 
           var allArticle = await this.storage.get(this.u.localstorage.articles);
-          var oldDataArticle = await allArticle.find(s => {
+          var oldDataArticle : Articles = await allArticle.find(s => {
             return s.code === result.code;
           })
 
@@ -73,9 +73,13 @@ export class ArticleListPage implements OnInit {
               code : result.code,
               libelle : result.libelle,
               prix : result.prix,
+              prixModifier : oldDataArticle.prixModifier,//
+              quantite : oldDataArticle.quantite, //
               firebase : true,
               isModified : true,
-              documentId :oldDataArticle.documentId
+              documentId :oldDataArticle.documentId,
+              familleCode : oldDataArticle.familleCode, //
+              familleLibelle : oldDataArticle.familleLibelle //
             }
           }
           else {
@@ -83,9 +87,13 @@ export class ArticleListPage implements OnInit {
               code : result.code,
               libelle : result.libelle,
               prix : result.prix,
+              prixModifier : oldDataArticle.prixModifier,//
+              quantite : oldDataArticle.quantite, //
               firebase : false,
               isModified : false,
-              documentId :oldDataArticle.documentId
+              documentId :oldDataArticle.documentId,
+              familleCode : oldDataArticle.familleCode, //
+              familleLibelle : oldDataArticle.familleLibelle //
             }
           }
 
@@ -202,7 +210,8 @@ export class ArticleListPage implements OnInit {
 
         for(let article of articlesLS){
 
-          if(article.code.substring(0,3) === familles[i].code.substring(0,3)){
+          // if(article.code.substring(0,3) === familles[i].code.substring(0,3)){
+          if(article.familleCode === familles[i].code){
             
             var articleGroup : Articles = {
               code : article.code,
@@ -210,7 +219,8 @@ export class ArticleListPage implements OnInit {
               prix : article.prix,
               prixModifier : article.prixModifier,
               quantite : article.quantite,
-              famille : familles[i].libelle,
+              familleCode : article.familleCode,
+              familleLibelle : familles[i].libelle,
               firebase : article.firebase,
               isModified : article.isModified,
               documentId : article.documentId
@@ -237,12 +247,12 @@ export class ArticleListPage implements OnInit {
 
 
 
-      async isFamilleContainsAritcle(famille :  FamilleArticle){
+      async isFamilleContainsAritcle(famille : FamilleArticle){
 
         const result : Articles [] = [];
         
         for(let i = 0;  i < this.articles.length; i++){
-          if(this.articles[i].famille === famille.libelle){
+          if(this.articles[i].familleLibelle === famille.libelle){
             result.push(this.articles[i])
           }
         }
@@ -261,8 +271,8 @@ export class ArticleListPage implements OnInit {
 
       async deleteArticle(article : Articles){
         
-        this.articleService.deleteArticle(article);
-        this.getArticle();
+        await this.articleService.deleteArticle(article);
+        await this.getArticle();
 
       }
   

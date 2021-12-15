@@ -73,37 +73,27 @@
       <ion-icon name="sync"></ion-icon>
     </ion-item>
 
-    <ion-item button (click)="this.clearLocalStorage()">
+    <ion-item button (click)="consoleLog()">
       <ion-label>
-        <h3>Vider les données</h3>
+        <h3>Console.log <strong>article</strong></h3>
+      </ion-label>
+      <ion-icon name="trash-outline"></ion-icon>
+    </ion-item>
+    <ion-item button (click)="consoleLogFamile()">
+      <ion-label>
+        <h3>Console.log <strong>familles</strong></h3>
+      </ion-label>
+      <ion-icon name="trash-outline"></ion-icon>
+    </ion-item>
+
+    <ion-item button (click)="this.step()">
+      <ion-label>
+        <h3>isModified = false</h3>
       </ion-label>
       <ion-icon name="trash-outline"></ion-icon>
     </ion-item>
 
   </ion-item-group>
-
-  <!-- <ion-item-group>
-    <ion-item-divider>
-      <ion-label>test</ion-label>
-    </ion-item-divider>
-
-    <ion-item button (click)="this.getDataFromFireStore('familles')">
-      <ion-label>
-        <h3>test firebase</h3>
-      </ion-label>
-      <ion-icon name="sync"></ion-icon>
-    </ion-item>
-
-    <ion-item button (click)="this.asupprimer('familles')">
-      <ion-label>
-        <h3>test localstorage</h3>
-      </ion-label>
-      <ion-icon name="sync"></ion-icon>
-    </ion-item>
-
-
-
-  </ion-item-group> -->
 
 </ion-content>
 

@@ -53,6 +53,19 @@ export class UtilityService {
       return false;
     }
   }
+
+  ConsoleLog(local : string, colonne? : string){
+
+    if(!colonne){
+      this.storage.get(local).then(s => console.log(s))
+    }else{
+      this.storage.get(local).then(s => {
+        for(let x of s){
+          console.log(x.colonne)
+        }
+      })
+    }
+  }
   
 
 }
