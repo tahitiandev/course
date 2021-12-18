@@ -353,17 +353,6 @@ export class ArticlesService {
     this.storage.set(this.utility.localstorage.articles, articlesNew)
 
   }
-
-  async changeValueiSModified(collectionName : string , trueOrFalse : boolean){
-    const collectionNames : any [] = await this.storage.get(collectionName);
-    var collectionNameNew : any [] = [];
-    for(let collectionName of collectionNames){
-      collectionName.isModified = trueOrFalse;
-      collectionNameNew.push(collectionName)
-    }
-    this.storage.set(collectionName, collectionNameNew)
-  }
-
   async setDefaultArticleData(){
     await this.storage.set(this.utility.localstorage.articles, this.articles)
   }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
+import { Deleted } from '../models/deleted';
 import { MenuDelaSemaine } from '../models/menuDeLaSemaine';
 import { FirebaseService } from './firebase.service';
 import { UtilityService } from './utility.service';
@@ -85,8 +86,6 @@ export class MenuService {
     var menuTmp : MenuDelaSemaine[] = [];
     const menuLS = await this.storage.get(this.utility.localstorage['menu de la semaine'])
 
-    console.log(this.utility.isUndefined(lastMenu))
-
     // Si le menu n'existe pas pour la semaine en cours
     if(this.utility.isUndefined(lastMenu)){
 
@@ -102,29 +101,50 @@ export class MenuService {
     // Si le menu existe déjà pour la semaine en cours
     if(!this.utility.isUndefined(lastMenu)){
 
-      console.log(lastMenu)
-
       for(let menus of menuLS){
         if(menus.dateDebut != newMenu.dateDebut && menus.dateFin != newMenu.dateFin){
           await menuTmp.push(menus)
         }
       }
 
-      // je rajoute le nouveau menu avec la nouvelle période
-      await menuTmp.push(newMenu)
+      // Vérifie si le menu a déjà été envoyé sur firebase
+      if(newMenu.firebase){
+        // je rajoute le nouveau menu avec la nouvelle période
+        newMenu.isModified = true;
+        await menuTmp.push(newMenu);
+  
+        // Sync to firebase
+        this.firebaseService.postToLocalStorageDeleted(
+          newMenu.firebase,
+          this.utility.localstorage['menu de la semaine'],
+          newMenu.documentId
+        )
+         
 
-      // Sync to firebase
-      this.firebaseService.postToLocalStorageDeleted(
-        lastMenu.firebase,
-        this.utility.localstorage['menu de la semaine'],
-        lastMenu.documentId
-      )
+      }//if
+      else{
+        await menuTmp.push(newMenu);
+      }
 
-    }
+
+    }//if
 
     // Je sauvegarde dans le localstorage
     await this.storage.set(this.utility.localstorage['menu de la semaine'], menuTmp)    
 
+  }
+
+  sortMenuByDate(menus : Array<MenuDelaSemaine>){
+    return menus.sort((a,b) => {
+      let x  = a.dateDebut;
+      let y  = b.dateDebut;
+      if(x > y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
   }
 
 

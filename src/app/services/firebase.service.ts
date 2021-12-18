@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Deleted } from '../models/deleted';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { UtilityService } from './utility.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 export class FirebaseService {
 
   constructor(private storage : Storage,
-              private firestore : AngularFirestore) { }
+              private firestore : AngularFirestore,
+              private utility : UtilityService) { }
   
   // Méthode qui permet de rajouter les données à supprimer sur firebase dans un localstorage nommé "deleted"
   async postToLocalStorageDeleted(firebaseInfo : boolean, collectionName : string, documentId : string){
@@ -23,8 +25,14 @@ export class FirebaseService {
 
       // Get toutes les valeurs à supprimer
       var deletedInfo : Deleted [] = await this.storage.get('deleted');
-      deletedInfo.push(deleted)
 
+      // Vérifie si la valeur n'est pas déjà présente dans le localstorage deleted
+      const isExist = await deletedInfo.find(alldata => {
+        return alldata.documentId === documentId
+      })
+      if(isExist === undefined){
+        deletedInfo.push(deleted)
+      }
       this.storage.set('deleted', deletedInfo);
     }//if
   }

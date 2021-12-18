@@ -41,7 +41,7 @@ export class Tab3Page {
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     for(let divers of localStorageNames){
       if(divers[1] != 'settings'){
-        this.articleService.changeValueiSModified(divers[1], false)
+        this.utility.changeValueiSModified(divers[1], false)
       }
     }
   }
@@ -142,8 +142,7 @@ export class Tab3Page {
 
   // Suppression des données dans firebase
   const deletedData : Deleted [] = await this.storage.get('deleted');
-  // console.log(deletedData.length)
-  // ICI
+
   if(deletedData.length > 0){
     for(let data of deletedData){
        await this.firestore.collection(data.collectionName)
@@ -197,7 +196,6 @@ export class Tab3Page {
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => {
-            console.log('Confirm Cancel: blah');
           }
         }, {
           text: 'Oui',
@@ -235,7 +233,7 @@ export class Tab3Page {
     
     for(let storageName of localStorageNames){
       if(storageName[1] != 'settings'){
-        this.articleService.changeValueiSModified(storageName[1], false)
+        this.utility.changeValueiSModified(storageName[1], false)
       }
     }
 

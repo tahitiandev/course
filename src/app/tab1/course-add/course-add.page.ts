@@ -86,19 +86,6 @@ export class CourseAddPage implements OnInit, OnChanges {
       return articles.libelle.indexOf(serachValue) > 0
     })
 
-    // console.log(result)
-
-
-    // for(let article of this.articles){
-    //   const x = await article.libelle.toLowerCase()
-      // if(x.indexOf(this.searchValue) > 0){
-      //   console.log(article)
-      //   // articleSearch.push(article)
-      // }
-    // }
-
-    // console.log(articleSearch)
-
     this.articles = []
     this.articles = result;
   }

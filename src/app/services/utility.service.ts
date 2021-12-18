@@ -66,6 +66,26 @@ export class UtilityService {
       })
     }
   }
+
+  async changeValueiSModified(collectionName : string , trueOrFalse : boolean){
+    const collectionNames : any [] = await this.storage.get(collectionName);
+    var collectionNameNew : any [] = [];
+    for(let collectionName of collectionNames){
+      collectionName.isModified = trueOrFalse;
+      collectionNameNew.push(collectionName)
+    }
+    this.storage.set(collectionName, collectionNameNew)
+  }
+
+  async changeValueiSModifiedForOneElement(collectionName : string, trueOrFalse : boolean){
+    const collectionNames : any [] = await this.storage.get(collectionName);
+    var collectionNameNew : any [] = [];
+    for(let collectionName of collectionNames){
+      collectionName.isModified = trueOrFalse;
+      collectionNameNew.push(collectionName)
+    }
+    this.storage.set(collectionName, collectionNameNew)
+  }
   
 
 }

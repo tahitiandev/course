@@ -109,6 +109,30 @@ export class ArticleListPage implements OnInit {
       await alert.present();
 
     }
+    
+    private async getFamilleQuiOntDesArticles(){
+      const articles : Articles [] = await this.storage.get(this.u.localstorage.articles);
+      const codeFamille = [];
+      for(let article of articles){
+        codeFamille.push(article.familleCode)
+      }
+      var uniqueCodeFamille = [...new Set(codeFamille)]
+      const familles : FamilleArticle [] = [];
+      for(let code of uniqueCodeFamille){
+        var famille = await this.articleService.searchFamilleByCode(code)
+        familles.push(famille)
+      }
+
+      const familleSortByLibelle = await this.articleService.sortByLibelleFamilleArticle(familles)
+
+      return familleSortByLibelle;
+
+    }
+
+    async toggleArticleDetail(index : number){
+      const element = await document.getElementById('articleDetail-' + index);
+      element.classList.toggle('hide')
+    }
 
     async AjouterUnArticle(){
 
@@ -172,37 +196,12 @@ export class ArticleListPage implements OnInit {
     await alert.present();
     }
 
-    // addNewArticle(newArticle :  Articles, articleInLocalStorage : Articles []){
-
-    //   // Ajout des articles déjà existant
-    //   if(articleInLocalStorage){
-    //   this.articles = [];
-
-    //   for(let article of articleInLocalStorage){
-    //   this.articles.push(article)
-    //   }
-
-    //   }
-
-    //   // Add du nouvelle article
-    //   this.articles.push({
-    //   code : newArticle.code,
-    //   libelle : newArticle.libelle,
-    //   prix : newArticle.prix
-    //   })
-
-    //   // MAJ des donées dans le localStorage
-    //   this.storage.set(this.u.localstorage.articles, this.articles)
-
-    //   }
-
-
-
     async getArticle(){
-      const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
-      const famillesLS : FamilleArticle [] = await this.storage.get(this.u.localstorage['famille d\'articles'])
-      const familles = this.articleService.sortByLibelleFamilleArticle(famillesLS)
+
+      const familles = await this.getFamilleQuiOntDesArticles()
       this.familles = familles;
+      
+      const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
       var groupByArticle : Articles[] = []
 
 
@@ -230,7 +229,7 @@ export class ArticleListPage implements OnInit {
           } // if          
         }
 
-      } // for 1
+      } // for
 
       const articles = await this.articleService.sortByArticleName(groupByArticle)
       this.articles = articles;
