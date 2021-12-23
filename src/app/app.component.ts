@@ -26,8 +26,9 @@ export class AppComponent implements OnInit {
   
   
   ngOnInit(){
-    this.initSplashscreen()
-    this.loadDefaultData()
+    // this.initSplashscreen()
+    // this.loadDefaultData()
+    this.route.navigateRoot('splashscreen')
   }
 
   initSplashscreen(){

@@ -238,10 +238,50 @@ export class Tab3Page {
     }
 
     if(showAlerte){
-      this.popupInformation('Les données ont bien été récupérées')
+      this.loaderOn()
+      setTimeout(() => {
+        this.loaderOff()
+        this.popupInformation('Les données ont bien été récupérées')
+      }, 3000);
     }
 
   }
+  async messageGetAllData(){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      message: 'Souhaitez-vous réellement mettre à jour vos données sur votre téléphone ?',
+      buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.popupInformation('La synchronisation a été annulée')
+          }
+        }, {
+          text: 'Oui',
+          handler: () => {
+            this.getAllData()
+          }
+        }
+      ]
+    });
+
+    await alert.present()
+  }
+
+  private loaderOn(){
+    document.getElementById('wait').innerHTML = "<ion-spinner name='dots' style='height:65px;width:65px'></ion-spinner>";
+    document.querySelector('.selector-to-display').classList.add('elementOff')
+  }
+
+  private loaderOff(){
+    document.getElementById('wait').innerHTML = "";
+    document.querySelector('.selector-to-display').classList.remove('elementOff')
+  }
+  
 
   private async MAJdataLocalStorageFromDataFromFireStore(collectionName : string){
 
