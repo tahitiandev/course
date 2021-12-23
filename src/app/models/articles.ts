@@ -4,10 +4,11 @@ export interface Articles{
     prix : number;
     prixModifier? : number;
     quantite?:number;
-    famille? : string;
     firebase? : boolean;
     isModified? : boolean;
     documentId? : string;
+    familleCode? : string;
+    familleLibelle? : string;
 }
 
 export interface FamilleArticle{

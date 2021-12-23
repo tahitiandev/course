@@ -49,11 +49,17 @@ export class ArticleAddPage implements OnInit {
   async onSubmit(){
     const formValue = await this.articleForm.value
     const newArticle : Articles = {
-      code : formValue.familles.toUpperCase() + formValue.code.toUpperCase(),
+      code : (await this.articleService.generateArticleId()).toString(),
+      documentId : null,
+      familleCode : formValue.familles,
+      familleLibelle : null,
+      firebase : false,
+      isModified : false,
       libelle : formValue.libelle,
       prix : formValue.prix ,
-      firebase : false
-    }
+      prixModifier : null,
+      quantite : 1
+    }    
     
     this.articleService.setArticleRealDataToLocalStorage(newArticle)
 

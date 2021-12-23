@@ -182,7 +182,6 @@ export class IngredientPage implements OnInit {
       codeArticle : newCodeArticle,
       firebase : false
     }
-    // console.log(newPlat)
 
     // 5- On met à jour le nouveau plat dans la liste complète
     var newAllPlat : Plats [] = await [];
@@ -244,7 +243,7 @@ export class IngredientPage implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Cancel');
+
           }
         }, {
           text: 'Ok',
@@ -286,7 +285,7 @@ export class IngredientPage implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Cancel');
+
           }
         }, {
           text: 'Ok',
@@ -381,7 +380,7 @@ export class IngredientPage implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Cancel');
+
           }
         },
         {

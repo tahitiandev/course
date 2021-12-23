@@ -1,0 +1,46 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      Historique des menus
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  <br>
+
+  <ion-item-group *ngFor="let menu of menus; let i = index">
+    <ion-item-divider (click)="toggleDetailMenu(i)">
+      <ion-label>Du {{ menu.dateDebut }} au {{ menu.dateFin }}</ion-label>
+      <ion-icon id="toggleButton-{{ i }}" slot="end" style="margin-right: 25px;" name="{{arrowIcone}}"></ion-icon>
+    </ion-item-divider>
+    <span id="detail-{{ i }}">
+      <ion-item>
+        <ion-label>Lundi : {{ menu.lundi }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Mardi : {{ menu.mardi }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Mercredi : {{ menu.mercredi }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Jeudi : {{ menu.jeudi }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Vendredi : {{ menu.vendredi }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Samedi : {{ menu.samedi }}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Dimanche : {{ menu.dimanche }}</ion-label>
+      </ion-item>
+    </span>
+  </ion-item-group>
+
+</ion-content>

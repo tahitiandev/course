@@ -179,9 +179,6 @@ export class PlatsService {
     
     var plats : Plats [] = [];
     const platsLS : Plats[] = await this.getPlatFromLocalStorage();
-
-    // console.log(platsLS)
-    // console.log(platupdate)
     
     for(let plat of platsLS){
       if(plat.libelle === platupdate.libelle){
@@ -191,7 +188,6 @@ export class PlatsService {
         await plats.push(plat)
       }
     }
-    console.log(plats)
     await this.storage.set(this.utility.localstorage.Plats, plats)  
     
   }

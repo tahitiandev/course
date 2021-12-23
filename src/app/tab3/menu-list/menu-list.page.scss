@@ -1,0 +1,13 @@
+.hide{
+    display: none;
+}
+.clickButton{
+    animation-name: slidein;
+    animation-iteration-count: 1;
+    animation-duration: 2s;
+}
+@keyframes identifier {
+    100%{
+        box-shadow: 2px 3px 26px 12px #A2FF42;
+    }
+}

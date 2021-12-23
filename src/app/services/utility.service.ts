@@ -53,6 +53,39 @@ export class UtilityService {
       return false;
     }
   }
+
+  ConsoleLog(local : string, colonne? : string){
+
+    if(!colonne){
+      this.storage.get(local).then(s => console.log(s))
+    }else{
+      this.storage.get(local).then(s => {
+        for(let x of s){
+          console.log(x.colonne)
+        }
+      })
+    }
+  }
+
+  async changeValueiSModified(collectionName : string , trueOrFalse : boolean){
+    const collectionNames : any [] = await this.storage.get(collectionName);
+    var collectionNameNew : any [] = [];
+    for(let collectionName of collectionNames){
+      collectionName.isModified = trueOrFalse;
+      collectionNameNew.push(collectionName)
+    }
+    this.storage.set(collectionName, collectionNameNew)
+  }
+
+  async changeValueiSModifiedForOneElement(collectionName : string, trueOrFalse : boolean){
+    const collectionNames : any [] = await this.storage.get(collectionName);
+    var collectionNameNew : any [] = [];
+    for(let collectionName of collectionNames){
+      collectionName.isModified = trueOrFalse;
+      collectionNameNew.push(collectionName)
+    }
+    this.storage.set(collectionName, collectionNameNew)
+  }
   
 
 }

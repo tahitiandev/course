@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Menu de la semaine</ion-title>
+    <ion-title (click)="this.loadMenuOfTheWeek()">Menu de la semaine</ion-title>
     <p style="text-align: center;">{{ menuDeLaSemaine.dateDebut }} - {{ menuDeLaSemaine.dateFin }}</p>
   </ion-toolbar>
 </ion-header>
@@ -266,6 +266,10 @@
   </ion-slides>
 
   <ion-fab vertical="bottom" (click)="slideNext(slides)" horizontal="end" slot="fixed">
+    <!-- <ion-fab-button (click)="initialize()">
+      <ion-icon name="sync-outline"></ion-icon>
+    </ion-fab-button>
+    <br> -->
     <ion-fab-button>
       <ion-icon name="arrow-forward-circle"></ion-icon>
     </ion-fab-button>

@@ -113,10 +113,8 @@ export class MenuTodayPage implements OnInit {
         this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
         break;
       case 'Mardi':
-
         this.menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-1,aujourrhui)
         this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
-
         break;
       case 'Mercredi':
         this.menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-2,aujourrhui)
@@ -188,6 +186,9 @@ export class MenuTodayPage implements OnInit {
         this.menuDeLaSemaine.dimanche = await menuDuJour.dimanche;
         this.menuDeLaSemaine.dateDebut = await menuDuJour.dateDebut;
         this.menuDeLaSemaine.dateFin = await menuDuJour.dateFin;
+        this.menuDeLaSemaine.firebase = await menuDuJour.firebase;
+        this.menuDeLaSemaine.isModified = await menuDuJour.isModified === undefined ? false : true;
+        this.menuDeLaSemaine.documentId = await menuDuJour.documentId;
     }
   }
 
@@ -222,7 +223,6 @@ export class MenuTodayPage implements OnInit {
   
   async getPlatByLibelle(libelle : string, jour : string){
     const result = await this.platservice.searchPlatByLibelle(libelle);
-    // console.log(result)
     if(jour === 'lundi'){
       this.menuDeLaSemaine.lundi = result.libelle
     }
@@ -246,15 +246,11 @@ export class MenuTodayPage implements OnInit {
     }
   }
 
-  async saveDataToLocalStorage(){
-    await this.menuService.saveMenuToLocalStorage(this.menuDeLaSemaine)
-  }
-
-  loadAndSavePlatDuJour(jour : string){
+  async loadAndSavePlatDuJour(jour : string){
 
     if(jour === 'lundi'){
-      const selectedValue = this.lundiForm.get('plat').value.libelle
-      this.getPlatByLibelle(selectedValue, jour)
+      const selectedValue = this.lundiForm.get('plat').value
+      this.getPlatByLibelle(selectedValue.libelle, jour)
     }
     if(jour === 'mardi'){
       const selectedValue = this.mardiForm.get('plat').value
@@ -281,7 +277,7 @@ export class MenuTodayPage implements OnInit {
       this.getPlatByLibelle(selectedValue, jour)
     }
 
-    this.saveDataToLocalStorage()
+    await this.menuService.saveMenuToLocalStorage(this.menuDeLaSemaine)
 
   }
 

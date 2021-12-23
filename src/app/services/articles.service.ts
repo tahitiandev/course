@@ -5,6 +5,7 @@ import { UtilityService } from './utility.service';
 import { CodeArticle } from '../models/plats';
 import { Deleted } from '../models/deleted';
 import { FirebaseService } from './firebase.service';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -222,21 +223,142 @@ export class ArticlesService {
 
     articlesFromLocalStorage : Articles[];
 
+  async generateFamilleArticleId(){
+    const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    return parseInt(familles[familles.length - 1].code) + 1
+  }
 
+  async generateArticleId(){
+    const articlesLS : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+    const articles : Articles [] = this.sortByArticleCode(articlesLS)
+    return parseInt(articles[articles.length - 1].code) + 1
+  }
+
+  async temp(){
+    const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    const temp = []
+    var id = 0;
+
+    for(let famille of familles){
+      temp.push({
+        old : famille.code,
+        new : id.toString()
+      })
+
+      id = id +1
+    }
+
+    this.storage.set('temp', temp)
+
+  }
+
+  async modifyFamilleArticleIdByNumber(){
+    const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    const famillesNew : FamilleArticle [] = [];
+    var index = 0;
+    for(let famille of familles){
+      var isModified = false;
+      if(famille.isModified){
+        isModified = true
+      }
+
+      famillesNew.push({
+        code : index.toString(),
+        libelle : famille.libelle,
+        firebase : famille.firebase,
+        isModified : true,
+        documentId : famille.documentId
+      })
+      index = index + 1
+    }
+    
+    this.storage.set(this.utility.localstorage['famille d\'articles'], famillesNew)
+
+  }
+
+  async modifyArticleId(){
+    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+    const articlesNew : Articles [] = [];
+    var id = 0;
+
+    for(let article of articles){
+
+      articlesNew.push({
+        code : id.toString(),
+        libelle : article.libelle,
+        prix : article.prix,
+        prixModifier : article.familleLibelle == undefined ? 0 : article.prixModifier,
+        quantite : article.familleLibelle == undefined ? 1 : article.quantite,
+        firebase : article.firebase,
+        isModified : article.isModified == undefined ? false : article.isModified,
+        documentId : article.documentId,
+        familleCode : article.familleCode == undefined ? "" : article.familleCode,
+        familleLibelle : article.familleLibelle == undefined ? "" : article.libelle
+      })
+
+      id = id + 1
+    }
+
+    this.storage.set(this.utility.localstorage.articles, articlesNew)
+  }
+
+  async modifyFamilleCodeForeachArticle(){
+
+    // Get all articles
+    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+    // Get map old articleId and new articleId
+    const temp = await this.storage.get('temp');
+    
+    var articlesNew : Articles [] = [];
+
+    const articleDivers = ['FLA','VCJ','VCL','VCR','FLC','FLP','VCS','FLS','SK1','FLO','FLT'];
+
+    for(let article of articles){
+
+      for(let tmp of temp){
+        if(tmp.old.substring(0,3) === article.code.substring(0,3)){
+          articlesNew.push({
+            code : article.code,
+            libelle : article.libelle,
+            prix : article.prix,
+            prixModifier : article.familleLibelle == undefined ? 0 : article.prixModifier,
+            quantite : article.familleLibelle == undefined ? 1 : article.quantite,
+            firebase : article.firebase,
+            isModified : article.isModified == undefined ? false : article.isModified,
+            documentId : article.documentId,
+            familleCode : tmp.new,
+            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle
+          })
+        }
+      }
+
+      for(let div of articleDivers){
+        if(div === article.code.substring(0,3)){
+          articlesNew.push({
+            code : article.code,
+            libelle : article.libelle,
+            prix : article.prix,
+            prixModifier : article.familleLibelle == undefined ? 0 : article.prixModifier,
+            quantite : article.familleLibelle == undefined ? 1 : article.quantite,
+            firebase : article.firebase,
+            isModified : article.isModified == undefined ? false : article.isModified,
+            documentId : article.documentId,
+            familleCode : '20',
+            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle
+          })
+        }
+      }
+
+    }
+    this.storage.set(this.utility.localstorage.articles, articlesNew)
+
+  }
   async setDefaultArticleData(){
     await this.storage.set(this.utility.localstorage.articles, this.articles)
   }
   async setDefaultFamilleArticleData(){
     await this.storage.set(this.utility.localstorage['famille d\'articles'], this.famille)
   }
-
-  // setArticleToLocalStorage(){
-  //   this.storage.set(this.utility.localstorage.articles, this.articles)
-  // }
-
-  // async setFamilleArticleToLocalStorage() {
-  //   await this.storage.set(this.utility.localstorage['famille d\'articles'], this.famille)
-  // }
 
   async updateArticle(newArticle : Articles){
     const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
@@ -323,15 +445,17 @@ export class ArticlesService {
   async deleteArticle(articleDeleted : Articles){
 
     const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+
+    // Mise àjour dans le localstorage
     const articlesNew : Articles [] = [];
     for(let article of articles){
       if(article.code != articleDeleted.code){
         articlesNew.push(article)
       }
     }
-
     this.storage.set(this.utility.localstorage.articles, articlesNew);
 
+    // Mise à jour sur firebase (via localstorage : deleted)
     const articleInfo = await this.searchArticleByArticleCode(articleDeleted.code);
     this.firebaseService.postToLocalStorageDeleted(articleInfo.firebase, this.utility.localstorage.articles, articleInfo.documentId);
 
@@ -457,6 +581,19 @@ export class ArticlesService {
       return res.libelle == libelle
     })
     return result
+  }
+
+  sortByArticleCode(articles : Array<Articles>){
+    return articles.sort((a,b) => {
+      let x  = parseInt(a.code);
+      let y  = parseInt(b.code);
+      if(x < y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
   }
 
   sortByArticleName(articles : Array<Articles>){

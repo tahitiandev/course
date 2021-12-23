@@ -1,1 +1,3 @@
 Gérer les mises à jour des données avec firebase
+
+23-11-2021 : Modification du génération des id de la famille d'article

@@ -64,7 +64,7 @@ export class ArticleListPage implements OnInit {
           var articleAJour : Articles;
 
           var allArticle = await this.storage.get(this.u.localstorage.articles);
-          var oldDataArticle = await allArticle.find(s => {
+          var oldDataArticle : Articles = await allArticle.find(s => {
             return s.code === result.code;
           })
 
@@ -73,9 +73,13 @@ export class ArticleListPage implements OnInit {
               code : result.code,
               libelle : result.libelle,
               prix : result.prix,
+              prixModifier : oldDataArticle.prixModifier,//
+              quantite : oldDataArticle.quantite, //
               firebase : true,
               isModified : true,
-              documentId :oldDataArticle.documentId
+              documentId :oldDataArticle.documentId,
+              familleCode : oldDataArticle.familleCode, //
+              familleLibelle : oldDataArticle.familleLibelle //
             }
           }
           else {
@@ -83,9 +87,13 @@ export class ArticleListPage implements OnInit {
               code : result.code,
               libelle : result.libelle,
               prix : result.prix,
+              prixModifier : oldDataArticle.prixModifier,//
+              quantite : oldDataArticle.quantite, //
               firebase : false,
               isModified : false,
-              documentId :oldDataArticle.documentId
+              documentId :oldDataArticle.documentId,
+              familleCode : oldDataArticle.familleCode, //
+              familleLibelle : oldDataArticle.familleLibelle //
             }
           }
 
@@ -100,6 +108,30 @@ export class ArticleListPage implements OnInit {
   
       await alert.present();
 
+    }
+    
+    private async getFamilleQuiOntDesArticles(){
+      const articles : Articles [] = await this.storage.get(this.u.localstorage.articles);
+      const codeFamille = [];
+      for(let article of articles){
+        codeFamille.push(article.familleCode)
+      }
+      var uniqueCodeFamille = [...new Set(codeFamille)]
+      const familles : FamilleArticle [] = [];
+      for(let code of uniqueCodeFamille){
+        var famille = await this.articleService.searchFamilleByCode(code)
+        familles.push(famille)
+      }
+
+      const familleSortByLibelle = await this.articleService.sortByLibelleFamilleArticle(familles)
+
+      return familleSortByLibelle;
+
+    }
+
+    async toggleArticleDetail(index : number){
+      const element = await document.getElementById('articleDetail-' + index);
+      element.classList.toggle('hide')
     }
 
     async AjouterUnArticle(){
@@ -164,37 +196,12 @@ export class ArticleListPage implements OnInit {
     await alert.present();
     }
 
-    // addNewArticle(newArticle :  Articles, articleInLocalStorage : Articles []){
-
-    //   // Ajout des articles déjà existant
-    //   if(articleInLocalStorage){
-    //   this.articles = [];
-
-    //   for(let article of articleInLocalStorage){
-    //   this.articles.push(article)
-    //   }
-
-    //   }
-
-    //   // Add du nouvelle article
-    //   this.articles.push({
-    //   code : newArticle.code,
-    //   libelle : newArticle.libelle,
-    //   prix : newArticle.prix
-    //   })
-
-    //   // MAJ des donées dans le localStorage
-    //   this.storage.set(this.u.localstorage.articles, this.articles)
-
-    //   }
-
-
-
     async getArticle(){
-      const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
-      const famillesLS : FamilleArticle [] = await this.storage.get(this.u.localstorage['famille d\'articles'])
-      const familles = this.articleService.sortByLibelleFamilleArticle(famillesLS)
+
+      const familles = await this.getFamilleQuiOntDesArticles()
       this.familles = familles;
+      
+      const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
       var groupByArticle : Articles[] = []
 
 
@@ -202,7 +209,8 @@ export class ArticleListPage implements OnInit {
 
         for(let article of articlesLS){
 
-          if(article.code.substring(0,3) === familles[i].code.substring(0,3)){
+          // if(article.code.substring(0,3) === familles[i].code.substring(0,3)){
+          if(article.familleCode === familles[i].code){
             
             var articleGroup : Articles = {
               code : article.code,
@@ -210,7 +218,8 @@ export class ArticleListPage implements OnInit {
               prix : article.prix,
               prixModifier : article.prixModifier,
               quantite : article.quantite,
-              famille : familles[i].libelle,
+              familleCode : article.familleCode,
+              familleLibelle : familles[i].libelle,
               firebase : article.firebase,
               isModified : article.isModified,
               documentId : article.documentId
@@ -220,7 +229,7 @@ export class ArticleListPage implements OnInit {
           } // if          
         }
 
-      } // for 1
+      } // for
 
       const articles = await this.articleService.sortByArticleName(groupByArticle)
       this.articles = articles;
@@ -237,12 +246,12 @@ export class ArticleListPage implements OnInit {
 
 
 
-      async isFamilleContainsAritcle(famille :  FamilleArticle){
+      async isFamilleContainsAritcle(famille : FamilleArticle){
 
         const result : Articles [] = [];
         
         for(let i = 0;  i < this.articles.length; i++){
-          if(this.articles[i].famille === famille.libelle){
+          if(this.articles[i].familleLibelle === famille.libelle){
             result.push(this.articles[i])
           }
         }
@@ -261,8 +270,8 @@ export class ArticleListPage implements OnInit {
 
       async deleteArticle(article : Articles){
         
-        this.articleService.deleteArticle(article);
-        this.getArticle();
+        await this.articleService.deleteArticle(article);
+        await this.getArticle();
 
       }
   

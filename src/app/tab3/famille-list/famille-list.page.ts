@@ -23,7 +23,6 @@ export class FamilleListPage implements OnInit {
   familles : FamilleArticle [] = [];
 
   ngOnInit() {
-    // this.articleService.setFamilleArticleToLocalStorage()
     this.initFamilleFromDataLocalStorage()
   }
 
@@ -35,6 +34,9 @@ export class FamilleListPage implements OnInit {
 
 
   async setNewFamille() {
+
+    const familleId = await this.articleService.generateFamilleArticleId();
+
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Nouvelle famille d\'article',
@@ -42,7 +44,8 @@ export class FamilleListPage implements OnInit {
         {
           name: 'code',
           type: 'text',
-          placeholder: 'Code'
+          value : familleId,
+          disabled : true
         },
         {
           name: 'libelle',
