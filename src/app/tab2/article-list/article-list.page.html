@@ -28,9 +28,14 @@
 
       <span *ngFor="let article of (articles | articlesFilter : searchValue); let i = index">
         <ion-item-sliding *ngIf="famille.code === article.familleCode">
+
+          <ion-item-options side="start">
+            <ion-item-option (click)="pairArticleWithAnBarreCode(article)" color="medium">Associer un code barre</ion-item-option>
+          </ion-item-options>
+
           <ion-item button (click)="modifierUnArticle(article)">
             <ion-label>
-              <h3>{{ article.libelle }}</h3>
+              <h3>{{ article.libelle }} {{ article.barreCode }}</h3>
             </ion-label>
             <ion-label>
               <h3 slot="end" style="text-align: right;">{{ article.prix }} xpf</h3>

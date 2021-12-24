@@ -381,13 +381,6 @@ export class ArticlesService {
     return articles;
   }
 
-  // Methode qui fonctionne plus
-  // Il était utilisé dans le tab2
-  // async setArticleRealDataToLocalStorage(articles : Articles []){
-  //   if(articles){
-  //     await this.storage.set(this.utility.localstorage.articles, articles)
-  //   }
-  // }
   async setArticleRealDataToLocalStorage(newArticle : Articles){
 
     var articles : Articles [] = [];

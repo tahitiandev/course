@@ -9,6 +9,7 @@ export interface Articles{
     documentId? : string;
     familleCode? : string;
     familleLibelle? : string;
+    barreCode? :string;
 }
 
 export interface FamilleArticle{

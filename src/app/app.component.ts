@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
     // this.initSplashscreen()
     // this.loadDefaultData()
     this.route.navigateRoot('splashscreen')
+    // this.route.navigateRoot('http://localhost:8100/tabs/tab3')
   }
 
   initSplashscreen(){

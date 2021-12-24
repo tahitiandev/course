@@ -28,6 +28,8 @@ var firebaseConfig = {
 };
 
 
+import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +47,7 @@ var firebaseConfig = {
   exports : [
     
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },BarcodeScanner],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

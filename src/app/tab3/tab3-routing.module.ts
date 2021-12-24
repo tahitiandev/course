@@ -26,9 +26,14 @@ const routes: Routes = [
   {
     path: 'plat-add',
     loadChildren: () => import('./plat-add/plat-add.module').then( m => m.PlatAddPageModule)
-  },  {
+  },
+  {
     path: 'menu-list',
     loadChildren: () => import('./menu-list/menu-list.module').then( m => m.MenuListPageModule)
+  },
+  {
+    path: 'scanner',
+    loadChildren: () => import('./scanner/scanner.module').then( m => m.ScannerPageModule)
   }
 
 ];

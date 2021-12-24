@@ -4,6 +4,7 @@ import { Articles, FamilleArticle } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Storage } from '@ionic/storage';
+import { BarreCodeService } from 'src/app/services/barre-code.service';
 
 @Component({
   selector: 'app-article-list',
@@ -16,7 +17,8 @@ export class ArticleListPage implements OnInit {
     private alertController: AlertController,
     private u : UtilityService,
     private articleService : ArticlesService,
-    private nav : NavController) {}
+    private nav : NavController,
+    private barreCodeService : BarreCodeService) {}
 
     articles : Articles [];
     familles : FamilleArticle [];
@@ -49,6 +51,12 @@ export class ArticleListPage implements OnInit {
           type: 'number',
           placeholder: 'Prix',
           value : articles.prix
+        },
+        {
+          name: 'barreCode',
+          type: 'text',
+          placeholder: 'Code barre',
+          value : articles.barreCode
         }
         ],
         buttons: [
@@ -79,7 +87,8 @@ export class ArticleListPage implements OnInit {
               isModified : true,
               documentId :oldDataArticle.documentId,
               familleCode : oldDataArticle.familleCode, //
-              familleLibelle : oldDataArticle.familleLibelle //
+              familleLibelle : oldDataArticle.familleLibelle, //
+              barreCode : result.barreCode
             }
           }
           else {
@@ -93,7 +102,8 @@ export class ArticleListPage implements OnInit {
               isModified : false,
               documentId :oldDataArticle.documentId,
               familleCode : oldDataArticle.familleCode, //
-              familleLibelle : oldDataArticle.familleLibelle //
+              familleLibelle : oldDataArticle.familleLibelle, //
+              barreCode : result.barreCode
             }
           }
 
@@ -107,6 +117,40 @@ export class ArticleListPage implements OnInit {
       });
   
       await alert.present();
+
+    }
+
+    async pairArticleWithAnBarreCode(articleForm : Articles){
+      const barreCode =  await this.barreCodeService.scanneBarreCode()
+      const articles : Articles [] = await this.articleService.getArticleFromLocalStorage()
+      var articlesNew : Articles [] = [];
+
+      for(let article of articles){
+        if(article.code != articleForm.code){
+          articlesNew.push(article)
+        }
+        if(article.code == articleForm.code){
+          var articleUpdate : Articles = {
+            code : article.code,
+            libelle : article.libelle,
+            prix : article.prix,
+            prixModifier : article.prixModifier,
+            quantite : article.quantite,
+            firebase : article.firebase,
+            isModified : article.isModified,
+            documentId : article.documentId,
+            familleCode : article.familleCode,
+            familleLibelle : article.familleLibelle,
+            barreCode : barreCode.toString(),
+          }
+          articlesNew.push(articleUpdate);
+          alert(article)
+        }
+      }
+
+
+      this.storage.set(this.u.localstorage.articles, articlesNew)
+
 
     }
     
