@@ -7,6 +7,7 @@ export interface  Courses{
     firebase : boolean;
     isModified? : boolean;
     documentId? : string;
+    plafond? : number;
 }
 
 export interface Liste{

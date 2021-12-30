@@ -22,7 +22,7 @@
           <ion-row>
             <ion-col>
               <h1>Renseigner<br>le nom de l'article</h1>
-              <h5>1/4</h5>
+              <h5>1/5</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -44,7 +44,7 @@
           <ion-row>
             <ion-col>
               <h1>Choisir<br>une famille d'article</h1>
-              <h5>2/4</h5>
+              <h5>2/5</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -87,26 +87,46 @@
           <ion-row>
             <ion-col>
               <h1>Renseigner<br>le prix</h1>
-              <h5>3/4</h5>
+              <h5>3/5</h5>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-input (click)="slideQuatre(slides)" id="slideQuatre" type="text" formControlName="prix"></ion-input>
+                <ion-input (click)="slideQuatre(slides)" id="slideQuatre" type="number" formControlName="prix"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
         </ion-grid>
 
       </ion-slide>
+
+      <!-- SLIDE 4 -->
+      <ion-slide >
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Associer un code barre</h1>
+              <h5>4/5</h5>
+              <br>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-button (click)="pairWithABarreCode(slides)" color="primary">Oui</ion-button>
+              <ion-button (click)="slideNext(slides)" color="danger">Non</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-slide>
+
       <!-- SLIDE 5 -->
     <ion-slide >
       <ion-grid>
         <ion-row>
           <ion-col>
             <h1>Valider vos choix</h1>
-            <h5>4/4</h5>
+            <h5>5/5</h5>
             <br>
           </ion-col>
         </ion-row>

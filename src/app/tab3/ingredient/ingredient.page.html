@@ -36,12 +36,20 @@
     </ion-list>
 
 
-
-
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="addIngredient()">
+  <ion-fab vertical="bottom" horizontal="end" edge slot="fixed" style="margin-bottom:40px">
+    <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="addIngredientByBarreCode()">
+        <ion-icon name="barcode-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+    <ion-fab-list side="start">
+      <ion-fab-button (click)="addIngredient()">
+        <ion-icon name="pencil-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
   </ion-fab>
 
 </ion-content>

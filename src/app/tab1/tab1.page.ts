@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { Courses } from '../models/courses';
 import { CoursesService } from '../services/courses.service';
 import { UtilityService } from '../services/utility.service';
+import { MenuService } from '../services/menu.service';
 
 @Component({
   selector: 'app-tab1',
@@ -15,9 +16,11 @@ export class Tab1Page implements OnInit, OnChanges {
   constructor(private storage : Storage,
               private nav : NavController,
               private coursesService : CoursesService,
-              private utility : UtilityService) {}
+              private utility : UtilityService,
+              private menuService : MenuService) {}
 
   courses : Courses[];
+  public masquerLesCoursesCloture :boolean = false;
 
   ngOnInit(){
     this.getCourse()
@@ -39,6 +42,47 @@ export class Tab1Page implements OnInit, OnChanges {
     })
   }
 
+  async generateCourseVide(){
+    const today = await this.menuService.generateDateAujourdhui()
+    const date = today.annnee + '-' + today.mois + '-'+ today.jour + 'T17:32:38.956-10:00'
+    // "2021-12-28T17:32:38.956-10:00"
+    const courses : Courses [] = await this.coursesService.getCourseFromLocalStorage();
+    const courseId = await this.coursesService.generateCourseId();
+    courses.push({
+      id : courseId,
+      date : date,
+      actif : false,
+      total : 0,
+      firebase : false,
+      isModified : false,
+      documentId : null,
+      plafond : 0,
+      liste : []
+    })
+    this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
+      this.courses = courses
+      this.goDetail(courseId)
+    })
+  }
+
+  async toggleShowListeDisabled(){
+    this.masquerLesCoursesCloture = !this.masquerLesCoursesCloture
+    if(this.masquerLesCoursesCloture){
+      const courses: Courses [] = await this.coursesService.getCourseFromLocalStorage();
+      const coursesNew : Courses [] = []
+      for(let course of courses){
+        if(!course.actif){
+          coursesNew.push(course)
+        }
+      }
+      this.courses = []
+      this.courses = this.orderByDesc(coursesNew)
+    }else{
+      this.courses = []
+      this.getCourse()
+    }
+    
+  }
 
   async getCourse(){
     const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
@@ -90,6 +134,12 @@ export class Tab1Page implements OnInit, OnChanges {
     this.courses = newCourse
     this.storage.set(this.utility.localstorage.Courses, newCourse)
 
+  }
+
+  supprimer(course : Courses){
+    this.coursesService.supprimerCourse(course).then(()=> {
+      this.getCourse()
+    })
   }
 
 

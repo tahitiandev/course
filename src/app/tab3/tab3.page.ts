@@ -26,6 +26,7 @@ export class Tab3Page {
   }
 
   articles : Articles [] = []
+  budget : number = 0;
 
   constructor(private utility : UtilityService,
               private storage : Storage,
@@ -60,9 +61,9 @@ export class Tab3Page {
   }
 
   async initSetting(){
-    const setting = await this.storage.get('settings')
+    const setting : Setting = await this.storage.get('settings')
 
-    if(setting){
+    if(setting  != null){
       this.setting = setting
 
       // Init thème
@@ -71,6 +72,9 @@ export class Tab3Page {
       }else{
         this.darkModeBtn = false
       }
+
+      this.budget = setting.budget;
+
     }else{
       console.log('Erreur d\'initialisation du setting du localstorage')
     }
@@ -157,9 +161,13 @@ export class Tab3Page {
   }
 
   // Récupérer les données de firebase
-  this.getAllData(false)
+  // this.getAllData(false).then(() => {
+  //   this.utility.popupInformation('Les données ont bien été envoyées sur firebase')
+  // })
 
-  this.popupInformation('Les données ont bien été envoyées sur firebase')
+  this.utility.popupInformation('Les données ont bien été envoyées')
+
+  
 
   }//postDataToFireStore
 
@@ -186,31 +194,7 @@ export class Tab3Page {
 
   async clearLocalStorage(){
 
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Attention',
-      message: 'Souhaitez-vous réellement supprimer vos données ?',
-      buttons: [
-        {
-          text: 'Non',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: (blah) => {
-          }
-        }, {
-          text: 'Oui',
-          handler: () => {
-            this.storage.clear()
-                .catch((e) => console.log(e))
-                .finally(() =>{
-                  this.popupInformation('Les données local ont été supprimé')
-                })
-          }
-        }
-      ]
-    });
-
-    await alert.present();
+      
   }
 
   private async verifieSiToutesLesDataSontEnvoye(localName : string){
@@ -241,7 +225,7 @@ export class Tab3Page {
       this.loaderOn()
       setTimeout(() => {
         this.loaderOff()
-        this.popupInformation('Les données ont bien été récupérées')
+        this.utility.popupInformation('Les données ont bien été récupérées')
       }, 3000);
     }
 
@@ -258,7 +242,7 @@ export class Tab3Page {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            this.popupInformation('La synchronisation a été annulée')
+            this.utility.popupInformation('La synchronisation a été annulée')
           }
         }, {
           text: 'Oui',
@@ -303,15 +287,35 @@ export class Tab3Page {
 
   }
 
-  private async popupInformation(message : string){
+  async budgetDeLaSemaine(){
     const alert = await this.alertController.create({
-    cssClass: 'my-custom-class',
-    header: 'Information',
-    message: message,
-    buttons: ['OK']
-  });
+      cssClass: 'my-custom-class',
+      header: 'Prompt!',
+      inputs: [
+        {
+          name: 'budget',
+          type: 'text',
+          placeholder: 'Montant du budget'
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Ok',
+          handler: () => {
+            console.log('Confirm Ok');
+          }
+        }
+      ]
+    });
 
-  await alert.present()
-}
+    await alert.present();
+  }
 
 }

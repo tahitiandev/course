@@ -27,7 +27,7 @@
   <ion-item-group>
 
     <ion-item-divider>
-      <ion-label>Configurations</ion-label>
+      <ion-label>Base de données</ion-label>
     </ion-item-divider>
 
     <ion-item button (click)="this.goToUrl('tab2','article-list')">
@@ -80,12 +80,20 @@
       <ion-icon name="sync"></ion-icon>
     </ion-item>
 
+  </ion-item-group>
 
-    <ion-item button (click)="this.consoleLog()">
+  <ion-item-group>
+
+    <ion-item-divider>
+      <ion-label>Configuration</ion-label>
+    </ion-item-divider>
+
+    <ion-item button (click)="this.budgetDeLaSemaine()">
       <ion-label>
-        <h3>console log</h3>
+        <h3>Budget</h3>
       </ion-label>
-      <ion-icon name="sync"></ion-icon>
+
+      {{budget}} XPF
     </ion-item>
 
   </ion-item-group>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from 'src/app/services/utility.service';
-import { FamilleArticle } from 'src/app/models/articles';
+import { Articles, FamilleArticle } from 'src/app/models/articles';
 import { AlertController, NavController } from '@ionic/angular';
 
 @Component({
@@ -31,7 +31,6 @@ export class FamilleListPage implements OnInit {
     const familles = await this.articleService.sortByLibelleFamilleArticle(famillesLS)
     this.familles = familles
   }
-
 
   async setNewFamille() {
 
@@ -62,9 +61,15 @@ export class FamilleListPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: async (data : FamilleArticle) => {
+          handler: async (data) => {
 
-            const newFamille = await this.articleService.addNewFamilleArticleRealDataToLocalStorage(data)
+            this.articleService.postNouvelleFamilleArticle({
+              code : data.code,
+              libelle : data.libelle,
+              firebase : false,
+              isModified : false,
+              documentId : null
+            })
             this.initFamilleFromDataLocalStorage()
 
 
@@ -90,8 +95,8 @@ export class FamilleListPage implements OnInit {
           name: 'code',
           type: 'text',
           placeholder: 'Code',
-          value : famille.code,
-          disabled : true
+          value : famille.code.toString(),
+          // disabled : true
         },
         {
           name: 'libelle',

@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
   ngOnInit(){
     // this.initSplashscreen()
     // this.loadDefaultData()
-    this.route.navigateRoot('splashscreen')
+    // this.route.navigateRoot('splashscreen')
     // this.route.navigateRoot('http://localhost:8100/tabs/tab3')
   }
 
@@ -99,7 +99,8 @@ export class AppComponent implements OnInit {
     if(!setting){
       // Je met à jour le thème
       this.settings = {
-        theme : true
+        theme : true,
+        budget : 20000
       }
       // je met à jour le LS
       this.storage.set(this.utility.localstorage.Setting, this.settings)
@@ -108,7 +109,8 @@ export class AppComponent implements OnInit {
     this.storage.get(this.utility.localstorage.Setting).then(s => {
       if(!s){
         this.settings = {
-          theme : true
+          theme : true,
+          budget : 20000
         }
         this.storage.set(this.utility.localstorage.Setting, this.settings)
       }

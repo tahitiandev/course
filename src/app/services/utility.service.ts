@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Deleted } from '../models/deleted';
 
@@ -9,7 +9,8 @@ import { Deleted } from '../models/deleted';
 export class UtilityService {
 
   constructor(public nav : NavController,
-              private storage : Storage) { }
+              private storage : Storage,
+              private alertController : AlertController) { }
 
   public localstorage = {
     'articles' : 'articles',
@@ -86,6 +87,17 @@ export class UtilityService {
     }
     this.storage.set(collectionName, collectionNameNew)
   }
+
+  async popupInformation(message : string){
+    const alert = await this.alertController.create({
+    cssClass: 'my-custom-class',
+    header: 'Information',
+    message: message,
+    buttons: ['OK']
+  });
+
+  await alert.present()
+}
   
 
 }

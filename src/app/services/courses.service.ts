@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Courses } from 'src/app/models/courses';
+import { Courses, Liste } from 'src/app/models/courses';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from './utility.service';
 
@@ -27,7 +27,8 @@ export class CoursesService {
           actif : false
         }
       ],
-      firebase : false
+      firebase : false,
+      plafond : 150000,
     }
   ]
 
@@ -46,7 +47,8 @@ export class CoursesService {
           actif : false
         }
       ],
-      firebase : false
+      firebase : false,
+      plafond : 150000,
     }
   ]
 
@@ -125,9 +127,23 @@ export class CoursesService {
     return newId;
   }
 
+  calculeMontantTotal(listes : Liste[]){
+    var total = 0;
+    for(let liste of listes){
+      total += (liste.quantite) * (liste.prixUnitaire)
+    }
+    return total;
+  }
 
-
-
-
+  async supprimerCourse(courseSelected : Courses){
+    const courses : Courses [] = await this.storage.get(this.utility.localstorage.Courses);
+    const courseNew : Courses [] = []
+    for(let course of courses){
+      if(course.id !== courseSelected.id){
+        courseNew.push(course)
+      }
+    }//for
+    this.storage.set(this.utility.localstorage.Courses, courseNew)
+  }
 
 }

@@ -53,6 +53,12 @@ export class ArticleListPage implements OnInit {
           value : articles.prix
         },
         {
+          name: 'familleCode',
+          type: 'number',
+          placeholder: 'Prix',
+          value : articles.familleCode
+        },
+        {
           name: 'barreCode',
           type: 'text',
           placeholder: 'Code barre',
@@ -86,7 +92,7 @@ export class ArticleListPage implements OnInit {
               firebase : true,
               isModified : true,
               documentId :oldDataArticle.documentId,
-              familleCode : oldDataArticle.familleCode, //
+              familleCode : result.familleCode.toString(), //
               familleLibelle : oldDataArticle.familleLibelle, //
               barreCode : result.barreCode
             }
@@ -101,7 +107,7 @@ export class ArticleListPage implements OnInit {
               firebase : false,
               isModified : false,
               documentId :oldDataArticle.documentId,
-              familleCode : oldDataArticle.familleCode, //
+              familleCode : result.familleCode, //
               familleLibelle : oldDataArticle.familleLibelle, //
               barreCode : result.barreCode
             }
@@ -144,12 +150,14 @@ export class ArticleListPage implements OnInit {
             barreCode : barreCode.toString(),
           }
           articlesNew.push(articleUpdate);
-          alert(article)
         }
       }
-
-
-      this.storage.set(this.u.localstorage.articles, articlesNew)
+      this.storage.set(this.u.localstorage.articles, articlesNew).then(() => {
+        this.u.popupInformation('Le code barre a bien été renseigné')
+        this.getArticle()
+      }).catch(e => {
+        alert(e)
+      })
 
 
     }
@@ -254,7 +262,7 @@ export class ArticleListPage implements OnInit {
         for(let article of articlesLS){
 
           // if(article.code.substring(0,3) === familles[i].code.substring(0,3)){
-          if(article.familleCode === familles[i].code){
+          if(article.familleCode == familles[i].code){
             
             var articleGroup : Articles = {
               code : article.code,
@@ -266,7 +274,8 @@ export class ArticleListPage implements OnInit {
               familleLibelle : familles[i].libelle,
               firebase : article.firebase,
               isModified : article.isModified,
-              documentId : article.documentId
+              documentId : article.documentId,
+              barreCode : article.barreCode
             }
 
             groupByArticle.push(articleGroup)
@@ -312,14 +321,67 @@ export class ArticleListPage implements OnInit {
 
       }
 
-      async deleteArticle(article : Articles){
+      deleteArticle(article : Articles){
         
-        await this.articleService.deleteArticle(article);
-        await this.getArticle();
+        this.articleService.deleteArticle(article).then(() => {
+          this.getArticle();
+        })
+        
 
       }
   
-  
+      async postArticleByBarreCode(){
+        const barreCode = await this.barreCodeService.scanneBarreCode();
+        const article = await this.articleService.searchArticleByBarreCode(barreCode);
+        if(article === null || article === undefined){
+          const alert = await this.alertController.create({
+            header: 'Ajouter un article',
+            inputs: [
+            {
+              name: 'libelle',
+              type: 'text',
+              placeholder: 'Libellé'
+            },
+            {
+              name: 'prix',
+              type: 'number',
+              placeholder: 'Prix'
+            }
+            ],
+            buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              cssClass: 'secondary',
+            handler: () => {
+            }
+            }, {
+            text: 'Ok',
+            handler: async (formValue : Articles) => {
+                this.articleService.setArticleRealDataToLocalStorage({
+                  code : (await this.articleService.generateArticleId()).toString(),
+                  libelle : formValue.libelle,
+                  prix : formValue.prix ,
+                  prixModifier : null,
+                  quantite : 1,
+                  firebase : false,
+                  isModified : false,
+                  documentId : null,
+                  familleCode : '22',
+                  familleLibelle : null,
+                  barreCode : barreCode
+                })
+              }
+            }
+            ]
+          });
+      
+          await alert.present();
+        }//if
+        else{
+          this.u.popupInformation('Le code barre <strong>' + barreCode + '</strong> est déjà associé à l\'article ' + article.libelle)
+        }
+      }
 
 
 }

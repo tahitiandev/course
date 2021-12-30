@@ -11,10 +11,14 @@
 <br>
 
 <ion-list>
-  <ion-item-sliding *ngFor="let course of this.courses; let index = index">
-
+  <!-- <ion-item style="background: blue; opacity: 0.7;">
+    <button (click)="masquerCourseCloture()">Masquer</button>
+  </ion-item> -->
+  <ion-item-sliding *ngFor="let course of this.courses; let index = index" >
+    <span class="element">
     <ion-item-options side="start">
       <ion-item-option color="{{course.actif ? 'medium' : 'danger'}}" (click)="cloturer(index)">{{ course.actif ? "Déclôturer" : "Clôturer"}}</ion-item-option>
+      <ion-item-option color="danger" (click)="supprimer(course)">Supprimer</ion-item-option>
     </ion-item-options>
 
       <ion-item button (click)="goDetail(course.id)">
@@ -27,17 +31,44 @@
 
         <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
       </ion-item>
+    </span>
     </ion-item-sliding>
   </ion-list>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="dark" (click)="toggleShowListeDisabled()">
+      <ion-icon name="toggle-outline"></ion-icon>
+    </ion-fab-button>
+    <br>
     <ion-fab-button (click)="getCourse()">
       <ion-icon name="sync-outline"></ion-icon>
     </ion-fab-button>
     <br>
     <ion-fab-button (click)="goToCourseAdd()">
       <ion-icon name="add"></ion-icon>
+    </ion-fab-button> 
+  </ion-fab> -->
+
+  <ion-fab vertical="bottom" horizontal="end" edge slot="fixed" style="margin-bottom:40px">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
     </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="getCourse()">
+        <ion-icon name="sync-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="toggleShowListeDisabled()">
+        <ion-icon name="toggle-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+    <ion-fab-list side="start">
+      <ion-fab-button (click)="generateCourseVide()">
+        <ion-icon name="document-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="goToCourseAdd()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
   </ion-fab>
   
 

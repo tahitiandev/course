@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { Articles, FamilleArticle } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
+import { BarreCodeService } from 'src/app/services/barre-code.service';
 
 @Component({
   selector: 'app-article-add',
@@ -14,10 +15,12 @@ export class ArticleAddPage implements OnInit {
   articleForm : FormGroup;
   familles : FamilleArticle [] = [];
   articlesLS : Articles [] = [];
+  barreCode : string = null;
 
   constructor(private formbuilder : FormBuilder,
               private articleService : ArticlesService,
-              private nav : NavController) { }
+              private nav : NavController,
+              private barrecCodeService : BarreCodeService) { }
 
   ngOnInit() {
     this.init()
@@ -45,20 +48,26 @@ export class ArticleAddPage implements OnInit {
     this.articlesLS = articles
   }
 
+  async pairWithABarreCode(slide){
+    const barreCode = await this.barrecCodeService.scanneBarreCode();
+    this.barreCode = barreCode;
+    this.slideNext(slide)
+  }
 
   async onSubmit(){
     const formValue = await this.articleForm.value
     const newArticle : Articles = {
       code : (await this.articleService.generateArticleId()).toString(),
-      documentId : null,
-      familleCode : formValue.familles,
-      familleLibelle : null,
-      firebase : false,
-      isModified : false,
       libelle : formValue.libelle,
       prix : formValue.prix ,
       prixModifier : null,
-      quantite : 1
+      quantite : 1,
+      firebase : false,
+      isModified : false,
+      documentId : null,
+      familleCode : formValue.familles,
+      familleLibelle : null,
+      barreCode : this.barreCode
     }    
     
     this.articleService.setArticleRealDataToLocalStorage(newArticle)
@@ -121,5 +130,6 @@ export class ArticleAddPage implements OnInit {
       slides.slideNext()
     } )
   }
+  
 
 }

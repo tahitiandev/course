@@ -8,6 +8,7 @@ import { ArticlesService } from 'src/app/services/articles.service';
 import { AlertController } from '@ionic/angular';
 import { AlertInput } from '@ionic/core';
 import { PlatsService } from 'src/app/services/plats.service';
+import { BarreCodeService } from 'src/app/services/barre-code.service';
 
 @Component({
   selector: 'app-ingredient',
@@ -36,7 +37,8 @@ export class IngredientPage implements OnInit {
               private utility : UtilityService,
               private articleService : ArticlesService,
               private alertController: AlertController,
-              private platsservice : PlatsService) { }
+              private platsservice : PlatsService,
+              private barreCodeService : BarreCodeService) { }
 
   ngOnInit() {
     this.loadPlatsFromLocalStorage();
@@ -266,6 +268,20 @@ export class IngredientPage implements OnInit {
     await alert.present();
 
   } // addIngredient
+
+  async addIngredientByBarreCode(){
+    const barreCode = await this.barreCodeService.scanneBarreCode()
+    const article = await this.articleService.searchArticleByBarreCode(barreCode);
+
+    var newIngredient = {
+      codeArticle : article.code,
+      libelle : article.libelle,
+      prix : article.prix
+    };
+    this.newIngredient = newIngredient
+    this.addIngredientQuantite();
+
+  }
 
   private async addIngredientQuantite(){
 
