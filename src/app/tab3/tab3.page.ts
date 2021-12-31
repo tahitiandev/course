@@ -26,7 +26,6 @@ export class Tab3Page {
   }
 
   articles : Articles [] = []
-  budget : number = 0;
 
   constructor(private utility : UtilityService,
               private storage : Storage,
@@ -73,8 +72,6 @@ export class Tab3Page {
         this.darkModeBtn = false
       }
 
-      this.budget = setting.budget;
-
     }else{
       console.log('Erreur d\'initialisation du setting du localstorage')
     }
@@ -104,6 +101,7 @@ export class Tab3Page {
 
   async postDataToFireStore(){
     
+    this.loaderOn()
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     var dataAjour : any [] = [];
 
@@ -159,15 +157,8 @@ export class Tab3Page {
     this.storage.set('deleted',tableauVide)
 
   }
-
-  // Récupérer les données de firebase
-  // this.getAllData(false).then(() => {
-  //   this.utility.popupInformation('Les données ont bien été envoyées sur firebase')
-  // })
-
+  this.loaderOff()
   this.utility.popupInformation('Les données ont bien été envoyées')
-
-  
 
   }//postDataToFireStore
 
@@ -294,22 +285,24 @@ export class Tab3Page {
       inputs: [
         {
           name: 'budget',
-          type: 'text',
-          placeholder: 'Montant du budget'
+          type: 'number',
+          placeholder: 'Montant du budget',
+          value : this.setting.budget
         },
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Annuler',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Cancel');
+
           }
         }, {
-          text: 'Ok',
-          handler: () => {
-            console.log('Confirm Ok');
+          text: 'Modifier',
+          handler: (formValue) => {
+              this.setting.budget = parseInt(formValue.budget);
+              this.storage.set(this.utility.localstorage.Setting, this.setting)
           }
         }
       ]
@@ -317,5 +310,6 @@ export class Tab3Page {
 
     await alert.present();
   }
+  
 
 }

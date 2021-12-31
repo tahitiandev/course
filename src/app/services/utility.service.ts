@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Deleted } from '../models/deleted';
+import { Setting } from '../models/setting';
 
 @Injectable({
   providedIn: 'root'
@@ -97,7 +98,12 @@ export class UtilityService {
   });
 
   await alert.present()
-}
+  }
+
+  async getSettingFromLocalStorage(){
+    const settings : Setting = await this.storage.get(this.localstorage.Setting);
+    return settings;
+  }
   
 
 }

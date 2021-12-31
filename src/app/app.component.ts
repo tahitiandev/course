@@ -26,20 +26,21 @@ export class AppComponent implements OnInit {
   
   
   ngOnInit(){
-    // this.initSplashscreen()
+    this.initSplashscreen()
     // this.loadDefaultData()
     // this.route.navigateRoot('splashscreen')
     // this.route.navigateRoot('http://localhost:8100/tabs/tab3')
   }
 
   initSplashscreen(){
+    this.loadDefaultData()
     document.addEventListener('deviceready', () => {
       this.loadDefaultData()
     })
   }
 
   loadDefaultData(){
-
+    
     // if(this.splashscreen){
     //   this.splashscreen = false;
     //   this.route.navigateRoot('splashscreen')
@@ -95,26 +96,15 @@ export class AppComponent implements OnInit {
   async initSetting() {
 
     const setting = await this.storage.get(this.utility.localstorage.Setting);
-    
-    if(!setting){
-      // Je met à jour le thème
-      this.settings = {
+    if(setting === null){
+      const settingInfo : Setting = {
         theme : true,
-        budget : 20000
+        budget : 20000,
+        masquerLesCoursesCloture : true
       }
-      // je met à jour le LS
-      this.storage.set(this.utility.localstorage.Setting, this.settings)
+      this.storage.set(this.utility.localstorage.Setting, settingInfo)
     }
-
-    this.storage.get(this.utility.localstorage.Setting).then(s => {
-      if(!s){
-        this.settings = {
-          theme : true,
-          budget : 20000
-        }
-        this.storage.set(this.utility.localstorage.Setting, this.settings)
-      }
-    })
+    
   }
 
   async initTheme(){

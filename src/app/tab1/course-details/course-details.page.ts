@@ -5,6 +5,7 @@ import { AlertInput } from '@ionic/core';
 import { Articles } from 'src/app/models/articles';
 import { Courses, Liste } from 'src/app/models/courses';
 import { CreerArticleAPartirDuCodeBarreResponse } from 'src/app/models/creerArticleAPartirDuCodeBarreResponse';
+import { Setting } from 'src/app/models/setting';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { CoursesService } from 'src/app/services/courses.service';
@@ -28,11 +29,18 @@ export class CourseDetailsPage implements OnInit {
   listeId : number;
   coursesDetail : Courses;
   listeArticle : Liste[]= [];
-  total : number = 0
+  total : number = 0;
+  setting : Setting
 
   ngOnInit() {
     this.listeId = this.route.snapshot.params['id']
     this.getCourse()
+    this.settingInit();
+  }
+
+  async settingInit(){
+    const setting : Setting = await this.utility.getSettingFromLocalStorage();
+    this.setting = setting;
   }
   
   async getCourse(){
@@ -44,8 +52,14 @@ export class CourseDetailsPage implements OnInit {
   }
 
   private async calculeTotal(){
+    this.settingInit();
+
     const montantCourse = await this.courseService.calculeMontantTotal(this.listeArticle);
     this.total = montantCourse;  
+    if(montantCourse > this.setting.budget){
+      var difference = (montantCourse) - (this.setting.budget)
+      this.utility.popupInformation('Vous avez dépasser votre budget de ' + difference + ' xpf')
+    }
   }
 
   async clickCheckBox(index : number){
@@ -110,6 +124,7 @@ export class CourseDetailsPage implements OnInit {
 
     this.listeArticle = newListe
     this.courseService.updateCourseInLocalStorage(courseUpdate)
+    this.calculeTotal();
 
 
   }
@@ -185,6 +200,8 @@ export class CourseDetailsPage implements OnInit {
             this.listeArticle = newListe
         
             this.courseService.updateCourseInLocalStorage(courseUpdate)
+            this.calculeTotal();
+            
 
           }
         }
@@ -197,22 +214,17 @@ export class CourseDetailsPage implements OnInit {
   async postNewArticleInCourse(option : string){
 
     if(option === 'barreCode'){
-      this.postArticleByBarreCode().then(() => {
-        this.calculeTotal()
-      })
+      this.postArticleByBarreCode()
     }
     
     if(option === 'manuel'){
-      this.postArticleManuel().then(() => {
-        this.calculeTotal()
-      })
+      this.postArticleManuel()
     }
 
     if(option === 'rafale'){
-      this.postRafaleArticleByBarreCodeBarre().then(() => {
-        this.calculeTotal()
-      })
+      this.postRafaleArticleByBarreCodeBarre()
     }
+
   }
 
   private async postRafaleArticleByBarreCodeBarre(){
@@ -240,15 +252,17 @@ export class CourseDetailsPage implements OnInit {
             }
           }, {
             text: 'Oui',
-            handler: () => {
-              this.postArticleByBarreCode();
-              this.postRafaleArticleByBarreCodeBarre();    
+            handler: async () => {
+              await this.postArticleByBarreCode();
+              await this.postRafaleArticleByBarreCodeBarre();
+              await this.calculeTotal();
             }
           }
         ]
       });
 
       await alert.present()
+      
       
     }//else
   }
@@ -288,6 +302,7 @@ export class CourseDetailsPage implements OnInit {
       }
 
       this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+      this.calculeTotal();
       }
     }else{
 
@@ -318,6 +333,7 @@ export class CourseDetailsPage implements OnInit {
       }
 
       this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+      this.calculeTotal();
 
     }//else
   }
@@ -395,7 +411,9 @@ export class CourseDetailsPage implements OnInit {
               firebase : this.coursesDetail.firebase
             }
       
-            this.courseService.updateCourseInLocalStorage(courseUpdate)
+            await this.courseService.updateCourseInLocalStorage(courseUpdate)
+            await this.calculeTotal();
+            
 
           }
         }
@@ -403,6 +421,7 @@ export class CourseDetailsPage implements OnInit {
     });
 
     await alert.present();
+    
 
   } // addIngredient
 

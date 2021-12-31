@@ -5,6 +5,7 @@ import { Courses } from '../models/courses';
 import { CoursesService } from '../services/courses.service';
 import { UtilityService } from '../services/utility.service';
 import { MenuService } from '../services/menu.service';
+import { Setting } from '../models/setting';
 
 @Component({
   selector: 'app-tab1',
@@ -21,9 +22,11 @@ export class Tab1Page implements OnInit, OnChanges {
 
   courses : Courses[];
   public masquerLesCoursesCloture :boolean = false;
+  setting : Setting;
 
   ngOnInit(){
     this.getCourse()
+    this.settingInit()
   }
 
   ngOnChanges(changes : SimpleChanges){
@@ -40,6 +43,13 @@ export class Tab1Page implements OnInit, OnChanges {
       }
       return 0;
     })
+  }
+
+  async settingInit(){
+    const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
+    this.setting = setting;
+    this.masquerLesCoursesCloture = setting.masquerLesCoursesCloture
+    
   }
 
   async generateCourseVide(){
@@ -81,6 +91,8 @@ export class Tab1Page implements OnInit, OnChanges {
       this.courses = []
       this.getCourse()
     }
+    this.setting.masquerLesCoursesCloture = !this.masquerLesCoursesCloture
+    this.storage.set(this.utility.localstorage.Setting, this.setting)
     
   }
 
