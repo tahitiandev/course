@@ -25,7 +25,9 @@ export class ArticleListPage implements OnInit {
     searchValue : string = "";
 
     ngOnInit(){
-      this.getArticle();
+      this.getArticle().then(() => {
+        this.spinner(false)
+      });
     }
 
     async modifierUnArticle(articles : Articles){
@@ -250,6 +252,8 @@ export class ArticleListPage implements OnInit {
 
     async getArticle(){
 
+      this.spinner(true)
+
       const familles = await this.getFamilleQuiOntDesArticles()
       this.familles = familles;
       
@@ -380,6 +384,22 @@ export class ArticleListPage implements OnInit {
         }//if
         else{
           this.u.popupInformation('Le code barre <strong>' + barreCode + '</strong> est déjà associé à l\'article ' + article.libelle)
+        }
+      }
+
+      spinner(enAttente : boolean){
+
+        const spinnerElement = document.getElementById('spinner');
+        const bodyElement = document.getElementById('body-display');
+        
+        if(enAttente){
+          spinnerElement.innerHTML = "<ion-spinner name='lines-small'></ion-spinner>";
+          bodyElement.classList.add('displayBackground')
+        }
+        
+        if(!enAttente){
+          spinnerElement.innerHTML = '';
+          bodyElement.classList.remove('displayBackground')
         }
       }
 

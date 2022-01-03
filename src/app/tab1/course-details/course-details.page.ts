@@ -306,34 +306,69 @@ export class CourseDetailsPage implements OnInit {
       }
     }else{
 
-      const listeNew : Liste [] = [];
-      for(let liste of this.listeArticle){
-        listeNew.push(liste)
-      }
-      var articleNew : Liste = {
-        articleId : article.code,
-        libelle : article.libelle,
-        quantite : 1,
-        prixUnitaire : article.prix,
-        prixTotal : null,
-        actif : false
-      }
-      
-      listeNew.push(articleNew)
-      
-      this.listeArticle = listeNew;
-      
-      const courseUpdate : Courses = await {
-        id : this.coursesDetail.id,
-        date : this.coursesDetail.date,
-        actif : this.coursesDetail.actif,
-        total : this.coursesDetail.total,
-        liste : listeNew,
-        firebase : this.coursesDetail.firebase
-      }
+      // Vérifie si l'article est déjà dans la liste
+      const articlePresentDansLaListe =  await this.listeArticle.find(s => {
+        return s.articleId === article.code
+      })
 
-      this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
-      this.calculeTotal();
+      if(articlePresentDansLaListe === null || articlePresentDansLaListe === undefined){
+
+        const listeNew : Liste [] = [];
+        for(let liste of this.listeArticle){
+          listeNew.push(liste)
+        }
+        var articleNew : Liste = {
+          articleId : article.code,
+          libelle : article.libelle,
+          quantite : 1,
+          prixUnitaire : article.prix,
+          prixTotal : null,
+          actif : false
+        }
+        
+        listeNew.push(articleNew)
+        
+        this.listeArticle = listeNew;
+        
+        const courseUpdate : Courses = await {
+          id : this.coursesDetail.id,
+          date : this.coursesDetail.date,
+          actif : this.coursesDetail.actif,
+          total : this.coursesDetail.total,
+          liste : listeNew,
+          firebase : this.coursesDetail.firebase
+        }
+
+        this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+        this.calculeTotal();
+      } //if
+      else{
+        articlePresentDansLaListe.actif = true
+
+        const listeNew : Liste [] = [];
+
+        for(let liste of this.listeArticle){
+          if(liste.articleId != articlePresentDansLaListe.articleId){
+            listeNew.push(liste)
+          }else{
+            listeNew.push(articlePresentDansLaListe)
+          }
+        }
+
+        this.listeArticle = listeNew;
+        
+        const courseUpdate : Courses = await {
+          id : this.coursesDetail.id,
+          date : this.coursesDetail.date,
+          actif : this.coursesDetail.actif,
+          total : this.coursesDetail.total,
+          liste : listeNew,
+          firebase : this.coursesDetail.firebase
+        }
+
+        this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+        this.calculeTotal();
+      }
 
     }//else
   }
