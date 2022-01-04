@@ -132,22 +132,25 @@ export class CourseDetailsPage implements OnInit {
   async updateArticle(data : Liste, index : number) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Prompt!',
+      header: 'Modifier les données de l\'article',
       inputs: [
         {
           name: 'prixUnitaire',
-          type: 'text',
+          placeholder : 'Prix unitaire',
+          type: 'number',
           value: data.prixUnitaire
         },
         {
           name: 'quantite',
-          type: 'text',
+          placeholder : 'Quantité',
+          type: 'number',
           id: 'name2-id',
           value: data.quantite
         },
         {
           name: 'actif',
-          type: 'text',
+          placeholder : 'Check',
+          type: 'checkbox',
           id: 'name2-id',
           value: data.actif
         }
@@ -307,11 +310,11 @@ export class CourseDetailsPage implements OnInit {
     }else{
 
       // Vérifie si l'article est déjà dans la liste
-      const articlePresentDansLaListe =  await this.listeArticle.find(s => {
-        return s.articleId === article.code
-      })
+      // const articlePresentDansLaListe =  await this.listeArticle.find(s => {
+      //   return s.articleId === article.code
+      // })
 
-      if(articlePresentDansLaListe === null || articlePresentDansLaListe === undefined){
+      // if(articlePresentDansLaListe === null || articlePresentDansLaListe === undefined){
 
         const listeNew : Liste [] = [];
         for(let liste of this.listeArticle){
@@ -341,8 +344,49 @@ export class CourseDetailsPage implements OnInit {
 
         this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
         this.calculeTotal();
-      } //if
-      else{
+    //   }
+    //   else{
+    //     articlePresentDansLaListe.actif = true
+
+    //     const listeNew : Liste [] = [];
+
+    //     for(let liste of this.listeArticle){
+    //       if(liste.articleId != articlePresentDansLaListe.articleId){
+    //         listeNew.push(liste)
+    //       }else{
+    //         listeNew.push(articlePresentDansLaListe)
+    //       }
+    //     }
+
+    //     this.listeArticle = listeNew;
+        
+    //     const courseUpdate : Courses = await {
+    //       id : this.coursesDetail.id,
+    //       date : this.coursesDetail.date,
+    //       actif : this.coursesDetail.actif,
+    //       total : this.coursesDetail.total,
+    //       liste : listeNew,
+    //       firebase : this.coursesDetail.firebase
+    //     }
+
+    //     this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+    //     this.calculeTotal();
+    //   }
+
+    }
+  }
+
+  async checkArticle(){
+    const barreCode = await this.barreCodeService.scanneBarreCode();
+    const articleRecherche = await this.articleService.searchArticleByBarreCode(barreCode)
+
+    if(articleRecherche != null || articleRecherche != undefined){
+      const articlePresentDansLaListe =  await this.listeArticle.find(s => {
+        return s.articleId === articleRecherche.code
+      })
+
+      if(articlePresentDansLaListe != null || articlePresentDansLaListe != undefined){
+
         articlePresentDansLaListe.actif = true
 
         const listeNew : Liste [] = [];
@@ -368,9 +412,44 @@ export class CourseDetailsPage implements OnInit {
 
         this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
         this.calculeTotal();
+      }else{
+        this.utility.popupInformation('L\'article ' + articleRecherche.libelle + ' n\'est pas présent dans la liste')
       }
 
-    }//else
+    }else{
+      var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode)
+      if(response.articleIsCreer){
+        const listeNew : Liste [] = [];
+      for(let liste of this.listeArticle){
+        listeNew.push(liste)
+      }
+      var articleNew : Liste = {
+        articleId : response.article.code,
+        libelle : response.article.libelle,
+        quantite : 1,
+        prixUnitaire : response.article.prix,
+        prixTotal : null,
+        actif : false
+      }
+      
+      listeNew.push(articleNew)
+      
+      this.listeArticle = listeNew;
+      
+      const courseUpdate : Courses = await {
+        id : this.coursesDetail.id,
+        date : this.coursesDetail.date,
+        actif : this.coursesDetail.actif,
+        total : this.coursesDetail.total,
+        liste : listeNew,
+        firebase : this.coursesDetail.firebase
+      }
+
+      this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+      this.calculeTotal();
+      }
+    }
+
   }
 
   private sortByArticleName(articles : Array<Articles>){
