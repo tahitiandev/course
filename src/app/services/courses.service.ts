@@ -144,6 +144,7 @@ export class CoursesService {
       }
     }//for
     this.storage.set(this.utility.localstorage.Courses, courseNew)
+    return courseNew;
   }
 
 }

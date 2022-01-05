@@ -135,36 +135,18 @@ export class Tab1Page implements OnInit, OnChanges {
 
   async cloturer(index : number){
 
-    const courses = await this.storage.get(this.utility.localstorage.Courses)
-    var newCourse : Courses[] = [];
-
-    
-    for(let i = 0; i < courses.length; i++){
-      if(i === index){
-        var add : Courses = {
-          id : courses[i].id,
-          date : courses[i].date,
-          actif : !courses[i].actif,
-          total : courses[i].total,
-          liste : courses[i].liste,
-          firebase : false
-        }
-        newCourse.push(add)
-      }
-      if(i !== index){
-        newCourse.push(courses[i])
-      }
-    } // for
-
-    this.courses = newCourse
-    this.storage.set(this.utility.localstorage.Courses, newCourse)
+    const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
+    const courses = await this.orderByDesc(coursesLS)
+    courses[index].actif = !courses[index].actif
+    this.courses = courses
+    this.storage.set(this.utility.localstorage.Courses, courses)
 
   }
 
-  supprimer(course : Courses){
-    this.coursesService.supprimerCourse(course).then(()=> {
-      this.getCourse()
-    })
+  async supprimer(course : Courses){
+    const courseNewList = await this.coursesService.supprimerCourse(course)
+    this.courses = await []
+    this.courses = await courseNewList;
   }
 
 
