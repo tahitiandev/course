@@ -25,8 +25,8 @@ export class Tab1Page implements OnInit, OnChanges {
   setting : Setting;
 
   ngOnInit(){
-    this.getCourse()
     this.settingInit()
+    this.getCourse()
   }
 
   ngOnChanges(changes : SimpleChanges){
@@ -47,8 +47,8 @@ export class Tab1Page implements OnInit, OnChanges {
 
   async settingInit(){
     const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
-    this.setting = setting;
-    this.masquerLesCoursesCloture = setting.masquerLesCoursesCloture
+    this.setting = await setting;
+    this.masquerLesCoursesCloture = await setting.masquerLesCoursesCloture
     
   }
 
@@ -91,7 +91,7 @@ export class Tab1Page implements OnInit, OnChanges {
       this.courses = []
       this.getCourse()
     }
-    this.setting.masquerLesCoursesCloture = !this.masquerLesCoursesCloture
+    this.setting.masquerLesCoursesCloture = this.masquerLesCoursesCloture
     this.storage.set(this.utility.localstorage.Setting, this.setting)
     
   }
@@ -99,7 +99,20 @@ export class Tab1Page implements OnInit, OnChanges {
   async getCourse(){
     const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
     const courses = await this.orderByDesc(coursesLS)
-    this.courses = courses
+    if(this.masquerLesCoursesCloture){
+      const coursesNew : Courses [] = [];
+      for(let course of courses){
+        if(!course.actif){
+          coursesNew.push(course)
+        }
+        this.courses = []
+        this.courses = this.orderByDesc(coursesNew)
+      }
+    }else{
+
+      this.courses = courses
+
+    }
   }
 
   calculeTotal(course : Courses){

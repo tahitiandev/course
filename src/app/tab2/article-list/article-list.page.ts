@@ -57,7 +57,7 @@ export class ArticleListPage implements OnInit {
         {
           name: 'familleCode',
           type: 'number',
-          placeholder: 'Prix',
+          placeholder: 'Code famille',
           value : articles.familleCode
         },
         {
@@ -72,9 +72,17 @@ export class ArticleListPage implements OnInit {
           text: 'Cancel',
           role: 'cancel',
           cssClass: 'secondary',
-        handler: () => {
-        }
-        }, {
+          handler: () => {
+          }
+        },
+        {
+          text: 'Modifier la famille',
+          cssClass: 'primary',
+          handler: async (result) => {
+
+          }
+        },
+        {
         text: 'Ok',
         handler: async (result : Articles) => {
           var articleAJour : Articles;
@@ -126,6 +134,10 @@ export class ArticleListPage implements OnInit {
   
       await alert.present();
 
+    }
+
+    private async alertListFamilleArticle(){
+      // await alert.present();
     }
 
     async pairArticleWithAnBarreCode(articleForm : Articles){
