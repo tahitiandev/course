@@ -1,7 +1,7 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { Courses } from '../models/courses';
+import { Courses, Liste } from '../models/courses';
 import { CoursesService } from '../services/courses.service';
 import { UtilityService } from '../services/utility.service';
 import { MenuService } from '../services/menu.service';
@@ -58,6 +58,7 @@ export class Tab1Page implements OnInit, OnChanges {
     // "2021-12-28T17:32:38.956-10:00"
     const courses : Courses [] = await this.coursesService.getCourseFromLocalStorage();
     const courseId = await this.coursesService.generateCourseId();
+    const listeVide : Liste [] = [];
     courses.push({
       id : courseId,
       date : date,
@@ -67,7 +68,7 @@ export class Tab1Page implements OnInit, OnChanges {
       isModified : false,
       documentId : null,
       plafond : 0,
-      liste : []
+      liste : listeVide
     })
     this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
       this.courses = courses
@@ -133,21 +134,50 @@ export class Tab1Page implements OnInit, OnChanges {
 
   
 
-  async cloturer(index : number){
+  async cloturer(courseSelected : Courses){
+
+    // const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
+    // const courses = await this.orderByDesc(coursesLS)
+    // courses[index].actif = !courses[index].actif
+    // this.storage.set(this.utility.localstorage.Courses, courses)
 
     const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
     const courses = await this.orderByDesc(coursesLS)
-    courses[index].actif = !courses[index].actif
-    this.courses = courses
-    this.storage.set(this.utility.localstorage.Courses, courses)
+    var courseNew : Courses [] = [];
+
+    for(let course of courses){
+      if(course.id === courseSelected.id){
+        course.actif = !course.actif
+        courseNew.push(course)
+      }else{
+        courseNew.push(course)
+      }
+    }
+
+    if(this.masquerLesCoursesCloture){
+
+      const coursesActif : Courses [] = []
+      for(let course of courses){
+        if(!course.actif){
+          coursesActif.push(course)
+        }
+      }
+      this.courses = []
+      this.courses = this.orderByDesc(coursesActif)
+    }else{
+      this.courses = []
+      this.courses = courseNew;
+      
+    }
+
+    this.storage.set(this.utility.localstorage.Courses, courseNew)
 
   }
 
   async supprimer(course : Courses){
     const courseNewList = await this.coursesService.supprimerCourse(course)
     this.courses = await []
-    this.courses = await courseNewList;
+    this.courses = await this.orderByDesc(courseNewList);
   }
-
 
 }

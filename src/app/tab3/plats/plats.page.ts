@@ -21,19 +21,20 @@ export class PlatsPage implements OnInit {
               private storage : Storage,
               private utility : UtilityService,
               private nav : NavController) {
-                this.getPlats()
                }
 
   ngOnInit() {
     this.getArticle()
     this.setTotal()
     this.getPlats()
+    
   }
 
   async getArticle(){
     const articles = await this.storage.get(this.utility.localstorage.articles);
     this.articles = articles;
-  }  
+  }
+
 
   async getPlats(){
     const platsLS = await this.storage.get(this.utility.localstorage.Plats)

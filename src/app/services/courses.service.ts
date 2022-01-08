@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Courses, Liste } from 'src/app/models/courses';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from './utility.service';
+import { FirebaseService } from './firebase.service';
+import { Deleted } from '../models/deleted';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,8 @@ import { UtilityService } from './utility.service';
 export class CoursesService {
 
   constructor(private storage : Storage,
-              private utility : UtilityService) { }
+              private utility : UtilityService,
+              private firebaseService : FirebaseService) { }
 
 
   private courses : Courses[] = [
@@ -112,10 +115,24 @@ export class CoursesService {
 
   }
 
+  private orderByIdAsc(course :  Courses[]){
+    return course.sort((a,b) => {
+      let x  = a.id;
+      let y  = b.id;
+      if(x > y){
+        return 1;
+      }else{
+        return -1;
+      }
+      return 0;
+    })
+  }
+
   async generateCourseId(){
 
-    const listeOfCourse = await this.getCourseFromLocalStorage();
-    const lastId = await listeOfCourse.pop().id
+    const listeOfCourse : Courses [] = await this.getCourseFromLocalStorage();
+    const listeOfCourseSortById = this.orderByIdAsc(listeOfCourse)
+    const lastId = await listeOfCourseSortById.pop().id
     var newId = 1;
 
     if(lastId){
@@ -142,9 +159,12 @@ export class CoursesService {
       if(course.id !== courseSelected.id){
         courseNew.push(course)
       }
+      if(course.id === courseSelected.id){
+        this.firebaseService.postToLocalStorageDeleted(course.firebase, this.utility.localstorage.Courses,course.documentId)
+      }
     }//for
     this.storage.set(this.utility.localstorage.Courses, courseNew)
     return courseNew;
-  }
+  }  
 
 }

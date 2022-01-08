@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import { calcPossibleSecurityContexts } from '@angular/compiler/src/template_parser/binding_parser';
 import { Deleted } from '../models/deleted';
 import { FirebaseService } from './firebase.service';
+import { ArticlesService } from './articles.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class PlatsService {
 
   constructor(private utility : UtilityService,
               private storage : Storage,
-              private firebaseService : FirebaseService) { }
+              private firebaseService : FirebaseService,
+              private articleService : ArticlesService) { }
 
   private plats : Plats [] = [
     {
@@ -226,5 +228,28 @@ export class PlatsService {
 
 
   }
+
+  // fonctionne pas
+  async actualisePrixPlat(){
+    const plats : Plats [] = await this.getPlatFromLocalStorage();
+    var total : number = 0;
+    
+    for(let plat of plats){
+
+      for(let articlesss of plat.codeArticle){
+        
+        const article = await this.articleService.searchArticleByArticleCode(articlesss.codeArticle);
+        console.log(articlesss.codeArticle)
+        total += (article.prix - 0) * (articlesss.quantite - 0)
+
+      }
+      
+      plat.prix = total
+      total = 0;
+    }
+
+  } // actualisePrixPlat
+
+
   
 }

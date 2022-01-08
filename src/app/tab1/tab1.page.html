@@ -17,15 +17,16 @@
   <ion-item-sliding *ngFor="let course of this.courses; let index = index" >
     <span class="element">
     <ion-item-options side="start">
-      <ion-item-option color="{{course.actif ? 'medium' : 'danger'}}" (click)="cloturer(index)">{{ course.actif ? "Déclôturer" : "Clôturer"}}</ion-item-option>
+      <ion-item-option color="{{course.actif ? 'medium' : 'danger'}}" (click)="cloturer(course)">{{ course.actif ? "Déclôturer" : "Clôturer"}}</ion-item-option>
     </ion-item-options>
 
       <ion-item button (click)="goDetail(course.id)">
+      <!-- <ion-item button (click)="aaaa(course.documentId)"> -->
         <ion-checkbox slot="start" [checked]="course.actif"></ion-checkbox>
         
         <ion-label>
           <h3>{{ course.date | date :'dd/MM/yyyy' }}</h3>
-          <h3>{{ this.calculeTotal(course) }} xpf</h3>
+          <h3>{{ this.calculeTotal(course) }} xpf - <strong>id : {{course.id}}</strong></h3>
         </ion-label>
 
         <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>

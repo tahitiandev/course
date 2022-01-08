@@ -103,7 +103,6 @@ export class UtilityService {
   async getSettingFromLocalStorage(){
     const settings : Setting = await this.storage.get(this.localstorage.Setting);
     return settings;
-  }
-  
+  } 
 
 }
