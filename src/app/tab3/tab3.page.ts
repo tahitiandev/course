@@ -247,6 +247,35 @@ export class Tab3Page {
     await alert.present()
   }
 
+  async messagePostDataToFireBase(){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      message: 'Souhaitez-vous réellement envoyer vos données sur firebase ?',
+      buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.utility.popupInformation('L\'envoi a été annulé')
+          }
+        }, {
+          text: 'Oui',
+          handler: () => {
+            this.postDataToFireStore()
+          }
+        }
+      ]
+    });
+
+    await alert.present()
+  }
+
+
+
+
   private loaderOn(){
     document.getElementById('wait').innerHTML = "<ion-spinner name='dots' style='height:65px;width:65px'></ion-spinner>";
     document.querySelector('.selector-to-display').classList.add('elementOff')
