@@ -136,11 +136,6 @@ export class Tab1Page implements OnInit, OnChanges {
 
   async cloturer(courseSelected : Courses){
 
-    // const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
-    // const courses = await this.orderByDesc(coursesLS)
-    // courses[index].actif = !courses[index].actif
-    // this.storage.set(this.utility.localstorage.Courses, courses)
-
     const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
     const courses = await this.orderByDesc(coursesLS)
     var courseNew : Courses [] = [];
@@ -148,6 +143,9 @@ export class Tab1Page implements OnInit, OnChanges {
     for(let course of courses){
       if(course.id === courseSelected.id){
         course.actif = !course.actif
+        if(course.firebase){
+          course.isModified = true;
+        }
         courseNew.push(course)
       }else{
         courseNew.push(course)
