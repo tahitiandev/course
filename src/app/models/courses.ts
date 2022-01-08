@@ -8,6 +8,7 @@ export interface  Courses{
     isModified? : boolean;
     documentId? : string;
     plafond? : number;
+    tag? : string;
 }
 
 export interface Liste{

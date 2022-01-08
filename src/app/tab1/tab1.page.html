@@ -26,13 +26,14 @@
         
         <ion-label>
           <h3>{{ course.date | date :'dd/MM/yyyy' }}</h3>
-          <h3>{{ this.calculeTotal(course) }} xpf - <strong>id : {{course.id}}</strong></h3>
+          <h3>{{ this.calculeTotal(course) }} xpf</h3>
         </ion-label>
 
         <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
       </ion-item>
 
       <ion-item-options side="end">
+        <ion-item-option color="danger" (click)="popUpTag(course)">Tag</ion-item-option>
         <ion-item-option color="danger" (click)="supprimer(course)">Supprimer</ion-item-option>
       </ion-item-options>
     </span>

@@ -1,5 +1,5 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Courses, Liste } from '../models/courses';
 import { CoursesService } from '../services/courses.service';
@@ -18,7 +18,8 @@ export class Tab1Page implements OnInit, OnChanges {
               private nav : NavController,
               private coursesService : CoursesService,
               private utility : UtilityService,
-              private menuService : MenuService) {}
+              private menuService : MenuService,
+              private alertController : AlertController) {}
 
   courses : Courses[];
   public masquerLesCoursesCloture :boolean = false;
@@ -132,7 +133,67 @@ export class Tab1Page implements OnInit, OnChanges {
     this.nav.navigateRoot('tabs/tab1/course-add')
   }
 
-  
+  async popUpTag(course : Courses){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      inputs: [
+        {
+          name: 'course',
+          label: 'Course',
+          value : 'Course',
+          type: 'radio'
+        },
+        {
+          name: 'course',
+          label: 'Important',
+          value : 'Course',
+          type: 'radio'
+        },
+        {
+          name: 'course',
+          label: 'Midi',
+          value : 'Course',
+          type: 'radio'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.utility.popupInformation('L\'envoi a été annulé')
+          }
+        }, {
+          text: 'Oui',
+          handler: async (tag) => {
+
+            const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
+            const courses = await this.orderByDesc(coursesLS)
+            
+            if(this.masquerLesCoursesCloture){
+              const coursesNew : Courses [] = [];
+              for(let course of courses){
+                if(!course.actif){
+                  coursesNew.push(course)
+                }
+                this.courses = []
+                this.courses = this.orderByDesc(coursesNew)
+              }
+            }else{
+
+              this.courses = courses
+
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present()
+  }
 
   async cloturer(courseSelected : Courses){
 
