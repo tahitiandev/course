@@ -304,6 +304,11 @@ export class ArticleListPage implements OnInit {
       this.articles = articles;
       }
 
+      actualiser(){
+        this.getArticle().then(()=> this.spinner(false))
+        
+      }
+
       goDetail(id : number){
       this.nav.navigateRoot('tabs/tab2/article-details/' + id)
       }

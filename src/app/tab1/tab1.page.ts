@@ -28,6 +28,7 @@ export class Tab1Page implements OnInit, OnChanges {
   ngOnInit(){
     this.settingInit()
     this.getCourse()
+    this.storage.get('articles').then(s => console.log(s))
   }
 
   ngOnChanges(changes : SimpleChanges){
@@ -172,7 +173,7 @@ export class Tab1Page implements OnInit, OnChanges {
 
             const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
             const courses = await this.orderByDesc(coursesLS)
-            
+
             if(this.masquerLesCoursesCloture){
               const coursesNew : Courses [] = [];
               for(let course of courses){
