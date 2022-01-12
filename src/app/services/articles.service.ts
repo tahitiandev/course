@@ -367,6 +367,10 @@ export class ArticlesService {
   async updateArticle(newArticle : Articles){
     const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
     var articleUpdate : Articles [] = [];
+    var compteur = 1
+    const test = articles.find(s => {
+      return s.libelle == ''
+    })
 
     for(let article of articles){
 
@@ -374,7 +378,11 @@ export class ArticlesService {
         articleUpdate.push(article)
       }
       if(article.code === newArticle.code){
-        articleUpdate.push(newArticle)
+        // cela évite les doublons
+        if(compteur === 1){
+          articleUpdate.push(newArticle)
+          compteur++
+        }
       }
     }
     this.storage.set(this.utility.localstorage.articles, articleUpdate)

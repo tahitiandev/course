@@ -31,6 +31,7 @@
 
           <ion-item-options side="start">
             <ion-item-option (click)="pairArticleWithAnBarreCode(article)" color="medium">Code barre</ion-item-option>
+            <ion-item-option color="medium" (click)="modifierArticleId(article)">Id</ion-item-option>
           </ion-item-options>
 
           <ion-item button (click)="modifierUnArticle(article)">
@@ -46,6 +47,7 @@
 
           <ion-item-options side="end">
             <!-- <ion-item-option (click)="goToArticleAdd()">Ajouter</ion-item-option> -->
+            <ion-item-option color="medium" (click)="modifierFamilleArticle(article)">Famille</ion-item-option>
             <ion-item-option color="medium" (click)="modifierUnArticle(article)">Modifier</ion-item-option>
             <ion-item-option color="danger" (click)="deleteArticle(article)">Supprimer</ion-item-option>
           </ion-item-options>
