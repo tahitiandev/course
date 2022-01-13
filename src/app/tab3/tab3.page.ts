@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { Setting } from '../models/setting';
 import { UtilityService } from '../services/utility.service';
@@ -16,7 +16,7 @@ import { FirebaseService } from '../services/firebase.service';
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss']
 })
-export class Tab3Page {
+export class Tab3Page implements OnInit {
 
   darkModeBtn : boolean;
   setting : Setting;
@@ -32,11 +32,12 @@ export class Tab3Page {
               private firestore : AngularFirestore,
               private alertController : AlertController,
               private articleService : ArticlesService,
-              private firebaseService : FirebaseService) {
-                this.initSetting()
-                // this.storage.set('deleted',[])
-              } // constructor
+              private firebaseService : FirebaseService) {}
   
+  ngOnInit(): void {
+    this.initSetting()
+  }
+
   async step(){
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     for(let divers of localStorageNames){

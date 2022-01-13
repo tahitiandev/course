@@ -34,22 +34,44 @@
             <ion-item-option color="medium" (click)="modifierArticleId(article)">Id</ion-item-option>
           </ion-item-options>
 
-          <ion-item button (click)="modifierUnArticle(article)">
+          <!-- <ion-item button (click)="modifierUnArticle(article)"> -->
+          <ion-item button>
             <ion-icon *ngIf="article.barreCode != null || article.barreCode != undefined" name="barcode-outline"></ion-icon>
             <ion-label>
               <h3>{{ article.libelle }}</h3>
             </ion-label>
+            <!-- <ion-label>
+              <ion-select value="notifications" interface="action-sheet">
+                <ion-select-option value="enable">Enable</ion-select-option>
+                <ion-select-option value="mute">Mute</ion-select-option>
+                <ion-select-option value="mute_week">Mute for a week</ion-select-option>
+                <ion-select-option value="mute_year">Mute for a year</ion-select-option>
+              </ion-select>
+            </ion-label> -->
             <ion-label>
               <h3 slot="end" style="text-align: right;">{{ article.prix }} xpf</h3>
             </ion-label>
             <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+
+
           </ion-item>
 
           <ion-item-options side="end">
             <!-- <ion-item-option (click)="goToArticleAdd()">Ajouter</ion-item-option> -->
+            <!-- <ion-item-option color="medium" (click)="modifierFamilleArticle(article)">Magasin</ion-item-option> -->
             <ion-item-option color="medium" (click)="modifierFamilleArticle(article)">Famille</ion-item-option>
             <ion-item-option color="medium" (click)="modifierUnArticle(article)">Modifier</ion-item-option>
             <ion-item-option color="danger" (click)="deleteArticle(article)">Supprimer</ion-item-option>
+            <!-- <ion-item-option color="danger">
+              <ion-label>Plus d'option</ion-label>
+              <ion-select value="notifications" interface="action-sheet">
+                <ion-select-option value="enable" (click)="modifierFamilleArticle(article)">Modifier la famille</ion-select-option>
+                <ion-select-option value="mute">Mute</ion-select-option>
+                <ion-select-option value="mute_week">Mute for a week</ion-select-option>
+                <ion-select-option value="mute_year">Mute for a year</ion-select-option>
+              </ion-select> -->
+
+            <!-- </ion-item-option> -->
           </ion-item-options>
 
         </ion-item-sliding>

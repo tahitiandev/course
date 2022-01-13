@@ -28,7 +28,6 @@ export class Tab1Page implements OnInit, OnChanges {
   ngOnInit(){
     this.settingInit()
     this.getCourse()
-    this.storage.get('articles').then(s => console.log(s))
   }
 
   ngOnChanges(changes : SimpleChanges){

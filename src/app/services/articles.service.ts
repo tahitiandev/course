@@ -18,122 +18,7 @@ export class ArticlesService {
               private firebaseService : FirebaseService,
               private alertController: AlertController) { }
 
-    private articles : Articles [] = [
-    {
-      code : 'FLORA',
-      libelle : 'Oranges',
-      prix : 100,
-      firebase : false
-    },
-    {
-      code : 'FLTOM',
-      libelle : 'Tomates',
-      prix : 10,
-      firebase : false
-    },
-    {
-      code : 'FLCAR',
-      libelle : 'Carrotte',
-      prix : 500,
-      firebase : false
-    },
-    {
-      code : 'FLSALA',
-      libelle : 'Salade',
-      prix : 500,
-      firebase : false
-    },
-    {
-      code : 'FLAUBER',
-      libelle : 'Aubergines',
-      prix : 500,
-      firebase : false
-    },
-    {
-      code : 'FLPOIV',
-      libelle : 'Poivron',
-      prix : 500,
-      firebase : false
-    },
-    {
-      code : 'VCJAM',
-      libelle : 'Jambon',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'VCLAR',
-      libelle : 'Lardon',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'VCRACL',
-      libelle : 'Fromage à raclette',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'VCSAUON',
-      libelle : 'Saucisson',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'VCSAUFU',
-      libelle : 'Saumon fumé',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'BOILAI',
-      libelle : 'Lait Vai Ora',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'BOICOC',
-      libelle : 'Coca',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'BOIVOLF',
-      libelle : 'Volvic aux fruits',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'BOIVAI',
-      libelle : 'Vaimato',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'VIANSTE',
-      libelle : 'Steck',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'VIANTRAV',
-      libelle : 'Travers de porc',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'VIANSAUC',
-      libelle : 'Saucisse',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'VIANPOUL',
-      libelle : 'Poulet',
-      prix : 95,
-      firebase : false
-    }
-  ];
+    private articles : Articles [] = [];
 
   private famille : FamilleArticle[] = [
     {
@@ -234,8 +119,8 @@ export class ArticlesService {
 
   async generateArticleId(){
     const articlesLS : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-    const articles : Articles [] = this.sortByArticleCode(articlesLS)
-    return parseInt(articles[articles.length - 1].code) + 1
+    const articles : Articles [] = await this.sortByArticleCode(articlesLS);
+    return await parseInt(articles[articles.length - 1].code) + 1
   }
 
   async temp(){
@@ -297,7 +182,8 @@ export class ArticlesService {
         isModified : article.isModified == undefined ? false : article.isModified,
         documentId : article.documentId,
         familleCode : article.familleCode == undefined ? "" : article.familleCode,
-        familleLibelle : article.familleLibelle == undefined ? "" : article.libelle
+        familleLibelle : article.familleLibelle == undefined ? "" : article.libelle,
+        magasin : article.magasin == undefined ? "Carrefour" : article.magasin
       })
 
       id = id + 1
@@ -331,7 +217,8 @@ export class ArticlesService {
             isModified : article.isModified == undefined ? false : article.isModified,
             documentId : article.documentId,
             familleCode : tmp.new,
-            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle
+            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle,
+            magasin : article.magasin == undefined ? "Carrefour" : article.magasin
           })
         }
       }
@@ -348,7 +235,8 @@ export class ArticlesService {
             isModified : article.isModified == undefined ? false : article.isModified,
             documentId : article.documentId,
             familleCode : '20',
-            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle
+            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle,
+            magasin : article.magasin == undefined ? "Carrefour" : article.magasin
           })
         }
       }
@@ -553,7 +441,8 @@ export class ArticlesService {
               prix : article.prix,
               prixModifier : article.prixModifier,
               quantite : articleCode.quantite,
-              firebase : false
+              firebase : false,
+              magasin : 'Carrefour'
             }
         }
   
@@ -743,7 +632,8 @@ export class ArticlesService {
               documentId : null,
               familleCode : '22',
               familleLibelle : null,
-              barreCode : codeBarre
+              barreCode : codeBarre,
+              magasin : 'Carrefour'
             }
             this.setArticleRealDataToLocalStorage(newArticle).then(()=> {
               articleNew = newArticle
@@ -793,6 +683,17 @@ export class ArticlesService {
     //     console.log(article)
     //   }
     // }
+  }
+
+  async ajouterUnMgasinParDefaut(){
+    const articles : Articles [] = await this.storage.get('articles');
+
+    for(let article of articles){
+      article.isModified = true
+      article.magasin = 'Carrefour'
+    }
+
+    this.storage.set('articles',articles)
   }
 
 }

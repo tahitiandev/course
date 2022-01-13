@@ -37,7 +37,7 @@ export class ArticleListPage implements OnInit {
       const articles: Articles[] = await this.articleService.sortByArticleCode(await this.storage.get('articles'));
       for(let a of articles){
           
-        console.log(a.code + ' ' + a.libelle)
+        console.log(a.code + ' ' + a.magasin)
       }
     }
 
@@ -66,12 +66,6 @@ export class ArticleListPage implements OnInit {
           value : articles.prix
         },
         {
-          name: 'familleCode',
-          type: 'number',
-          placeholder: 'Code famille',
-          value : articles.familleCode
-        },
-        {
           name: 'barreCode',
           type: 'text',
           placeholder: 'Code barre',
@@ -87,10 +81,10 @@ export class ArticleListPage implements OnInit {
           }
         },
         {
-          text: 'Modifier la famille',
+          text: 'Magasin : ' + articles.magasin,
           cssClass: 'primary',
           handler: async (result) => {
-
+            this.modifierMagasin(articles)
           }
         },
         {
@@ -105,25 +99,17 @@ export class ArticleListPage implements OnInit {
           article.code = result.code;
           article.libelle = result.libelle;
           article.prix = result.prix;
-          article.familleCode = result.familleCode.toString();
           article.barreCode = result.barreCode
           
           if(article.firebase){
             article.isModified = true
           }
 
-          if(article.familleCode != result.familleCode){
-            const famillesLS : FamilleArticle [] = await this.storage.get(this.u.localstorage['famille d\'articles']);
-            const familleInfo : FamilleArticle = famillesLS.find(familleResult => {
-              return familleResult.code === result.familleCode
+          this.articleService.updateArticle(article).then(() => {
+            this.getArticle().then(() => {
+              this.spinner(false)
             })
-
-            article.familleLibelle = familleInfo.libelle
-          }
-
-            this.articleService.updateArticle(article).then(() => {
-              this.getArticle()
-            })
+          })
           
           }
         }
@@ -133,6 +119,67 @@ export class ArticleListPage implements OnInit {
       await alert.present();
 
     }
+
+    async modifierMagasin(article : Articles){
+
+      const alert = await this.alertController.create({
+        header: 'Modifier l\'article',
+        inputs: [
+        {
+          name: 'magasin',
+          type: 'radio',
+          label : 'Carrefour',
+          value : 'Carrefour'
+        },
+        {
+          name: 'magasin',
+          type: 'radio',
+          label : 'Easy market',
+          value : 'Easy market'
+        },
+        {
+          name: 'magasin',
+          type: 'radio',
+          label : 'Hyper U',
+          value : 'Hyper U'
+        }
+        ],
+        buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+        text: 'Ok',
+        handler: async (result) => {
+          
+          article.magasin = result
+          
+          const articles : Articles [] = await this.storage.get(this.u.localstorage.articles);
+          const index =  await articles.findIndex(s => {
+            return s.code === article.code
+          })
+
+          articles[index] = article
+
+          this.storage.set(this.u.localstorage.articles, articles).then(() => {
+            this.getArticle().then(() => {
+              this.spinner(false)
+            })
+          })
+
+        }
+        }
+        ]
+      });
+  
+      await alert.present();
+
+    }
+
 
     async modifierArticleId(article : Articles){
 
@@ -221,6 +268,7 @@ export class ArticleListPage implements OnInit {
             familleCode : article.familleCode,
             familleLibelle : article.familleLibelle,
             barreCode : barreCode.toString(),
+            magasin : article.magasin
           }
           articlesNew.push(articleUpdate);
         }
@@ -301,7 +349,8 @@ export class ArticleListPage implements OnInit {
           code : newArticle.code,
           libelle : newArticle.libelle,
           prix : newArticle.prix,
-          firebase : false
+          firebase : false,
+          magasin : 'Carrefour'
         })
 
         this.storage.set(this.u.localstorage.articles, articleTemp).then(() => this.getArticle())
@@ -353,7 +402,8 @@ export class ArticleListPage implements OnInit {
               firebase : article.firebase,
               isModified : article.isModified,
               documentId : article.documentId,
-              barreCode : article.barreCode
+              barreCode : article.barreCode,
+              magasin : article.magasin
             }
 
             groupByArticle.push(articleGroup)
@@ -495,7 +545,8 @@ export class ArticleListPage implements OnInit {
                   documentId : null,
                   familleCode : '22',
                   familleLibelle : null,
-                  barreCode : barreCode
+                  barreCode : barreCode,
+                  magasin : 'Carrefour'
                 })
               }
             }

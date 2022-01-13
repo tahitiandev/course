@@ -67,7 +67,8 @@ export class ArticleAddPage implements OnInit {
       documentId : null,
       familleCode : formValue.familles,
       familleLibelle : null,
-      barreCode : this.barreCode
+      barreCode : this.barreCode,
+      magasin : 'Carrefour'
     }    
     
     this.articleService.setArticleRealDataToLocalStorage(newArticle)

@@ -10,6 +10,7 @@ export interface Articles{
     familleCode? : string;
     familleLibelle? : string;
     barreCode? :string;
+    magasin : string;
 }
 
 export interface FamilleArticle{
