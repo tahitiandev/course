@@ -136,7 +136,7 @@ export class Tab1Page implements OnInit, OnChanges {
 
   async popUpPayeur(course : Courses){
 
-    const payeurs = await this.setting.payeur;
+    const payeurs = await this.setting.payeurs;
     const input : AlertInput [] = [];
 
     for(let payeur of payeurs){
@@ -177,6 +177,10 @@ export class Tab1Page implements OnInit, OnChanges {
             })
 
             courses[index].payeur = payeur
+
+            if(courses[index].firebase){
+              courses[index].isModified = true
+            }
 
             this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
               this.getCourse()
@@ -232,6 +236,69 @@ export class Tab1Page implements OnInit, OnChanges {
             })
 
             courses[index].tag = tag
+
+            if(courses[index].firebase){
+              courses[index].isModified = true
+            }
+
+            this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
+              this.getCourse()
+            })
+            
+        }
+        }
+      ]
+    });
+
+    await alert.present()
+  }
+
+  async popUpMagasin(course : Courses){
+
+    const magasins = await this.setting.magasins;
+    const input : AlertInput [] = [];
+
+    for(let magasin of magasins){
+      input.push({
+        name : 'magasin',
+        label : magasin,
+        value : magasin,
+        type : 'radio'
+      })
+    }
+
+    input.push({
+      name: 'magasin',
+      label: 'Effacer le magasin',
+      value : null,
+      type: 'radio'
+    })
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      inputs: input,
+      buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.utility.popupInformation('L\'envoi a été annulé')
+          }
+        }, {
+          text: 'Oui',
+          handler: async (magasin) => {
+
+            const courses : Courses [] = await this.storage.get(this.utility.localstorage.Courses)
+            const index = await courses.findIndex(s => {
+              return s.id === course.id
+            })
+
+            courses[index].magasin = magasin
+            if(courses[index].firebase){
+              courses[index].isModified = true
+            }
 
             this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
               this.getCourse()

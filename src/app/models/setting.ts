@@ -2,6 +2,7 @@ export interface Setting{
     theme : boolean;
     budget : number;
     masquerLesCoursesCloture : boolean;
-    payeur : any [];
+    payeurs : any [];
     tags : any [];
+    magasins : any [];
 }

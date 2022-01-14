@@ -101,8 +101,9 @@ export class AppComponent implements OnInit {
         theme : true,
         budget : 20000,
         masquerLesCoursesCloture : true,
-        payeur : ['Gilles','Herehau'],
-        tags : ['Courses','Dejeuner']
+        payeurs : ['Gilles','Herehau'],
+        tags : ['Courses','Dejeuner'],
+        magasins : ['Carrefour','Hyper U', 'Easy market']
       }
       this.storage.set(this.utility.localstorage.Setting, settingInfo)
     }

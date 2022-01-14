@@ -26,12 +26,14 @@
           <h3>{{ this.calculeTotal(course) }} xpf</h3>
         </ion-label>
 
+        <span side="end" [ngClass]="{'magasin' : course.magasin != undefined}">{{ course.magasin }}</span>
         <span side="end" [ngClass]="{'tag' : course.tag != undefined}">{{ course.tag }}</span>
         <span side="end" [ngClass]="{'payeur' : course.payeur != undefined}">{{ course.payeur }}</span>
         <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
       </ion-item>
 
       <ion-item-options side="end">
+        <ion-item-option style="background: #979e59; color: black;" (click)="popUpMagasin(course)">Magasin</ion-item-option>
         <ion-item-option style="background: #a0d145; color: black;" (click)="popUpPayeur(course)">Payeur</ion-item-option>
         <ion-item-option style="background: rgb(71, 69, 209); color: white;" (click)="popUpTag(course)">Tag</ion-item-option>
         <ion-item-option style="background: red;" (click)="supprimer(course)">Supprimer</ion-item-option>

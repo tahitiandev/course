@@ -10,6 +10,7 @@ export interface  Courses{
     plafond? : number;
     tag? : string;
     payeur? : string;
+    magasin? : string;
 }
 
 export interface Liste{

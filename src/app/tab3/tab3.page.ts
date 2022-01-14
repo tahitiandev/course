@@ -348,7 +348,7 @@ export class Tab3Page implements OnInit {
 
   async listeDesPayeurs(){
 
-    const payeurs = await this.setting.payeur;
+    const payeurs = await this.setting.payeurs;
 
     const input : AlertInput [] = []
 
@@ -381,7 +381,7 @@ export class Tab3Page implements OnInit {
             })
 
             payeurs.splice(index,1)
-            this.setting.payeur = payeurs
+            this.setting.payeurs = payeurs
 
             this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
               this.utility.popupInformation('Le payeur <strong>' + payeur + '</strong> a bien été supprimé')
@@ -425,9 +425,9 @@ export class Tab3Page implements OnInit {
         }, {
           text: 'Ajouter',
           handler: async (payeur) => {
-              const payeurs =  await this.setting.payeur
+              const payeurs =  await this.setting.payeurs
               payeurs.push(payeur.payeur)
-              this.setting.payeur = payeurs
+              this.setting.payeurs = payeurs
               this.storage.set(this.utility.localstorage.Setting, this.setting).then(()=> {
               this.utility.popupInformation('Le payeur <strong>' + payeur.payeur + '</strong> a bien été créé')
               })
@@ -523,6 +523,99 @@ export class Tab3Page implements OnInit {
               this.setting.tags = tags
               this.storage.set(this.utility.localstorage.Setting, this.setting).then(()=> {
               this.utility.popupInformation('Le tag <strong>' + tag.tag + '</strong> a bien été créé')
+              })
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async listeDesMagasins(){
+
+    const magasins = await this.setting.magasins;
+
+    const input : AlertInput [] = []
+
+    for(let magasin of magasins){
+      await input.push({
+        name : 'magasin',
+        type : 'radio',
+        label : magasin,
+        value : magasin
+      })
+    }
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Liste des magasins',
+      inputs: input,
+      buttons: [
+        {
+          text: 'Ajouter',
+          handler: () => {
+              this.creerUnNouveauMagasin()
+          }
+        }
+        , {
+          text: 'Supprimer',
+          handler: async (magasin) => {
+
+            const index = await magasins.findIndex(magasinSetting => {
+              return magasinSetting === magasin
+            })
+
+            magasins.splice(index,1)
+            this.setting.magasins = magasins
+
+            this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
+              this.utility.popupInformation('Le magasin <strong>' + magasin + '</strong> a bien été supprimé')
+            })
+              
+          }
+        },
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async creerUnNouveauMagasin(){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Créer un magasin',
+      inputs: [
+        {
+          name: 'magasin',
+          type: 'text',
+          placeholder: 'Libellé du magasin'
+        },
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Ajouter',
+          handler: async (magasin) => {
+              const magasins =  await this.setting.magasins
+              magasins.push(magasin.magasin)
+              this.setting.tags = magasins
+              this.storage.set(this.utility.localstorage.Setting, this.setting).then(()=> {
+              this.utility.popupInformation('Le magasin <strong>' + magasin.magasin + '</strong> a bien été créé')
               })
           }
         }
