@@ -6,6 +6,7 @@ import { CoursesService } from '../services/courses.service';
 import { UtilityService } from '../services/utility.service';
 import { MenuService } from '../services/menu.service';
 import { Setting } from '../models/setting';
+import { AlertInput } from '@ionic/core';
 
 @Component({
   selector: 'app-tab1',
@@ -133,31 +134,86 @@ export class Tab1Page implements OnInit, OnChanges {
     this.nav.navigateRoot('tabs/tab1/course-add')
   }
 
-  async popUpTag(course : Courses){
+  async popUpPayeur(course : Courses){
+
+    const payeurs = await this.setting.payeur;
+    const input : AlertInput [] = [];
+
+    for(let payeur of payeurs){
+      input.push({
+        name : 'payeur',
+        label : payeur,
+        value : payeur,
+        type : 'radio'
+      })
+    }
+
+    input.push({
+      name: 'payeur',
+      label: 'Effacer le payeur',
+      value : null,
+      type: 'radio'
+    })
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Information',
-      inputs: [
+      inputs: input,
+      buttons: [
         {
-          name: 'course',
-          label: 'Course',
-          value : 'Course',
-          type: 'radio'
-        },
-        {
-          name: 'course',
-          label: 'Important',
-          value : 'Course',
-          type: 'radio'
-        },
-        {
-          name: 'course',
-          label: 'Midi',
-          value : 'Course',
-          type: 'radio'
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.utility.popupInformation('L\'envoi a été annulé')
+          }
+        }, {
+          text: 'Oui',
+          handler: async (payeur) => {
+
+            const courses : Courses [] = await this.storage.get(this.utility.localstorage.Courses)
+            const index = await courses.findIndex(s => {
+              return s.id === course.id
+            })
+
+            courses[index].payeur = payeur
+
+            this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
+              this.getCourse()
+            })
         }
-      ],
+        }
+      ]
+    });
+
+    await alert.present()
+  }
+
+  async popUpTag(course : Courses){
+
+    const tags = await this.setting.tags;
+    const input : AlertInput [] = [];
+
+    for(let tag of tags){
+      input.push({
+        name : 'tag',
+        label : tag,
+        value : tag,
+        type : 'radio'
+      })
+    }
+
+    input.push({
+      name: 'tag',
+      label: 'Effacer le tag',
+      value : null,
+      type: 'radio'
+    })
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      inputs: input,
       buttons: [
         {
           text: 'Non',
@@ -170,24 +226,18 @@ export class Tab1Page implements OnInit, OnChanges {
           text: 'Oui',
           handler: async (tag) => {
 
-            const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
-            const courses = await this.orderByDesc(coursesLS)
+            const courses : Courses [] = await this.storage.get(this.utility.localstorage.Courses)
+            const index = await courses.findIndex(s => {
+              return s.id === course.id
+            })
 
-            if(this.masquerLesCoursesCloture){
-              const coursesNew : Courses [] = [];
-              for(let course of courses){
-                if(!course.actif){
-                  coursesNew.push(course)
-                }
-                this.courses = []
-                this.courses = this.orderByDesc(coursesNew)
-              }
-            }else{
+            courses[index].tag = tag
 
-              this.courses = courses
-
-            }
-          }
+            this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
+              this.getCourse()
+            })
+            
+        }
         }
       ]
     });

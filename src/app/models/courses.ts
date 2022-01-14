@@ -9,6 +9,7 @@ export interface  Courses{
     documentId? : string;
     plafond? : number;
     tag? : string;
+    payeur? : string;
 }
 
 export interface Liste{

@@ -100,7 +100,9 @@ export class AppComponent implements OnInit {
       const settingInfo : Setting = {
         theme : true,
         budget : 20000,
-        masquerLesCoursesCloture : true
+        masquerLesCoursesCloture : true,
+        payeur : ['Gilles','Herehau'],
+        tags : ['Courses','Dejeuner']
       }
       this.storage.set(this.utility.localstorage.Setting, settingInfo)
     }

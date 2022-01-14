@@ -10,6 +10,7 @@ import { Articles, FamilleArticle } from '../models/articles';
 import { Deleted } from '../models/deleted';
 import { ArticlesService } from '../services/articles.service';
 import { FirebaseService } from '../services/firebase.service';
+import { AlertInput } from '@ionic/core';
 
 @Component({
   selector: 'app-tab3',
@@ -45,6 +46,10 @@ export class Tab3Page implements OnInit {
         this.utility.changeValueiSModified(divers[1], false)
       }
     }
+  }
+
+  inipayeur(){
+
   }
 
   async consoleLog(){
@@ -333,6 +338,192 @@ export class Tab3Page implements OnInit {
           handler: (formValue) => {
               this.setting.budget = parseInt(formValue.budget);
               this.storage.set(this.utility.localstorage.Setting, this.setting)
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async listeDesPayeurs(){
+
+    const payeurs = await this.setting.payeur;
+
+    const input : AlertInput [] = []
+
+    for(let payeur of payeurs){
+      await input.push({
+        name : 'payeur',
+        type : 'radio',
+        label : payeur,
+        value : payeur
+      })
+    }
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Liste des payeurs',
+      inputs: input,
+      buttons: [
+        {
+          text: 'Ajouter',
+          handler: () => {
+              this.creerUnNouveauPayeur()
+          }
+        }
+        , {
+          text: 'Supprimer',
+          handler: async (payeur) => {
+
+            const index = await payeurs.findIndex(payeurSetting => {
+              return payeurSetting === payeur
+            })
+
+            payeurs.splice(index,1)
+            this.setting.payeur = payeurs
+
+            this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
+              this.utility.popupInformation('Le payeur <strong>' + payeur + '</strong> a bien été supprimé')
+            })
+              
+          }
+        },
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async creerUnNouveauPayeur(){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Créer un payeur',
+      inputs: [
+        {
+          name: 'payeur',
+          type: 'text',
+          placeholder: 'Nom du payeur'
+        },
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Ajouter',
+          handler: async (payeur) => {
+              const payeurs =  await this.setting.payeur
+              payeurs.push(payeur.payeur)
+              this.setting.payeur = payeurs
+              this.storage.set(this.utility.localstorage.Setting, this.setting).then(()=> {
+              this.utility.popupInformation('Le payeur <strong>' + payeur.payeur + '</strong> a bien été créé')
+              })
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async listeDesTags(){
+
+    const tags = await this.setting.tags;
+
+    const input : AlertInput [] = []
+
+    for(let tag of tags){
+      await input.push({
+        name : 'tag',
+        type : 'radio',
+        label : tag,
+        value : tag
+      })
+    }
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Liste des tags',
+      inputs: input,
+      buttons: [
+        {
+          text: 'Ajouter',
+          handler: () => {
+              this.creerUnNouveauTag()
+          }
+        }
+        , {
+          text: 'Supprimer',
+          handler: async (tag) => {
+
+            const index = await tags.findIndex(tagSetting => {
+              return tagSetting === tag
+            })
+
+            tags.splice(index,1)
+            this.setting.tags = tags
+
+            this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
+              this.utility.popupInformation('Le tag <strong>' + tag + '</strong> a bien été supprimé')
+            })
+              
+          }
+        },
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async creerUnNouveauTag(){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Créer un tag',
+      inputs: [
+        {
+          name: 'tag',
+          type: 'text',
+          placeholder: 'Libellé du tag'
+        },
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Ajouter',
+          handler: async (tag) => {
+              const tags =  await this.setting.tags
+              tags.push(tag.tag)
+              this.setting.tags = tags
+              this.storage.set(this.utility.localstorage.Setting, this.setting).then(()=> {
+              this.utility.popupInformation('Le tag <strong>' + tag.tag + '</strong> a bien été créé')
+              })
           }
         }
       ]
