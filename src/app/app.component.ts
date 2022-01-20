@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
+import * as firebase from 'firebase';
 import { Setting } from './models/setting';
 import { ArticlesService } from './services/articles.service';
 import { CoursesService } from './services/courses.service';
@@ -97,14 +98,7 @@ export class AppComponent implements OnInit {
 
     const setting = await this.storage.get(this.utility.localstorage.Setting);
     if(setting === null){
-      const settingInfo : Setting = {
-        theme : true,
-        budget : 20000,
-        masquerLesCoursesCloture : true,
-        payeurs : ['Gilles','Herehau'],
-        tags : ['Courses','Dejeuner'],
-        magasins : ['Carrefour','Hyper U', 'Easy market']
-      }
+      const settingInfo : Setting = await this.utility.initSettingData()
       this.storage.set(this.utility.localstorage.Setting, settingInfo)
     }
     

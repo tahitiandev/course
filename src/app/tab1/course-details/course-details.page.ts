@@ -129,6 +129,77 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
+  async insertSpecialArticle(){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Modifier les données de l\'article',
+      inputs: [
+        {
+          name: 'libelle',
+          label : 'Libellé',
+          placeholder : 'Libellé',
+          type: 'text'
+        },
+        {
+          name: 'prixUnitaire',
+          label : 'Prix unitaire',
+          placeholder : 'Prix unitaire',
+          type: 'number'
+        },
+        {
+          name: 'quantite',
+          label : 'Quantité',
+          placeholder : 'Quantité',
+          type: 'number'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Ok',
+          handler: async (data) => {
+
+            const liste : Liste = {
+              articleId : null,
+              libelle : data.libelle,
+              quantite : data.quantite,
+              prixUnitaire : data.prixUnitaire,
+              actif : false
+            }
+
+            this.listeArticle.push(liste)
+
+            const courseUpdate : Courses = await {
+              id : this.coursesDetail.id,
+              date : this.coursesDetail.date,
+              actif : this.coursesDetail.actif,
+              total : this.coursesDetail.total,
+              liste : this.listeArticle,
+              firebase : this.coursesDetail.firebase,
+              isModified : this.coursesDetail.firebase ? true : false,
+              documentId : this.coursesDetail.documentId,
+              plafond : this.coursesDetail.plafond
+            }
+
+            this.courseService.updateCourseInLocalStorage(courseUpdate)
+            this.calculeTotal();
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+
+  }
+
   async updateArticle(data : Liste, index : number) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -136,12 +207,21 @@ export class CourseDetailsPage implements OnInit {
       inputs: [
         {
           name: 'prixUnitaire',
+          label : 'Prix unitaire',
           placeholder : 'Prix unitaire',
           type: 'number',
           value: data.prixUnitaire
         },
         {
+          name: 'libelle',
+          label : 'Libellé',
+          placeholder : 'Libellé',
+          type: 'text',
+          value: data.libelle
+        },
+        {
           name: 'quantite',
+          label : 'Quantité',
           placeholder : 'Quantité',
           type: 'number',
           id: 'name2-id',
@@ -177,7 +257,7 @@ export class CourseDetailsPage implements OnInit {
               if(i === index){
                 newListe.push({
                   articleId : this.listeArticle[i].articleId,
-                  libelle : this.listeArticle[i].libelle,
+                  libelle : data.libelle,
                   quantite : data.quantite,
                   prixUnitaire : data.prixUnitaire,
                   prixTotal : null,
@@ -195,7 +275,7 @@ export class CourseDetailsPage implements OnInit {
               total : this.coursesDetail.total,
               liste : newListe,
               firebase : this.coursesDetail.firebase,
-              isModified : this.coursesDetail.isModified,
+              isModified : this.coursesDetail.firebase ? true : false,
               documentId : this.coursesDetail.documentId,
               plafond : this.coursesDetail.plafond
             }
@@ -276,12 +356,11 @@ export class CourseDetailsPage implements OnInit {
       const article = await this.articleService.searchArticleByBarreCode(barreCode)
       
     if(article === null || article === undefined){
-      var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode)
+      var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode, true)
+      // alert(response.articleIsCreer)
+      // alert(response.article.code)
       if(response.articleIsCreer){
-        const listeNew : Liste [] = [];
-      for(let liste of this.listeArticle){
-        listeNew.push(liste)
-      }
+        
       var articleNew : Liste = {
         articleId : response.article.code,
         libelle : response.article.libelle,
@@ -291,30 +370,30 @@ export class CourseDetailsPage implements OnInit {
         actif : false
       }
       
-      listeNew.push(articleNew)
-      
-      this.listeArticle = listeNew;
-      
+      this.listeArticle.push(articleNew)
+           
       const courseUpdate : Courses = await {
         id : this.coursesDetail.id,
         date : this.coursesDetail.date,
         actif : this.coursesDetail.actif,
         total : this.coursesDetail.total,
-        liste : listeNew,
-        firebase : this.coursesDetail.firebase
+        firebase : this.coursesDetail.firebase,
+        liste : this.listeArticle
       }
 
-      this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+      this.courseService.updateCourseInLocalStorage(courseUpdate).then(async () => {
+
+        const courses : Courses [] = await this.courseService.getCourseFromLocalStorage()
+        const course : Courses = await courses.find(s => {
+          return s.id === this.coursesDetail.id
+        })
+        this.listeArticle = []
+        this.listeArticle = course.liste
+        
+      })
       this.calculeTotal();
       }
     }else{
-
-      // Vérifie si l'article est déjà dans la liste
-      // const articlePresentDansLaListe =  await this.listeArticle.find(s => {
-      //   return s.articleId === article.code
-      // })
-
-      // if(articlePresentDansLaListe === null || articlePresentDansLaListe === undefined){
 
         const listeNew : Liste [] = [];
         for(let liste of this.listeArticle){
@@ -344,35 +423,6 @@ export class CourseDetailsPage implements OnInit {
 
         this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
         this.calculeTotal();
-    //   }
-    //   else{
-    //     articlePresentDansLaListe.actif = true
-
-    //     const listeNew : Liste [] = [];
-
-    //     for(let liste of this.listeArticle){
-    //       if(liste.articleId != articlePresentDansLaListe.articleId){
-    //         listeNew.push(liste)
-    //       }else{
-    //         listeNew.push(articlePresentDansLaListe)
-    //       }
-    //     }
-
-    //     this.listeArticle = listeNew;
-        
-    //     const courseUpdate : Courses = await {
-    //       id : this.coursesDetail.id,
-    //       date : this.coursesDetail.date,
-    //       actif : this.coursesDetail.actif,
-    //       total : this.coursesDetail.total,
-    //       liste : listeNew,
-    //       firebase : this.coursesDetail.firebase
-    //     }
-
-    //     this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
-    //     this.calculeTotal();
-    //   }
-
     }
   }
 
@@ -417,7 +467,7 @@ export class CourseDetailsPage implements OnInit {
       }
 
     }else{
-      var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode)
+      var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode, false)
       if(response.articleIsCreer){
         const listeNew : Liste [] = [];
       for(let liste of this.listeArticle){

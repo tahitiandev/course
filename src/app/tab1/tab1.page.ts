@@ -54,7 +54,51 @@ export class Tab1Page implements OnInit, OnChanges {
     
   }
 
-  async generateCourseVide(){
+  async listeDesMagasins(){
+
+    const magasins = await this.setting.magasins;
+
+    const input : AlertInput [] = []
+
+    for(let magasin of magasins){
+      await input.push({
+        name : 'magasin',
+        type : 'radio',
+        label : magasin,
+        value : magasin
+      })
+    }
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Liste des magasins',
+      inputs: input,
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (magasin) => {
+
+            this.generateCourseVide(magasin)
+              
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async generateCourseVide(magasin){
+
     const today = await this.menuService.generateDateAujourdhui()
     const date = today.annnee + '-' + today.mois + '-'+ today.jour + 'T17:32:38.956-10:00'
     // "2021-12-28T17:32:38.956-10:00"
@@ -70,7 +114,8 @@ export class Tab1Page implements OnInit, OnChanges {
       isModified : false,
       documentId : null,
       plafond : 0,
-      liste : listeVide
+      liste : listeVide,
+      magasin : magasin
     })
     this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
       this.courses = courses

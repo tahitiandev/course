@@ -103,6 +103,19 @@ export class UtilityService {
   async getSettingFromLocalStorage(){
     const settings : Setting = await this.storage.get(this.localstorage.Setting);
     return settings;
-  } 
+  }
+
+  async initSettingData(){
+    const settings : Setting = await {
+      theme : true,
+      budget : 20000,
+      masquerLesCoursesCloture : true,
+      payeurs : ['Gilles','Herehau'],
+      tags : ['Courses','Dejeuner'],
+      magasins : ['Carrefour','Hyper U', 'Easy market'],
+      firebase : false
+    }
+    return settings;
+  }
 
 }

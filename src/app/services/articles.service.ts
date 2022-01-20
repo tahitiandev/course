@@ -529,7 +529,7 @@ export class ArticlesService {
 
   async verifieSiPrixDifferent(codeArticle : string, prix : number){
     const articleInfo : Articles = await this.searchArticleByArticleCode(codeArticle)
-    if(prix !== articleInfo.prix){
+    if(prix !== articleInfo.prix && codeArticle != null){
 
       const alert = await this.alertController.create({
         cssClass: 'my-custom-class',
@@ -558,9 +558,9 @@ export class ArticlesService {
   }
 
   // Dans la liste de course, si on scanne un code barre qui n'existe pas, on le créé
-  async creerArticleAPartirduBarreCode(barreCode : string){
+  async creerArticleAPartirduBarreCode(barreCode : string, ifMethodeUseInpostArticleByBarreCode : boolean){
     var response :CreerArticleAPartirDuCodeBarreResponse = {
-      articleIsCreer : true,
+      articleIsCreer : null,
       article : null
     }
     const alert = await this.alertController.create({
@@ -579,8 +579,9 @@ export class ArticlesService {
         }, {
           text: 'Oui',
           handler: async () => {
-            const article : Articles = await this.formulaireCreerArticleAPartirduBarreCode(barreCode)
-            response.article = article
+            const article : Articles = await this.formulaireCreerArticleAPartirduBarreCode(barreCode,ifMethodeUseInpostArticleByBarreCode)
+            response.article = await article
+            response.articleIsCreer = await true
           }
         }
       ]
@@ -591,7 +592,7 @@ export class ArticlesService {
     return response
   }
 
-  private async formulaireCreerArticleAPartirduBarreCode(codeBarre : string){
+  private async formulaireCreerArticleAPartirduBarreCode(codeBarre : string,ifMethodeUseInpostArticleByBarreCode:boolean){
 
     var articleNew : Articles = null;
 
@@ -638,7 +639,8 @@ export class ArticlesService {
             this.setArticleRealDataToLocalStorage(newArticle).then(()=> {
               articleNew = newArticle
             })
-          }
+            
+          }//
         }
       ]
     });

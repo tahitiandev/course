@@ -624,6 +624,15 @@ export class Tab3Page implements OnInit {
 
     await alert.present();
   }
+
+  async configurationParDefaut(){
+    const setting = await this.utility.initSettingData()
+    this.storage.set(this.utility.localstorage.Setting, setting).then(() => {
+      this.utility.popupInformation('La configuration a bien été faite.')
+    }).catch(error => {
+      this.utility.popupInformation(error)
+    })
+  }
   
 
 }

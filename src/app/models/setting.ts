@@ -5,4 +5,7 @@ export interface Setting{
     payeurs : any [];
     tags : any [];
     magasins : any [];
+    firebase : boolean;
+    documentId? : string;
+    isModified? : string;
 }
