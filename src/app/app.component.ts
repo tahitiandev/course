@@ -23,14 +23,11 @@ export class AppComponent implements OnInit {
               private utility : UtilityService) {}
   
   splashscreen : boolean = true;
+  nbConnection : number = 0;
   settings : Setting;
-  
   
   ngOnInit(){
     this.initSplashscreen()
-    // this.loadDefaultData()
-    // this.route.navigateRoot('splashscreen')
-    // this.route.navigateRoot('http://localhost:8100/tabs/tab3')
   }
 
   initSplashscreen(){
@@ -42,10 +39,12 @@ export class AppComponent implements OnInit {
 
   loadDefaultData(){
     
-    // if(this.splashscreen){
-    //   this.splashscreen = false;
-    //   this.route.navigateRoot('splashscreen')
-    // }else{
+    if(this.splashscreen){
+      this.splashscreen = false;
+      if(this.nbConnection === 0){
+        this.route.navigateRoot('splashscreen')
+      }
+    }else{
       this.setArticle()
       this.setFamilleArticle()
       this.setPlat()
@@ -54,7 +53,7 @@ export class AppComponent implements OnInit {
       this.initSetting()
       this.initTheme()
       this.setDeletedElement()
-    // }
+    }
   }
 
   async setArticle(){

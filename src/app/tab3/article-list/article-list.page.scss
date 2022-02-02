@@ -1,0 +1,19 @@
+.colSize{
+    height: 80px;
+    text-align: center;
+}
+.hideInput{
+    font-size: 200px;
+}
+.hide{
+    display: none;
+}
+#spinner{
+    // background-color: yellow;
+    position: fixed; z-index: 9;
+    top: 45%; left: 45%;
+}
+.displayBackground{
+    background: gray;
+    opacity: 1;
+}

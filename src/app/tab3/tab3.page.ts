@@ -27,6 +27,7 @@ export class Tab3Page implements OnInit {
   }
 
   articles : Articles [] = []
+  budget : number;
 
   constructor(private utility : UtilityService,
               private storage : Storage,
@@ -70,6 +71,7 @@ export class Tab3Page implements OnInit {
 
     if(setting  != null){
       this.setting = setting
+      this.budget = setting.budget
 
       // Init thème
       if(this.setting.theme === true){
@@ -316,7 +318,7 @@ export class Tab3Page implements OnInit {
   async budgetDeLaSemaine(){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Prompt!',
+      header: 'Budget de la semaine',
       inputs: [
         {
           name: 'budget',

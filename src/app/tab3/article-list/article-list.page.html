@@ -79,7 +79,7 @@
       </span>
     </ion-item-group>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="this.actualiser()" style="opacity: 0.7;">
       <ion-icon name="sync-outline"></ion-icon>
     </ion-fab-button>
@@ -92,6 +92,28 @@
       <ion-icon name="barcode-outline"></ion-icon>
     </ion-fab-button>
     
-  </ion-fab> 
+  </ion-fab>  -->
+
+  <ion-fab vertical="bottom" horizontal="end" edge slot="fixed" style="margin-bottom:40px">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="this.actualiser()">
+        <ion-icon name="sync-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="goToArticleAdd()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+
+    <ion-fab-list side="start">
+      <ion-fab-button (click)="postArticleByBarreCode()">
+        <ion-icon name="barcode-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+
+  </ion-fab>
 
 </ion-content>
