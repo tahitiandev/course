@@ -635,6 +635,67 @@ export class Tab3Page implements OnInit {
       this.utility.popupInformation(error)
     })
   }
+
+
+
+  async listeDesArticlesEnErreur(){
+
+    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles)
+    const articleEnError : Articles [] = await articles.filter(resullt => {
+      return resullt.code === '[object Promise]'
+    })
+
+    const input : AlertInput [] = []
+
+    for(let article of articleEnError){
+      await input.push({
+        name : 'article',
+        type : 'radio',
+        label : article.libelle,
+        value : article,
+        disabled : true
+      })
+    }
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Les articles en erreur',
+      inputs: input,
+      buttons: [
+        {
+          text: 'Corriger',
+          handler: async () => {
+
+              var id = await this.articleService.generateArticleId()
+
+              for(let data of articleEnError){
+                const index = articles.findIndex(r => {
+                  return r.libelle === data.libelle
+                })
+
+                articles[index].code = id.toString()
+                id++
+              }
+
+              this.storage.set(this.utility.localstorage.articles, articles).then(() => {
+                this.utility.popupInformation('Les articles en erreur ont bien été corrigé')
+              })
+            
+          }
+        },
+        {
+          text: 'Fermer',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
   
 
 }

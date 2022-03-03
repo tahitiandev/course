@@ -120,7 +120,10 @@ export class ArticlesService {
   async generateArticleId(){
     const articlesLS : Articles [] = await this.storage.get(this.utility.localstorage.articles);
     const articles : Articles [] = await this.sortByArticleCode(articlesLS);
-    return await parseInt(articles[articles.length - 1].code) + 1
+    const articleSansErreur : Articles [] = await articles.filter(result => {
+      return result.code !== '[object Promise]'
+    })
+    return await parseInt(articleSansErreur[articleSansErreur.length - 1].code) + 1
   }
 
   async temp(){

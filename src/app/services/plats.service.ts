@@ -239,7 +239,6 @@ export class PlatsService {
       for(let articlesss of plat.codeArticle){
         
         const article = await this.articleService.searchArticleByArticleCode(articlesss.codeArticle);
-        console.log(articlesss.codeArticle)
         total += (article.prix - 0) * (articlesss.quantite - 0)
 
       }

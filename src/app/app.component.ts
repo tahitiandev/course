@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
   splashscreen : boolean = true;
   nbConnection : number = 0;
   settings : Setting;
+  demarrageSansSplashscreen : boolean = true;
   
   ngOnInit(){
     this.initSplashscreen()
@@ -39,10 +40,22 @@ export class AppComponent implements OnInit {
 
   loadDefaultData(){
     
-    if(this.splashscreen){
-      this.splashscreen = false;
-      if(this.nbConnection === 0){
-        this.route.navigateRoot('splashscreen')
+    if(!this.demarrageSansSplashscreen){
+
+      if(this.splashscreen){
+        this.splashscreen = false;
+        if(this.nbConnection === 0){
+          this.route.navigateRoot('splashscreen')
+        }
+      }else{
+        this.setArticle()
+        this.setFamilleArticle()
+        this.setPlat()
+        this.setCourse()
+        this.setMenu()
+        this.initSetting()
+        this.initTheme()
+        this.setDeletedElement()
       }
     }else{
       this.setArticle()

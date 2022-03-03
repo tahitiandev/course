@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { NavController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
+import { AlertInput } from '@ionic/core';
 import { Storage } from '@ionic/storage';
 import { MenuDelaSemaine } from '../models/menuDeLaSemaine';
 import { Plats } from '../models/plats';
 import { MenuService } from '../services/menu.service';
 import { PlatsService } from '../services/plats.service';
 import { UtilityService } from '../services/utility.service';
+import { FirebaseService } from '../services/firebase.service';
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
@@ -30,6 +32,8 @@ export class Tab2Page implements OnInit {
   samediForm : FormGroup;
   dimancheForm : FormGroup;
 
+  jourDelaSemaine //new
+
   public menuDeLaSemaine : MenuDelaSemaine = {
     lundi : '',
     mardi : '',
@@ -41,12 +45,15 @@ export class Tab2Page implements OnInit {
     dateDebut : '',
     dateFin : '',
     firebase : false}
-
+  
   constructor(private platservice : PlatsService,
               private formbuilder : FormBuilder,
+              private alertController : AlertController,
               private storage : Storage,
+              private firebaseService : FirebaseService,
               private utility : UtilityService,
-              private menuService : MenuService) { }
+              private menuService : MenuService,
+              ) { }
 
   ngOnInit() {
     this.initialize()
@@ -55,8 +62,16 @@ export class Tab2Page implements OnInit {
   initialize(){
     this.getPlat()
     this.initForm()
-    this.loadMenuOfTheWeek()
+
+    this.loadMenuOfTheWeek().then((s) => {
+      this.spinner(false)
+    })
     this.initPeriodeSemaine()
+    this.getJourDeLaSemaine()
+  }
+
+  private getJourDeLaSemaine(){
+    this.jourDelaSemaine = this.menuService.getJourDeLaSemaine()
   }
 
   private miseEnformeDate(dateRenseigne : Date){
@@ -134,9 +149,6 @@ export class Tab2Page implements OnInit {
         this.menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(0,aujourrhui)
         break;
     }
-
-
-
   }
 
   private async generateDateAujourdhui(){
@@ -171,9 +183,37 @@ export class Tab2Page implements OnInit {
 
   }
 
+  spinner(enAttente : boolean){
+
+    const spinnerElement = document.getElementById('spinner');
+    
+    if(enAttente){
+      spinnerElement.innerHTML = "<ion-spinner name='lines-small'></ion-spinner>";
+      // spinnerElement.innerHTML = "<h1>test</h1>";
+    }
+    
+    if(!enAttente){
+      spinnerElement.innerHTML = '';
+    }
+  }
+
+  // NEW
   async loadMenuOfTheWeek(){
+
+    this.spinner(true)
+
     const menuDuJour : MenuDelaSemaine = await this.menuService.loadMenuOfTheWeek();
+
     if(menuDuJour != null){
+
+        this.jourDelaSemaine[0][0].menu = await menuDuJour.lundi
+        this.jourDelaSemaine[0][1].menu = await menuDuJour.mardi;
+        this.jourDelaSemaine[1][0].menu = await menuDuJour.mercredi;
+        this.jourDelaSemaine[1][1].menu = await menuDuJour.jeudi;
+        this.jourDelaSemaine[2][0].menu = await menuDuJour.vendredi;
+        this.jourDelaSemaine[2][1].menu = await menuDuJour.samedi;
+        this.jourDelaSemaine[3][0].menu = await menuDuJour.dimanche;
+
         this.menuDeLaSemaine.lundi = await menuDuJour.lundi;
         this.menuDeLaSemaine.mardi = await menuDuJour.mardi;
         this.menuDeLaSemaine.mercredi = await menuDuJour.mercredi;
@@ -187,6 +227,7 @@ export class Tab2Page implements OnInit {
         this.menuDeLaSemaine.isModified = await menuDuJour.isModified === undefined ? false : true;
         this.menuDeLaSemaine.documentId = await menuDuJour.documentId;
     }
+    
   }
 
   initForm(){
@@ -284,5 +325,107 @@ export class Tab2Page implements OnInit {
   slideBack(slides){
     slides.slidePrev()
   }
+
+  // NEW
+  async selectionMenuDuJour(jour : string){
+
+    const input : AlertInput [] = []
+
+    for(let plats of this.plats){
+      await input.push({
+        name : 'plats',
+        type : 'radio',
+        label : plats.libelle,
+        value : plats
+      })
+    }
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Sélectionner le menu de ' + jour,
+      inputs: input,
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        },
+        {
+          text: 'Valider',
+          handler: async (response) => {
+
+            if(jour === 'Lundi'){
+              this.jourDelaSemaine[0][0].menu = response.libelle
+              this.menuDeLaSemaine.lundi = response.libelle
+            }
+            if(jour === 'Mardi'){
+              this.jourDelaSemaine[0][1].menu = response.libelle
+              this.menuDeLaSemaine.mardi = response.libelle
+            }
+            if(jour === 'Mercredi'){
+              this.jourDelaSemaine[1][0].menu = response.libelle
+              this.menuDeLaSemaine.mercredi = response.libelle
+            }
+            if(jour === 'Jeudi'){
+              this.jourDelaSemaine[1][1].menu = response.libelle
+              this.menuDeLaSemaine.jeudi = response.libelle
+            }
+            if(jour === 'Vendredi'){
+              this.jourDelaSemaine[2][0].menu = response.libelle
+              this.menuDeLaSemaine.vendredi = response.libelle
+            }
+            if(jour === 'Samedi'){
+              this.jourDelaSemaine[2][1].menu = response.libelle
+              this.menuDeLaSemaine.samedi = response.libelle
+            }
+            if(jour === 'Dimanche'){
+              this.jourDelaSemaine[3][0].menu = response.libelle
+              this.menuDeLaSemaine.dimanche = response.libelle
+            }
+            const menus : MenuDelaSemaine [] = await this.storage.get(this.utility.localstorage['menu de la semaine'])
+
+            // si menu déjà sur firebase
+            if(this.menuDeLaSemaine.firebase){
+              
+              // Chargement des données
+              const index = await menus.findIndex(s => {
+                return s.dateDebut === this.menuDeLaSemaine.dateDebut
+              })
+              
+              // On modifie les données
+              this.menuDeLaSemaine.isModified = true;
+              menus[index] = this.menuDeLaSemaine
+
+              this.firebaseService.postToLocalStorageDeleted(
+                this.menuDeLaSemaine.firebase,
+                this.utility.localstorage['menu de la semaine'],
+                this.menuDeLaSemaine.documentId
+              )
+            }else{
+              menus.push(this.menuDeLaSemaine)
+            }
+            this.storage.get(this.utility.localstorage['menu de la semaine']).then(s => console.log(s))
+
+            await this.storage.set(this.utility.localstorage['menu de la semaine'], menus).then(()=> {
+              this.storage.get(this.utility.localstorage['menu de la semaine']).then(s => console.log(s))
+            })
+
+            // if(response.libelle === ''){
+            //   this.utility.popupInformation('Vous n\'avez sélectionné aucune valeur')
+            // }
+
+          }// Valider
+        }
+      ]
+    });
+
+    if(jour !== ''){
+      await alert.present();
+    }
+  }
+
 
 }

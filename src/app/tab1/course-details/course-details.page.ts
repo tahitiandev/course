@@ -5,10 +5,12 @@ import { AlertInput } from '@ionic/core';
 import { Articles } from 'src/app/models/articles';
 import { Courses, Liste } from 'src/app/models/courses';
 import { CreerArticleAPartirDuCodeBarreResponse } from 'src/app/models/creerArticleAPartirDuCodeBarreResponse';
+import { Plats } from 'src/app/models/plats';
 import { Setting } from 'src/app/models/setting';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { CoursesService } from 'src/app/services/courses.service';
+import { PlatsService } from 'src/app/services/plats.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
@@ -24,6 +26,7 @@ export class CourseDetailsPage implements OnInit {
               private alertController: AlertController,
               private barreCodeService : BarreCodeService,
               private articleService : ArticlesService,
+              private platsService : PlatsService,
               private utility : UtilityService) { }
 
   listeId : number;
@@ -591,6 +594,122 @@ export class CourseDetailsPage implements OnInit {
 
   actualiser(){
     this.calculeTotal()
+  }
+
+  async insertPlat(){
+
+    const platsBrute : Plats [] = await this.platsService.getPlatFromLocalStorage()
+    const plats = await this.platsService.sortByLibelleFamilleArticle(platsBrute)
+    var radioOption : AlertInput [] = [];
+    
+    for(let plat of plats){
+      radioOption.push({
+        type : 'radio',
+        name : plat.libelle,
+        label : plat.libelle,
+        value : plat
+      })
+    }
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Ajouter les ingrédients d\'un plat',
+      inputs: radioOption,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Ok',
+          handler: async (plat : Plats) => {    
+
+            this.chooseArticle(plat)
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+
+  }
+
+  async chooseArticle(plat : Plats){
+
+    const articlesInfo : Articles [] = await this.articleService.getArticleFromLocalStorage()
+    const articlePlat : Articles [] = []
+
+    for(let article of plat.codeArticle){
+      const result = await articlesInfo.find(s => {
+        return s.code === article.codeArticle
+      })
+      articlePlat.push(result)
+    }
+
+    var radioOption : AlertInput [] = [];
+    
+    for(let article of articlePlat){
+      radioOption.push({
+        type : 'checkbox',
+        name : article.code,
+        label : article.libelle,
+        checked : true,
+        value : article
+      })
+    }
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Décocher les articles que vous ne souhaitez pas ajouter',
+      inputs: radioOption,
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Valider',
+          handler: async (data) => {   
+
+            for(let s of data){
+              this.listeArticle.push({
+                articleId : s.code,
+                libelle : s.libelle,
+                quantite : s.quantite,
+                prixUnitaire : s.prix,
+                actif : false
+              }) 
+            }
+
+            const courseUpdate : Courses = await {
+              id : this.coursesDetail.id,
+              date : this.coursesDetail.date,
+              actif : this.coursesDetail.actif,
+              total : this.coursesDetail.total,
+              liste : this.listeArticle,
+              firebase : this.coursesDetail.firebase,
+              isModified : this.coursesDetail.firebase ? true : false,
+              documentId : this.coursesDetail.documentId,
+              plafond : this.coursesDetail.plafond
+            }
+
+            this.courseService.updateCourseInLocalStorage(courseUpdate)
+            this.calculeTotal();
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+
   }
 
 }
