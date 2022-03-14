@@ -302,7 +302,6 @@ export class Tab3Page implements OnInit {
       var obj = await res[0].payload.doc.data()
       var result = await Object.keys(obj).map((key) => [Number(key), obj[key]]);
       var data : any [] = []
-      console.log(data)
 
       for(let i of result){
         data.push(i[1])
@@ -696,6 +695,74 @@ export class Tab3Page implements OnInit {
 
     await alert.present();
   }
-  
+
+  getDataCollection(collectionName : string){
+    this.firestore.collection(collectionName)
+                  .snapshotChanges()
+                  .subscribe((result) => {
+                    var alldata = []
+                    for(let s of result){
+                       var parse : any = s.payload.doc.data()
+                       parse.documentId = s.payload.doc.id
+                       alldata.push(s.payload.doc.data())
+                    }
+                    this.storage.set('datatemp', alldata)
+                  })
+  }
+
+  async backupArticleFamilleArticle (){
+    
+    this.deleteCollection('backup-article')
+    this.deleteCollection('backup-famille')
+
+    this.getDataCollection('articles')
+    const articles : Articles [] = await this.storage.get('datatemp')
+    for(let article of articles){
+      this.firestore.collection('backup-article').add(article)
+    }
+
+    this.getDataCollection('familles')
+    const familles : FamilleArticle [] = await this.storage.get('datatemp')
+    for(let famille of familles){
+      this.firestore.collection('backup-famille').add(famille)
+
+    }
+
+  }
+
+  async deleteCollection(collectionName : string){
+    this.firestore.collection(collectionName)
+                  .snapshotChanges()
+                  .subscribe(result => {
+                    for(let s of result){
+
+                      this.firestore.collection(collectionName)
+                                    .doc(s.payload.doc.id)
+                                    .delete()
+                    }
+                  })
+  }
+
+  async restaurerBackup(){
+
+    this.deleteCollection('articles')
+    
+    this.getDataCollection('backup-article')
+    const articles : Articles [] = await this.storage.get('datatemp')
+    for(let article of articles){
+        this.firestore.collection('articles').add(article)
+      }
+      
+    this.deleteCollection('familles')
+    this.getDataCollection('backup-famille')
+
+    const familles : FamilleArticle [] = await this.storage.get('datatemp')
+
+    for(let famille of familles){
+      this.firestore.collection('familles').add(famille)
+    }
+
+  }
+ 
 
 }

@@ -132,12 +132,30 @@
       <ion-label>Menu temporaire</ion-label>
     </ion-item-divider>
 
+    <ion-item button (click)="this.backupArticleFamilleArticle()">
+      <ion-label>
+        <h3>Backup</h3>
+      </ion-label>
+      <ion-icon name="bug-outline"></ion-icon>  
+    </ion-item>
+
+    <ion-item button (click)="this.restaurerBackup()">
+      <ion-label>
+        <h3>Restaurer les backups</h3>
+      </ion-label>
+      <ion-icon name="bug-outline"></ion-icon>  
+    </ion-item>
+
+    
     <ion-item button (click)="this.listeDesArticlesEnErreur()">
       <ion-label>
         <h3>Liste des articles en erreur</h3>
       </ion-label>
       <ion-icon name="bug-outline"></ion-icon>  
     </ion-item>
+
+
+
   </ion-item-group>
 
   <span id="wait"></span>
