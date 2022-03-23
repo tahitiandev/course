@@ -5,6 +5,8 @@ import { PlatsService } from 'src/app/services/plats.service';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Articles } from 'src/app/models/articles';
+import { FirebaseService } from 'src/app/services/firebase.service';
+
 
 @Component({
   selector: 'app-plats',
@@ -20,7 +22,8 @@ export class PlatsPage implements OnInit {
               private alertController: AlertController,
               private storage : Storage,
               private utility : UtilityService,
-              private nav : NavController) {
+              private nav : NavController,
+              private firebase : FirebaseService) {
                }
 
   ngOnInit() {
@@ -57,6 +60,7 @@ export class PlatsPage implements OnInit {
 
   private calculeTotal(plat : Plats){
     var total : number = 0;
+    // console.log(plat)
     
     for(let article of plat.codeArticle){
       var articleInfo = this.articles.find(s => {
@@ -72,10 +76,9 @@ export class PlatsPage implements OnInit {
     const platsLS = await this.platsService.getPlatFromLocalStorage();
     const plats = await this.platsService.sortByLibelleFamilleArticle(platsLS)
     const platsWithPrix : Plats[] = [];
-
     for(let plat of plats){
 
-      var prix = this.calculeTotal(plat)
+      var prix = await this.calculeTotal(plat)
 
       platsWithPrix.push({
         libelle : plat.libelle,
@@ -93,11 +96,22 @@ export class PlatsPage implements OnInit {
 
   }
 
-  async supprimerPlat(index : number){
+  async supprimerPlat(plat : Plats){
     
-    const platsNew = await this.platsService.deletePlat(index);
+    const plats : Plats [] = await this.platsService.getPlatFromLocalStorage();
+    const index = await plats.findIndex(result => {
+      return result.libelle === plat.libelle
+    })
+
+    plats.splice(index,1)
     this.plats = []
-    this.plats = platsNew
+    this.plats = plats;
+    this.storage.set(this.utility.localstorage.Plats, plats)
+    this.firebase.postToLocalStorageDeleted(
+      plat.firebase,
+      this.utility.localstorage.Plats,
+      plat.documentId
+      )
 
   } // supprimerPlat
 

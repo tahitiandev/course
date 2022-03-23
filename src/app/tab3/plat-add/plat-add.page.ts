@@ -35,7 +35,6 @@ export class PlatAddPage implements OnInit {
   platTmp : Plats [] = [];
 
   ngOnInit() {
-    // this.plats.setPlatsToLocalStorage();
     this.storage.get(this.utility.localstorage.articles).then(articles => this.articles = articles)
     this.init()
   }
@@ -45,11 +44,6 @@ export class PlatAddPage implements OnInit {
       libelle : '',
       ingredient : '',
       quantite : 1
-      // ingredient0 : '',
-      // ingredient1 : '',
-      // ingredient2 : '',
-      // ingredient3 : '',
-      // ingredient4 : ''
     })
   }
 
@@ -62,14 +56,10 @@ export class PlatAddPage implements OnInit {
     await this.ListeCodeArticle.push(articleCode)
     this.formgroup.patchValue({
       ingredient : '',
-      quantite : '1'
+      quantite : 1
     })
     
   }
-
-  // reset(){
-  //   this.plats.setPlatsToLocalStorage();
-  // }
 
   ajouterIngredient(){
 
@@ -90,6 +80,7 @@ export class PlatAddPage implements OnInit {
   async onSubmitForm(){
 
     const formValues = this.formgroup.value;
+
     const libelle = formValues['libelle'];
     const ingredient : CodeArticle [] = []
     
@@ -104,10 +95,12 @@ export class PlatAddPage implements OnInit {
     var plat : Plats = {
       libelle : libelle,
       codeArticle : ingredient,
-      firebase : false
+      firebase : false,
+      isModified : false,
+      documentId : null
     }
     
-    this.platsService.setPlatToLocalStorage(plat)
+    await this.platsService.setPlatToLocalStorage(plat)
     this.utility.goToUrl('tab3','plats');
     
   }
@@ -194,6 +187,17 @@ export class PlatAddPage implements OnInit {
     this.loadIngredient()
     slides.slideNext()
 
+  }
+
+  ajouterUnNouvelleIngredient(slides){
+    slides.slidePrev()
+    slides.slidePrev()
+    this.loadIngredient()
+    // .then(() => {
+    //   setTimeout(() => {
+    //     slides.slidePrev()
+    //   }, 1500);
+    // })
   }
 
 

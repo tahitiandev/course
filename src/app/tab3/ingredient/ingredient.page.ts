@@ -109,96 +109,28 @@ export class IngredientPage implements OnInit {
   }//getIngredient
 
   
-  async deleteArticle(index : number){
+  async deleteArticle(ingredient : CodeArticle){
     
-    var codeArticleCorrige : CodeArticle [] = []
-
-    for(let i = 0; i < this.platDetail.codeArticle.length; i++){
-      if(i != index){
-        await codeArticleCorrige.push(this.platDetail.codeArticle[i])
-      }
-    }
-
-    var platDetailCorrige : Plats = await {
-      libelle : this.libelle,
-      codeArticle : codeArticleCorrige,
-      firebase : false
-    }
-
-    this.ingredients = []
-    this.getIngredient(codeArticleCorrige)
-
-    var platsCorrige : Plats [] = [];
-
-    for(let plat of this.plats){
-
-      if(plat.libelle === this.libelle){
-        platsCorrige.push(platDetailCorrige)
-      }
-
-      if(plat.libelle != this.libelle){
-        platsCorrige.push(plat)
-      }
-
-    }
-
-    this.storage.set(this.utility.localstorage.Plats, platsCorrige)
-
-  }
-
-
-  async deleteArticletest(index : number){
-
-    // 1 - Recherche le plat en cours
-    const plat = await this.plats.find(s => {
-      return s.libelle === this.libelle
+   // ingredients
+    const indexIngredient = await this.ingredients.findIndex(result => {
+      return result.codeArticle === ingredient.codeArticle && result.quantite === ingredient.quantite;
     })
 
+    // platDetail
+    const indexPlatDetail = await this.platDetail.codeArticle.findIndex(result => {
+      return result.codeArticle === ingredient.codeArticle && result.quantite === ingredient.quantite;
+    })
 
-    // 2- Init varaible qui stock les nouveaux ingrédients
-    var newIngredient = [];
-
-    // 3- Ajouter les nouveaux ingédients
-    for(var x = 0; x < plat.codeArticle.length; x++){
-      // On Vérifique qu'on ne prenne bien pas en compte l'ingédient en cours
-      if(x != index){
-        newIngredient.push(plat.codeArticle[x])
-      }
-    }
-
-    // 4- On rajoute le libellé et le prix et le libellé
-    this.ingredients = []
-    this.getIngredient(newIngredient)
-
-    var newCodeArticle : CodeArticle[] = []
-    for(let code of this.ingredients){
-      newCodeArticle.push({
-        codeArticle : code.codeArticle,
-        quantite : code.quantite
-      })
-    }
-
-    // 4- On set le plat avec les nouveaux ingrédients
-    var newPlat : Plats = await {
-      libelle : this.libelle,
-      codeArticle : newCodeArticle,
-      firebase : false
-    }
-
-    // 5- On met à jour le nouveau plat dans la liste complète
-    var newAllPlat : Plats [] = await [];
+    // plats
+    const indexPlat = await this.plats.findIndex(result => {
+      return result.libelle === this.platDetail.libelle
+    })
     
-    for(let plat of this.plats){
-      if(plat.libelle != newPlat.libelle){
-        await newAllPlat.push(plat)
-      }
-      if(plat.libelle === newPlat.libelle){
-        await newAllPlat.push(newPlat)
-      }
-    }
-
-    // 6- On met à jour le localstorage
-    await this.storage.set(this.utility.localstorage.Plats, newAllPlat)
+    this.platDetail.codeArticle.splice(indexPlatDetail,1)
+    this.plats[indexPlat].codeArticle.splice(indexPlat,1)
+    this.ingredients.splice(indexIngredient,1)
+    
+    this.storage.set(this.utility.localstorage.Plats, this.plats)
 
   }
 

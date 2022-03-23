@@ -120,11 +120,15 @@ export class Tab3Page implements OnInit {
         var datafromLocalName = await this.storage.get(localStorageName[1])        
         datafromLocalName.forEach( async (data) => {
 
+          // if(localStorageName[1] === 'plats'){
+          //   console.log(data)
+          // }
+
           // si data non envoyé dans firebase
           if(!data.firebase){
             data.firebase = true;
             await this.firestore.collection(localStorageName[1])
-                                .add(data)
+            .add(data)
             dataAjour.push(data)
           }// si la donnée a déjà été envoyé dans firebase
           else{

@@ -73,12 +73,17 @@
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-input (click)="slidetrois(slides)" id="slidetrois" type="number" placeholder="Ecrire ici" formControlName="quantite"></ion-input>
+                <ion-input id="slidetrois" type="number" placeholder="Ecrire ici" formControlName="quantite"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-button style="position:absolute; right: 20px; margin-top: 20px;" (click)="this.terminerSlideTrois(slides)" color="warning">Terminer</ion-button>
+            <ion-col>
+              <ion-button style="position:absolute; right: 20px; margin-top: 20px;" (click)="this.ajouterUnNouvelleIngredient(slides)" color="warning">Nouveau</ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button style="position:absolute; right: 20px; margin-top: 20px;" (click)="this.terminerSlideTrois(slides)" color="warning">Terminer</ion-button>
+            </ion-col>
           </ion-row>
         </ion-grid>
 

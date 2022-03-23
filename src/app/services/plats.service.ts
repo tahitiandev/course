@@ -163,17 +163,9 @@ export class PlatsService {
   }
 
   async setPlatToLocalStorage(newPlat : Plats){
-    var plats : Plats [] = [];
-
-    const platsLS : Plats[] = await this.getPlatFromLocalStorage();
     
-    if(platsLS){
-      for(let plat of platsLS){
-        await plats.push(plat)
-      }
-    }
-
-    await plats.push(newPlat)
+    const plats: Plats[] = await this.getPlatFromLocalStorage();
+    plats.push(newPlat)    
     await this.storage.set(this.utility.localstorage.Plats, plats)
   }
   
