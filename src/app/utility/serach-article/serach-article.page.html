@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>serach-article</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-toolbar>
+    <ion-searchbar [(ngModel)]="searchValue"></ion-searchbar>
+
+    <br>
+
+    <ion-list *ngFor="let article of (articles | articlesFilter : searchValue); let index = index">
+
+      <ion-item button>
+        <ion-label>{{ article.libelle }}</ion-label>
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-item>
+      
+    </ion-list>
+    
+    <!-- <ion-fab vertical="bottom" horizontal="end" edge slot="fixed" style="margin-bottom:40px; position: fixed;">
+      <ion-fab-button (click)="valider()">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab> -->
+    <!-- <ion-searchbar></ion-searchbar> -->
+  </ion-toolbar>
+
+
+</ion-content>

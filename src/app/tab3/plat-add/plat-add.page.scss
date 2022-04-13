@@ -1,0 +1,17 @@
+.addArticle{
+    opacity: 0;
+    animation-iteration-count: 1;
+    animation-duration: 1s;
+    animation-name: addArt;
+}
+
+@keyframes addArt {
+    0%   {
+        opacity: 1;
+
+    }
+    100% {
+        opacity: 0;
+        display: none;
+    }
+  }

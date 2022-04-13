@@ -12,8 +12,9 @@ const routes: Routes = [
   },
   {
     path: 'test',
-    loadChildren: () => import('./utility/search-artiche/search-artiche.module').then( m => m.SearchArtichePageModule)
+    loadChildren: () => import('./utility/serach-article/serach-article.module').then( m => m.SerachArticlePageModule)
   }
+
 
 
 ];

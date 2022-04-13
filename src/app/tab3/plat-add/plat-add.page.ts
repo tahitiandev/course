@@ -27,22 +27,25 @@ export class PlatAddPage implements OnInit {
               ) {
                 
                }
-
   articles : Articles [];
   formgroup : FormGroup;
   ingredients : any[] = [];
-  ListeCodeArticle : any[] = [];
+  ListeCodeArticle : CodeArticle[] = [];
   platTmp : Plats [] = [];
+  searchValue : string = "";
+  
 
   ngOnInit() {
-    this.storage.get(this.utility.localstorage.articles).then(articles => this.articles = articles)
+    this.storage.get(this.utility.localstorage.articles).then((articles : Articles []) => {
+      this.articles = this.articleService.sortByArticleName(articles)
+    })
     this.init()
   }
 
   init(){
     this.formgroup = this.formbuilder.group({
       libelle : '',
-      ingredient : '',
+      // ingredient : '',
       quantite : 1
     })
   }
@@ -77,19 +80,61 @@ export class PlatAddPage implements OnInit {
 
   }
 
+  async loadOneArticle(article : Articles, index : number){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      message: 'Renseigner une quantite',
+      inputs: [
+        {
+          name: 'Quantite',
+          type: 'number'
+          
+        }
+      ],
+      buttons: [
+        {
+          text: 'Valider',
+          handler: async (res) => {
+            article.quantite = res.Quantite
+            this.ListeCodeArticle.push({
+              codeArticle : article.code,
+              quantite : article.quantite
+            })
+
+            const button = document.getElementById('testAricle-' + index)
+            button.classList.add("addArticle");
+
+          }
+        }
+      ]
+    });
+
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
+
+    
+    
+  }
+
   async onSubmitForm(){
 
     const formValues = this.formgroup.value;
 
     const libelle = formValues['libelle'];
-    const ingredient : CodeArticle [] = []
+    const ingredient = this.ListeCodeArticle
+    // const ingredient : CodeArticle [] = []
     
-    for(let ingre of this.ingredients){
-      ingredient.push({
-        codeArticle : ingre.code,
-        quantite : ingre.quantite
-      })
-    }
+    // for(let ingre of this.ingredients){
+    //   ingredient.push({
+    //     codeArticle : ingre.code,
+    //     quantite : ingre.quantite
+    //   })
+    // }
 
 
     var plat : Plats = {

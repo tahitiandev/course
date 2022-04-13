@@ -21,7 +21,7 @@
           <ion-row>
             <ion-col>
               <h1>Choisir<br>un nom du plat</h1>
-              <h5>1/4</h5>
+              <h5>1/3</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -37,7 +37,7 @@
       </ion-slide>
 
       <!-- SLIDE 2 -->
-      <ion-slide>
+      <!-- <ion-slide>
 
         <ion-grid>
           <ion-row>
@@ -59,9 +59,50 @@
         </ion-grid>
 
 
+      </ion-slide> -->
+
+      <ion-slide>
+
+        <ion-grid style="margin-top: -180px;">
+          <ion-row>
+            <ion-col (click)="slideNext(slides)">
+              <h1>Sélectionner<br>les ingrédients</h1>
+              <h5>2/3</h5>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-toolbar>
+              <!-- <ion-searchbar [(ngModel)]="searchValue"></ion-searchbar> -->
+              <ion-searchbar></ion-searchbar>
+            </ion-toolbar>
+          </ion-row>
+  
+          <ion-row>
+  
+            <ion-list style="margin: 5%;width: 100%; height: 340px; overflow: scroll;">
+              <ion-item id="testAricle-{{index}}" *ngFor="let article of articles; let index = index">
+              <!-- <ion-item id="testAricle-{{index}}" *ngFor="let article of (articles | platArticleSearch : searchValue); let index = index"> -->
+                  <ion-icon (click)="loadOneArticle(article, index)" slot="end" name="add-circle-outline"></ion-icon>
+                  <!-- <ion-icon slot="end" name="add-circle-outline"></ion-icon> -->
+                <ion-label>{{ article.libelle }}</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-row>
+          <!-- <button style="position: fixed; bottom: 10px; left: 50px; z-index: 1;">test</button> -->
+          
+          <!-- <ion-row>
+            <ion-col>
+              <ion-button slot="end" color="primary" style="z-index: 9;">Primary</ion-button>
+            </ion-col>
+          </ion-row> -->
+
+        </ion-grid>
+  
       </ion-slide>
 
-      <ion-slide >
+
+      <!-- SLIDE 3 -->
+      <!-- <ion-slide >
 
         <ion-grid>
           <ion-row>
@@ -88,7 +129,7 @@
         </ion-grid>
 
 
-      </ion-slide>
+      </ion-slide> -->
 
       <!-- SLIDE 5 -->
     <ion-slide >
@@ -96,7 +137,7 @@
         <ion-row>
           <ion-col>
             <h1>Valider vos choix</h1>
-            <h5>4/4</h5>
+            <h5>3/3</h5>
             <br>
           </ion-col>
         </ion-row>
