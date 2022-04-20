@@ -45,7 +45,7 @@ export class PlatAddPage implements OnInit {
   init(){
     this.formgroup = this.formbuilder.group({
       libelle : '',
-      // ingredient : '',
+      searchValue : '',
       quantite : 1
     })
   }
@@ -59,6 +59,7 @@ export class PlatAddPage implements OnInit {
     await this.ListeCodeArticle.push(articleCode)
     this.formgroup.patchValue({
       ingredient : '',
+      // searchValue : '',
       quantite : 1
     })
     
@@ -149,6 +150,18 @@ export class PlatAddPage implements OnInit {
     this.utility.goToUrl('tab3','plats');
     
   }
+
+  async searchArticle(event){
+    const query = await event.target.value.toLowerCase();
+    const articles = await this.articleService.getArticleFromLocalStorage();
+    
+    const result = await articles.filter(s => {
+      return s.libelle.toLocaleLowerCase().startsWith(query.toLocaleLowerCase())
+    })
+
+    this.articles = this.articleService.sortByArticleName(result)
+  }
+
 
   private async saveInLocalStorage(){
 

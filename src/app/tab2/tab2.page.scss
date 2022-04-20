@@ -31,14 +31,19 @@ img{
 }
 
 .nomTitre h4 {
-    text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
+    // text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
     font-weight: bold;
+    color: rgba(51, 53, 54, 0.568);
 }
 
 .art-opacite h2 {
     // color: rgb(49, 150, 142, 0.5);
-    color: rgb(79, 41, 247);
-    text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
+    // color: rgb(79, 41, 247);
+    // text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
+    
+    // Rajout hors style personnalisé
+    font-weight: bold;
+    color: rgb(43, 117, 49);
 }
 
 .art-opacite{

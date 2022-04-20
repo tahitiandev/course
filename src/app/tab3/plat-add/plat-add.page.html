@@ -72,14 +72,13 @@
           </ion-row>
           <ion-row>
             <ion-toolbar>
-              <!-- <ion-searchbar [(ngModel)]="searchValue"></ion-searchbar> -->
-              <ion-searchbar></ion-searchbar>
+              <ion-searchbar (ionInput)="searchArticle($event)"></ion-searchbar>
             </ion-toolbar>
           </ion-row>
   
           <ion-row>
   
-            <ion-list style="margin: 5%;width: 100%; height: 340px; overflow: scroll;">
+            <ion-list class="article-list" style="margin: 5%;width: 100%; height: 340px; overflow: scroll;">
               <ion-item id="testAricle-{{index}}" *ngFor="let article of articles; let index = index">
               <!-- <ion-item id="testAricle-{{index}}" *ngFor="let article of (articles | platArticleSearch : searchValue); let index = index"> -->
                   <ion-icon (click)="loadOneArticle(article, index)" slot="end" name="add-circle-outline"></ion-icon>
@@ -88,6 +87,14 @@
               </ion-item>
             </ion-list>
           </ion-row>
+
+
+
+
+
+
+
+
           <!-- <button style="position: fixed; bottom: 10px; left: 50px; z-index: 1;">test</button> -->
           
           <!-- <ion-row>
