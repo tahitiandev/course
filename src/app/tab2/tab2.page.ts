@@ -392,7 +392,7 @@ export class Tab2Page implements OnInit {
               
               // Chargement des données
               const index = await menus.findIndex(s => {
-                return s.dateDebut === this.menuDeLaSemaine.dateDebut
+                return s.dateDebut === this.menuDeLaSemaine.dateDebut && s.dateFin === this.menuDeLaSemaine.dateFin
               })
               
               // On modifie les données
@@ -407,15 +407,20 @@ export class Tab2Page implements OnInit {
             }else{
               menus.push(this.menuDeLaSemaine)
             }
-            this.storage.get(this.utility.localstorage['menu de la semaine']).then(s => console.log(s))
 
-            await this.storage.set(this.utility.localstorage['menu de la semaine'], menus).then(()=> {
-              this.storage.get(this.utility.localstorage['menu de la semaine']).then(s => console.log(s))
+            const menuFromLocalstorage = await this.storage.get(this.utility.localstorage['menu de la semaine']);
+            const index : number = await menuFromLocalstorage.findIndex((data : MenuDelaSemaine) => {
+              return data.dateDebut === this.menuDeLaSemaine.dateDebut && data.dateFin === this.menuDeLaSemaine.dateFin
             })
 
-            // if(response.libelle === ''){
-            //   this.utility.popupInformation('Vous n\'avez sélectionné aucune valeur')
-            // }
+            // si le localstorage n'a pas de données
+            if(index === -1){
+              this.storage.set(this.utility.localstorage['menu de la semaine'], menus)
+            }else{
+              menuFromLocalstorage[index] = this.menuDeLaSemaine
+              this.storage.set(this.utility.localstorage['menu de la semaine'], menuFromLocalstorage)
+            }
+
 
           }// Valider
         }

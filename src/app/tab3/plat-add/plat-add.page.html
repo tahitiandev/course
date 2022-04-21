@@ -37,30 +37,6 @@
       </ion-slide>
 
       <!-- SLIDE 2 -->
-      <!-- <ion-slide>
-
-        <ion-grid>
-          <ion-row>
-            <ion-col>
-              <h1>Ajouter<br>un ingredient</h1>
-              <h5>2/4</h5>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-item>
-                <ion-label position="floating">Ajouter un Ingrédient</ion-label>
-                <ion-select (ionChange)="slideNext(slides)" id="slideDeux" formControlName="ingredient">
-                  <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-
-
-      </ion-slide> -->
-
       <ion-slide>
 
         <ion-grid style="margin-top: -180px;">
@@ -80,9 +56,7 @@
   
             <ion-list class="article-list" style="margin: 5%;width: 100%; height: 340px; overflow: scroll;">
               <ion-item id="testAricle-{{index}}" *ngFor="let article of articles; let index = index">
-              <!-- <ion-item id="testAricle-{{index}}" *ngFor="let article of (articles | platArticleSearch : searchValue); let index = index"> -->
                   <ion-icon (click)="loadOneArticle(article, index)" slot="end" name="add-circle-outline"></ion-icon>
-                  <!-- <ion-icon slot="end" name="add-circle-outline"></ion-icon> -->
                 <ion-label>{{ article.libelle }}</ion-label>
               </ion-item>
             </ion-list>

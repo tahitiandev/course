@@ -6,6 +6,7 @@ import { UtilityService } from 'src/app/services/utility.service';
 import { Storage } from '@ionic/storage';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { AlertInput } from '@ionic/core';
+import { Setting } from 'src/app/models/setting';
 
 @Component({
   selector: 'app-article-list',
@@ -24,22 +25,28 @@ export class ArticleListPage implements OnInit {
     articles : Articles [];
     familles : FamilleArticle [];
     searchValue : string = "";
+    settings : Setting;
+    filtreMagasin : string = "";
+    magasins : string [] = []
 
     ngOnInit(){
+      this.onInit();
+    }
+
+    async onInit(){
+      // Charger les articles
       this.getArticle().then(() => {
         this.spinner(false)
       });
 
-      // this.aa()
+      // Charger les settings
+      const settings : Setting = await this.storage.get(this.u.localstorage.Setting)
+      this.settings = await settings
+
+      // Charger la liste des magasins
+      this.magasins = await settings.magasins
     }
 
-    async aa(){
-      const articles: Articles[] = await this.articleService.sortByArticleCode(await this.storage.get('articles'));
-      for(let a of articles){
-          
-        console.log(a.code + ' ' + a.magasin)
-      }
-    }
 
     async modifierUnArticle(articles : Articles){
 
@@ -355,12 +362,6 @@ export class ArticleListPage implements OnInit {
 
         this.storage.set(this.u.localstorage.articles, articleTemp).then(() => this.getArticle())
         
-        
-        // Récupère les données du LS et le met dans une variable temporaire
-        // this.storage.get(this.u.localstorage.articles).then(articles => {
-        //   this.addNewArticle(newArticle, articles)
-        //   // this.refreshArticleList()
-        // });
           
         }
       }
@@ -368,6 +369,12 @@ export class ArticleListPage implements OnInit {
     });
 
     await alert.present();
+    }
+
+    async changeMagasin(event){
+      const magasin = await event.target.value
+      this.filtreMagasin = await magasin
+      this.getArticle().then(() => this.spinner(false))
     }
 
     async getArticle(){
@@ -413,7 +420,24 @@ export class ArticleListPage implements OnInit {
       } // for
 
       const articles = await this.articleService.sortByArticleName(groupByArticle)
-      this.articles = articles;
+      this.filtreArticleByMagasin(articles);
+      }
+
+      private async filtreArticleByMagasin(articles : Array<Articles>){
+        var articlesFiltre : Articles [] = []
+
+        if(this.filtreMagasin != ""){
+
+          for(let article of articles){
+            if(article.magasin === this.filtreMagasin){
+              articlesFiltre.push(article)
+            }
+          }
+          this.articles = await articlesFiltre
+        }else{
+          this.articles = articles
+        }
+
       }
 
       actualiser(){
