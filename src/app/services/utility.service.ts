@@ -118,4 +118,136 @@ export class UtilityService {
     return settings;
   }
 
+  //#region Définir la date
+
+  private miseEnformeDate(dateRenseigne : Date){
+
+    var jourTmp = dateRenseigne.getDate()
+    var jour = jourTmp.toString()
+    if(jourTmp < 10){
+      jour = '0' + jour;
+    }
+
+    var moisTmp = dateRenseigne.getMonth() + 1;
+    var mois = moisTmp.toString()
+
+    if(moisTmp < 10){
+      mois = '0' + mois;
+    }
+
+    var today = jour + "/" + mois+ "/" + dateRenseigne.getFullYear();
+
+    var infoDate = {
+      'jour' : jour,
+      'mois' : mois,
+      'annnee' : dateRenseigne.getFullYear(),
+      'dateComplete' : today
+    }
+
+    return infoDate
+
+  }
+
+  private ajoutOuSupprimeDesJoursDuneDate(jour : number, date : Date){
+
+    var finDeSemaine = new Date()
+    finDeSemaine.setDate(date.getDate() + jour)
+    var NewFinDeSemaine = this.miseEnformeDate(finDeSemaine).dateComplete
+    return NewFinDeSemaine
+
+  }
+
+  private async generateDateAujourdhui(){
+    var date = await new Date();
+
+    // JOUR
+    var jourTmp = date.getDate();
+    var jour = jourTmp.toString()
+    if(jourTmp < 10){
+      jour = '0' + jour;
+    }
+    
+    // MOIS
+    var moisTmp = date.getMonth() + 1;
+    var mois = moisTmp.toString()
+    
+    if(moisTmp < 10){
+      mois = '0' + mois;
+    }
+    
+    // DATE COMPLETE
+    var today = await jour + "/" + mois+ "/" + date.getFullYear();
+
+    var infoDate = {
+      'jour' : jour,
+      'mois' : mois,
+      'annnee' : date.getFullYear(),
+      'dateComplete' : today
+    }
+
+    return infoDate;
+
+  }
+
+  async getDateDebutetDateDeFinDeSemaine(){
+
+    var jourToday=new Date()
+    var jourDeLaSemaine=new Array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi");
+    const today = await this.generateDateAujourdhui()
+    
+    var aujourrhui = new Date(Date.parse(today.mois + '/' + today.jour + '/' + today.annnee))
+
+    var periode = {
+      dateDebut : '',
+      dateFin : '',
+      dateDuJour : aujourrhui
+    }
+
+    switch(jourDeLaSemaine[jourToday.getDay()]){
+      case 'Lundi':
+        periode.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(0,aujourrhui)
+        periode.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
+        break;
+      case 'Mardi':
+        periode.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-1,aujourrhui)
+        periode.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
+        break;
+      case 'Mercredi':
+        periode.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-2,aujourrhui)
+        periode.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(4,aujourrhui)
+        break;
+      case 'Jeudi':
+        periode.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-3,aujourrhui)
+        periode.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(3,aujourrhui)
+        break;
+      case 'Vendredi':
+        periode.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-4,aujourrhui)
+        periode.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(2,aujourrhui)
+        break;
+      case 'Samedi':
+        periode.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-5,aujourrhui)
+        periode.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(1,aujourrhui)
+        break;
+      case 'Dimanche':
+        periode.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-6,aujourrhui)
+        periode.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(0,aujourrhui)
+        break;
+    }
+
+    return periode
+  }
+
+  //#endregion
+
+
+
+
+
+
+
+
+
+
+
+
 }

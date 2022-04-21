@@ -5,11 +5,13 @@ import { AlertInput } from '@ionic/core';
 import { Articles } from 'src/app/models/articles';
 import { Courses, Liste } from 'src/app/models/courses';
 import { CreerArticleAPartirDuCodeBarreResponse } from 'src/app/models/creerArticleAPartirDuCodeBarreResponse';
+import { MenuDelaSemaine } from 'src/app/models/menuDeLaSemaine';
 import { Plats } from 'src/app/models/plats';
 import { Setting } from 'src/app/models/setting';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { CoursesService } from 'src/app/services/courses.service';
+import { MenuService } from 'src/app/services/menu.service';
 import { PlatsService } from 'src/app/services/plats.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
@@ -27,7 +29,8 @@ export class CourseDetailsPage implements OnInit {
               private barreCodeService : BarreCodeService,
               private articleService : ArticlesService,
               private platsService : PlatsService,
-              private utility : UtilityService) { }
+              private utility : UtilityService,
+              private menuService : MenuService) { }
 
   listeId : number;
   coursesDetail : Courses;
@@ -638,7 +641,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async chooseArticle(plat : Plats){
+  async chooseArticle(plat : Plats, jour? : string){
 
     const articlesInfo : Articles [] = await this.articleService.getArticleFromLocalStorage()
     const articlePlat : Articles [] = []
@@ -709,6 +712,55 @@ export class CourseDetailsPage implements OnInit {
     });
 
     await alert.present();
+
+  }
+
+  async insertMenu(){
+
+    const menusInfo : MenuDelaSemaine [] = await this.menuService.getMenuFromLocaoStorage()
+    const semaineEnCours = await this.utility.getDateDebutetDateDeFinDeSemaine()
+    const index = await menusInfo.findIndex((data : MenuDelaSemaine) => {
+      return data.dateDebut === semaineEnCours.dateDebut && data.dateFin === semaineEnCours.dateFin
+    })
+
+    const articlesInfo : Articles [] = await this.articleService.getArticleFromLocalStorage()
+    const platSemaineEnCours : Plats [] = []
+    
+    if(menusInfo[index].lundi != ''){
+      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].lundi)
+      platSemaineEnCours.push(plat)
+      this.chooseArticle(plat, 'lundi')
+    }
+    if(menusInfo[index].mardi != ''){
+      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].mardi)
+      platSemaineEnCours.push(plat)
+      this.chooseArticle(plat,'mardi')
+    }
+    if(menusInfo[index].mercredi != ''){
+      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].mercredi)
+      platSemaineEnCours.push(plat)
+      this.chooseArticle(plat, 'mercredi')
+    }
+    if(menusInfo[index].jeudi != ''){
+      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].jeudi)
+      platSemaineEnCours.push(plat)
+      this.chooseArticle(plat, 'Jeudi')
+    }
+    if(menusInfo[index].vendredi != ''){
+      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].vendredi)
+      platSemaineEnCours.push(plat)
+      this.chooseArticle(plat, 'Vendredi')
+    }
+    if(menusInfo[index].samedi != ''){
+      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].samedi)
+      platSemaineEnCours.push(plat)
+      this.chooseArticle(plat, 'Samedi')
+    }
+    if(menusInfo[index].dimanche != ''){
+      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].dimanche)
+      platSemaineEnCours.push(plat)
+      this.chooseArticle(plat, 'Dimanche')
+    }
 
   }
 
