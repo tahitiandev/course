@@ -123,7 +123,11 @@ export class ArticlesService {
     const articleSansErreur : Articles [] = await articles.filter(result => {
       return result.code !== '[object Promise]'
     })
-    return await parseInt(articleSansErreur[articleSansErreur.length - 1].code) + 1
+    if(articleSansErreur.length > 0){
+      return await parseInt(articleSansErreur[articleSansErreur.length - 1].code) + 1
+    }else{
+      return 0
+    }
   }
 
   async temp(){
