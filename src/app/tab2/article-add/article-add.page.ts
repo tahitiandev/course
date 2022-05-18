@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { Articles, FamilleArticle } from 'src/app/models/articles';
+import { Setting } from 'src/app/models/setting';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
+import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-article-add',
@@ -20,7 +22,8 @@ export class ArticleAddPage implements OnInit {
   constructor(private formbuilder : FormBuilder,
               private articleService : ArticlesService,
               private nav : NavController,
-              private barrecCodeService : BarreCodeService) { }
+              private barrecCodeService : BarreCodeService,
+              private utility : UtilityService) { }
 
   ngOnInit() {
     this.init()
@@ -56,6 +59,8 @@ export class ArticleAddPage implements OnInit {
 
   async onSubmit(){
     const formValue = await this.articleForm.value
+    const setting : Setting = await this.utility.getSetting();
+
     const newArticle : Articles = {
       code : (await this.articleService.generateArticleId()).toString(),
       libelle : formValue.libelle,
@@ -68,7 +73,7 @@ export class ArticleAddPage implements OnInit {
       familleCode : formValue.familles,
       familleLibelle : null,
       barreCode : this.barreCode,
-      magasin : 'Carrefour'
+      magasin : setting.magasinParDefaut
     }    
     
     this.articleService.setArticleRealDataToLocalStorage(newArticle)

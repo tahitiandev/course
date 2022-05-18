@@ -85,6 +85,47 @@ export class Tab3Page implements OnInit {
     }
   }
 
+  async setMagasinParDefaut(){
+
+    const magasins = await this.setting.magasins;
+
+    const input : AlertInput [] = []
+
+    for(let magasin of magasins){
+      await input.push({
+        name : 'payeur',
+        type : 'radio',
+        label : magasin,
+        value : magasin
+      })
+    }
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      message: 'Définir un magasin par défaut',
+      inputs : input,
+      buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.utility.popupInformation('La synchronisation a été annulée')
+          }
+        }, {
+          text: 'Oui',
+          handler: (magasin) => {
+            this.setting.magasinParDefaut = magasin
+            this.storage.set(this.utility.localstorage.Setting, this.setting)
+          }
+        }
+      ]
+    });
+
+    await alert.present()
+  }
+
 
   goToUrl(tabNumber : string, pageName? : string){
     this.utility.goToUrl(tabNumber, pageName);    
