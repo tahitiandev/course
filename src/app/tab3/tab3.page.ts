@@ -106,6 +106,54 @@ export class Tab3Page implements OnInit {
     }
   }
 
+  async postRefactoNonUtilise(){
+    
+    this.loaderOn()
+
+    const localNames = await Object.entries(this.utility.localstorage);
+    var dataAjour : any [] = [];
+
+    for(let [key, localname] of localNames){
+      
+      if(localname != 'settings'){
+
+        var datalocalname = await this.storage.get(localname);
+
+        // Données non envoyé sur firebase
+        var dataNonEnvoyeSurFirebase = await datalocalname.filter(data => !data.firebase)        
+        dataNonEnvoyeSurFirebase.filter(async data => {
+          // await this.firestore.collection(localname).add(data)
+          data.firebase = true
+          dataAjour.push(data)
+        });
+
+        // Données déjà envoyé
+        var dataEnvoyeSurFirebase = await datalocalname.filter(data => data.firebase === true)
+          // Données modifié ?
+          var dataModifiedOnTrue = await dataEnvoyeSurFirebase.filter(data => data.isModified)
+          dataModifiedOnTrue.filter(async data => {
+            // await this.firestore.collection(localname)
+            //                       .doc(data.documentId)
+            //                       .delete()
+            // await this.firestore.collection(localname)
+            //                       .add(data)
+            dataAjour.push(data)
+          });
+        console.log(dataEnvoyeSurFirebase)
+          
+      } //if
+
+      // console.log(dataAjour)
+
+      // this.storage.set(localname, dataAjour)
+      dataAjour = []
+
+    } //for
+
+    this.loaderOff()
+
+  }
+
 
   async postDataToFireStore(){
     
@@ -119,10 +167,6 @@ export class Tab3Page implements OnInit {
 
         var datafromLocalName = await this.storage.get(localStorageName[1])        
         datafromLocalName.forEach( async (data) => {
-
-          // if(localStorageName[1] === 'plats'){
-          //   console.log(data)
-          // }
 
           // si data non envoyé dans firebase
           if(!data.firebase){

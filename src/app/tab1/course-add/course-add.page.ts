@@ -117,7 +117,11 @@ export class CourseAddPage implements OnInit, OnChanges {
       ]
     });
 
-    await alert.present();
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
 
     
     

@@ -363,8 +363,7 @@ export class CourseDetailsPage implements OnInit {
       
     if(article === null || article === undefined){
       var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode, true)
-      // alert(response.articleIsCreer)
-      // alert(response.article.code)
+
       if(response.articleIsCreer){
         
       var articleNew : Liste = {
@@ -402,6 +401,7 @@ export class CourseDetailsPage implements OnInit {
     }else{
 
         const listeNew : Liste [] = [];
+        
         for(let liste of this.listeArticle){
           listeNew.push(liste)
         }
@@ -424,7 +424,13 @@ export class CourseDetailsPage implements OnInit {
           actif : this.coursesDetail.actif,
           total : this.coursesDetail.total,
           liste : listeNew,
-          firebase : this.coursesDetail.firebase
+          firebase : this.coursesDetail.firebase,
+          isModified : this.coursesDetail.isModified === undefined ? null : this.coursesDetail.isModified,
+          documentId : this.coursesDetail.documentId === undefined ? null : this.coursesDetail.documentId,
+          plafond : this.coursesDetail.plafond === undefined ? null : this.coursesDetail.plafond,
+          tag : this.coursesDetail.tag === undefined ? null : this.coursesDetail.tag,
+          payeur : this.coursesDetail.payeur === undefined ? null : this.coursesDetail.payeur,
+          magasin : this.coursesDetail.magasin === undefined ? null : this.coursesDetail.magasin
         }
 
         this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
@@ -578,7 +584,13 @@ export class CourseDetailsPage implements OnInit {
               actif : this.coursesDetail.actif,
               total : this.coursesDetail.total,
               liste : listeNew,
-              firebase : this.coursesDetail.firebase
+              firebase : this.coursesDetail.firebase,
+              isModified : this.coursesDetail.isModified === undefined ? null : this.coursesDetail.isModified,
+              documentId : this.coursesDetail.documentId === undefined ? null : this.coursesDetail.documentId,
+              plafond : this.coursesDetail.plafond === undefined ? null : this.coursesDetail.plafond,
+              tag : this.coursesDetail.tag === undefined ? null : this.coursesDetail.tag,
+              payeur : this.coursesDetail.payeur === undefined ? null : this.coursesDetail.payeur,
+              magasin : this.coursesDetail.magasin === undefined ? null : this.coursesDetail.magasin
             }
       
             await this.courseService.updateCourseInLocalStorage(courseUpdate)

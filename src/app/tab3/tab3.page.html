@@ -129,6 +129,28 @@
   <ion-item-group>
 
     <ion-item-divider>
+      <ion-label>Divers</ion-label>
+    </ion-item-divider>
+
+    <ion-item button (click)="this.goToUrl('tab3','stats')">
+      <ion-label>
+        <h3>Statistiques</h3>
+      </ion-label>
+      <ion-icon name="analytics-outline"></ion-icon>
+    </ion-item>
+
+    <ion-item button (click)="this.goToUrl('tab3','depense-list')">
+      <ion-label>
+        <h3>Mouvements divers</h3>
+      </ion-label>
+      <ion-icon name="analytics-outline"></ion-icon>
+    </ion-item>
+
+  </ion-item-group>
+
+  <ion-item-group>
+
+    <ion-item-divider>
       <ion-label>Menu temporaire</ion-label>
     </ion-item-divider>
 
@@ -150,6 +172,13 @@
     <ion-item button (click)="this.listeDesArticlesEnErreur()">
       <ion-label>
         <h3>Liste des articles en erreur</h3>
+      </ion-label>
+      <ion-icon name="bug-outline"></ion-icon>  
+    </ion-item>
+
+    <ion-item button (click)="this.postRefactoNonUtilise()">
+      <ion-label>
+        <h3>test</h3>
       </ion-label>
       <ion-icon name="bug-outline"></ion-icon>  
     </ion-item>

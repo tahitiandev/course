@@ -1,0 +1,90 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      Statistiques
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-grid>
+    <ion-row>
+      <h4>Définir la période : </h4>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">Date de début</ion-label>
+          <ion-input (ionChange)="getDateDebut($event)" type="date" placeholder="test"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label position="floating">Date de fin</ion-label>
+          <ion-input (ionChange)="getDateFin($event)" type="date" placeholder="test"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <h4>Résultat :</h4>
+    </ion-row>
+    <ion-row>
+      <h5>1) Par payeur</h5>
+    </ion-row>
+    <ion-row>
+
+      <table>
+        <tr>
+          <th>Payeur</th>
+          <th>Dépense</th>
+        </tr>
+        <tr *ngFor="let data of this.totalParPayeur">
+
+          <td>{{ data.payeur }}</td>
+          <td>{{ data.total }}</td>
+
+        </tr>
+        <tr *ngFor="let depense of this.depenses">
+          <td>{{ depense.payeur }}</td>
+          <td>{{ depense.montant }}</td>
+        </tr>
+      </table>
+
+    </ion-row>
+
+    <ion-row>
+      <h5>2) Par magasin</h5>
+    </ion-row>
+    <ion-row>
+
+      <table>
+        <tr>
+          <th>Magasin</th>
+          <th>Dépense</th>
+        </tr>
+        <tr *ngFor="let data of this.totalParMagasin">
+
+          <td>{{ data.magasin }}</td>
+          <td>{{ data.total }}</td>
+
+        </tr>
+      </table>
+
+    </ion-row>
+
+
+
+
+
+
+
+  </ion-grid>
+
+
+</ion-content>
+

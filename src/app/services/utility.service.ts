@@ -13,13 +13,24 @@ export class UtilityService {
               private storage : Storage,
               private alertController : AlertController) { }
 
+  
+  
+  //#region getter 
+  async getSetting(){
+    const settings : Setting = await this.storage.get(this.localstorage.Setting);
+    return settings;
+  }
+
+  //#endregion
+  
   public localstorage = {
     'articles' : 'articles',
     'famille d\'articles' : 'familles',
     'Plats' : 'plats',
     'Courses' : 'courses',
     'menu de la semaine' : 'menus',
-    'Setting' : 'settings'
+    'Setting' : 'settings',
+    'Dépenses' : 'depense'
   }
 
   goToUrl(tabNumber : string, pageName? : string){

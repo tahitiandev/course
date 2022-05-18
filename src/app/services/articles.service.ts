@@ -562,10 +562,8 @@ export class ArticlesService {
 
   // Dans la liste de course, si on scanne un code barre qui n'existe pas, on le créé
   async creerArticleAPartirduBarreCode(barreCode : string, ifMethodeUseInpostArticleByBarreCode : boolean){
-    var response :CreerArticleAPartirDuCodeBarreResponse = {
-      articleIsCreer : null,
-      article : null
-    }
+    var response :CreerArticleAPartirDuCodeBarreResponse;
+    
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Information',
@@ -597,7 +595,7 @@ export class ArticlesService {
 
   private async formulaireCreerArticleAPartirduBarreCode(codeBarre : string,ifMethodeUseInpostArticleByBarreCode:boolean){
 
-    var articleNew : Articles = null;
+    var articleNew : Articles;
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -625,6 +623,7 @@ export class ArticlesService {
         }, {
           text: 'Ok',
           handler: async (formValue) => {
+
             const newArticle : Articles = {
               code : this.generateArticleId().toString(),
               libelle : formValue.libelle,
@@ -639,16 +638,26 @@ export class ArticlesService {
               barreCode : codeBarre,
               magasin : 'Carrefour'
             }
-            this.setArticleRealDataToLocalStorage(newArticle).then(()=> {
-              articleNew = newArticle
-            })
+
+            const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles);
+            const articleIsExiste = await articles.filter(articles => articles.code === newArticle.code);
+
+            // Si l'article n'existe pas encore
+            if(articleIsExiste.length === 0){
+
+              articles.push(newArticle)
+              this.storage.set(this.utility.localstorage.articles, articles).then(() => articleNew = newArticle)
+
+            }else{
+              window.alert('L\'article existe déjà')
+            }
             
-          }//
+          }
         }
       ]
     });
     await alert.present();
-    return articleNew;
+    return await articleNew;
   }
 
   async test(){

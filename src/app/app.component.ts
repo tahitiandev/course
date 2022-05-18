@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import * as firebase from 'firebase';
+import { Depenses } from './models/depenses';
 import { Setting } from './models/setting';
 import { ArticlesService } from './services/articles.service';
 import { CoursesService } from './services/courses.service';
@@ -56,6 +57,7 @@ export class AppComponent implements OnInit {
         this.initSetting()
         this.initTheme()
         this.setDeletedElement()
+        this.initDepense()
       }
     }else{
       this.setArticle()
@@ -66,6 +68,7 @@ export class AppComponent implements OnInit {
       this.initSetting()
       this.initTheme()
       this.setDeletedElement()
+      this.initDepense()
     }
   }
 
@@ -130,6 +133,17 @@ export class AppComponent implements OnInit {
       document.body.setAttribute('color-theme','light');
     }
 
+  }
+
+  async initDepense(){
+    
+    const depenses : Array<Depenses> = await this.storage.get(this.utility.localstorage.Dépenses);
+    
+    if(depenses === null){
+      const data : Array<Depenses> = []
+      this.storage.set(this.utility.localstorage.Dépenses, data)
+
+    }
   }
 
 }

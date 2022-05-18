@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Courses, Liste } from '../models/courses';
@@ -13,7 +13,7 @@ import { AlertInput } from '@ionic/core';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page implements OnInit, OnChanges {
+export class Tab1Page implements OnInit {
 
   constructor(private storage : Storage,
               private nav : NavController,
@@ -27,11 +27,17 @@ export class Tab1Page implements OnInit, OnChanges {
   setting : Setting;
 
   ngOnInit(){
-    this.settingInit()
-    this.getCourse()
+    this.onInit()
   }
+  
+  async onInit(){
 
-  ngOnChanges(changes : SimpleChanges){
+    const setting = await this.settingInit()
+    this.setting = await setting;
+    this.masquerLesCoursesCloture = await setting.masquerLesCoursesCloture
+
+    this.getCourse()
+    this.majTotalGeneral()
   }
   
   private orderByDesc(course :  Courses[]){
@@ -49,8 +55,7 @@ export class Tab1Page implements OnInit, OnChanges {
 
   async settingInit(){
     const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
-    this.setting = await setting;
-    this.masquerLesCoursesCloture = await setting.masquerLesCoursesCloture
+    return setting
     
   }
 
@@ -60,14 +65,14 @@ export class Tab1Page implements OnInit, OnChanges {
 
     const input : AlertInput [] = []
 
-    for(let magasin of magasins){
-      await input.push({
+    magasins.map(magasin => {
+      input.push({
         name : 'magasin',
         type : 'radio',
         label : magasin,
         value : magasin
       })
-    }
+    })
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -101,7 +106,6 @@ export class Tab1Page implements OnInit, OnChanges {
 
     const today = await this.menuService.generateDateAujourdhui()
     const date = today.annnee + '-' + today.mois + '-'+ today.jour + 'T17:32:38.956-10:00'
-    // "2021-12-28T17:32:38.956-10:00"
     const courses : Courses [] = await this.coursesService.getCourseFromLocalStorage();
     const courseId = await this.coursesService.generateCourseId();
     const listeVide : Liste [] = [];
@@ -147,28 +151,35 @@ export class Tab1Page implements OnInit, OnChanges {
   async getCourse(){
     const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
     const courses = await this.orderByDesc(coursesLS)
+
     if(this.masquerLesCoursesCloture){
-      const coursesNew : Courses [] = [];
-      for(let course of courses){
-        if(!course.actif){
-          coursesNew.push(course)
-        }
+      const courseActif : Courses [] = await courses.filter(course => course.actif === false)
         this.courses = []
-        this.courses = this.orderByDesc(coursesNew)
-      }
+        this.courses = this.orderByDesc(courseActif)
     }else{
 
       this.courses = courses
 
     }
+    return await courses;
   }
 
   calculeTotal(course : Courses){
     var total : number = 0;
-    for(let article of course.liste){
-      total += (article.prixUnitaire-0) * (article.quantite-0)
-    }
+    course.liste.map(article => total += (article.prixUnitaire-0) * (article.quantite-0))
     return total.toLocaleString();
+  }
+
+  private calculeTotalReturnInt(course : Courses){
+    var total : number = 0;
+    course.liste.map(article => total += (article.prixUnitaire-0) * (article.quantite-0))
+    return total;
+  }
+
+  async majTotalGeneral(){
+    const courses : Courses[] = await this.getCourse();
+    courses.map(course => course.total = this.calculeTotalReturnInt(course))
+    this.storage.set(this.utility.localstorage.Courses, courses)
   }
 
   goDetail(id : number){
@@ -184,14 +195,14 @@ export class Tab1Page implements OnInit, OnChanges {
     const payeurs = await this.setting.payeurs;
     const input : AlertInput [] = [];
 
-    for(let payeur of payeurs){
+    payeurs.map(payeur => {
       input.push({
         name : 'payeur',
         label : payeur,
         value : payeur,
         type : 'radio'
       })
-    }
+    })
 
     input.push({
       name: 'payeur',
@@ -243,14 +254,14 @@ export class Tab1Page implements OnInit, OnChanges {
     const tags = await this.setting.tags;
     const input : AlertInput [] = [];
 
-    for(let tag of tags){
+    tags.map(tag => {
       input.push({
         name : 'tag',
         label : tag,
         value : tag,
         type : 'radio'
       })
-    }
+    })
 
     input.push({
       name: 'tag',
@@ -359,25 +370,20 @@ export class Tab1Page implements OnInit, OnChanges {
 
   async cloturer(courseSelected : Courses){
 
-    const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
-    const courses = await this.orderByDesc(coursesLS)
-    var courseNew : Courses [] = [];
+    const courses : Array<Courses> = await this.storage.get(this.utility.localstorage.Courses)
+    const index = await courses.findIndex(s => {
+      return s.id === courseSelected.id
+    })
 
-    for(let course of courses){
-      if(course.id === courseSelected.id){
-        course.actif = !course.actif
-        if(course.firebase){
-          course.isModified = true;
-        }
-        courseNew.push(course)
-      }else{
-        courseNew.push(course)
-      }
+    courses[index].actif = !courses[index].actif
+
+    if(courses[index].firebase){
+      courses[index].isModified = true;
     }
 
     if(this.masquerLesCoursesCloture){
 
-      const coursesActif : Courses [] = []
+      const coursesActif : Array<Courses> = []
       for(let course of courses){
         if(!course.actif){
           coursesActif.push(course)
@@ -386,12 +392,13 @@ export class Tab1Page implements OnInit, OnChanges {
       this.courses = []
       this.courses = this.orderByDesc(coursesActif)
     }else{
+      
       this.courses = []
-      this.courses = courseNew;
+      this.courses = this.orderByDesc(courses)
       
     }
 
-    this.storage.set(this.utility.localstorage.Courses, courseNew)
+    this.storage.set(this.utility.localstorage.Courses, courses)
 
   }
 
