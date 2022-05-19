@@ -644,7 +644,7 @@ export class ArticlesService {
             }
 
             const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles);
-            const articleIsExiste = await articles.filter(articles => articles.code === newArticle.code);
+            const articleIsExiste : Array<Articles> = await articles.filter(articles => articles.code === newArticle.code);
 
             // Si l'article n'existe pas encore
             if(articleIsExiste.length === 0){
@@ -653,7 +653,7 @@ export class ArticlesService {
               this.storage.set(this.utility.localstorage.articles, articles).then(() => articleNew = newArticle)
 
             }else{
-              window.alert('L\'article existe déjà')
+              window.alert('L\'article existe déjà. L\'article code : ' +  articleIsExiste[0].code + ' - ' + articleIsExiste[0].libelle)
             }
             
           }

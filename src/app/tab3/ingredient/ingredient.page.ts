@@ -129,6 +129,10 @@ export class IngredientPage implements OnInit {
     this.platDetail.codeArticle.splice(indexPlatDetail,1)
     this.plats[indexPlat].codeArticle.splice(indexPlat,1)
     this.ingredients.splice(indexIngredient,1)
+
+    // Recalcule le prix total du plat
+    var prix = await this.platsservice.calculePrixTotalPlat(this.plats[indexPlat]);
+    this.plats[indexPlat].prix = prix
     
     this.storage.set(this.utility.localstorage.Plats, this.plats)
 
@@ -149,7 +153,7 @@ export class IngredientPage implements OnInit {
 
   async addIngredient(){
 
-    const articlesToLocalStorage : Articles [] = await this.storage.get(this.utility.localstorage.articles)
+    const articlesToLocalStorage : Array<Articles> = await this.storage.get(this.utility.localstorage.articles)
     const articles = await this.sortByArticleName(articlesToLocalStorage)
     var radioOption : AlertInput [] = [];
     
@@ -247,7 +251,7 @@ export class IngredientPage implements OnInit {
             }
 
             // 1 - Recherche le plat en cours
-            const plat = await this.plats.find(s => {
+            const plat : Plats = await this.plats.find(s => {
                 return s.libelle === this.libelle
             })
 
@@ -255,6 +259,10 @@ export class IngredientPage implements OnInit {
                codeArticle : this.newIngredient.codeArticle,
                quantite : this.newIngredient.quantite
             })
+
+            // Recalcule le prix total du plat
+            var prix = await this.platsservice.calculePrixTotalPlat(plat)
+            plat.prix = prix
 
             if(plat.firebase){
               plat.isModified = true;

@@ -6,6 +6,7 @@ import { calcPossibleSecurityContexts } from '@angular/compiler/src/template_par
 import { Deleted } from '../models/deleted';
 import { FirebaseService } from './firebase.service';
 import { ArticlesService } from './articles.service';
+import { Articles } from '../models/articles';
 
 @Injectable({
   providedIn: 'root'
@@ -240,6 +241,22 @@ export class PlatsService {
     }
 
   } // actualisePrixPlat
+
+  async calculePrixTotalPlat(plat : Plats){
+
+    const articles : Array<Articles> = await this.articleService.getArticleFromLocalStorage();
+
+    var total : number = 0;
+    
+    for(let article of plat.codeArticle){
+      var articleInfo = articles.find(s => {
+        return s.code === article.codeArticle;
+      })
+      total += (articleInfo.prix-0) * (article.quantite-0)
+    }
+    return total;
+    
+  }
 
 
   

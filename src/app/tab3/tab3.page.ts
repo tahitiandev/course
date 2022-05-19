@@ -232,8 +232,17 @@ export class Tab3Page implements OnInit {
           
         }); // foreach datafromLocalName
 
-        this.storage.set(localStorageName[1],dataAjour);
+        // this.storage.set(localStorageName[1],dataAjour);
+
         dataAjour= [];
+
+        // GetAllData
+        setTimeout(() => {
+          this.getAllData(false)
+        }, 2000);
+
+
+
 
       }//if
 

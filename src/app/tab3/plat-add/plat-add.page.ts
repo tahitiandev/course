@@ -127,24 +127,18 @@ export class PlatAddPage implements OnInit {
     const formValues = this.formgroup.value;
 
     const libelle = formValues['libelle'];
-    const ingredient = this.ListeCodeArticle
-    // const ingredient : CodeArticle [] = []
-    
-    // for(let ingre of this.ingredients){
-    //   ingredient.push({
-    //     codeArticle : ingre.code,
-    //     quantite : ingre.quantite
-    //   })
-    // }
-
+    const ingredient = this.ListeCodeArticle;
 
     var plat : Plats = {
       libelle : libelle,
       codeArticle : ingredient,
       firebase : false,
       isModified : false,
-      documentId : null
+      documentId : null,
     }
+
+    const prix = await this.platsService.calculePrixTotalPlat(plat);
+    plat.prix = prix
     
     await this.platsService.setPlatToLocalStorage(plat)
     this.utility.goToUrl('tab3','plats');
