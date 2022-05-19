@@ -317,16 +317,20 @@ export class IngredientPage implements OnInit {
         {
           type : 'text',
           name : 'codeArticle',
-          value : this.ingredients[index].codeArticle
+          label : 'Code article',
+          value : this.ingredients[index].codeArticle,
+          disabled : true
         },
         {
           type : 'text',
           name : 'libelle',
+          label : 'Libellé',
           value : this.ingredients[index].libelle
         },
         {
           type : 'number',
           name : 'quantite',
+          label : 'Qantité',
           value : this.ingredients[index].quantite
         }
       ],
@@ -340,7 +344,7 @@ export class IngredientPage implements OnInit {
           }
         },
         {
-          text: 'Ok',
+          text: 'Valider',
           handler: async (resultat : any) => {
 
             var codeArticles : CodeArticle [] = [];
@@ -359,7 +363,7 @@ export class IngredientPage implements OnInit {
               }
             }
 
-            const platsInfo = await this.articles.find(s => {
+            const platsInfo = await this.plats.find(s => {
               return s.libelle === this.libelle;
             })
 
@@ -372,13 +376,16 @@ export class IngredientPage implements OnInit {
               documentId : platsInfo.documentId
             }
 
+            // Recalcule le prix total du plat
+            const prix = await this.platsservice.calculePrixTotalPlat(plat)
+            plat.prix = prix;
+
             if(platsInfo.firebase){
               plat.isModified = true;
             }else{
               plat.isModified = false;
             }
             
-
             
             this.platsservice.updatePlatToLocalStorage(plat)
 
