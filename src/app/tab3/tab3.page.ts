@@ -68,6 +68,8 @@ export class Tab3Page implements OnInit {
 
   async initSetting(){
     const setting : Setting = await this.storage.get('settings')
+    // setting.firebase = false;
+    // this.storage.set(this.utility.localstorage.Setting, setting)
 
     if(setting  != null){
       this.setting = setting
@@ -117,6 +119,8 @@ export class Tab3Page implements OnInit {
           text: 'Oui',
           handler: (magasin) => {
             this.setting.magasinParDefaut = magasin
+            this.utility.settingIsModified(this.setting)
+            
             this.storage.set(this.utility.localstorage.Setting, this.setting)
           }
         }
@@ -138,6 +142,7 @@ export class Tab3Page implements OnInit {
       const setting = await this.storage.get(this.utility.localstorage.Setting);
       this.setting = setting;
       this.setting.theme = true
+      this.utility.settingIsModified(setting);
       this.storage.set(this.utility.localstorage.Setting, this.setting)
     }else{
       document.body.setAttribute('color-theme',this.theme.light);
@@ -236,20 +241,36 @@ export class Tab3Page implements OnInit {
 
         dataAjour= [];
 
-        // GetAllData
-        setTimeout(() => {
-          this.getAllData(false)
-        }, 2000);
-
-
-
-
       }//if
 
   }); // foreach localStorageNames
 
+  // Envoi des settings
+  const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
+
+  if(setting.firebase){
+    if(setting.isModified){
+      this.firestore.collection(this.utility.localstorage.Setting)
+                    .doc(setting.documentId)
+                    .delete()
+      this.firestore.collection(this.utility.localstorage.Setting)
+                    .add(setting)
+    }
+  }
+  if(!setting.firebase){
+    this.firestore.collection(this.utility.localstorage.Setting)
+                    .add(setting)
+    setting.firebase =  true
+  }
+  this.storage.set(this.utility.localstorage.Setting, setting)
+
+  // GetAllData
+  setTimeout(() => {
+    this.getAllData(false)
+  }, 2000);
+
   // Suppression des données dans firebase
-  const deletedData : Deleted [] = await this.storage.get('deleted');
+  const deletedData : Array<Deleted> = await this.storage.get('deleted');
 
   if(deletedData.length > 0){
     for(let data of deletedData){
@@ -317,6 +338,22 @@ export class Tab3Page implements OnInit {
         this.utility.changeValueiSModified(storageName[1], false)
       }
     }
+
+    this.firestore.collection(this.utility.localstorage.Setting)
+                 .snapshotChanges()
+                 .subscribe(async(result) => {
+
+                  var data = await result[0].payload.doc.data()
+                  this.storage.set(this.utility.localstorage.Setting, data)
+                  const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
+                  
+                  setting.documentId = await result[0].payload.doc.id
+                  setting.firebase = true;
+                  setting.isModified = false;
+
+                  this.storage.set(this.utility.localstorage.Setting, setting)
+
+                 })    
 
     if(showAlerte){
       this.loaderOn()
@@ -436,6 +473,7 @@ export class Tab3Page implements OnInit {
           text: 'Modifier',
           handler: (formValue) => {
               this.setting.budget = parseInt(formValue.budget);
+              this.utility.settingIsModified(this.setting)
               this.storage.set(this.utility.localstorage.Setting, this.setting)
           }
         }
@@ -481,6 +519,7 @@ export class Tab3Page implements OnInit {
 
             payeurs.splice(index,1)
             this.setting.payeurs = payeurs
+            this.utility.settingIsModified(this.setting)
 
             this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
               this.utility.popupInformation('Le payeur <strong>' + payeur + '</strong> a bien été supprimé')
@@ -574,6 +613,7 @@ export class Tab3Page implements OnInit {
 
             tags.splice(index,1)
             this.setting.tags = tags
+            this.utility.settingIsModified(this.setting)
 
             this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
               this.utility.popupInformation('Le tag <strong>' + tag + '</strong> a bien été supprimé')
@@ -667,6 +707,7 @@ export class Tab3Page implements OnInit {
 
             magasins.splice(index,1)
             this.setting.magasins = magasins
+            this.utility.settingIsModified(this.setting);
 
             this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
               this.utility.popupInformation('Le magasin <strong>' + magasin + '</strong> a bien été supprimé')

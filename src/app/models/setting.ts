@@ -8,5 +8,5 @@ export interface Setting{
     magasinParDefaut? : string;
     firebase : boolean;
     documentId? : string;
-    isModified? : string;
+    isModified? : boolean;
 }

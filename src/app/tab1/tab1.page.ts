@@ -144,6 +144,7 @@ export class Tab1Page implements OnInit {
       this.getCourse()
     }
     this.setting.masquerLesCoursesCloture = this.masquerLesCoursesCloture
+    this.utility.settingIsModified(this.setting)
     this.storage.set(this.utility.localstorage.Setting, this.setting)
     
   }

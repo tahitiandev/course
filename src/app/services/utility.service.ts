@@ -80,6 +80,13 @@ export class UtilityService {
     }
   }
 
+  async settingIsModified(setting : Setting){
+    if(setting.firebase){
+      setting.isModified = true;
+    }
+    this.storage.set(this.localstorage.Setting, setting);
+  }
+
   async changeValueiSModified(collectionName : string , trueOrFalse : boolean){
     const collectionNames : any [] = await this.storage.get(collectionName);
     var collectionNameNew : any [] = [];
