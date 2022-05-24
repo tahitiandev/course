@@ -130,18 +130,28 @@ export class CoursesService {
 
   async generateCourseId(){
 
-    const listeOfCourse : Courses [] = await this.getCourseFromLocalStorage();
-    const listeOfCourseSortById = this.orderByIdAsc(listeOfCourse)
-    const lastId = await listeOfCourseSortById.pop().id
-    var newId = 1;
+    const listeOfCourse : Array<Courses> = await this.getCourseFromLocalStorage();
 
-    if(lastId){
-      newId = lastId + 1
+    if(listeOfCourse.length > 0){
+      
+      const listeOfCourseSortById = this.orderByIdAsc(listeOfCourse)
+      const lastId = await listeOfCourseSortById.pop().id
+      var newId = 1;
+  
+      if(lastId){
+        newId = lastId + 1
+      }else{
+        newId = 1
+      }
+  
+      return newId;
+      
     }else{
-      newId = 1
+
+      return 0;
+
     }
 
-    return newId;
   }
 
   calculeMontantTotal(listes : Liste[]){
