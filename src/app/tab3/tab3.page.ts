@@ -68,8 +68,6 @@ export class Tab3Page implements OnInit {
 
   async initSetting(){
     const setting : Setting = await this.storage.get('settings')
-    // setting.firebase = false;
-    // this.storage.set(this.utility.localstorage.Setting, setting)
 
     if(setting  != null){
       this.setting = setting
@@ -324,6 +322,26 @@ export class Tab3Page implements OnInit {
 
   }
 
+  private async getSettingFromFirebase(){
+
+    this.firestore.collection(this.utility.localstorage.Setting)
+                 .snapshotChanges()
+                 .subscribe(async(result) => {
+
+                  var data = await result[0].payload.doc.data()
+                  this.storage.set(this.utility.localstorage.Setting, data)
+                              .then( async ()=> {
+                                const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
+                                setting.documentId = await result[0].payload.doc.id
+                                setting.firebase = true;
+                                setting.isModified = false;
+                                this.storage.set(this.utility.localstorage.Setting, setting)
+                                            .then(() => this.initSetting())
+                              })
+                 })
+
+  }
+
   async getAllData(showAlerte : boolean = true){
 
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
@@ -339,21 +357,7 @@ export class Tab3Page implements OnInit {
       }
     }
 
-    this.firestore.collection(this.utility.localstorage.Setting)
-                 .snapshotChanges()
-                 .subscribe(async(result) => {
-
-                  var data = await result[0].payload.doc.data()
-                  this.storage.set(this.utility.localstorage.Setting, data)
-                  const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
-                  
-                  setting.documentId = await result[0].payload.doc.id
-                  setting.firebase = true;
-                  setting.isModified = false;
-
-                  this.storage.set(this.utility.localstorage.Setting, setting)
-
-                 })    
+    this.getSettingFromFirebase()
 
     if(showAlerte){
       this.loaderOn()
