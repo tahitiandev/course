@@ -38,6 +38,7 @@ export class Tab3Page implements OnInit {
   
   ngOnInit(): void {
     this.initSetting()
+    this.firebaseService.getCollectionFromFirebase('articles')
   }
 
   async step(){

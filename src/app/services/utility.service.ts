@@ -33,6 +33,10 @@ export class UtilityService {
     'Dépenses' : 'depense'
   }
 
+  public objectName = {
+    'set temp collectionName' : 'collectionNameTemp'
+  }
+
   goToUrl(tabNumber : string, pageName? : string){
 
     if(pageName){
@@ -200,17 +204,27 @@ export class UtilityService {
       'jour' : jour,
       'mois' : mois,
       'annnee' : date.getFullYear(),
-      'dateComplete' : today
+      'dateComplete' : today,
+      'dateTime' : date
     }
 
     return infoDate;
 
   }
 
+  async parseDateStringToDateTime(ddMMyyyy : string){
+    
+    const jour = await ddMMyyyy.substring(0,2)
+    const mois = await ddMMyyyy.substring(3,5)
+    const annee = await ddMMyyyy.substring(6,10)
+    
+    return new Date(annee + '/' + mois + '/' + jour)
+  }
+
   async getDateDebutetDateDeFinDeSemaine(){
 
-    var jourToday=new Date()
-    var jourDeLaSemaine=new Array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi");
+    var jourToday = new Date()
+    var jourDeLaSemaine = new Array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi");
     const today = await this.generateDateAujourdhui()
     
     var aujourrhui = new Date(Date.parse(today.mois + '/' + today.jour + '/' + today.annnee))
@@ -218,7 +232,8 @@ export class UtilityService {
     var periode = {
       dateDebut : '',
       dateFin : '',
-      dateDuJour : aujourrhui
+      dateDuJour : aujourrhui,
+      dateTime : today.dateTime
     }
 
     switch(jourDeLaSemaine[jourToday.getDay()]){

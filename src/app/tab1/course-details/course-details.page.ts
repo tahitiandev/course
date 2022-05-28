@@ -148,6 +148,11 @@ export class CourseDetailsPage implements OnInit {
           type: 'text'
         },
         {
+          name: 'isNegatif',
+          placeholder : 'Montant négatif',
+          type: 'checkbox'
+        },
+        {
           name: 'prixUnitaire',
           label : 'Prix unitaire',
           placeholder : 'Prix unitaire',
@@ -176,7 +181,7 @@ export class CourseDetailsPage implements OnInit {
               articleId : null,
               libelle : data.libelle,
               quantite : data.quantite,
-              prixUnitaire : data.prixUnitaire,
+              prixUnitaire : data.isNegatif ? data.prixUnitaire * (-1) : data.prixUnitaire,
               actif : false
             }
 

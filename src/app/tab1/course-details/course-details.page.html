@@ -21,7 +21,6 @@
       
       <ion-item>
         <ion-label>{{ detail.libelle }}</ion-label>
-        <!-- <ion-label style="text-align: right;">Qté:{{ detail.quantite === null ? detail.quantite : 1 }}</ion-label> -->
         <ion-label style="text-align: right;">{{ detail.prixUnitaire }} xpf (x{{ detail.quantite != null ? detail.quantite : 1 }})</ion-label>
         <ion-label style="text-align: right;"> {{ detail.quantite != null ? (detail.quantite-0) * (detail.prixUnitaire-0) : detail.prixUnitaire }} xpf</ion-label>
         <ion-checkbox style="margin-left: 30px;" (click)="clickCheckBox(index)" [checked]="detail.actif"></ion-checkbox>

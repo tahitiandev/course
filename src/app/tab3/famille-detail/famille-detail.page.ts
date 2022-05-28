@@ -59,7 +59,7 @@ export class FamilleDetailPage implements OnInit {
 
   async onSubmit(){
     const formValue : FamilleArticle = await this.familleForm.value
-    this.articleservice.setFamilleArticleRealDataToLocalStorage(formValue)
+    this.articleservice.updateFamille(formValue)
     this.nav.back()
   }
 

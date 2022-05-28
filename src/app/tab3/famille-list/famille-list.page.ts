@@ -17,22 +17,26 @@ export class FamilleListPage implements OnInit {
               private utility : UtilityService,
               private alertController: AlertController,
               private nav : NavController) {
-                // this.initFamilleFromDataLocalStorage()
                }
 
   familles : FamilleArticle [] = [];
 
   ngOnInit() {
-    this.initFamilleFromDataLocalStorage()
+    this.onInit()
   }
 
-  async initFamilleFromDataLocalStorage(){
+  async onInit(){
+    const familles : Array<FamilleArticle> = await this.getFamilles();
+    this.familles = familles;
+  }
+
+  async getFamilles(){
     const famillesLS = await this.storage.get(this.utility.localstorage['famille d\'articles'])
     const familles = await this.articleService.sortByLibelleFamilleArticle(famillesLS)
-    this.familles = familles
+    return familles;
   }
 
-  async setNewFamille() {
+  async postFamille() {
 
     const familleId = await this.articleService.generateFamilleArticleId();
 
@@ -63,19 +67,16 @@ export class FamilleListPage implements OnInit {
           text: 'Ok',
           handler: async (data) => {
 
-            this.articleService.postNouvelleFamilleArticle({
+            await this.articleService.postNouvelleFamilleArticle({
               code : data.code,
               libelle : data.libelle,
               firebase : false,
               isModified : false,
               documentId : null
             })
-            this.initFamilleFromDataLocalStorage()
 
+            this.onInit()
 
-          //   this.articleService.setFamilleArticleRealDataToLocalStorage(data).then(() => {
-          //     this.initFamilleFromDataLocalStorage()
-          //   })
           }
         }
       ]
@@ -114,8 +115,9 @@ export class FamilleListPage implements OnInit {
           }
         }, {
           text: 'Ok',
-          handler: (data : FamilleArticle) => {
-            this.articleService.setFamilleArticleRealDataToLocalStorage(data)
+          handler: async (famille : FamilleArticle) => {
+            await this.articleService.updateFamille(famille);
+            this.onInit()
           }
         }
       ]
@@ -129,9 +131,9 @@ export class FamilleListPage implements OnInit {
     this.nav.navigateRoot('tabs/tab3/famille-detail/' + code)
   }
 
-  deleteFamilleArticle(famille : FamilleArticle){
-    this.articleService.deleteFamilleArticle(famille)
-    this.initFamilleFromDataLocalStorage()
+  async deleteFamilleArticle(famille : FamilleArticle){
+    await this.articleService.deleteFamilleArticle(famille)
+    this.onInit()
   }
 
 

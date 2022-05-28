@@ -3,6 +3,13 @@ import { Storage } from '@ionic/storage';
 import { Deleted } from '../models/deleted';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { UtilityService } from './utility.service';
+import { Articles } from '../models/articles'
+import { FamilleArticle } from '../models/articles'
+import { Plats } from '../models/plats'
+import { Courses } from '../models/courses'
+import { MenuDelaSemaine } from '../models/menuDeLaSemaine'
+import { Depenses } from '../models/depenses'
+
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +52,101 @@ export class FirebaseService {
   }
 
   // Methode qui force la mise à jour de l'ensemble des données d'une collection sur firestore
+
+  async getCollectionFromFirebase(collectionName : string){
+    
+    await this.firestore.collection(collectionName)
+                                     .snapshotChanges()
+                                     .subscribe((result) => {
+                                        var alldata = [];
+                                        for(let data of result){
+                                          var parseData : any = data.payload.doc.data();
+                                          parseData.documentId = data.payload.doc.id
+                                          
+                                          alldata.push(parseData)
+                                        }
+
+                                        this.storage.set(this.utility.objectName['set temp collectionName'],alldata)
+                                        
+                                     })
+
+  }
+
+  private async getDataCollectionTemp(){
+
+    return await this.storage.get(this.utility.objectName['set temp collectionName'])
+
+  }
+
+  async miseAJourDocumentID(){
+
+    const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles)
+    this.getCollectionFromFirebase(this.utility.localstorage.articles)
+    var articlesFirebase : Array<Articles> = await this.getDataCollectionTemp();
+    
+    for(let article of articlesFirebase){
+      for(let articler of articles){
+        if(article === articler){
+          articler.documentId = article.documentId
+        }
+      }
+    }
+
+    const familles : Array<FamilleArticle> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    this.getCollectionFromFirebase(this.utility.localstorage['famille d\'articles'])
+    var famillesFirebase : Array<FamilleArticle> = await this.getDataCollectionTemp();
+
+    for(let famille of famillesFirebase){
+      for(let familler of familles){
+        if(famille === familler){
+          familler.documentId = famille.documentId
+        }
+      }
+    }
+
+    const plats : Array<Plats> = await this.storage.get(this.utility.localstorage.Plats);
+    this.getCollectionFromFirebase(this.utility.localstorage.Plats);
+    var platsFirebase : Array<Plats> = await this.getDataCollectionTemp();
+
+    for(let plat of platsFirebase){
+      for(let platr of plats){
+        if(plat === platr){
+          platr.documentId = plat.documentId
+        }
+      }
+    }
+
+    const courses : Array<Plats> = await this.storage.get(this.utility.localstorage.Plats);
+    this.getCollectionFromFirebase(this.utility.localstorage.Plats);
+    var platsFirebase : Array<Plats> = await this.getDataCollectionTemp();
+
+    for(let plat of platsFirebase){
+      for(let platr of plats){
+        if(plat === platr){
+          platr.documentId = plat.documentId
+        }
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
   
 
 }

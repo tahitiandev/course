@@ -118,9 +118,9 @@ export class ArticlesService {
   }
 
   async generateArticleId(){
-    const articlesLS : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-    const articles : Articles [] = await this.sortByArticleCode(articlesLS);
-    const articleSansErreur : Articles [] = await articles.filter(result => {
+    const articlesLS : Array<Articles> = await this.getArticleFromLocalStorage();
+    const articles : Array<Articles> = await this.sortByArticleCode(articlesLS);
+    const articleSansErreur : Array<Articles> = await articles.filter(result => {
       return result.code !== '[object Promise]'
     })
     if(articleSansErreur.length > 0){
@@ -284,8 +284,9 @@ export class ArticlesService {
   }
 
   async getArticleFromLocalStorage (){
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles)
-    return articles;
+    const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles)
+    const articlesOrderBy : Array<Articles> = await this.sortByArticleCode(articles)
+    return articlesOrderBy;
   }
 
   async setArticleRealDataToLocalStorage(newArticle : Articles){
@@ -306,39 +307,16 @@ export class ArticlesService {
     }
   }
 
-  async setFamilleArticleRealDataToLocalStorage(familleArticle : FamilleArticle){
-    const temp : FamilleArticle[] = [];
+  async updateFamille(familleArticle : FamilleArticle){
 
-    const familles = await this.storage.get(this.utility.localstorage['famille d\'articles'])
-
-    for(let famille of familles){
-      if(famille.code != familleArticle.code){
-        await temp.push(famille)
-      }
-      if(famille.code === familleArticle.code){
-
-        const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code)
-
-        const newFamilleArticle : FamilleArticle = {
-          code : familleArticle.code.toString(),
-          libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle),
-          firebase : false,
-          isModified : familleInfo.isModified,
-          documentId : familleInfo.documentId
-        }
-
-        if(familleInfo.firebase){
-          newFamilleArticle.isModified =  true;
-        }else{
-          newFamilleArticle.isModified = false;
-        }
-
-        await temp.push(newFamilleArticle)
-        
-      }
+    const familles : Array<FamilleArticle> = await this.getFamilleArticleFromLocalStorage();
+    const index = await familles.findIndex(s => s.code === familleArticle.code)
+    familles[index] = familleArticle
+    if(familleArticle.firebase){
+      familles[index].isModified = true;
     }
 
-    this.storage.set(this.utility.localstorage['famille d\'articles'], temp)
+    this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
 
   }
 
@@ -362,19 +340,18 @@ export class ArticlesService {
   }
 
   async deleteFamilleArticle(familleArticle : FamilleArticle){
-    const familles : FamilleArticle[] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-    const famillesNew : FamilleArticle [] = [];
-    for(let famille of familles){
-      if(famille.code != familleArticle.code){
-        famillesNew.push(famille)
-      }
-    }
+    const familles : Array<FamilleArticle> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+
+    const index = await familles.findIndex(s => s.code === familleArticle.code);
+    familles.splice(index,1)
     
-    this.storage.set(this.utility.localstorage['famille d\'articles'], famillesNew)
+    this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
     
     // Supprimer dans firebase
-    const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code);
-    this.firebaseService.postToLocalStorageDeleted(familleInfo.firebase, this.utility.localstorage['famille d\'articles'], familleInfo.documentId);
+    if(familleArticle.firebase){
+      const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code);
+      this.firebaseService.postToLocalStorageDeleted(familleInfo.firebase, this.utility.localstorage['famille d\'articles'], familleInfo.documentId);
+    }
     
   }
 
@@ -401,13 +378,9 @@ export class ArticlesService {
   async postNouvelleFamilleArticle(familleSelected : FamilleArticle){
 
     const familles : FamilleArticle [] = await this.getFamilleArticleFromLocalStorage();
-    const famillesNew : FamilleArticle [] = []
-    for(let famille of familles){
-      famillesNew.push(famille)
-    }
-    famillesNew.push(familleSelected)
-    this.storage.set(this.utility.localstorage['famille d\'articles'], famillesNew)
-    return famillesNew;
+    familles.push(familleSelected)
+    this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
+    return await familles;
 
   }
   
@@ -423,7 +396,7 @@ export class ArticlesService {
   }
 
   async getFamilleArticleFromLocalStorage(){
-    const familles : FamilleArticle [] =  await this.storage.get(this.utility.localstorage['famille d\'articles'])
+    const familles : Array<FamilleArticle> =  await this.storage.get(this.utility.localstorage['famille d\'articles'])
     return familles;
   }
 
@@ -618,17 +591,17 @@ export class ArticlesService {
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Annuler',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
 
           }
         }, {
-          text: 'Ok',
+          text: 'Créer',
           handler: async (formValue) => {
 
-            const newArticle : Articles = {
+            const newArticle : Articles = await {
               code : this.generateArticleId().toString(),
               libelle : formValue.libelle,
               prix : formValue.prix ,
@@ -643,7 +616,7 @@ export class ArticlesService {
               magasin : 'Carrefour'
             }
 
-            const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles);
+            const articles : Array<Articles> = await this.getArticleFromLocalStorage();
             const articleIsExiste : Array<Articles> = await articles.filter(articles => articles.code === newArticle.code);
 
             // Si l'article n'existe pas encore

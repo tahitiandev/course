@@ -26,11 +26,11 @@ interface TotalParMagasin {
 
 export class StatsPage implements OnInit {
 
-  courses : Courses [] = [];
+  courses : Array<Courses> = [];
   settings : Setting;
   payeurs;
-  totalParPayeur : TotalParPayeur [] = [];
-  totalParMagasin : TotalParMagasin [] = [];
+  totalParPayeur : Array<TotalParPayeur> = [];
+  totalParMagasin : Array<TotalParMagasin> = [];
   dateDebut;
   dateFin;
   depenses : Array<Depenses> = [];
@@ -49,7 +49,8 @@ export class StatsPage implements OnInit {
     await this.getPayeurs();
     const date = await this.getDateDebutDateFinDeSemaine()
     this.dateDebut = await date.dateDebut
-    this.dateFin = await date.dateFin
+    this.dateFin = await date.dateFin   
+
     this.getTotalParPayeurParSemaine()
     this.getTotalParMagasinParSemaine()
 
@@ -60,7 +61,7 @@ export class StatsPage implements OnInit {
   }
 
   async getCourses(){
-    const courses : Courses [] = await this.courseService.getCourseFromLocalStorage();
+    const courses : Array<Courses> = await this.courseService.getCourseFromLocalStorage();
     this.courses = courses;
     return await courses;
   }
@@ -98,10 +99,12 @@ export class StatsPage implements OnInit {
 
     const courses = await this.getCourses();
 
-    const result : TotalParPayeur [] = [];
+    const result : Array<TotalParPayeur> = [];
     const payeurs = await this.settings.payeurs;
     const periodeDebut = await this.dateDebut;
     const periodeFin = await this.dateFin
+    // const periodeDebut = await this.utility.parseDateStringToDateTime(this.dateDebut);
+    // const periodeFin = await this.utility.parseDateStringToDateTime(this.dateFin);
     const depenses : Array<Depenses> = await this.getDepense();
     var index = 0
 
@@ -116,6 +119,7 @@ export class StatsPage implements OnInit {
       for(let course of courses){
         if(course.payeur === payeur){
           if(course.date >= periodeDebut && course.date <= periodeFin)
+          // if(new Date(course.date) >= periodeDebut && new Date(course.date) <= periodeFin)
           result[index].total += course.total
         }
       } // for(course)
@@ -123,7 +127,8 @@ export class StatsPage implements OnInit {
       // 2 - dépense liée au mouvement financier
       for(let depense of depenses){
         if(depense.payeur === payeur){
-          if(depense.date >= periodeDebut && depense <= periodeFin){
+          // if(new Date(depense.date) >= periodeDebut && new Date(depense.date) <= periodeFin){
+          if(depense.date >= periodeDebut && depense.date <= periodeFin){
             result[index].total += depense.montant
           }
         }
@@ -132,7 +137,6 @@ export class StatsPage implements OnInit {
       index ++
 
     } // for(payeur)
-
 
     this.totalParPayeur = result;
     return result
