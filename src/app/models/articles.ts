@@ -20,3 +20,8 @@ export interface FamilleArticle{
     isModified? : boolean;
     documentId? : string;
 }
+
+export interface PrixMagasin{
+    magasin : string;
+    prix : number;
+}

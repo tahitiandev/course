@@ -601,8 +601,10 @@ export class ArticlesService {
           text: 'Créer',
           handler: async (formValue) => {
 
-            const newArticle : Articles = await {
-              code : this.generateArticleId().toString(),
+            var codeArticle = (await this.generateArticleId()).toString();
+
+            const newArticle : Articles = {
+              code : codeArticle,
               libelle : formValue.libelle,
               prix : formValue.prix ,
               prixModifier : null,
@@ -616,6 +618,21 @@ export class ArticlesService {
               magasin : 'Carrefour'
             }
 
+            // this.setArticleRealDataToLocalStorage({
+            //   code : (await this.generateArticleId()).toString(),
+            //   libelle : formValue.libelle,
+            //   prix : formValue.prix ,
+            //   prixModifier : null,
+            //   quantite : 1,
+            //   firebase : false,
+            //   isModified : false,
+            //   documentId : null,
+            //   familleCode : '22',
+            //   familleLibelle : null,
+            //   barreCode : codeBarre,
+            //   magasin : 'Carrefour'
+            // })
+
             const articles : Array<Articles> = await this.getArticleFromLocalStorage();
             const articleIsExiste : Array<Articles> = await articles.filter(articles => articles.code === newArticle.code);
 
@@ -624,9 +641,11 @@ export class ArticlesService {
 
               articles.push(newArticle)
               this.storage.set(this.utility.localstorage.articles, articles).then(() => articleNew = newArticle)
-
+              
             }else{
               window.alert('L\'article existe déjà. L\'article code : ' +  articleIsExiste[0].code + ' - ' + articleIsExiste[0].libelle)
+              // articles.push(newArticle)
+              // this.storage.set(this.utility.localstorage.articles, articles).then(() => articleNew = newArticle)
             }
             
           }
