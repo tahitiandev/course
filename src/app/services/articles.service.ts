@@ -7,6 +7,7 @@ import { Deleted } from '../models/deleted';
 import { FirebaseService } from './firebase.service';
 import { AlertController } from '@ionic/angular';
 import { CreerArticleAPartirDuCodeBarreResponse } from '../models/creerArticleAPartirDuCodeBarreResponse';
+import { Setting } from '../models/setting';
 
 @Injectable({
   providedIn: 'root'
@@ -19,96 +20,16 @@ export class ArticlesService {
               private alertController: AlertController) { }
 
     private articles : Articles [] = [];
+    private settings : Setting;
 
-  private famille : FamilleArticle[] = [
-    {
-      code : 'CON',
-      libelle : 'Congelé',
-      firebase : false
-    },
-    {
-      code : 'BOI',
-      libelle : 'Boisson',
-      firebase : false
-    },
-    {
-      code : 'PDJ',
-      libelle : 'Petit déjeuner',
-      firebase : false
-    },
-    {
-      code : 'OUT',
-      libelle : 'Outillage',
-      firebase : false
-    },
-    {
-      code : 'FRIA',
-      libelle : 'Friandise',
-      firebase : false
-    },
-    {
-      code : 'BEB',
-      libelle : 'Article bébé',
-      firebase : false
-    },
-    {
-      code : 'FRU',
-      libelle : 'Fruits',
-      firebase : false
-    },
-    {
-      code : 'LEG',
-      libelle : 'Légumes',
-      firebase : false
-    },
-    {
-      code : 'VIAN',
-      libelle : 'Viandes',
-      firebase : false
-    },
-    {
-      code : 'MUL',
-      libelle : 'Multi-médias',
-      firebase : false
-    },
-    {
-      code : 'COUV',
-      libelle : 'Couverts',
-      firebase : false
-    },
-    {
-      code : 'LIV',
-      libelle : 'Papeterie',
-      firebase : false
-    },
-    {
-      code : 'LESSI',
-      libelle : 'Lessives',
-      firebase : false
-    },
-    {
-      code : 'MENAG',
-      libelle : 'Produits ménagers',
-      firebase : false
-    },
-    {
-      code : 'BAIN',
-      libelle : 'Articles de bain (ex savons)',
-      firebase : false
-    },
-    {
-      code : 'CHAR',
-      libelle : 'Charcuterie',
-      firebase : false
-    },
-    {
-      code : 'REF',
-      libelle : 'Produits réfrigéré',
-      firebase : false
-    }
-  ]
+  private famille : FamilleArticle[] = []
 
     articlesFromLocalStorage : Articles[];
+
+  async onInit(){
+    const settings : Setting = await this.utility.getSetting();
+    this.settings = settings
+  }
 
   async generateFamilleArticleId(){
     const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
@@ -190,7 +111,7 @@ export class ArticlesService {
         documentId : article.documentId,
         familleCode : article.familleCode == undefined ? "" : article.familleCode,
         familleLibelle : article.familleLibelle == undefined ? "" : article.libelle,
-        magasin : article.magasin == undefined ? "Carrefour" : article.magasin
+        magasin : article.magasin == undefined ? this.settings.magasinParDefaut : article.magasin
       })
 
       id = id + 1
@@ -225,7 +146,7 @@ export class ArticlesService {
             documentId : article.documentId,
             familleCode : tmp.new,
             familleLibelle : article.familleLibelle == undefined ? "" : article.libelle,
-            magasin : article.magasin == undefined ? "Carrefour" : article.magasin
+            magasin : article.magasin == undefined ? this.settings.magasinParDefaut : article.magasin
           })
         }
       }
@@ -243,7 +164,7 @@ export class ArticlesService {
             documentId : article.documentId,
             familleCode : '20',
             familleLibelle : article.familleLibelle == undefined ? "" : article.libelle,
-            magasin : article.magasin == undefined ? "Carrefour" : article.magasin
+            magasin : article.magasin == undefined ? this.settings.magasinParDefaut : article.magasin
           })
         }
       }
@@ -260,27 +181,18 @@ export class ArticlesService {
   }
 
   async updateArticle(newArticle : Articles){
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-    var articleUpdate : Articles [] = [];
-    var compteur = 1
-    const test = articles.find(s => {
-      return s.libelle == ''
-    })
 
-    for(let article of articles){
-
-      if(article.code != newArticle.code){
-        articleUpdate.push(article)
-      }
-      if(article.code === newArticle.code){
-        // cela évite les doublons
-        if(compteur === 1){
-          articleUpdate.push(newArticle)
-          compteur++
-        }
-      }
+    const articles : Array<Articles> = await this.getArticleFromLocalStorage();
+    const index = await articles.findIndex(s => s.code === newArticle.code);
+    
+    articles.splice(index,1)
+    if(newArticle.firebase){
+      newArticle.isModified = true
     }
-    this.storage.set(this.utility.localstorage.articles, articleUpdate)
+
+    articles.push(newArticle)
+    
+    this.storage.set(this.utility.localstorage.articles, articles)
   }
 
   async getArticleFromLocalStorage (){
@@ -322,16 +234,12 @@ export class ArticlesService {
 
   async deleteArticle(articleDeleted : Articles){ 
 
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+    const articles : Array<Articles> = await this.getArticleFromLocalStorage();
 
     // Mise àjour dans le localstorage
-    const articlesNew : Articles [] = [];
-    for(let article of articles){
-      if(article.code != articleDeleted.code){
-        articlesNew.push(article)
-      }
-    }
-    this.storage.set(this.utility.localstorage.articles, articlesNew);
+    const index = await articles.findIndex(s => s.code === articleDeleted.code);
+    articles.splice(index,1);
+    this.storage.set(this.utility.localstorage.articles, articles);
 
     // Mise à jour sur firebase (via localstorage : deleted)
     const articleInfo = await this.searchArticleByArticleCode(articleDeleted.code);
@@ -422,7 +330,7 @@ export class ArticlesService {
               prixModifier : article.prixModifier,
               quantite : articleCode.quantite,
               firebase : false,
-              magasin : 'Carrefour'
+              magasin : this.settings.magasinParDefaut
             }
         }
   
@@ -615,23 +523,8 @@ export class ArticlesService {
               familleCode : '22',
               familleLibelle : null,
               barreCode : codeBarre,
-              magasin : 'Carrefour'
+              magasin : this.settings.magasinParDefaut
             }
-
-            // this.setArticleRealDataToLocalStorage({
-            //   code : (await this.generateArticleId()).toString(),
-            //   libelle : formValue.libelle,
-            //   prix : formValue.prix ,
-            //   prixModifier : null,
-            //   quantite : 1,
-            //   firebase : false,
-            //   isModified : false,
-            //   documentId : null,
-            //   familleCode : '22',
-            //   familleLibelle : null,
-            //   barreCode : codeBarre,
-            //   magasin : 'Carrefour'
-            // })
 
             const articles : Array<Articles> = await this.getArticleFromLocalStorage();
             const articleIsExiste : Array<Articles> = await articles.filter(articles => articles.code === newArticle.code);
@@ -656,54 +549,5 @@ export class ArticlesService {
     return await articleNew;
   }
 
-  async test(){
-    const articles : FamilleArticle[] = await this.getFamilleArticleFromLocalStorage()
-    const result : FamilleArticle = await articles.find(s => {
-      return s.libelle == 'à classer'
-    })
-    console.log(result)
-    return result
-    // const article1 = await articles.find(s => {
-    //   return s.barreCode === 'hello'
-    // })
-    
-    // const article2 = await articles.find(s => {
-    //   return s.barreCode == 'teste'
-    // })
-
-    // return article2
-    
-    // article1.code = '24';
-    // article2.code = '25';
-    // console.log(article1)
-    // console.log(article2)
-    // this.deleteArticle(article1)
-    // this.deleteArticle(article2)
-
-    
-    // const id = await (await this.generateArticleId()).toString()
-    // console.log(id)
-    // goodArticle.code = '65'
-    // this.updateArticle(goodArticle)
-    // console.log(goodArticle)
-
-
-    // for(let article of articles){
-    //   if(article.libelle === 'Saucisse (x6)'){
-    //     console.log(article)
-    //   }
-    // }
-  }
-
-  async ajouterUnMgasinParDefaut(){
-    const articles : Articles [] = await this.storage.get('articles');
-
-    for(let article of articles){
-      article.isModified = true
-      article.magasin = 'Carrefour'
-    }
-
-    this.storage.set('articles',articles)
-  }
 
 }

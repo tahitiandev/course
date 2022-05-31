@@ -28,6 +28,7 @@ export class FamilleListPage implements OnInit {
   async onInit(){
     const familles : Array<FamilleArticle> = await this.getFamilles();
     this.familles = familles;
+    console.log(familles)
   }
 
   async getFamilles(){
@@ -108,15 +109,19 @@ export class FamilleListPage implements OnInit {
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Annuler',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
           }
         }, {
-          text: 'Ok',
+          text: 'Valider',
           handler: async (famille : FamilleArticle) => {
-            await this.articleService.updateFamille(famille);
+            const familles = await this.articleService.getFamilleArticleFromLocalStorage();
+            const familleNew = await familles.find(s => s.code === famille.code)
+            familleNew.code = famille.code
+            familleNew.libelle = famille.libelle
+            await this.articleService.updateFamille(familleNew);
             this.onInit()
           }
         }

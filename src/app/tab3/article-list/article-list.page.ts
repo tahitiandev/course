@@ -22,8 +22,8 @@ export class ArticleListPage implements OnInit {
     private nav : NavController,
     private barreCodeService : BarreCodeService) {}
 
-    articles : Articles [];
-    familles : FamilleArticle [];
+    articles : Array<Articles>;
+    familles : Array<FamilleArticle>;
     searchValue : string = "";
     settings : Setting;
     filtreMagasin : string = "";
@@ -107,17 +107,11 @@ export class ArticleListPage implements OnInit {
           article.libelle = result.libelle;
           article.prix = result.prix;
           article.barreCode = result.barreCode
-          
-          if(article.firebase){
-            article.isModified = true
-          }
 
-          this.articleService.updateArticle(article).then(() => {
-            this.getArticle().then(() => {
-              this.spinner(false)
-            })
-          })
-          
+          await this.articleService.updateArticle(article)
+          await this.getArticle()
+          await this.spinner(false)
+
           }
         }
         ]
@@ -129,38 +123,32 @@ export class ArticleListPage implements OnInit {
 
     async modifierMagasin(article : Articles){
 
+      const magasins = this.settings.magasins
+
+      var inputsOption : Array<AlertInput> = [];
+
+      for(let magasin of magasins){
+        inputsOption.push({
+          name: 'magasin',
+          type: 'radio',
+          label : magasin,
+          value : magasin
+        })
+      }
+
       const alert = await this.alertController.create({
         header: 'Modifier l\'article',
-        inputs: [
-        {
-          name: 'magasin',
-          type: 'radio',
-          label : 'Carrefour',
-          value : 'Carrefour'
-        },
-        {
-          name: 'magasin',
-          type: 'radio',
-          label : 'Easy market',
-          value : 'Easy market'
-        },
-        {
-          name: 'magasin',
-          type: 'radio',
-          label : 'Hyper U',
-          value : 'Hyper U'
-        }
-        ],
+        inputs: inputsOption,
         buttons: [
         {
-          text: 'Cancel',
+          text: 'Annuler',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
           }
         },
         {
-        text: 'Ok',
+        text: 'Valider',
         handler: async (result) => {
           
           article.magasin = result
@@ -219,7 +207,7 @@ export class ArticleListPage implements OnInit {
         text: 'Ok',
         handler: async (result : Articles) => {
 
-          var articles : Articles [] = await this.storage.get(this.u.localstorage.articles);
+          var articles : Array<Articles> = await this.storage.get(this.u.localstorage.articles);
           
           if(result.code !== article.code){
 
@@ -232,14 +220,11 @@ export class ArticleListPage implements OnInit {
               articles[index].isModified = true
             }
 
-            this.storage.set(this.u.localstorage.articles, articles).then(() => {
-              this.getArticle().then(() => {
-                this.spinner(false)
-              })
-            })
+            await this.storage.set(this.u.localstorage.articles, articles);
+            await this.getArticle()
+            await this.spinner(false);
 
           }
-
           
         }
         }
@@ -249,44 +234,17 @@ export class ArticleListPage implements OnInit {
       await alert.present();
     }
 
-    private async alertListFamilleArticle(){
-      // await alert.present();
-    }
-
-    async pairArticleWithAnBarreCode(articleForm : Articles){
+    async pairArticleWithAnBarreCode(article : Articles){
       const barreCode =  await this.barreCodeService.scanneBarreCode()
-      const articles : Articles [] = await this.articleService.getArticleFromLocalStorage()
-      var articlesNew : Articles [] = [];
+      const articles : Array<Articles> = await this.articleService.getArticleFromLocalStorage()
 
-      for(let article of articles){
-        if(article.code != articleForm.code){
-          articlesNew.push(article)
-        }
-        if(article.code == articleForm.code){
-          var articleUpdate : Articles = {
-            code : article.code,
-            libelle : article.libelle,
-            prix : article.prix,
-            prixModifier : article.prixModifier,
-            quantite : article.quantite,
-            firebase : article.firebase,
-            isModified : article.isModified,
-            documentId : article.documentId,
-            familleCode : article.familleCode,
-            familleLibelle : article.familleLibelle,
-            barreCode : barreCode.toString(),
-            magasin : article.magasin
-          }
-          articlesNew.push(articleUpdate);
-        }
-      }
-      this.storage.set(this.u.localstorage.articles, articlesNew).then(() => {
-        this.u.popupInformation('Le code barre a bien été renseigné')
-        this.getArticle()
-      }).catch(e => {
-        alert(e)
-      })
+      const index = await articles.findIndex(s => s.code === article.code)
+      articles[index].barreCode = barreCode.toString();
 
+      await this.storage.set(this.u.localstorage.articles, articles)
+      await this.u.popupInformation('Le code barre a bien été renseigné');
+      await this.getArticle();
+      await this.spinner(false)
 
     }
     
@@ -357,7 +315,7 @@ export class ArticleListPage implements OnInit {
           libelle : newArticle.libelle,
           prix : newArticle.prix,
           firebase : false,
-          magasin : 'Carrefour'
+          magasin : this.settings.magasinParDefaut
         })
 
         this.storage.set(this.u.localstorage.articles, articleTemp).then(() => this.getArticle())
@@ -455,9 +413,9 @@ export class ArticleListPage implements OnInit {
 
       async modifierFamilleArticle(article : Articles){
 
-        const familles : FamilleArticle [] = this.articleService.sortByLibelleFamilleArticle(await this.storage.get(this.u.localstorage['famille d\'articles']));
+        const familles : Array<FamilleArticle> = this.articleService.sortByLibelleFamilleArticle(await this.storage.get(this.u.localstorage['famille d\'articles']));
 
-        var inputOption : AlertInput [] = [];
+        var inputOption : Array<AlertInput> = [];
 
         for(let famille of familles){
           inputOption.push({
@@ -483,14 +441,16 @@ export class ArticleListPage implements OnInit {
           text: 'Valider',
           handler: async (result) => {
 
-              const familleInfo : FamilleArticle = familles.find(s => {
+              const familleInfo : FamilleArticle = await familles.find(s => {
                 return s.code = result
               })
 
-              article.familleCode = await result
-              article.familleLibelle = await familleInfo.libelle
+              article.familleCode = result
+              article.familleLibelle = familleInfo.libelle
+
               await this.articleService.updateArticle(article)       
-              this.getArticle()
+              await this.getArticle()
+              await this.spinner(false)
             }
           }
           ]
@@ -521,11 +481,11 @@ export class ArticleListPage implements OnInit {
 
       }
 
-      deleteArticle(article : Articles){
+      async deleteArticle(article : Articles){
         
-        this.articleService.deleteArticle(article).then(() => {
-          this.getArticle();
-        })
+        await this.articleService.deleteArticle(article)
+        await this.getArticle();
+        await this.spinner(false);
         
 
       }
@@ -570,7 +530,7 @@ export class ArticleListPage implements OnInit {
                   familleCode : '22',
                   familleLibelle : null,
                   barreCode : barreCode,
-                  magasin : 'Carrefour'
+                  magasin : this.settings.magasinParDefaut
                 })
               }
             }
