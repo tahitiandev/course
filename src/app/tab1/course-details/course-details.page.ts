@@ -7,13 +7,14 @@ import { Courses, Liste } from 'src/app/models/courses';
 import { CreerArticleAPartirDuCodeBarreResponse } from 'src/app/models/creerArticleAPartirDuCodeBarreResponse';
 import { MenuDelaSemaine } from 'src/app/models/menuDeLaSemaine';
 import { Plats } from 'src/app/models/plats';
-import { Setting } from 'src/app/models/setting';
+import { Settings } from 'src/app/models/setting';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { MenuService } from 'src/app/services/menu.service';
 import { PlatsService } from 'src/app/services/plats.service';
 import { UtilityService } from 'src/app/services/utility.service';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-course-details',
@@ -23,7 +24,8 @@ import { UtilityService } from 'src/app/services/utility.service';
 
 export class CourseDetailsPage implements OnInit {
 
-  constructor(private route : ActivatedRoute,
+  constructor(private storage : Storage,
+              private route : ActivatedRoute,
               private courseService : CoursesService,
               private alertController: AlertController,
               private barreCodeService : BarreCodeService,
@@ -32,108 +34,158 @@ export class CourseDetailsPage implements OnInit {
               private utility : UtilityService,
               private menuService : MenuService) { }
 
-  listeId : number;
-  coursesDetail : Courses;
-  listeArticle : Liste[]= [];
+  courseId : number;
+  course : Courses;
+  courseDetails : Array<Liste> = [];
   total : number = 0;
-  setting : Setting
+  settings : Settings
 
   ngOnInit() {
-    this.listeId = this.route.snapshot.params['id']
-    this.getCourse()
-    this.settingInit();
-  }
-
-  async settingInit(){
-    const setting : Setting = await this.utility.getSettingFromLocalStorage();
-    this.setting = setting;
+    this.onInit();
   }
   
-  async getCourse(){
-    const courseDetail = await this.courseService.getCourseById(+this.listeId);
-    this.coursesDetail = await courseDetail
-    this.listeArticle = await courseDetail.liste;
+  private async onInit(){
+
+    // Init course
+    const course = await this.getCourse();
+    this.course = course;
+    this.courseDetails = course.liste;
+    
+    // Init setting
+    const settings = await this.settingInit();
+    this.settings = settings;
+
+  }
+
+  private async settingInit(){
+    const setting : Settings = await this.utility.getSettingFromLocalStorage();
+    return setting;
+  }
+
+  private getCourseId(){
+    return this.route.snapshot.params['id'];
+  }
+  
+  private async getCourse(){
+    const id = this.getCourseId();
+    const courseDetail = await this.courseService.getCourseById(+id);
+    
+    // Init quelques données de bases (entête, détail, id)
+    this.course = await courseDetail
+    this.courseDetails = await courseDetail.liste;
+    this.courseId = id;
+
     this.calculeTotal()
-      
+
+    return courseDetail;
+  }
+
+  private async getCourses(){
+    const courses : Array<Courses> = await this.courseService.getCourses();
+    return courses;
   }
 
   private async calculeTotal(){
+
     this.settingInit();
 
-    const montantCourse = await this.courseService.calculeMontantTotal(this.listeArticle);
+    const montantCourse = await this.courseService.calculeMontantTotal(this.courseDetails);
     this.total = montantCourse;  
-    if(montantCourse > this.setting.budget){
-      var difference = (montantCourse) - (this.setting.budget)
+    if(montantCourse > this.settings.budget){
+      var difference = (montantCourse) - (this.settings.budget)
       this.utility.popupInformation('Vous avez dépasser votre budget de ' + difference + ' xpf')
     }
   }
 
   async clickCheckBox(index : number){
 
-    var actifCheckBox : boolean = await this.listeArticle[index].actif
+    var actifCheckBox : boolean = await this.courseDetails[index].actif
     var newListe : Liste [] = []
 
-    for(let i = 0 ; i < this.listeArticle.length; i++){
+    for(let i = 0 ; i < this.courseDetails.length; i++){
 
       if(i !== index){
-        newListe.push(this.listeArticle[i])
+        newListe.push(this.courseDetails[i])
       }
       if(i === index){
         newListe.push({
-          articleId : this.listeArticle[i].articleId,
-          libelle : this.listeArticle[i].libelle,
-          prixUnitaire : this.listeArticle[i].prixUnitaire,
-          actif : !this.listeArticle[i].actif,
-          quantite : this.listeArticle[i].quantite
+          articleId : this.courseDetails[i].articleId,
+          libelle : this.courseDetails[i].libelle,
+          prixUnitaire : this.courseDetails[i].prixUnitaire,
+          actif : !this.courseDetails[i].actif,
+          quantite : this.courseDetails[i].quantite
         })
       }
 
     } //for
   
     const courseUpdate : Courses = await {
-      id : this.coursesDetail.id,
-      date : this.coursesDetail.date,
-      actif : this.coursesDetail.actif,
-      total : this.coursesDetail.total,
+      id : this.course.id,
+      date : this.course.date,
+      actif : this.course.actif,
+      total : this.course.total,
       liste : newListe,
-      firebase : false
+      firebase : false,
+      tag : this.course.tag,
+      payeur : this.course.payeur,
+      magasin : this.course.magasin,
+      isModified : this.course.firebase ? true : false,
+      isDeleted : this.course.isDeleted,
+      documentId : this.course.documentId,
     }
 
-    this.listeArticle = newListe
+    this.courseDetails = newListe
 
-    this.courseService.updateCourseInLocalStorage(courseUpdate)
+    this.courseService.updateCourseToLocalStorage(courseUpdate)
     
 
   }
 
-  async supprimerArticle(index: number){
+  async supprimerArticle(article : Liste){
 
-    var actifCheckBox : boolean = await this.listeArticle[index].actif
-    var newListe : Liste [] = []
+    const index = await this.courseDetails.findIndex(s => s === article);
+    this.courseDetails.splice(index, 1)
 
-    for(let i = 0 ; i < this.listeArticle.length; i++){
+    this.course.liste = []
+    this.course.liste = this.courseDetails;
 
-      if(i !== index){
-        newListe.push(this.listeArticle[i])
-      }
+    const courses : Array<Courses> = await this.courseService.getCourses();
+    const indexCourse = await courses.findIndex(s => s.id === this.course.id);
+    courses[indexCourse] = this.course
 
-    } //for
-
-    const courseUpdate : Courses = await {
-      id : this.coursesDetail.id,
-      date : this.coursesDetail.date,
-      actif : this.coursesDetail.actif,
-      total : this.coursesDetail.total,
-      liste : newListe,
-      firebase : this.coursesDetail.firebase
-    }
-
-    this.listeArticle = newListe
-    this.courseService.updateCourseInLocalStorage(courseUpdate)
+    await this.storage.set(this.utility.localstorage.Courses, courses)
     this.calculeTotal();
 
 
   }
+  // async supprimerArticle(index: number){
+
+  //   var actifCheckBox : boolean = await this.listeArticle[index].actif
+  //   var newListe : Liste [] = []
+
+  //   for(let i = 0 ; i < this.listeArticle.length; i++){
+
+  //     if(i !== index){
+  //       newListe.push(this.listeArticle[i])
+  //     }
+
+  //   } //for
+
+  //   const courseUpdate : Courses = await {
+  //     id : this.coursesDetail.id,
+  //     date : this.coursesDetail.date,
+  //     actif : this.coursesDetail.actif,
+  //     total : this.coursesDetail.total,
+  //     liste : newListe,
+  //     firebase : this.coursesDetail.firebase
+  //   }
+
+  //   this.listeArticle = newListe
+  //   this.courseService.updateCourseInLocalStorage(courseUpdate)
+  //   this.calculeTotal();
+
+
+  // }
 
   async insertSpecialArticle(){
 
@@ -167,14 +219,14 @@ export class CourseDetailsPage implements OnInit {
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Annuler',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
 
           }
         }, {
-          text: 'Ok',
+          text: 'Valider',
           handler: async (data) => {
 
             const liste : Liste = {
@@ -185,21 +237,30 @@ export class CourseDetailsPage implements OnInit {
               actif : false
             }
 
-            this.listeArticle.push(liste)
+            this.courseDetails.push(liste)
 
-            const courseUpdate : Courses = await {
-              id : this.coursesDetail.id,
-              date : this.coursesDetail.date,
-              actif : this.coursesDetail.actif,
-              total : this.coursesDetail.total,
-              liste : this.listeArticle,
-              firebase : this.coursesDetail.firebase,
-              isModified : this.coursesDetail.firebase ? true : false,
-              documentId : this.coursesDetail.documentId,
-              plafond : this.coursesDetail.plafond
+            const courses : Array<Courses> = await this.courseService.getCourses();
+            const index = await courses.findIndex(s => s.id === this.course.id);
+            courses[index].liste = this.courseDetails;
+            if(courses[index].firebase){
+              courses[index].isModified = true;
             }
 
-            this.courseService.updateCourseInLocalStorage(courseUpdate)
+            await this.storage.set(this.utility.localstorage.Courses, courses)
+
+            // const courseUpdate : Courses = await {
+            //   id : this.coursesDetail.id,
+            //   date : this.coursesDetail.date,
+            //   actif : this.coursesDetail.actif,
+            //   total : this.coursesDetail.total,
+            //   liste : this.listeArticle,
+            //   firebase : this.coursesDetail.firebase,
+            //   isModified : this.coursesDetail.firebase ? true : false,
+            //   documentId : this.coursesDetail.documentId,
+            //   plafond : this.coursesDetail.plafond
+            // }
+
+            // this.courseService.updateCourseInLocalStorage(courseUpdate)
             this.calculeTotal();
 
           }
@@ -211,7 +272,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async updateArticle(data : Liste, index : number) {
+  async updateArticle(articleSelected : Liste, index : number) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Modifier les données de l\'article',
@@ -221,14 +282,14 @@ export class CourseDetailsPage implements OnInit {
           label : 'Prix unitaire',
           placeholder : 'Prix unitaire',
           type: 'number',
-          value: data.prixUnitaire
+          value: articleSelected.prixUnitaire
         },
         {
           name: 'libelle',
           label : 'Libellé',
           placeholder : 'Libellé',
           type: 'text',
-          value: data.libelle
+          value: articleSelected.libelle
         },
         {
           name: 'quantite',
@@ -236,65 +297,79 @@ export class CourseDetailsPage implements OnInit {
           placeholder : 'Quantité',
           type: 'number',
           id: 'name2-id',
-          value: data.quantite
+          value: articleSelected.quantite
         },
         {
           name: 'actif',
           placeholder : 'Check',
           type: 'checkbox',
           id: 'name2-id',
-          value: data.actif
+          checked: articleSelected.actif
         }
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Annuler',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
 
           }
         }, {
-          text: 'Ok',
-          handler: async (data) => {
+          text: 'Valider',
+          handler: async (data : Liste) => {
+
+            const courses : Array<Courses> = await this.courseService.getCourses();
+            const index = await courses.findIndex(s => s.id === this.course.id);
+
+            const indexList = await this.courseDetails.findIndex(s => s === articleSelected);
+
+            courses[index].liste[indexList].prixUnitaire = data.prixUnitaire;
+            courses[index].liste[indexList].libelle = data.libelle;
+            courses[index].liste[indexList].quantite = data.quantite;
+            courses[index].liste[indexList].actif = data.actif;
+            this.courseDetails = []
+            this.courseDetails = courses[index].liste
+            await this.storage.set(this.utility.localstorage.Courses, courses);
+            await this.calculeTotal();
             
-            var newListe : Liste [] = []
+            // var newListe : Liste [] = []
         
-            for(let i = 0 ; i < this.listeArticle.length; i++){
+            // for(let i = 0 ; i < this.listeArticle.length; i++){
         
-              if(i !== index){
-                newListe.push(this.listeArticle[i])
-              }
-              if(i === index){
-                newListe.push({
-                  articleId : this.listeArticle[i].articleId,
-                  libelle : data.libelle,
-                  quantite : data.quantite,
-                  prixUnitaire : data.prixUnitaire,
-                  prixTotal : null,
-                  actif : data.actif,
-                })
-                this.articleService.verifieSiPrixDifferent(this.listeArticle[i].articleId, data.prixUnitaire)
-              }
+            //   if(i !== index){
+            //     newListe.push(this.listeArticle[i])
+            //   }
+            //   if(i === index){
+            //     newListe.push({
+            //       articleId : this.listeArticle[i].articleId,
+            //       libelle : data.libelle,
+            //       quantite : data.quantite,
+            //       prixUnitaire : data.prixUnitaire,
+            //       prixTotal : null,
+            //       actif : data.actif,
+            //     })
+            //     this.articleService.verifieSiPrixDifferent(this.listeArticle[i].articleId, data.prixUnitaire)
+            //   }
         
-            } //for
+            // } //for
           
-            const courseUpdate : Courses = await {
-              id : this.coursesDetail.id,
-              date : this.coursesDetail.date,
-              actif : this.coursesDetail.actif,
-              total : this.coursesDetail.total,
-              liste : newListe,
-              firebase : this.coursesDetail.firebase,
-              isModified : this.coursesDetail.firebase ? true : false,
-              documentId : this.coursesDetail.documentId,
-              plafond : this.coursesDetail.plafond
-            }
+            // const courseUpdate : Courses = await {
+            //   id : this.coursesDetail.id,
+            //   date : this.coursesDetail.date,
+            //   actif : this.coursesDetail.actif,
+            //   total : this.coursesDetail.total,
+            //   liste : newListe,
+            //   firebase : this.coursesDetail.firebase,
+            //   isModified : this.coursesDetail.firebase ? true : false,
+            //   documentId : this.coursesDetail.documentId,
+            //   plafond : this.coursesDetail.plafond
+            // }
         
-            this.listeArticle = newListe
+            // this.listeArticle = newListe
         
-            this.courseService.updateCourseInLocalStorage(courseUpdate)
-            this.calculeTotal();
+            // this.courseService.updateCourseInLocalStorage(courseUpdate)
+            // this.calculeTotal();
             
 
           }
@@ -305,7 +380,7 @@ export class CourseDetailsPage implements OnInit {
     await alert.present();
   }
 
-  async postNewArticleInCourse(option : string){
+  async postArticleToCourse(option : string){
 
     if(option === 'barreCode'){
       this.postArticleByBarreCode()
@@ -366,7 +441,11 @@ export class CourseDetailsPage implements OnInit {
       const barreCode = await this.barreCodeService.scanneBarreCode();
       const article = await this.articleService.searchArticleByBarreCode(barreCode)
       
+      const courses : Array<Courses> = await this.courseService.getCourses();
+      const index = await courses.findIndex(s => s.id === this.course.id);
+      
     if(article === null || article === undefined){
+
       var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode, true)
 
       if(response.articleIsCreer){
@@ -380,34 +459,59 @@ export class CourseDetailsPage implements OnInit {
         actif : false
       }
       
-      this.listeArticle.push(articleNew)
-           
-      const courseUpdate : Courses = await {
-        id : this.coursesDetail.id,
-        date : this.coursesDetail.date,
-        actif : this.coursesDetail.actif,
-        total : this.coursesDetail.total,
-        firebase : this.coursesDetail.firebase,
-        liste : this.listeArticle
+      this.courseDetails.push(articleNew)
+
+      this.course.liste = this.courseDetails;
+      courses[index] = this.course;
+      if(courses[index].firebase){
+        courses[index].isModified = true;
       }
+      await this.storage.set(this.utility.localstorage.Courses, courses);
+           
+      // const courseUpdate : Courses = await {
+      //   id : this.coursesDetail.id,
+      //   date : this.coursesDetail.date,
+      //   actif : this.coursesDetail.actif,
+      //   total : this.coursesDetail.total,
+      //   firebase : this.coursesDetail.firebase,
+      //   liste : this.listeArticle
+      // }
 
-      this.courseService.updateCourseInLocalStorage(courseUpdate).then(async () => {
+      // this.courseService.updateCourseInLocalStorage(courseUpdate).then(async () => {
 
-        const courses : Courses [] = await this.courseService.getCourseFromLocalStorage()
-        const course : Courses = await courses.find(s => {
-          return s.id === this.coursesDetail.id
-        })
-        this.listeArticle = []
-        this.listeArticle = course.liste
+      //   const courses : Courses [] = await this.courseService.getCourseFromLocalStorage()
+      //   const course : Courses = await courses.find(s => {
+      //     return s.id === this.coursesDetail.id
+      //   })
+      //   this.listeArticle = []
+      //   this.listeArticle = course.liste
         
-      })
+      // })
       this.calculeTotal();
       }
     }else{
 
+        this.courseDetails.push({
+          articleId : article.code,
+          libelle : article.libelle,
+          quantite : 1,
+          prixUnitaire : article.prix,
+          prixTotal : null,
+          actif : false
+        })
+
+
+      // this.coursesDetail.liste = this.listeArticle;
+      // courses[index] = this.coursesDetail;
+      // if(courses[index].firebase){
+      //   courses[index].isModified = true;
+      // }
+      // await this.storage.set(this.utility.localstorage.Courses, courses);
+
+
         const listeNew : Liste [] = [];
         
-        for(let liste of this.listeArticle){
+        for(let liste of this.courseDetails){
           listeNew.push(liste)
         }
         var articleNew : Liste = {
@@ -421,24 +525,25 @@ export class CourseDetailsPage implements OnInit {
         
         listeNew.push(articleNew)
         
-        this.listeArticle = listeNew;
+        this.courseDetails = listeNew;
         
         const courseUpdate : Courses = await {
-          id : this.coursesDetail.id,
-          date : this.coursesDetail.date,
-          actif : this.coursesDetail.actif,
-          total : this.coursesDetail.total,
+          id : this.course.id,
+          date : this.course.date,
+          actif : this.course.actif,
+          total : this.course.total,
           liste : listeNew,
-          firebase : this.coursesDetail.firebase,
-          isModified : this.coursesDetail.isModified === undefined ? null : this.coursesDetail.isModified,
-          documentId : this.coursesDetail.documentId === undefined ? null : this.coursesDetail.documentId,
-          plafond : this.coursesDetail.plafond === undefined ? null : this.coursesDetail.plafond,
-          tag : this.coursesDetail.tag === undefined ? null : this.coursesDetail.tag,
-          payeur : this.coursesDetail.payeur === undefined ? null : this.coursesDetail.payeur,
-          magasin : this.coursesDetail.magasin === undefined ? null : this.coursesDetail.magasin
+          firebase : this.course.firebase,
+          isModified : this.course.isModified === undefined ? null : this.course.isModified,
+          documentId : this.course.documentId === undefined ? null : this.course.documentId,
+          plafond : this.course.plafond === undefined ? null : this.course.plafond,
+          tag : this.course.tag === undefined ? null : this.course.tag,
+          payeur : this.course.payeur === undefined ? null : this.course.payeur,
+          magasin : this.course.magasin === undefined ? null : this.course.magasin,
+          isDeleted : this.course.isDeleted,
         }
 
-        this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+        this.courseService.updateCourseToLocalStorage(courseUpdate).then(() => this.courseDetails = listeNew)
         this.calculeTotal();
     }
   }
@@ -448,36 +553,43 @@ export class CourseDetailsPage implements OnInit {
     const articleRecherche = await this.articleService.searchArticleByBarreCode(barreCode)
 
     if(articleRecherche != null || articleRecherche != undefined){
-      const articlePresentDansLaListe =  await this.listeArticle.find(s => {
+      const articlePresentDansLaListe =  await this.courseDetails.find(s => {
         return s.articleId === articleRecherche.code
       })
 
       if(articlePresentDansLaListe != null || articlePresentDansLaListe != undefined){
 
         articlePresentDansLaListe.actif = true
+        const courses : Array<Courses> = await this.courseService.getCourses();
+        const index = await courses.findIndex(s => s.id  === this.course.id)
+        const indexArtcle = await this.courseDetails.findIndex(s => s === articlePresentDansLaListe);
+        courses[index].liste[indexArtcle] = articlePresentDansLaListe;
+        courses[index].isModified = true;
 
-        const listeNew : Liste [] = [];
+        await this.storage.set(this.utility.localstorage.Courses, courses)
 
-        for(let liste of this.listeArticle){
-          if(liste.articleId != articlePresentDansLaListe.articleId){
-            listeNew.push(liste)
-          }else{
-            listeNew.push(articlePresentDansLaListe)
-          }
-        }
+        // const listeNew : Liste [] = [];
 
-        this.listeArticle = listeNew;
+        // for(let liste of this.listeArticle){
+        //   if(liste.articleId != articlePresentDansLaListe.articleId){
+        //     listeNew.push(liste)
+        //   }else{
+        //     listeNew.push(articlePresentDansLaListe)
+        //   }
+        // }
+
+        // this.listeArticle = listeNew;
         
-        const courseUpdate : Courses = await {
-          id : this.coursesDetail.id,
-          date : this.coursesDetail.date,
-          actif : this.coursesDetail.actif,
-          total : this.coursesDetail.total,
-          liste : listeNew,
-          firebase : this.coursesDetail.firebase
-        }
+        // const courseUpdate : Courses = await {
+        //   id : this.coursesDetail.id,
+        //   date : this.coursesDetail.date,
+        //   actif : this.coursesDetail.actif,
+        //   total : this.coursesDetail.total,
+        //   liste : listeNew,
+        //   firebase : this.coursesDetail.firebase
+        // }
 
-        this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+        // this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
         this.calculeTotal();
       }else{
         this.utility.popupInformation('L\'article ' + articleRecherche.libelle + ' n\'est pas présent dans la liste')
@@ -487,7 +599,7 @@ export class CourseDetailsPage implements OnInit {
       var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode, false)
       if(response.articleIsCreer){
         const listeNew : Liste [] = [];
-      for(let liste of this.listeArticle){
+      for(let liste of this.courseDetails){
         listeNew.push(liste)
       }
       var articleNew : Liste = {
@@ -501,18 +613,24 @@ export class CourseDetailsPage implements OnInit {
       
       listeNew.push(articleNew)
       
-      this.listeArticle = listeNew;
+      this.courseDetails = listeNew;
       
       const courseUpdate : Courses = await {
-        id : this.coursesDetail.id,
-        date : this.coursesDetail.date,
-        actif : this.coursesDetail.actif,
-        total : this.coursesDetail.total,
+        id : this.course.id,
+        date : this.course.date,
+        actif : this.course.actif,
+        total : this.course.total,
         liste : listeNew,
-        firebase : this.coursesDetail.firebase
+        firebase : this.course.firebase,
+        documentId : this.course.documentId,
+        isModified : this.course.firebase ? true : false,
+        isDeleted : this.course.isDeleted,
+        tag : this.course.tag,
+        payeur : this.course.payeur,
+        magasin : this.course.magasin,
       }
 
-      this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
+      this.courseService.updateCourseToLocalStorage(courseUpdate).then(() => this.courseDetails = listeNew)
       this.calculeTotal();
       }
     }
@@ -534,9 +652,9 @@ export class CourseDetailsPage implements OnInit {
 
   private async postArticleManuel(){
 
-    const articlesToLocalStorage : Articles [] = await this.articleService.getArticleFromLocalStorage()
+    const articlesToLocalStorage : Array<Articles> = await this.articleService.getArticleFromLocalStorage()
     const articles = await this.sortByArticleName(articlesToLocalStorage)
-    var radioOption : AlertInput [] = [];
+    var radioOption : Array<AlertInput> = [];
     
     for(let article of articles){
       radioOption.push({
@@ -558,14 +676,14 @@ export class CourseDetailsPage implements OnInit {
       inputs: radioOption,
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Annuler',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
 
           }
         }, {
-          text: 'Ok',
+          text: 'Valider',
           handler: async (article : any) => {
 
             var liste : Liste = {
@@ -576,29 +694,43 @@ export class CourseDetailsPage implements OnInit {
               actif : false
             }
 
-            const listeNew : Liste [] = [];
-            for(let liste of this.listeArticle){
-              listeNew.push(liste)
-            }
-            listeNew.push(liste)
-            this.listeArticle = listeNew
 
-            const courseUpdate : Courses = await {
-              id : this.coursesDetail.id,
-              date : this.coursesDetail.date,
-              actif : this.coursesDetail.actif,
-              total : this.coursesDetail.total,
-              liste : listeNew,
-              firebase : this.coursesDetail.firebase,
-              isModified : this.coursesDetail.isModified === undefined ? null : this.coursesDetail.isModified,
-              documentId : this.coursesDetail.documentId === undefined ? null : this.coursesDetail.documentId,
-              plafond : this.coursesDetail.plafond === undefined ? null : this.coursesDetail.plafond,
-              tag : this.coursesDetail.tag === undefined ? null : this.coursesDetail.tag,
-              payeur : this.coursesDetail.payeur === undefined ? null : this.coursesDetail.payeur,
-              magasin : this.coursesDetail.magasin === undefined ? null : this.coursesDetail.magasin
+            this.courseDetails.push(liste)
+            this.course.liste = []
+            this.course.liste = this.courseDetails
+            this.course.isModified = true;
+
+            const courses : Array<Courses> = await this.courseService.getCourses();
+            const index = await courses.findIndex(s => s.id === this.course.id);
+            courses[index].liste = this.courseDetails;
+            if(courses[index].firebase){
+              courses[index].isModified = true;
             }
+            await this.storage.set(this.utility.localstorage.Courses, courses)
+
+            // const listeNew : Liste [] = [];
+            // for(let liste of this.listeArticle){
+            //   listeNew.push(liste)
+            // }
+            // listeNew.push(liste)
+            // this.listeArticle = listeNew
+
+            // const courseUpdate : Courses = await {
+            //   id : this.coursesDetail.id,
+            //   date : this.coursesDetail.date,
+            //   actif : this.coursesDetail.actif,
+            //   total : this.coursesDetail.total,
+            //   liste : listeNew,
+            //   firebase : this.coursesDetail.firebase,
+            //   isModified : this.coursesDetail.isModified === undefined ? null : this.coursesDetail.isModified,
+            //   documentId : this.coursesDetail.documentId === undefined ? null : this.coursesDetail.documentId,
+            //   plafond : this.coursesDetail.plafond === undefined ? null : this.coursesDetail.plafond,
+            //   tag : this.coursesDetail.tag === undefined ? null : this.coursesDetail.tag,
+            //   payeur : this.coursesDetail.payeur === undefined ? null : this.coursesDetail.payeur,
+            //   magasin : this.coursesDetail.magasin === undefined ? null : this.coursesDetail.magasin
+            // }
       
-            await this.courseService.updateCourseInLocalStorage(courseUpdate)
+            // await this.courseService.updateCourseInLocalStorage(courseUpdate)
             await this.calculeTotal();
             
 
@@ -660,8 +792,8 @@ export class CourseDetailsPage implements OnInit {
 
   async chooseArticle(plat : Plats, jour? : string){
 
-    const articlesInfo : Articles [] = await this.articleService.getArticleFromLocalStorage()
-    const articlePlat : Articles [] = []
+    const articlesInfo : Array<Articles> = await this.articleService.getArticleFromLocalStorage();
+    const articlePlat : Array<Articles> = [];
 
     for(let article of plat.codeArticle){
       const result = await articlesInfo.find(s => {
@@ -699,7 +831,7 @@ export class CourseDetailsPage implements OnInit {
           handler: async (data) => {   
 
             for(let s of data){
-              this.listeArticle.push({
+              this.courseDetails.push({
                 articleId : s.code,
                 libelle : s.libelle,
                 quantite : s.quantite,
@@ -709,18 +841,22 @@ export class CourseDetailsPage implements OnInit {
             }
 
             const courseUpdate : Courses = await {
-              id : this.coursesDetail.id,
-              date : this.coursesDetail.date,
-              actif : this.coursesDetail.actif,
-              total : this.coursesDetail.total,
-              liste : this.listeArticle,
-              firebase : this.coursesDetail.firebase,
-              isModified : this.coursesDetail.firebase ? true : false,
-              documentId : this.coursesDetail.documentId,
-              plafond : this.coursesDetail.plafond
+              id : this.course.id,
+              date : this.course.date,
+              actif : this.course.actif,
+              total : this.course.total,
+              liste : this.courseDetails,
+              firebase : this.course.firebase,
+              isModified : this.course.firebase ? true : false,
+              documentId : this.course.documentId,
+              plafond : this.course.plafond,
+              isDeleted : this.course.isDeleted,
+              tag : this.course.tag,
+              payeur : this.course.payeur,
+              magasin : this.course.magasin,
             }
 
-            this.courseService.updateCourseInLocalStorage(courseUpdate)
+            this.courseService.updateCourseToLocalStorage(courseUpdate)
             this.calculeTotal();
 
           }

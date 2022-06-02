@@ -14,104 +14,57 @@ export class CoursesService {
               private utility : UtilityService,
               private firebaseService : FirebaseService) { }
 
-
-  private courses : Courses[] = [
-    {
-      id : 1,
-      date : '21/07/2021',
-      actif : true,
-      total : 1050,
-      liste : [
-        {
-          articleId : '',
-          libelle : '',
-          quantite : 2,
-          prixUnitaire : 10,
-          actif : false
-        }
-      ],
-      firebase : false,
-      plafond : 150000,
-    }
-  ]
-
-  private defaultData : Courses [] = [
-    {
-      id : 1,
-      date : '2021-08-17T10:55:41.500-10:00',
-      actif : true,
-      total : 1050,
-      liste : [
-        {
-          articleId : 'FLORA',
-          libelle : 'test Oranges',
-          quantite : 2,
-          prixUnitaire : 10,
-          actif : false
-        }
-      ],
-      firebase : false,
-      plafond : 150000,
-    }
-  ]
+  private defaultData : Array<Courses> = []
 
   async setDefaultCourseData(){
     await this.storage.set(this.utility.localstorage.Courses, this.defaultData)
   }
 
-  async getCourseFromLocalStorage(){
-    this.courses = [];
-    const courses : Courses [] =  await this.storage.get(this.utility.localstorage.Courses)
-    this.courses = courses
-    return courses;
+  private orderByDesc(course :  Courses[]){
+    return course.sort((a,b) => {
+      let x  = a.id;
+      let y  = b.id;
+      if(x < y){
+        return 1;
+      }else{
+        return -1;
+      }
+      return 0;
+    })
   }
 
-  async getCourse(){
-    return await this.courses;
+  async getCourses(){
+    const courses : Array<Courses> =  await this.storage.get(this.utility.localstorage.Courses);
+    const courseNotDeleted : Array<Courses> = await courses.filter(course => course.isDeleted !== true);
+    return this.orderByDesc(courseNotDeleted);
   }
-
 
   async getCourseById(id : number){
 
-    this.courses = [];
-    const courses = await this.getCourseFromLocalStorage()
-    this.courses = courses;
-
-    const courseDetail = this.courses.find(s => {
-      return s.id === id
-    })
-    return courseDetail;
+    const courses : Array<Courses> = await this.getCourses();
+    return await courses.find(s => s.id === id);
   }
 
-  async setCourseInLocalStorage(course : Courses){
-    var courses : Courses [] = [];
-    const coursesLS : Courses [] = await this.getCourseFromLocalStorage()
-
-      for(let coursen of coursesLS){
-        courses.push(coursen)
-      }
-      courses.push(course)
-
-    this.storage.set(this.utility.localstorage.Courses, courses)
-
-
-  }
-
-  async updateCourseInLocalStorage(course : Courses){
-
-    var coursesLS : Courses [] = await this.getCourseFromLocalStorage()
-    var newData : Courses [] = [];
+  async postCourseToLocalStorage(course : Courses){
     
-    for(let courseUnite of coursesLS){
-      if(courseUnite.id != course.id){
-        newData.push(courseUnite)
-      }
-      if(courseUnite.id === course.id){
-        newData.push(course)
-      }
-    }
+    const courses : Array<Courses> = await this.getCourses();
+    courses.push(course);
+    await this.saveToLocalStorage(courses)
 
-    this.storage.set(this.utility.localstorage.Courses, newData)
+  }
+
+  async getIndexCourse(course : Courses){
+    const courses : Array<Courses> = await this.getCourses();
+    return await courses.findIndex(s => s.id === course.id)
+  }
+
+  async updateCourseToLocalStorage(course : Courses){
+
+    const courses : Array<Courses> = await this.getCourses();
+    const index = await this.getIndexCourse(course);
+    course[index] = course;
+
+    await this.saveToLocalStorage(courses)
 
   }
 
@@ -130,7 +83,7 @@ export class CoursesService {
 
   async generateCourseId(){
 
-    const listeOfCourse : Array<Courses> = await this.getCourseFromLocalStorage();
+    const listeOfCourse : Array<Courses> = await this.getCourses();
 
     if(listeOfCourse.length > 0){
       
@@ -162,19 +115,18 @@ export class CoursesService {
     return total;
   }
 
-  async supprimerCourse(courseSelected : Courses){
-    const courses : Courses [] = await this.storage.get(this.utility.localstorage.Courses);
-    const courseNew : Courses [] = []
-    for(let course of courses){
-      if(course.id !== courseSelected.id){
-        courseNew.push(course)
-      }
-      if(course.id === courseSelected.id){
-        this.firebaseService.postToLocalStorageDeleted(course.firebase, this.utility.localstorage.Courses,course.documentId)
-      }
-    }//for
-    this.storage.set(this.utility.localstorage.Courses, courseNew)
-    return courseNew;
+  async deleteCourse(course : Courses){
+
+    const courses : Array<Courses> = await this.getCourses();
+    const index = await this.getIndexCourse(course)
+    courses[index].isDeleted = true;
+    // courses.splice(index,1)
+    await this.saveToLocalStorage(courses)
+    return await courses;
   }  
+  
+  async saveToLocalStorage(courses : Array<Courses>){
+    await this.storage.set(this.utility.localstorage.Courses, courses);
+  }
 
 }

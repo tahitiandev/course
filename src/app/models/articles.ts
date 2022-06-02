@@ -6,6 +6,7 @@ export interface Articles{
     quantite?:number;
     firebase? : boolean;
     isModified? : boolean;
+    isDeleted? : boolean;
     documentId? : string;
     familleCode? : string;
     familleLibelle? : string;
@@ -18,6 +19,7 @@ export interface FamilleArticle{
     libelle : string;
     firebase : boolean;
     isModified? : boolean;
+    isDeleted? : boolean;
     documentId? : string;
 }
 

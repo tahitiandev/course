@@ -27,13 +27,11 @@ export class FamilleListPage implements OnInit {
 
   async onInit(){
     const familles : Array<FamilleArticle> = await this.getFamilles();
-    this.familles = familles;
-    console.log(familles)
+    this.familles = familles.filter(s => s.isDeleted !== true);
   }
 
   async getFamilles(){
-    const famillesLS = await this.storage.get(this.utility.localstorage['famille d\'articles'])
-    const familles = await this.articleService.sortByLibelleFamilleArticle(famillesLS)
+    const familles = await this.articleService.getFamilleArticleFromLocalStorage();
     return familles;
   }
 

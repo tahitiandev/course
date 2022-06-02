@@ -6,7 +6,7 @@ import { UtilityService } from 'src/app/services/utility.service';
 import { Storage } from '@ionic/storage';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { AlertInput } from '@ionic/core';
-import { Setting } from 'src/app/models/setting';
+import { Settings } from 'src/app/models/setting';
 
 @Component({
   selector: 'app-article-list',
@@ -25,7 +25,7 @@ export class ArticleListPage implements OnInit {
     articles : Array<Articles>;
     familles : Array<FamilleArticle>;
     searchValue : string = "";
-    settings : Setting;
+    settings : Settings;
     filtreMagasin : string = "";
     magasins : string [] = []
 
@@ -40,7 +40,7 @@ export class ArticleListPage implements OnInit {
       });
 
       // Charger les settings
-      const settings : Setting = await this.storage.get(this.u.localstorage.Setting)
+      const settings : Settings = await this.storage.get(this.u.localstorage.Setting)
       this.settings = await settings
 
       // Charger la liste des magasins
@@ -371,7 +371,9 @@ export class ArticleListPage implements OnInit {
               magasin : article.magasin
             }
 
-            groupByArticle.push(articleGroup)
+            if(!article.isDeleted){
+              groupByArticle.push(articleGroup)
+            }
           } // if          
         }
 

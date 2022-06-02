@@ -3,14 +3,15 @@ export interface  Courses{
     date : string;
     actif : boolean;
     total : number;
-    liste? : Liste[];
+    liste : Liste[];
     firebase : boolean;
-    isModified? : boolean;
-    documentId? : string;
+    isModified : boolean;
+    isDeleted : boolean;
+    documentId : string;
     plafond? : number;
-    tag? : string;
-    payeur? : string;
-    magasin? : string;
+    tag : string;
+    payeur : string;
+    magasin : string;
 }
 
 export interface Liste{

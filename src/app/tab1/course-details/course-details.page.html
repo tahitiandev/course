@@ -14,7 +14,7 @@
   </div>
 
   <ion-list style="margin-top: 5%;">
-    <ion-item-sliding *ngFor="let detail of listeArticle; let index = index">
+    <ion-item-sliding *ngFor="let detail of courseDetails; let index = index">
       <ion-item-options side="start">
         <ion-item-option >Modifier<br>article</ion-item-option>
       </ion-item-options>
@@ -28,7 +28,7 @@
       
       <ion-item-options side="end">
         <ion-item-option (click)="updateArticle(detail, index)">Modifier</ion-item-option>
-        <ion-item-option (click)="supprimerArticle(index)" color="danger" >Supprimer</ion-item-option>
+        <ion-item-option (click)="supprimerArticle(detail)" color="danger" >Supprimer</ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
@@ -41,18 +41,17 @@
       <ion-fab-button (click)="checkArticle()">
         <ion-icon name="checkmark-outline"></ion-icon> 
       </ion-fab-button>
-      <ion-fab-button (click)="postNewArticleInCourse('barreCode')">
+      <ion-fab-button (click)="postArticleToCourse('barreCode')">
         <ion-icon name="barcode-outline"></ion-icon> 
       </ion-fab-button>
-      <ion-fab-button (click)="postNewArticleInCourse('rafale')">
+      <ion-fab-button (click)="postArticleToCourse('rafale')">
         <ion-icon name="barcode-outline"></ion-icon>
         <ion-icon name="barcode-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
 
-
     <ion-fab-list side="start">
-      <ion-fab-button (click)="postNewArticleInCourse('manuel')">
+      <ion-fab-button (click)="postArticleToCourse('manuel')">
         <ion-icon name="pencil-outline"></ion-icon>
       </ion-fab-button>
       
@@ -75,6 +74,11 @@
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
+
+  <br>
+  <br>
+  <br>
+  <br>
 
 
 </ion-content>

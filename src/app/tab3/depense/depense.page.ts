@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { Depenses } from 'src/app/models/depenses';
-import { Setting } from 'src/app/models/setting';
+import { Settings } from 'src/app/models/setting';
 import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class DepensePage implements OnInit {
               private utility : UtilityService,
               private formbuilder : FormBuilder) { }
   
-  settings : Setting;
+  settings : Settings;
   depenses : Array<Depenses>;
   payeurs;
   magasins;
@@ -39,7 +39,7 @@ export class DepensePage implements OnInit {
     this.magasins = await settings.magasins;
   }
   private async getSetting(){
-    const settings : Setting = await this.utility.getSetting();
+    const settings : Settings = await this.utility.getSetting();
     return settings;
   }
 

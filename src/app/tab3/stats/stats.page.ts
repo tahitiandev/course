@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Courses } from 'src/app/models/courses';
 import { CoursesService } from 'src/app/services/courses.service';
 import { Storage } from '@ionic/storage';
-import { Setting } from 'src/app/models/setting';
+import { Settings } from 'src/app/models/setting';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Depenses } from 'src/app/models/depenses';
 
@@ -27,7 +27,7 @@ interface TotalParMagasin {
 export class StatsPage implements OnInit {
 
   courses : Array<Courses> = [];
-  settings : Setting;
+  settings : Settings;
   payeurs;
   totalParPayeur : Array<TotalParPayeur> = [];
   totalParMagasin : Array<TotalParMagasin> = [];
@@ -61,13 +61,13 @@ export class StatsPage implements OnInit {
   }
 
   async getCourses(){
-    const courses : Array<Courses> = await this.courseService.getCourseFromLocalStorage();
+    const courses : Array<Courses> = await this.courseService.getCourses();
     this.courses = courses;
     return await courses;
   }
 
   async getSettings(){
-    const settings : Setting = await this.storage.get(this.utility.localstorage.Setting)
+    const settings : Settings = await this.storage.get(this.utility.localstorage.Setting)
     this.settings = settings
     return await settings;
   }

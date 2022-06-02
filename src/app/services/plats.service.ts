@@ -145,8 +145,9 @@ export class PlatsService {
   }
 
   async getPlatFromLocalStorage(){
-    const plats : Plats [] = await this.storage.get(this.utility.localstorage.Plats)
-    return plats;
+    const plats : Array<Plats> = await this.storage.get(this.utility.localstorage.Plats)
+    const PlatsParse : Array<Plats> = await this.sortByLibelleFamilleArticle(plats);
+    return PlatsParse;
   }
 
   async searchPlatByLibelle(libelle : string){

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { Articles, FamilleArticle } from 'src/app/models/articles';
-import { Setting } from 'src/app/models/setting';
+import { Settings } from 'src/app/models/setting';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -59,7 +59,7 @@ export class ArticleAddPage implements OnInit {
 
   async onSubmit(){
     const formValue = await this.articleForm.value
-    const setting : Setting = await this.utility.getSetting();
+    const setting : Settings = await this.utility.getSetting();
 
     const newArticle : Articles = {
       code : (await this.articleService.generateArticleId()).toString(),

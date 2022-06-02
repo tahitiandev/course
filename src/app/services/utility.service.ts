@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Deleted } from '../models/deleted';
-import { Setting } from '../models/setting';
+import { Settings } from '../models/setting';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class UtilityService {
   
   //#region getter 
   async getSetting(){
-    const settings : Setting = await this.storage.get(this.localstorage.Setting);
+    const settings : Settings = await this.storage.get(this.localstorage.Setting);
     return settings;
   }
 
@@ -84,7 +84,7 @@ export class UtilityService {
     }
   }
 
-  async settingIsModified(setting : Setting){
+  async settingIsModified(setting : Settings){
     if(setting.firebase){
       setting.isModified = true;
     }
@@ -123,12 +123,12 @@ export class UtilityService {
   }
 
   async getSettingFromLocalStorage(){
-    const settings : Setting = await this.storage.get(this.localstorage.Setting);
+    const settings : Settings = await this.storage.get(this.localstorage.Setting);
     return settings;
   }
 
   async initSettingData(){
-    const settings : Setting = await {
+    const settings : Settings = await {
       theme : true,
       budget : 20000,
       masquerLesCoursesCloture : true,

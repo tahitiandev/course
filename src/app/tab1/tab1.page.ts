@@ -5,7 +5,7 @@ import { Courses, Liste } from '../models/courses';
 import { CoursesService } from '../services/courses.service';
 import { UtilityService } from '../services/utility.service';
 import { MenuService } from '../services/menu.service';
-import { Setting } from '../models/setting';
+import { Settings } from '../models/setting';
 import { AlertInput } from '@ionic/core';
 
 @Component({
@@ -24,7 +24,7 @@ export class Tab1Page implements OnInit {
 
   courses : Courses[];
   public masquerLesCoursesCloture :boolean = false;
-  setting : Setting;
+  settings : Settings;
 
   ngOnInit(){
     this.onInit()
@@ -32,11 +32,13 @@ export class Tab1Page implements OnInit {
   
   async onInit(){
 
-    const setting = await this.settingInit()
-    this.setting = await setting;
-    this.masquerLesCoursesCloture = await setting.masquerLesCoursesCloture
+    // Init setting
+    const settings = await this.settingsInit()
+    this.settings = await settings;
+    this.masquerLesCoursesCloture = await settings.masquerLesCoursesCloture
 
-    this.getCourse()
+    // Courses
+    this.getCourses()
     this.majTotalGeneral()
   }
   
@@ -53,15 +55,15 @@ export class Tab1Page implements OnInit {
     })
   }
 
-  async settingInit(){
-    const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
+  private async settingsInit(){
+    const setting : Settings = await this.storage.get(this.utility.localstorage.Setting);
     return setting
     
   }
 
   async listeDesMagasins(){
 
-    const magasins = await this.setting.magasins;
+    const magasins = await this.settings.magasins;
 
     const input : AlertInput [] = []
 
@@ -102,13 +104,13 @@ export class Tab1Page implements OnInit {
     await alert.present();
   }
 
-  async generateCourseVide(magasin){
+  private async generateCourseVide(magasin){
 
-    const today = await this.menuService.generateDateAujourdhui()
-    const date = today.annnee + '-' + today.mois + '-'+ today.jour + 'T17:32:38.956-10:00'
-    const courses : Courses [] = await this.coursesService.getCourseFromLocalStorage();
+    const today = await this.menuService.generateDateAujourdhui();
+    const date = today.annnee + '-' + today.mois + '-'+ today.jour + 'T17:32:38.956-10:00';
+    const courses : Array<Courses> = await this.coursesService.getCourses();
     const courseId = await this.coursesService.generateCourseId();
-    const listeVide : Liste [] = [];
+    const listeVide : Array<Liste> = [];
     courses.push({
       id : courseId,
       date : date,
@@ -119,7 +121,10 @@ export class Tab1Page implements OnInit {
       documentId : null,
       plafond : 0,
       liste : listeVide,
-      magasin : magasin
+      magasin : magasin,
+      isDeleted : false,
+      tag : null,
+      payeur : null
     })
     this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
       this.courses = courses
@@ -130,7 +135,7 @@ export class Tab1Page implements OnInit {
   async toggleShowListeDisabled(){
     this.masquerLesCoursesCloture = !this.masquerLesCoursesCloture
     if(this.masquerLesCoursesCloture){
-      const courses: Courses [] = await this.coursesService.getCourseFromLocalStorage();
+      const courses: Courses [] = await this.coursesService.getCourses();
       const coursesNew : Courses [] = []
       for(let course of courses){
         if(!course.actif){
@@ -141,20 +146,19 @@ export class Tab1Page implements OnInit {
       this.courses = this.orderByDesc(coursesNew)
     }else{
       this.courses = []
-      this.getCourse()
+      this.getCourses()
     }
-    this.setting.masquerLesCoursesCloture = this.masquerLesCoursesCloture
-    this.utility.settingIsModified(this.setting)
-    this.storage.set(this.utility.localstorage.Setting, this.setting)
+    this.settings.masquerLesCoursesCloture = this.masquerLesCoursesCloture
+    this.utility.settingIsModified(this.settings)
+    this.storage.set(this.utility.localstorage.Setting, this.settings)
     
   }
 
-  async getCourse(){
-    const coursesLS = await this.storage.get(this.utility.localstorage.Courses)
-    const courses = await this.orderByDesc(coursesLS)
+  async getCourses(){
+    const courses : Array<Courses> = await this.coursesService.getCourses();
 
     if(this.masquerLesCoursesCloture){
-      const courseActif : Courses [] = await courses.filter(course => course.actif === false)
+      const courseActif : Courses [] = await courses.filter(course => course.actif === false);
         this.courses = []
         this.courses = this.orderByDesc(courseActif)
     }else{
@@ -178,7 +182,7 @@ export class Tab1Page implements OnInit {
   }
 
   async majTotalGeneral(){
-    const courses : Courses[] = await this.getCourse();
+    const courses : Courses[] = await this.getCourses();
     courses.map(course => course.total = this.calculeTotalReturnInt(course))
     this.storage.set(this.utility.localstorage.Courses, courses)
   }
@@ -193,7 +197,7 @@ export class Tab1Page implements OnInit {
 
   async popUpPayeur(course : Courses){
 
-    const payeurs = await this.setting.payeurs;
+    const payeurs = await this.settings.payeurs;
     const input : AlertInput [] = [];
 
     payeurs.map(payeur => {
@@ -240,7 +244,7 @@ export class Tab1Page implements OnInit {
             }
 
             this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
-              this.getCourse()
+              this.getCourses()
             })
         }
         }
@@ -252,7 +256,7 @@ export class Tab1Page implements OnInit {
 
   async popUpTag(course : Courses){
 
-    const tags = await this.setting.tags;
+    const tags = await this.settings.tags;
     const input : AlertInput [] = [];
 
     tags.map(tag => {
@@ -299,7 +303,7 @@ export class Tab1Page implements OnInit {
             }
 
             this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
-              this.getCourse()
+              this.getCourses()
             })
             
         }
@@ -312,7 +316,7 @@ export class Tab1Page implements OnInit {
 
   async popUpMagasin(course : Courses){
 
-    const magasins = await this.setting.magasins;
+    const magasins = await this.settings.magasins;
     const input : AlertInput [] = [];
 
     for(let magasin of magasins){
@@ -358,7 +362,7 @@ export class Tab1Page implements OnInit {
             }
 
             this.storage.set(this.utility.localstorage.Courses, courses).then(() => {
-              this.getCourse()
+              this.getCourses()
             })
             
         }
@@ -404,9 +408,8 @@ export class Tab1Page implements OnInit {
   }
 
   async supprimer(course : Courses){
-    const courseNewList = await this.coursesService.supprimerCourse(course)
-    this.courses = await []
-    this.courses = await this.orderByDesc(courseNewList);
+    const courses = await this.coursesService.deleteCourse(course)
+    await this.getCourses();
   }
 
 }

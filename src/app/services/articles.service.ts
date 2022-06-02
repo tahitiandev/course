@@ -7,7 +7,7 @@ import { Deleted } from '../models/deleted';
 import { FirebaseService } from './firebase.service';
 import { AlertController } from '@ionic/angular';
 import { CreerArticleAPartirDuCodeBarreResponse } from '../models/creerArticleAPartirDuCodeBarreResponse';
-import { Setting } from '../models/setting';
+import { Settings } from '../models/setting';
 
 @Injectable({
   providedIn: 'root'
@@ -20,14 +20,14 @@ export class ArticlesService {
               private alertController: AlertController) { }
 
     private articles : Articles [] = [];
-    private settings : Setting;
+    private settings : Settings;
 
   private famille : FamilleArticle[] = []
 
     articlesFromLocalStorage : Articles[];
 
   async onInit(){
-    const settings : Setting = await this.utility.getSetting();
+    const settings : Settings = await this.utility.getSetting();
     this.settings = settings
   }
 
@@ -235,31 +235,42 @@ export class ArticlesService {
   async deleteArticle(articleDeleted : Articles){ 
 
     const articles : Array<Articles> = await this.getArticleFromLocalStorage();
-
-    // Mise àjour dans le localstorage
     const index = await articles.findIndex(s => s.code === articleDeleted.code);
-    articles.splice(index,1);
+    articles[index].isDeleted = true;
     this.storage.set(this.utility.localstorage.articles, articles);
 
-    // Mise à jour sur firebase (via localstorage : deleted)
-    const articleInfo = await this.searchArticleByArticleCode(articleDeleted.code);
-    this.firebaseService.postToLocalStorageDeleted(articleInfo.firebase, this.utility.localstorage.articles, articleInfo.documentId);
+    // const articles : Array<Articles> = await this.getArticleFromLocalStorage();
+
+    // // Mise àjour dans le localstorage
+    // const index = await articles.findIndex(s => s.code === articleDeleted.code);
+    // articles.splice(index,1);
+    // this.storage.set(this.utility.localstorage.articles, articles);
+
+    // // Mise à jour sur firebase (via localstorage : deleted)
+    // const articleInfo = await this.searchArticleByArticleCode(articleDeleted.code);
+    // this.firebaseService.postToLocalStorageDeleted(articleInfo.firebase, this.utility.localstorage.articles, articleInfo.documentId);
 
   }
 
   async deleteFamilleArticle(familleArticle : FamilleArticle){
-    const familles : Array<FamilleArticle> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
 
+    const familles : Array<FamilleArticle> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
     const index = await familles.findIndex(s => s.code === familleArticle.code);
-    familles.splice(index,1)
+    familles[index].isDeleted = true;
+    await this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
+
+    // const familles : Array<FamilleArticle> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+
+    // const index = await familles.findIndex(s => s.code === familleArticle.code);
+    // familles.splice(index,1)
     
-    this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
+    // this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
     
-    // Supprimer dans firebase
-    if(familleArticle.firebase){
-      const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code);
-      this.firebaseService.postToLocalStorageDeleted(familleInfo.firebase, this.utility.localstorage['famille d\'articles'], familleInfo.documentId);
-    }
+    // // Supprimer dans firebase
+    // if(familleArticle.firebase){
+    //   const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code);
+    //   this.firebaseService.postToLocalStorageDeleted(familleInfo.firebase, this.utility.localstorage['famille d\'articles'], familleInfo.documentId);
+    // }
     
   }
 
@@ -305,7 +316,8 @@ export class ArticlesService {
 
   async getFamilleArticleFromLocalStorage(){
     const familles : Array<FamilleArticle> =  await this.storage.get(this.utility.localstorage['famille d\'articles'])
-    return familles;
+    const famillesParse : Array<FamilleArticle> = await this.sortByCodeFamilleArticle(familles);
+    return famillesParse;
   }
 
   // A utiliser uniquement pour la page course-add-page.ts

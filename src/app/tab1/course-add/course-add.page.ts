@@ -195,10 +195,16 @@ export class CourseAddPage implements OnInit, OnChanges {
       actif : true,
       total : 1000,
       liste : liste,
-      firebase : false
+      firebase : false,
+      isModified : false,
+      isDeleted : false,
+      documentId : null,
+      tag : null,
+      payeur : null,
+      magasin : null,
     }
 
-    this.coursesService.setCourseInLocalStorage(coursess)
+    this.coursesService.postCourseToLocalStorage(coursess)
 
     setTimeout(() => {
       this.nav.navigateRoot('tabs/tab1/course-details/' + courseId)
@@ -231,10 +237,16 @@ export class CourseAddPage implements OnInit, OnChanges {
       actif : true,
       total : 1000,
       liste : liste,
-      firebase : false
+      firebase : false,
+      isModified : false,
+      isDeleted : false,
+      documentId : null,
+      tag : null,
+      payeur : null,
+      magasin : null,
     }
 
-    this.coursesService.setCourseInLocalStorage(course)
+    this.coursesService.postCourseToLocalStorage(course)
 
     this.nav.navigateRoot('tabs/tab1')
 

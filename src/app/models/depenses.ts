@@ -6,5 +6,6 @@ export interface Depenses{
     description : string;
     firebase : boolean;
     isModified? : boolean;
+    isDeleted? : boolean;
     documentId? : string;
 }

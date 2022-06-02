@@ -3,7 +3,7 @@ import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import * as firebase from 'firebase';
 import { Depenses } from './models/depenses';
-import { Setting } from './models/setting';
+import { Settings } from './models/setting';
 import { ArticlesService } from './services/articles.service';
 import { CoursesService } from './services/courses.service';
 import { MenuService } from './services/menu.service';
@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
   
   splashscreen : boolean = true;
   nbConnection : number = 0;
-  settings : Setting;
+  settings : Settings;
   demarrageSansSplashscreen : boolean = true;
   
   ngOnInit(){
@@ -91,7 +91,7 @@ export class AppComponent implements OnInit {
     }
   }
   async setCourse(){
-    const courses = await this.courseService.getCourseFromLocalStorage()
+    const courses = await this.courseService.getCourses()
     if(courses === null){
       await this.courseService.setDefaultCourseData()
     }
@@ -113,7 +113,7 @@ export class AppComponent implements OnInit {
 
     const setting = await this.storage.get(this.utility.localstorage.Setting);
     if(setting === null){
-      const settingInfo : Setting = await this.utility.initSettingData()
+      const settingInfo : Settings = await this.utility.initSettingData()
       this.storage.set(this.utility.localstorage.Setting, settingInfo)
     }
     

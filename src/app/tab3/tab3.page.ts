@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
-import { Setting } from '../models/setting';
+import { Settings } from '../models/setting';
 import { UtilityService } from '../services/utility.service';
 import { Storage } from '@ionic/storage';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -20,7 +20,7 @@ import { AlertInput } from '@ionic/core';
 export class Tab3Page implements OnInit {
 
   darkModeBtn : boolean;
-  setting : Setting;
+  setting : Settings;
   theme = {
     'dark' : 'dark',
     'light' : 'light'
@@ -64,7 +64,7 @@ export class Tab3Page implements OnInit {
   }
 
   async initSetting(){
-    const setting : Setting = await this.storage.get('settings')
+    const setting : Settings = await this.storage.get('settings')
 
     if(setting  != null){
       this.setting = setting
@@ -180,7 +180,17 @@ export class Tab3Page implements OnInit {
                                   .doc(data.documentId)
                                   .update(data)
               data.isModified = false;
-            }
+
+            }//isModified
+
+            if(data.isDeleted){
+
+              await this.firestore.collection(localStorageName[1])
+                                  .doc(data.documentId)
+                                  .update(data)
+
+            }//isDeleted
+
             dataAjour.push(data)
             
           }
@@ -196,7 +206,7 @@ export class Tab3Page implements OnInit {
   }); // foreach localStorageNames
 
   // Envoi des settings
-  const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
+  const setting : Settings = await this.storage.get(this.utility.localstorage.Setting);
 
   if(setting.firebase){
     if(setting.isModified){
@@ -238,6 +248,7 @@ export class Tab3Page implements OnInit {
     this.storage.set('deleted',tableauVide)
 
   }
+
   this.loaderOff()
   this.utility.popupInformation('Les données ont bien été envoyées')
 
@@ -283,7 +294,7 @@ export class Tab3Page implements OnInit {
                   var data = await result[0].payload.doc.data()
                   this.storage.set(this.utility.localstorage.Setting, data)
                               .then( async ()=> {
-                                const setting : Setting = await this.storage.get(this.utility.localstorage.Setting);
+                                const setting : Settings = await this.storage.get(this.utility.localstorage.Setting);
                                 setting.documentId = await result[0].payload.doc.id
                                 setting.firebase = true;
                                 setting.isModified = false;
