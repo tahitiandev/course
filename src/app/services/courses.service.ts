@@ -56,9 +56,15 @@ export class CoursesService {
     
     const courses : Array<Courses> = await this.getCourses();
     courses.push(course);
-    const result = await this.postCourses(courses)
+    const result = await this.postCourses(courses);
+    const index = await this.getIndexCourse(course);
 
-    return result;
+    const response = {
+      all : result,
+      course : await result[index]
+    }
+
+    return response;
 
   }
 

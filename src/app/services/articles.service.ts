@@ -105,14 +105,26 @@ export class ArticlesService {
 
   }
 
+  async getIndexArticle(article : Articles){
+    const articles = await this.getArticles();
+    const index = await articles.findIndex(articles => articles === article);
+    return index;
+  }
+
   async postArticle(article : Articles){
 
     const articles = await this.getArticles();
     articles.push(article);
 
     const result = await this.postArticles(articles);
+    const index = await this.getIndexArticle(article);
 
-    return articles;
+    const response = {
+      all : result,
+      article : result[index]
+    };
+
+    return response;
   }
 
   async updateFamille(famille : Familles){
@@ -395,9 +407,7 @@ export class ArticlesService {
               magasin : this.settings.magasinParDefaut
             }
 
-            const result : Array<Articles> = await this.postArticle(newArticle);
-            const aa = await result.find(articles => articles.code === codeArticle);
-            window.alert(aa.code + ' ' + aa.libelle);
+            await this.postArticle(newArticle);
             
           }
         }

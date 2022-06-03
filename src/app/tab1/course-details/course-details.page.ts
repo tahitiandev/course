@@ -364,8 +364,8 @@ export class CourseDetailsPage implements OnInit {
 
       const alert = await this.alertController.create({
         cssClass: 'my-custom-class',
-        header: 'Information',
-        message: 'Aucun article ne correspond au code barre : <strong>' + barreCode + '</strong>. Nous allons le créer',
+        header: 'Information : Aucun article ne correspond au code barre : <strong>' + barreCode + '</strong>',
+        message: 'Renseigner les champs ci-dessous si vous souhaitez le créer',
         inputs : [
           {
             name: 'libelle',
@@ -402,9 +402,18 @@ export class CourseDetailsPage implements OnInit {
                 magasin : this.course.magasin
               }
 
-              await this.articleService.postArticle(article);
+              const response = await this.articleService.postArticle(article);
 
- 
+              this.courseDetails.push({
+                articleId : response.article.code,
+                libelle : response.article.libelle,
+                quantite : 1,
+                prixUnitaire : response.article.prix,
+                actif : false
+              });
+
+              this.course.liste = this.courseDetails;
+              this.courseService.postCourse(this.course);
 
   
             }
@@ -414,8 +423,21 @@ export class CourseDetailsPage implements OnInit {
   
       await alert.present();
 
+    } // if(article.length === 0)
+    else{
 
-    } // if
+      this.courseDetails.push({
+        articleId : article[0].code,
+        libelle : article[0].libelle,
+        quantite : 1,
+        prixUnitaire : article[0].prix,
+        actif : false
+      })
+
+      this.course.liste = this.courseDetails;
+      this.courseService.postCourse(this.course);
+
+    }
 
   }
 
