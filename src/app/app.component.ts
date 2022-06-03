@@ -73,13 +73,13 @@ export class AppComponent implements OnInit {
   }
 
   async setArticle(){
-    const articles = await this.articleService.getArticleFromLocalStorage()
+    const articles = await this.articleService.getArticles()
     if(articles === null){
       await this.articleService.setDefaultArticleData()
     }
   }
   async setFamilleArticle(){
-    const famillles = await this.articleService.getFamilleArticleFromLocalStorage()
+    const famillles = await this.articleService.getFamilles()
     if(famillles === null){
       await this.articleService.setDefaultFamilleArticleData()
     }

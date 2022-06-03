@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from 'src/app/services/utility.service';
-import { Articles, FamilleArticle } from 'src/app/models/articles';
+import { Articles, Familles } from 'src/app/models/articles';
 import { AlertController, NavController } from '@ionic/angular';
 
 @Component({
@@ -19,25 +19,25 @@ export class FamilleListPage implements OnInit {
               private nav : NavController) {
                }
 
-  familles : FamilleArticle [] = [];
+  familles : Familles [] = [];
 
   ngOnInit() {
     this.onInit()
   }
 
   async onInit(){
-    const familles : Array<FamilleArticle> = await this.getFamilles();
+    const familles : Array<Familles> = await this.getFamilles();
     this.familles = familles.filter(s => s.isDeleted !== true);
   }
 
   async getFamilles(){
-    const familles = await this.articleService.getFamilleArticleFromLocalStorage();
+    const familles = await this.articleService.getFamilles();
     return familles;
   }
 
   async postFamille() {
 
-    const familleId = await this.articleService.generateFamilleArticleId();
+    const familleId = await this.articleService.generateFamilleId();
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -66,7 +66,7 @@ export class FamilleListPage implements OnInit {
           text: 'Ok',
           handler: async (data) => {
 
-            await this.articleService.postNouvelleFamilleArticle({
+            await this.articleService.postFamille({
               code : data.code,
               libelle : data.libelle,
               firebase : false,
@@ -85,7 +85,7 @@ export class FamilleListPage implements OnInit {
 
   } //
 
-  async updateFamille(famille : FamilleArticle){
+  async updateFamille(famille : Familles){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -114,8 +114,8 @@ export class FamilleListPage implements OnInit {
           }
         }, {
           text: 'Valider',
-          handler: async (famille : FamilleArticle) => {
-            const familles = await this.articleService.getFamilleArticleFromLocalStorage();
+          handler: async (famille : Familles) => {
+            const familles = await this.articleService.getFamilles();
             const familleNew = await familles.find(s => s.code === famille.code)
             familleNew.code = famille.code
             familleNew.libelle = famille.libelle
@@ -134,8 +134,8 @@ export class FamilleListPage implements OnInit {
     this.nav.navigateRoot('tabs/tab3/famille-detail/' + code)
   }
 
-  async deleteFamilleArticle(famille : FamilleArticle){
-    await this.articleService.deleteFamilleArticle(famille)
+  async deleteFamilleArticle(famille : Familles){
+    await this.articleService.deleteFamille(famille)
     this.onInit()
   }
 

@@ -14,7 +14,7 @@ export interface Articles{
     magasin : string;
 }
 
-export interface FamilleArticle{
+export interface Familles{
     code : string;
     libelle : string;
     firebase : boolean;

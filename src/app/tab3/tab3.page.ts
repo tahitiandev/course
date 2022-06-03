@@ -6,7 +6,7 @@ import { Storage } from '@ionic/storage';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
-import { Articles, FamilleArticle } from '../models/articles';
+import { Articles, Familles } from '../models/articles';
 import { Deleted } from '../models/deleted';
 import { ArticlesService } from '../services/articles.service';
 import { FirebaseService } from '../services/firebase.service';
@@ -58,7 +58,7 @@ export class Tab3Page implements OnInit {
 
   }
   async consoleLogFamile(){
-    const familles : FamilleArticle []  = await this.storage.get('familles');
+    const familles : Familles []  = await this.storage.get('familles');
     console.log(familles)
 
   }
@@ -822,7 +822,7 @@ export class Tab3Page implements OnInit {
     }
 
     this.getDataCollection('familles')
-    const familles : FamilleArticle [] = await this.storage.get('datatemp')
+    const familles : Familles [] = await this.storage.get('datatemp')
     for(let famille of familles){
       this.firestore.collection('backup-famille').add(famille)
 
@@ -856,7 +856,7 @@ export class Tab3Page implements OnInit {
     this.deleteCollection('familles')
     this.getDataCollection('backup-famille')
 
-    const familles : FamilleArticle [] = await this.storage.get('datatemp')
+    const familles : Familles [] = await this.storage.get('datatemp')
 
     for(let famille of familles){
       this.firestore.collection('familles').add(famille)

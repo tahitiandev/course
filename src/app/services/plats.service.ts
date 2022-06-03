@@ -245,7 +245,7 @@ export class PlatsService {
 
   async calculePrixTotalPlat(plat : Plats){
 
-    const articles : Array<Articles> = await this.articleService.getArticleFromLocalStorage();
+    const articles : Array<Articles> = await this.articleService.getArticles();
 
     var total : number = 0;
     

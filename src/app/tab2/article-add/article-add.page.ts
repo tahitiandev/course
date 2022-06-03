@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NavController } from '@ionic/angular';
-import { Articles, FamilleArticle } from 'src/app/models/articles';
+import { Articles, Familles } from 'src/app/models/articles';
 import { Settings } from 'src/app/models/setting';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
@@ -15,7 +15,7 @@ import { UtilityService } from 'src/app/services/utility.service';
 export class ArticleAddPage implements OnInit {
 
   articleForm : FormGroup;
-  familles : FamilleArticle [] = [];
+  familles : Familles [] = [];
   articlesLS : Articles [] = [];
   barreCode : string = null;
 
@@ -40,14 +40,14 @@ export class ArticleAddPage implements OnInit {
   }
 
   async getFamilleFromLocalStorage(){
-    const familleLS = await this.articleService.getFamilleArticleFromLocalStorage()
-    const familles = await this.articleService.sortByLibelleFamilleArticle(familleLS)
+    const familleLS = await this.articleService.getFamilles()
+    const familles = await this.articleService.orderByLibelleFamille(familleLS)
     this.familles = familles
   }
 
   async getArticleToLocalStorage(){
-    const articlesLS = await this.articleService.getArticleFromLocalStorage()
-    const articles = await this.articleService.sortByArticleName(articlesLS)
+    const articlesLS = await this.articleService.getArticles()
+    const articles = await this.articleService.orderByArticleName(articlesLS)
     this.articlesLS = articles
   }
 
@@ -76,7 +76,7 @@ export class ArticleAddPage implements OnInit {
       magasin : setting.magasinParDefaut
     }    
     
-    this.articleService.setArticleRealDataToLocalStorage(newArticle)
+    this.articleService.postArticle(newArticle)
 
     this.nav.back()
 

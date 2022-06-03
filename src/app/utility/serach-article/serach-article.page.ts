@@ -25,7 +25,7 @@ export class SerachArticlePage implements OnInit {
 
     async getArticles(){
       const articles : Articles [] =  await this.storage.get(this.utility.localstorage.articles)
-      this.articles = this.articlesService.sortByArticleName(articles)
+      this.articles = this.articlesService.orderByArticleName(articles)
     }
 
     async addArticles(article : Articles){

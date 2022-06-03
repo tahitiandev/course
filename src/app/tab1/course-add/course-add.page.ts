@@ -53,8 +53,8 @@ export class CourseAddPage implements OnInit, OnChanges {
   }
   
   private async getArticles(){
-    const articlesLS = await this.articleService.getArticleFromLocalStorage();
-    const articles = await this.articleService.sortByArticleName(articlesLS)
+    const articlesLS = await this.articleService.getArticles();
+    const articles = await this.articleService.orderByArticleName(articlesLS)
     this.articles = articles;
   }
 
@@ -204,7 +204,7 @@ export class CourseAddPage implements OnInit, OnChanges {
       magasin : null,
     }
 
-    this.coursesService.postCourseToLocalStorage(coursess)
+    this.coursesService.postCourse(coursess)
 
     setTimeout(() => {
       this.nav.navigateRoot('tabs/tab1/course-details/' + courseId)
@@ -246,7 +246,7 @@ export class CourseAddPage implements OnInit, OnChanges {
       magasin : null,
     }
 
-    this.coursesService.postCourseToLocalStorage(course)
+    this.coursesService.postCourse(course)
 
     this.nav.navigateRoot('tabs/tab1')
 

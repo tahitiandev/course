@@ -63,7 +63,7 @@ export class ArticleDetailsPage implements OnInit {
       magasin : 'Carrefour'
     }
     
-    this.articleService.setArticleRealDataToLocalStorage(newArticle)
+    this.articleService.postArticle(newArticle)
 
     this.nav.back()
     

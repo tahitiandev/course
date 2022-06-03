@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Articles, FamilleArticle } from '../models/articles';
+import { Articles, Familles } from '../models/articles';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from './utility.service';
 import { CodeArticle } from '../models/plats';
@@ -19,305 +19,165 @@ export class ArticlesService {
               private firebaseService : FirebaseService,
               private alertController: AlertController) { }
 
-    private articles : Articles [] = [];
-    private settings : Settings;
-
-  private famille : FamilleArticle[] = []
-
-    articlesFromLocalStorage : Articles[];
+  private articles : Array<Articles> = [];
+  private settings : Settings;
+  private familles : Array<Familles> = [];
 
   async onInit(){
     const settings : Settings = await this.utility.getSetting();
     this.settings = settings
   }
 
-  async generateFamilleArticleId(){
-    const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-    const famillesSort : FamilleArticle [] = await this.sortByCodeFamilleArticle(familles)
-    var id = parseInt(famillesSort[famillesSort.length - 1].code) + 1
+  async getFamilles(){
+
+    const familles : Array<Familles> =  await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    const famillesOrderBy : Array<Familles> = await this.sortByCodeFamilleArticle(familles);
+
+    return famillesOrderBy;
+  }
+
+  async generateFamilleId(){
+
+    const familles : Array<Familles> = await this.getFamilles();
+    var id = parseInt(familles[familles.length - 1].code) + 1
+
     return id.toString();
   }
 
   async generateArticleId(){
-    const articlesLS : Array<Articles> = await this.getArticleFromLocalStorage();
+
+    const articlesLS : Array<Articles> = await this.getArticles();
     const articles : Array<Articles> = await this.sortByArticleCode(articlesLS);
-    const articleSansErreur : Array<Articles> = await articles.filter(result => {
-      return result.code !== '[object Promise]'
-    })
+    const articleSansErreur : Array<Articles> = await articles.filter(result => result.code !== '[object Promise]');
+
     if(articleSansErreur.length > 0){
-      return await parseInt(articleSansErreur[articleSansErreur.length - 1].code) + 1
+
+      return parseInt(articleSansErreur[articleSansErreur.length - 1].code) + 1
+
     }else{
+
       return 0
+
     }
   }
 
-  async temp(){
-    const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-    const temp = []
-    var id = 0;
-
-    for(let famille of familles){
-      temp.push({
-        old : famille.code,
-        new : id.toString()
-      })
-
-      id = id +1
-    }
-
-    this.storage.set('temp', temp)
-
-  }
-
-  async modifyFamilleArticleIdByNumber(){
-    const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-    const famillesNew : FamilleArticle [] = [];
-    var index = 0;
-    for(let famille of familles){
-      var isModified = false;
-      if(famille.isModified){
-        isModified = true
-      }
-
-      famillesNew.push({
-        code : index.toString(),
-        libelle : famille.libelle,
-        firebase : famille.firebase,
-        isModified : true,
-        documentId : famille.documentId
-      })
-      index = index + 1
-    }
-    
-    this.storage.set(this.utility.localstorage['famille d\'articles'], famillesNew)
-
-  }
-
-  async modifyArticleId(){
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-    const articlesNew : Articles [] = [];
-    var id = 0;
-
-    for(let article of articles){
-
-      articlesNew.push({
-        code : id.toString(),
-        libelle : article.libelle,
-        prix : article.prix,
-        prixModifier : article.familleLibelle == undefined ? 0 : article.prixModifier,
-        quantite : article.familleLibelle == undefined ? 1 : article.quantite,
-        firebase : article.firebase,
-        isModified : article.isModified == undefined ? false : article.isModified,
-        documentId : article.documentId,
-        familleCode : article.familleCode == undefined ? "" : article.familleCode,
-        familleLibelle : article.familleLibelle == undefined ? "" : article.libelle,
-        magasin : article.magasin == undefined ? this.settings.magasinParDefaut : article.magasin
-      })
-
-      id = id + 1
-    }
-
-    this.storage.set(this.utility.localstorage.articles, articlesNew)
-  }
-
-  async modifyFamilleCodeForeachArticle(){
-
-    // Get all articles
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-    // Get map old articleId and new articleId
-    const temp = await this.storage.get('temp');
-    
-    var articlesNew : Articles [] = [];
-
-    const articleDivers = ['FLA','VCJ','VCL','VCR','FLC','FLP','VCS','FLS','SK1','FLO','FLT'];
-
-    for(let article of articles){
-
-      for(let tmp of temp){
-        if(tmp.old.substring(0,3) === article.code.substring(0,3)){
-          articlesNew.push({
-            code : article.code,
-            libelle : article.libelle,
-            prix : article.prix,
-            prixModifier : article.familleLibelle == undefined ? 0 : article.prixModifier,
-            quantite : article.familleLibelle == undefined ? 1 : article.quantite,
-            firebase : article.firebase,
-            isModified : article.isModified == undefined ? false : article.isModified,
-            documentId : article.documentId,
-            familleCode : tmp.new,
-            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle,
-            magasin : article.magasin == undefined ? this.settings.magasinParDefaut : article.magasin
-          })
-        }
-      }
-
-      for(let div of articleDivers){
-        if(div === article.code.substring(0,3)){
-          articlesNew.push({
-            code : article.code,
-            libelle : article.libelle,
-            prix : article.prix,
-            prixModifier : article.familleLibelle == undefined ? 0 : article.prixModifier,
-            quantite : article.familleLibelle == undefined ? 1 : article.quantite,
-            firebase : article.firebase,
-            isModified : article.isModified == undefined ? false : article.isModified,
-            documentId : article.documentId,
-            familleCode : '20',
-            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle,
-            magasin : article.magasin == undefined ? this.settings.magasinParDefaut : article.magasin
-          })
-        }
-      }
-
-    }
-    this.storage.set(this.utility.localstorage.articles, articlesNew)
-
-  }
   async setDefaultArticleData(){
-    await this.storage.set(this.utility.localstorage.articles, this.articles)
+
+    await this.postArticles(this.articles);
+    
   }
+  
   async setDefaultFamilleArticleData(){
-    await this.storage.set(this.utility.localstorage['famille d\'articles'], this.famille)
+    
+    await this.postFamilles(this.familles);
+
   }
 
-  async updateArticle(newArticle : Articles){
+  async updateArticle(article : Articles){
 
-    const articles : Array<Articles> = await this.getArticleFromLocalStorage();
-    const index = await articles.findIndex(s => s.code === newArticle.code);
+    const articles : Array<Articles> = await this.getArticles();
+    const index = await articles.findIndex(s => s.code === article.code);
     
     articles.splice(index,1)
-    if(newArticle.firebase){
-      newArticle.isModified = true
+
+    if(article.firebase){
+      article.isModified = true
     }
 
-    articles.push(newArticle)
-    
-    this.storage.set(this.utility.localstorage.articles, articles)
+    articles.push(article)
+    await this.postArticles(articles);
+
+    return articles;
   }
 
-  async getArticleFromLocalStorage (){
+  async getArticles(){
+
     const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles)
     const articlesOrderBy : Array<Articles> = await this.sortByArticleCode(articles)
+
     return articlesOrderBy;
   }
 
-  async setArticleRealDataToLocalStorage(newArticle : Articles){
+  async postArticles(articles : Array<Articles>){
 
-    var articles : Articles [] = [];
-    const articlesLS = await this.getArticleFromLocalStorage();
+    await this.utility.saveToLocalStorage(this.utility.localstorage.articles, articles);
+    return this.getArticles();
 
-    if(articlesLS){
-      for(let article of articlesLS){
-        if(article.code != newArticle.code){
-          await articles.push(article)
-        }
-      }
-
-      await articles.push(newArticle)
-      await this.storage.set(this.utility.localstorage.articles, articles)
-
-    }
   }
 
-  async updateFamille(familleArticle : FamilleArticle){
+  async postArticle(article : Articles){
 
-    const familles : Array<FamilleArticle> = await this.getFamilleArticleFromLocalStorage();
-    const index = await familles.findIndex(s => s.code === familleArticle.code)
-    familles[index] = familleArticle
-    if(familleArticle.firebase){
+    const articles = await this.getArticles();
+    articles.push(article);
+
+    const result = await this.postArticles(articles);
+
+    return articles;
+  }
+
+  async updateFamille(famille : Familles){
+
+    const familles : Array<Familles> = await this.getFamilles();
+    const index = await familles.findIndex(s => s.code === famille.code);
+    familles[index] = famille;
+
+    if(famille.firebase){
       familles[index].isModified = true;
     }
 
-    this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
+    await this.postFamilles(familles);
+
+    return familles;
 
   }
 
   async deleteArticle(articleDeleted : Articles){ 
 
-    const articles : Array<Articles> = await this.getArticleFromLocalStorage();
+    const articles : Array<Articles> = await this.getArticles();
     const index = await articles.findIndex(s => s.code === articleDeleted.code);
+    
     articles[index].isDeleted = true;
-    this.storage.set(this.utility.localstorage.articles, articles);
+    await this.postArticles(articles);
 
-    // const articles : Array<Articles> = await this.getArticleFromLocalStorage();
-
-    // // Mise àjour dans le localstorage
-    // const index = await articles.findIndex(s => s.code === articleDeleted.code);
-    // articles.splice(index,1);
-    // this.storage.set(this.utility.localstorage.articles, articles);
-
-    // // Mise à jour sur firebase (via localstorage : deleted)
-    // const articleInfo = await this.searchArticleByArticleCode(articleDeleted.code);
-    // this.firebaseService.postToLocalStorageDeleted(articleInfo.firebase, this.utility.localstorage.articles, articleInfo.documentId);
+    return articles;
 
   }
 
-  async deleteFamilleArticle(familleArticle : FamilleArticle){
+  async deleteFamille(famille : Familles){
 
-    const familles : Array<FamilleArticle> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-    const index = await familles.findIndex(s => s.code === familleArticle.code);
+    const familles : Array<Familles> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    const index = await familles.findIndex(s => s.code === famille.code);
     familles[index].isDeleted = true;
-    await this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
-
-    // const familles : Array<FamilleArticle> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-
-    // const index = await familles.findIndex(s => s.code === familleArticle.code);
-    // familles.splice(index,1)
     
-    // this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
-    
-    // // Supprimer dans firebase
-    // if(familleArticle.firebase){
-    //   const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code);
-    //   this.firebaseService.postToLocalStorageDeleted(familleInfo.firebase, this.utility.localstorage['famille d\'articles'], familleInfo.documentId);
-    // }
+    const result = await this.postFamilles(familles)
+
+    return result;
     
   }
 
-  async addNewFamilleArticleRealDataToLocalStorage(familleArticle : FamilleArticle){
-    const temp : FamilleArticle[] = [];
+  async postFamilles(familles : Array<Familles>){
 
-    const familles = await this.storage.get(this.utility.localstorage['famille d\'articles'])
-
-    for(let famille of familles){
-        await temp.push(famille)
-    }
-    
-    const newFamilleArticle : FamilleArticle = {
-      code : familleArticle.code.toUpperCase(),
-      libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle),
-      firebase : false
-    }
-    await temp.push(newFamilleArticle)
-
-    this.storage.set(this.utility.localstorage['famille d\'articles'], temp)
-
+    await this.storage.set(this.utility.localstorage['famille d\'articles'], familles);
+    return familles;
   }
 
-  async postNouvelleFamilleArticle(familleSelected : FamilleArticle){
+  async postFamille(famille : Familles){
 
-    const familles : FamilleArticle [] = await this.getFamilleArticleFromLocalStorage();
-    familles.push(familleSelected)
-    this.storage.set(this.utility.localstorage['famille d\'articles'], familles)
+    const familles : Array<Familles> = await this.getFamilles();
+    familles.push(famille)
+    await this.postFamilles(familles);
+
     return await familles;
 
   }
   
   async searchFamilleByCode(code : string){
 
-    const famille = await this.getFamilleArticleFromLocalStorage();
-    const result = await famille.find((famille : FamilleArticle) => {
-      return famille.code == code
-    })
+    const famille = await this.getFamilles();
+    const result = await famille.find((famille : Familles) => famille.code == code);
 
     return result;
 
-  }
-
-  async getFamilleArticleFromLocalStorage(){
-    const familles : Array<FamilleArticle> =  await this.storage.get(this.utility.localstorage['famille d\'articles'])
-    const famillesParse : Array<FamilleArticle> = await this.sortByCodeFamilleArticle(familles);
-    return famillesParse;
   }
 
   // A utiliser uniquement pour la page course-add-page.ts
@@ -326,7 +186,7 @@ export class ArticlesService {
       this.articles = [];
       
       // J'ajoute les données du localstorage
-      const articles = await this.getArticleFromLocalStorage();
+      const articles = await this.getArticles();
       this.articles = articles;
       
       // Init données à renvoyer
@@ -351,19 +211,18 @@ export class ArticlesService {
   }
 
   async searchArticleByArticleCode(articleCode : string){
-    const articles : Articles [] = await this.getArticleFromLocalStorage()
-    const article : Articles = await articles.find(article => {
-      return article.code === articleCode
-    })
+
+    const articles : Array<Articles> = await this.getArticles();
+    const article : Articles = await articles.find(article => article.code === articleCode);
+
     return article;
   }
 
   async searchArticleByLibelle(libelle : string){
 
-    const articles : Articles [] = await this.getArticleFromLocalStorage()
-    const result : Articles = articles.find((res : Articles) => {
-      return res.libelle == libelle
-    })
+    const articles : Array<Articles> = await this.getArticles();
+    const result : Articles = articles.find((res : Articles) => res.libelle == libelle);
+
     return result
   }
 
@@ -380,7 +239,7 @@ export class ArticlesService {
     })
   }
 
-  sortByArticleName(articles : Array<Articles>){
+  orderByArticleName(articles : Array<Articles>){
     return articles.sort((a,b) => {
       let x  = a.libelle.toLowerCase();
       let y  = b.libelle.toLowerCase();
@@ -393,7 +252,7 @@ export class ArticlesService {
     })
   }
 
-  sortByLibelleFamilleArticle(familles:FamilleArticle[]){
+  orderByLibelleFamille(familles:Familles[]){
     return familles.sort((a,b) => {
       let x  = a.libelle.toLowerCase();
       let y  = b.libelle.toLowerCase();
@@ -406,7 +265,7 @@ export class ArticlesService {
     })
   }
 
-  sortByCodeFamilleArticle(familles:FamilleArticle[]){
+  sortByCodeFamilleArticle(familles:Familles[]){
     return familles.sort((a,b) => {
       let x  = parseInt(a.code) ;
       let y  = parseInt(b.code);
@@ -420,16 +279,18 @@ export class ArticlesService {
   }
 
   async searchArticleByBarreCode(barreCode : string){
-    const articles : Articles [] = await this.getArticleFromLocalStorage();
-    const article : Articles = await articles.find((elements) => {
-        return elements.barreCode === barreCode
-    })
+
+    const articles : Array<Articles> = await this.getArticles();
+    const article : Articles = await articles.find((articles) => articles.barreCode === barreCode);
+
     return article;
   }
 
   async verifieSiPrixDifferent(codeArticle : string, prix : number){
-    const articleInfo : Articles = await this.searchArticleByArticleCode(codeArticle)
-    if(prix !== articleInfo.prix && codeArticle != null){
+
+    const article : Articles = await this.searchArticleByArticleCode(codeArticle);
+    
+    if(prix !== article.prix && codeArticle != null){
 
       const alert = await this.alertController.create({
         cssClass: 'my-custom-class',
@@ -444,9 +305,11 @@ export class ArticlesService {
             }
           }, {
             text: 'Oui',
-            handler: () => {
-              articleInfo.prix = prix
-              this.updateArticle(articleInfo)
+            handler: async () => {
+
+              article.prix = prix;
+              await this.updateArticle(article);
+
             }
           }
         ]
@@ -457,9 +320,7 @@ export class ArticlesService {
     }
   }
 
-  // Dans la liste de course, si on scanne un code barre qui n'existe pas, on le créé
-  async creerArticleAPartirduBarreCode(barreCode : string, ifMethodeUseInpostArticleByBarreCode : boolean){
-    var response :CreerArticleAPartirDuCodeBarreResponse;
+  async postArticleByBarreCode(barreCode : string, ifMethodeUseInpostArticleByBarreCode : boolean){
     
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -472,27 +333,22 @@ export class ArticlesService {
           cssClass: 'secondary',
           handler: () => {
             this.utility.popupInformation('Fin de l\'opération')
-            response.articleIsCreer = false
           }
         }, {
           text: 'Oui',
           handler: async () => {
-            const article : Articles = await this.formulaireCreerArticleAPartirduBarreCode(barreCode,ifMethodeUseInpostArticleByBarreCode)
-            response.article = await article
-            response.articleIsCreer = await true
+
+            await this.formulaireCreerArticleAPartirduBarreCode(barreCode,ifMethodeUseInpostArticleByBarreCode);
+
           }
         }
       ]
     });
 
     await alert.present()
-
-    return response
   }
 
   private async formulaireCreerArticleAPartirduBarreCode(codeBarre : string,ifMethodeUseInpostArticleByBarreCode:boolean){
-
-    var articleNew : Articles;
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -519,14 +375,15 @@ export class ArticlesService {
           }
         }, {
           text: 'Créer',
-          handler: async (formValue) => {
+          handler: async (article : Articles) => {
 
+            
             var codeArticle = (await this.generateArticleId()).toString();
 
             const newArticle : Articles = {
               code : codeArticle,
-              libelle : formValue.libelle,
-              prix : formValue.prix ,
+              libelle : article.libelle,
+              prix : article.prix ,
               prixModifier : null,
               quantite : 1,
               firebase : false,
@@ -538,27 +395,15 @@ export class ArticlesService {
               magasin : this.settings.magasinParDefaut
             }
 
-            const articles : Array<Articles> = await this.getArticleFromLocalStorage();
-            const articleIsExiste : Array<Articles> = await articles.filter(articles => articles.code === newArticle.code);
-
-            // Si l'article n'existe pas encore
-            if(articleIsExiste.length === 0){
-
-              articles.push(newArticle)
-              this.storage.set(this.utility.localstorage.articles, articles).then(() => articleNew = newArticle)
-              
-            }else{
-              window.alert('L\'article existe déjà. L\'article code : ' +  articleIsExiste[0].code + ' - ' + articleIsExiste[0].libelle)
-              // articles.push(newArticle)
-              // this.storage.set(this.utility.localstorage.articles, articles).then(() => articleNew = newArticle)
-            }
+            const result : Array<Articles> = await this.postArticle(newArticle);
+            const aa = await result.find(articles => articles.code === codeArticle);
+            window.alert(aa.code + ' ' + aa.libelle);
             
           }
         }
       ]
     });
     await alert.present();
-    return await articleNew;
   }
 
 

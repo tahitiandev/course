@@ -14,7 +14,6 @@ import { CoursesService } from 'src/app/services/courses.service';
 import { MenuService } from 'src/app/services/menu.service';
 import { PlatsService } from 'src/app/services/plats.service';
 import { UtilityService } from 'src/app/services/utility.service';
-import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-course-details',
@@ -24,8 +23,7 @@ import { Storage } from '@ionic/storage';
 
 export class CourseDetailsPage implements OnInit {
 
-  constructor(private storage : Storage,
-              private route : ActivatedRoute,
+  constructor(private route : ActivatedRoute,
               private courseService : CoursesService,
               private alertController: AlertController,
               private barreCodeService : BarreCodeService,
@@ -100,7 +98,7 @@ export class CourseDetailsPage implements OnInit {
   async clickCheckBox(index : number){
 
     var actifCheckBox : boolean = await this.courseDetails[index].actif
-    var newListe : Liste [] = []
+    var newListe : Array<Liste> = []
 
     for(let i = 0 ; i < this.courseDetails.length; i++){
 
@@ -136,7 +134,7 @@ export class CourseDetailsPage implements OnInit {
 
     this.courseDetails = newListe
 
-    this.courseService.updateCourseToLocalStorage(courseUpdate)
+    this.courseService.putCourse(courseUpdate)
     
 
   }
@@ -144,48 +142,20 @@ export class CourseDetailsPage implements OnInit {
   async supprimerArticle(article : Liste){
 
     const index = await this.courseDetails.findIndex(s => s === article);
-    this.courseDetails.splice(index, 1)
+    this.courseDetails.splice(index, 1);
 
-    this.course.liste = []
+    this.course.liste = [];
     this.course.liste = this.courseDetails;
 
     const courses : Array<Courses> = await this.courseService.getCourses();
     const indexCourse = await courses.findIndex(s => s.id === this.course.id);
-    courses[indexCourse] = this.course
+    courses[indexCourse] = this.course;
 
-    await this.storage.set(this.utility.localstorage.Courses, courses)
+    await this.courseService.postCourses(courses);
     this.calculeTotal();
 
 
   }
-  // async supprimerArticle(index: number){
-
-  //   var actifCheckBox : boolean = await this.listeArticle[index].actif
-  //   var newListe : Liste [] = []
-
-  //   for(let i = 0 ; i < this.listeArticle.length; i++){
-
-  //     if(i !== index){
-  //       newListe.push(this.listeArticle[i])
-  //     }
-
-  //   } //for
-
-  //   const courseUpdate : Courses = await {
-  //     id : this.coursesDetail.id,
-  //     date : this.coursesDetail.date,
-  //     actif : this.coursesDetail.actif,
-  //     total : this.coursesDetail.total,
-  //     liste : newListe,
-  //     firebase : this.coursesDetail.firebase
-  //   }
-
-  //   this.listeArticle = newListe
-  //   this.courseService.updateCourseInLocalStorage(courseUpdate)
-  //   this.calculeTotal();
-
-
-  // }
 
   async insertSpecialArticle(){
 
@@ -246,21 +216,7 @@ export class CourseDetailsPage implements OnInit {
               courses[index].isModified = true;
             }
 
-            await this.storage.set(this.utility.localstorage.Courses, courses)
-
-            // const courseUpdate : Courses = await {
-            //   id : this.coursesDetail.id,
-            //   date : this.coursesDetail.date,
-            //   actif : this.coursesDetail.actif,
-            //   total : this.coursesDetail.total,
-            //   liste : this.listeArticle,
-            //   firebase : this.coursesDetail.firebase,
-            //   isModified : this.coursesDetail.firebase ? true : false,
-            //   documentId : this.coursesDetail.documentId,
-            //   plafond : this.coursesDetail.plafond
-            // }
-
-            // this.courseService.updateCourseInLocalStorage(courseUpdate)
+            await this.courseService.postCourses(courses);
             this.calculeTotal();
 
           }
@@ -272,7 +228,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async updateArticle(articleSelected : Liste, index : number) {
+  async putArticle(articleSelected : Liste, index : number) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Modifier les données de l\'article',
@@ -330,47 +286,8 @@ export class CourseDetailsPage implements OnInit {
             courses[index].liste[indexList].actif = data.actif;
             this.courseDetails = []
             this.courseDetails = courses[index].liste
-            await this.storage.set(this.utility.localstorage.Courses, courses);
-            await this.calculeTotal();
-            
-            // var newListe : Liste [] = []
-        
-            // for(let i = 0 ; i < this.listeArticle.length; i++){
-        
-            //   if(i !== index){
-            //     newListe.push(this.listeArticle[i])
-            //   }
-            //   if(i === index){
-            //     newListe.push({
-            //       articleId : this.listeArticle[i].articleId,
-            //       libelle : data.libelle,
-            //       quantite : data.quantite,
-            //       prixUnitaire : data.prixUnitaire,
-            //       prixTotal : null,
-            //       actif : data.actif,
-            //     })
-            //     this.articleService.verifieSiPrixDifferent(this.listeArticle[i].articleId, data.prixUnitaire)
-            //   }
-        
-            // } //for
-          
-            // const courseUpdate : Courses = await {
-            //   id : this.coursesDetail.id,
-            //   date : this.coursesDetail.date,
-            //   actif : this.coursesDetail.actif,
-            //   total : this.coursesDetail.total,
-            //   liste : newListe,
-            //   firebase : this.coursesDetail.firebase,
-            //   isModified : this.coursesDetail.firebase ? true : false,
-            //   documentId : this.coursesDetail.documentId,
-            //   plafond : this.coursesDetail.plafond
-            // }
-        
-            // this.listeArticle = newListe
-        
-            // this.courseService.updateCourseInLocalStorage(courseUpdate)
-            // this.calculeTotal();
-            
+            await this.courseService.postCourses(courses);
+            await this.calculeTotal();           
 
           }
         }
@@ -436,204 +353,123 @@ export class CourseDetailsPage implements OnInit {
     }//else
   }
 
+  private async postArticleByBarreCode2(){
+
+    const barreCode = await this.barreCodeService.scanneBarreCode();
+    const articles : Array<Articles> = await this.articleService.getArticles();
+
+    const article = await articles.filter(articles =>  articles.barreCode === barreCode);
+
+    if(article.length === 0){
+
+      const alert = await this.alertController.create({
+        cssClass: 'my-custom-class',
+        header: 'Information',
+        message: 'Aucun article ne correspond au code barre : <strong>' + barreCode + '</strong>. Nous allons le créer',
+        inputs : [
+          {
+            name: 'libelle',
+            type: 'text',
+            placeholder : 'Libellé'
+          },
+          {
+            name: 'prix',
+            type: 'number',
+            placeholder : 'Prix'
+          }
+        ],
+        buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            cssClass: 'secondary',
+            handler: () => {
+              this.utility.popupInformation('Fin de l\'opération')
+            }
+          }, {
+            text: 'Créer',
+            handler: async (article) => {
+  
+              const articleNew : Articles = {
+                code : (await this.articleService.generateArticleId()).toString(),
+                libelle : article.libelle,
+                prix : article.prix,
+                quantite : 1,
+                firebase : false,
+                familleCode : '22',
+                familleLibelle : null,
+                barreCode : barreCode,
+                magasin : this.course.magasin
+              }
+
+              await this.articleService.postArticle(article);
+
+ 
+
+  
+            }
+          }
+        ]
+      });
+  
+      await alert.present();
+
+
+    } // if
+
+  }
+
   private async postArticleByBarreCode(){
 
       const barreCode = await this.barreCodeService.scanneBarreCode();
-      const article = await this.articleService.searchArticleByBarreCode(barreCode)
-      
-      const courses : Array<Courses> = await this.courseService.getCourses();
-      const index = await courses.findIndex(s => s.id === this.course.id);
+      const article = await this.articleService.searchArticleByBarreCode(barreCode);
       
     if(article === null || article === undefined){
 
-      var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode, true)
+      await this.articleService.postArticleByBarreCode(barreCode, true);
+      const article : Articles = await this.articleService.searchArticleByBarreCode(barreCode);
 
-      if(response.articleIsCreer){
+      window.alert(article.libelle)
         
       var articleNew : Liste = {
-        articleId : response.article.code,
-        libelle : response.article.libelle,
+        articleId : article.code,
+        libelle : article.libelle,
         quantite : 1,
-        prixUnitaire : response.article.prix,
+        prixUnitaire : article.prix,
         prixTotal : null,
         actif : false
       }
       
       this.courseDetails.push(articleNew)
-
       this.course.liste = this.courseDetails;
-      courses[index] = this.course;
-      if(courses[index].firebase){
-        courses[index].isModified = true;
-      }
-      await this.storage.set(this.utility.localstorage.Courses, courses);
+
+      window.alert(articleNew.libelle)
+
+      await this.courseService.postCourse(this.course);
            
-      // const courseUpdate : Courses = await {
-      //   id : this.coursesDetail.id,
-      //   date : this.coursesDetail.date,
-      //   actif : this.coursesDetail.actif,
-      //   total : this.coursesDetail.total,
-      //   firebase : this.coursesDetail.firebase,
-      //   liste : this.listeArticle
-      // }
-
-      // this.courseService.updateCourseInLocalStorage(courseUpdate).then(async () => {
-
-      //   const courses : Courses [] = await this.courseService.getCourseFromLocalStorage()
-      //   const course : Courses = await courses.find(s => {
-      //     return s.id === this.coursesDetail.id
-      //   })
-      //   this.listeArticle = []
-      //   this.listeArticle = course.liste
-        
-      // })
       this.calculeTotal();
-      }
-    }else{
-
-        this.courseDetails.push({
-          articleId : article.code,
-          libelle : article.libelle,
-          quantite : 1,
-          prixUnitaire : article.prix,
-          prixTotal : null,
-          actif : false
-        })
-
-
-      // this.coursesDetail.liste = this.listeArticle;
-      // courses[index] = this.coursesDetail;
-      // if(courses[index].firebase){
-      //   courses[index].isModified = true;
-      // }
-      // await this.storage.set(this.utility.localstorage.Courses, courses);
-
-
-        const listeNew : Liste [] = [];
-        
-        for(let liste of this.courseDetails){
-          listeNew.push(liste)
-        }
-        var articleNew : Liste = {
-          articleId : article.code,
-          libelle : article.libelle,
-          quantite : 1,
-          prixUnitaire : article.prix,
-          prixTotal : null,
-          actif : false
-        }
-        
-        listeNew.push(articleNew)
-        
-        this.courseDetails = listeNew;
-        
-        const courseUpdate : Courses = await {
-          id : this.course.id,
-          date : this.course.date,
-          actif : this.course.actif,
-          total : this.course.total,
-          liste : listeNew,
-          firebase : this.course.firebase,
-          isModified : this.course.isModified === undefined ? null : this.course.isModified,
-          documentId : this.course.documentId === undefined ? null : this.course.documentId,
-          plafond : this.course.plafond === undefined ? null : this.course.plafond,
-          tag : this.course.tag === undefined ? null : this.course.tag,
-          payeur : this.course.payeur === undefined ? null : this.course.payeur,
-          magasin : this.course.magasin === undefined ? null : this.course.magasin,
-          isDeleted : this.course.isDeleted,
-        }
-
-        this.courseService.updateCourseToLocalStorage(courseUpdate).then(() => this.courseDetails = listeNew)
-        this.calculeTotal();
-    }
-  }
-
-  async checkArticle(){
-    const barreCode = await this.barreCodeService.scanneBarreCode();
-    const articleRecherche = await this.articleService.searchArticleByBarreCode(barreCode)
-
-    if(articleRecherche != null || articleRecherche != undefined){
-      const articlePresentDansLaListe =  await this.courseDetails.find(s => {
-        return s.articleId === articleRecherche.code
-      })
-
-      if(articlePresentDansLaListe != null || articlePresentDansLaListe != undefined){
-
-        articlePresentDansLaListe.actif = true
-        const courses : Array<Courses> = await this.courseService.getCourses();
-        const index = await courses.findIndex(s => s.id  === this.course.id)
-        const indexArtcle = await this.courseDetails.findIndex(s => s === articlePresentDansLaListe);
-        courses[index].liste[indexArtcle] = articlePresentDansLaListe;
-        courses[index].isModified = true;
-
-        await this.storage.set(this.utility.localstorage.Courses, courses)
-
-        // const listeNew : Liste [] = [];
-
-        // for(let liste of this.listeArticle){
-        //   if(liste.articleId != articlePresentDansLaListe.articleId){
-        //     listeNew.push(liste)
-        //   }else{
-        //     listeNew.push(articlePresentDansLaListe)
-        //   }
-        // }
-
-        // this.listeArticle = listeNew;
-        
-        // const courseUpdate : Courses = await {
-        //   id : this.coursesDetail.id,
-        //   date : this.coursesDetail.date,
-        //   actif : this.coursesDetail.actif,
-        //   total : this.coursesDetail.total,
-        //   liste : listeNew,
-        //   firebase : this.coursesDetail.firebase
-        // }
-
-        // this.courseService.updateCourseInLocalStorage(courseUpdate).then(() => this.listeArticle = listeNew)
-        this.calculeTotal();
-      }else{
-        this.utility.popupInformation('L\'article ' + articleRecherche.libelle + ' n\'est pas présent dans la liste')
-      }
 
     }else{
-      var response : CreerArticleAPartirDuCodeBarreResponse = await this.articleService.creerArticleAPartirduBarreCode(barreCode, false)
-      if(response.articleIsCreer){
-        const listeNew : Liste [] = [];
-      for(let liste of this.courseDetails){
-        listeNew.push(liste)
-      }
+
       var articleNew : Liste = {
-        articleId : response.article.code,
-        libelle : response.article.libelle,
+        articleId : article.code,
+        libelle : article.libelle,
         quantite : 1,
-        prixUnitaire : response.article.prix,
+        prixUnitaire : article.prix,
         prixTotal : null,
         actif : false
       }
       
-      listeNew.push(articleNew)
-      
-      this.courseDetails = listeNew;
-      
-      const courseUpdate : Courses = await {
-        id : this.course.id,
-        date : this.course.date,
-        actif : this.course.actif,
-        total : this.course.total,
-        liste : listeNew,
-        firebase : this.course.firebase,
-        documentId : this.course.documentId,
-        isModified : this.course.firebase ? true : false,
-        isDeleted : this.course.isDeleted,
-        tag : this.course.tag,
-        payeur : this.course.payeur,
-        magasin : this.course.magasin,
-      }
-
-      this.courseService.updateCourseToLocalStorage(courseUpdate).then(() => this.courseDetails = listeNew)
+      this.courseDetails.push(articleNew)
+      this.course.liste = this.courseDetails;
+      await this.courseService.postCourse(this.course);
       this.calculeTotal();
-      }
     }
+  }
+
+  async checkArticle(){
+
+    alert('methode à refaire');
 
   }
 
@@ -652,7 +488,7 @@ export class CourseDetailsPage implements OnInit {
 
   private async postArticleManuel(){
 
-    const articlesToLocalStorage : Array<Articles> = await this.articleService.getArticleFromLocalStorage()
+    const articlesToLocalStorage : Array<Articles> = await this.articleService.getArticles()
     const articles = await this.sortByArticleName(articlesToLocalStorage)
     var radioOption : Array<AlertInput> = [];
     
@@ -703,34 +539,12 @@ export class CourseDetailsPage implements OnInit {
             const courses : Array<Courses> = await this.courseService.getCourses();
             const index = await courses.findIndex(s => s.id === this.course.id);
             courses[index].liste = this.courseDetails;
+            
             if(courses[index].firebase){
               courses[index].isModified = true;
             }
-            await this.storage.set(this.utility.localstorage.Courses, courses)
 
-            // const listeNew : Liste [] = [];
-            // for(let liste of this.listeArticle){
-            //   listeNew.push(liste)
-            // }
-            // listeNew.push(liste)
-            // this.listeArticle = listeNew
-
-            // const courseUpdate : Courses = await {
-            //   id : this.coursesDetail.id,
-            //   date : this.coursesDetail.date,
-            //   actif : this.coursesDetail.actif,
-            //   total : this.coursesDetail.total,
-            //   liste : listeNew,
-            //   firebase : this.coursesDetail.firebase,
-            //   isModified : this.coursesDetail.isModified === undefined ? null : this.coursesDetail.isModified,
-            //   documentId : this.coursesDetail.documentId === undefined ? null : this.coursesDetail.documentId,
-            //   plafond : this.coursesDetail.plafond === undefined ? null : this.coursesDetail.plafond,
-            //   tag : this.coursesDetail.tag === undefined ? null : this.coursesDetail.tag,
-            //   payeur : this.coursesDetail.payeur === undefined ? null : this.coursesDetail.payeur,
-            //   magasin : this.coursesDetail.magasin === undefined ? null : this.coursesDetail.magasin
-            // }
-      
-            // await this.courseService.updateCourseInLocalStorage(courseUpdate)
+            await this.courseService.postCourses(courses);
             await this.calculeTotal();
             
 
@@ -750,9 +564,9 @@ export class CourseDetailsPage implements OnInit {
 
   async insertPlat(){
 
-    const platsBrute : Plats [] = await this.platsService.getPlatFromLocalStorage()
+    const platsBrute : Array<Plats> = await this.platsService.getPlatFromLocalStorage()
     const plats = await this.platsService.sortByLibelleFamilleArticle(platsBrute)
-    var radioOption : AlertInput [] = [];
+    var radioOption : Array<AlertInput> = [];
     
     for(let plat of plats){
       radioOption.push({
@@ -792,7 +606,7 @@ export class CourseDetailsPage implements OnInit {
 
   async chooseArticle(plat : Plats, jour? : string){
 
-    const articlesInfo : Array<Articles> = await this.articleService.getArticleFromLocalStorage();
+    const articlesInfo : Array<Articles> = await this.articleService.getArticles();
     const articlePlat : Array<Articles> = [];
 
     for(let article of plat.codeArticle){
@@ -802,7 +616,7 @@ export class CourseDetailsPage implements OnInit {
       articlePlat.push(result)
     }
 
-    var radioOption : AlertInput [] = [];
+    var radioOption : Array<AlertInput> = [];
     
     for(let article of articlePlat){
       radioOption.push({
@@ -856,7 +670,7 @@ export class CourseDetailsPage implements OnInit {
               magasin : this.course.magasin,
             }
 
-            this.courseService.updateCourseToLocalStorage(courseUpdate)
+            this.courseService.putCourse(courseUpdate)
             this.calculeTotal();
 
           }
@@ -870,14 +684,14 @@ export class CourseDetailsPage implements OnInit {
 
   async insertMenu(){
 
-    const menusInfo : MenuDelaSemaine [] = await this.menuService.getMenuFromLocaoStorage()
+    const menusInfo : Array<MenuDelaSemaine> = await this.menuService.getMenuFromLocaoStorage()
     const semaineEnCours = await this.utility.getDateDebutetDateDeFinDeSemaine()
     const index = await menusInfo.findIndex((data : MenuDelaSemaine) => {
       return data.dateDebut === semaineEnCours.dateDebut && data.dateFin === semaineEnCours.dateFin
     })
 
-    const articlesInfo : Articles [] = await this.articleService.getArticleFromLocalStorage()
-    const platSemaineEnCours : Plats [] = []
+    const articlesInfo : Array<Articles> = await this.articleService.getArticles()
+    const platSemaineEnCours : Array<Plats> = []
     
     if(menusInfo[index].lundi != ''){
       const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].lundi)

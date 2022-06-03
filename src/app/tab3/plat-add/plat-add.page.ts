@@ -37,7 +37,7 @@ export class PlatAddPage implements OnInit {
 
   ngOnInit() {
     this.storage.get(this.utility.localstorage.articles).then((articles : Articles []) => {
-      this.articles = this.articleService.sortByArticleName(articles)
+      this.articles = this.articleService.orderByArticleName(articles)
     })
     this.init()
   }
@@ -147,13 +147,13 @@ export class PlatAddPage implements OnInit {
 
   async searchArticle(event){
     const query = await event.target.value.toLowerCase();
-    const articles = await this.articleService.getArticleFromLocalStorage();
+    const articles = await this.articleService.getArticles();
     
     const result = await articles.filter(s => {
       return s.libelle.toLocaleLowerCase().startsWith(query.toLocaleLowerCase())
     })
 
-    this.articles = this.articleService.sortByArticleName(result)
+    this.articles = this.articleService.orderByArticleName(result)
   }
 
 

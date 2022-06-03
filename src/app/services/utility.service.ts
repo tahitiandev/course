@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
+import { AlertInput } from '@ionic/core';
 import { Storage } from '@ionic/storage';
 import { Deleted } from '../models/deleted';
 import { Settings } from '../models/setting';
@@ -273,9 +274,42 @@ export class UtilityService {
   //#endregion
 
 
+  async postAlert(inputs : Array<AlertInput>){
 
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Créer un article',
+      inputs: inputs,
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: async () => {
+            await this.popupInformation('')
+          }
+        },
+        {
+          text: 'Valider',
+          handler: async (data) => {
+            await this.getAlertValue(data);
+          }
+        }
+      ]
+    })
 
+    await alert.present();
 
+  }
+  
+  private getAlertValue(data : any){
+    console.log(data);
+    return data;
+  }
+
+  async saveToLocalStorage(localStorageName : string, values : Array<any>){
+    await this.storage.set(localStorageName, values);
+  }
 
 
 

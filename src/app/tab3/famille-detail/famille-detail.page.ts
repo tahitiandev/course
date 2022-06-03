@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { FamilleArticle } from 'src/app/models/articles';
+import { Familles } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { ArticlesService } from 'src/app/services/articles.service';
 export class FamilleDetailPage implements OnInit {
 
   private codeFamille : string;
-  familleDetail : FamilleArticle
+  familleDetail : Familles
   familleForm = new FormGroup({
     code : new FormControl(),
     libelle : new FormControl()
@@ -58,7 +58,7 @@ export class FamilleDetailPage implements OnInit {
   }
 
   async onSubmit(){
-    const formValue : FamilleArticle = await this.familleForm.value
+    const formValue : Familles = await this.familleForm.value
     this.articleservice.updateFamille(formValue)
     this.nav.back()
   }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
-import { Articles, FamilleArticle } from 'src/app/models/articles';
+import { Articles, Familles } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Storage } from '@ionic/storage';
@@ -22,7 +22,7 @@ export class ArticleListPage implements OnInit {
     private barreCodeService : BarreCodeService) {}
 
     articles : Articles [];
-    familles : FamilleArticle [];
+    familles : Familles [];
     searchValue : string = "";
 
     ngOnInit(){
@@ -248,7 +248,7 @@ export class ArticleListPage implements OnInit {
 
     async pairArticleWithAnBarreCode(articleForm : Articles){
       const barreCode =  await this.barreCodeService.scanneBarreCode()
-      const articles : Articles [] = await this.articleService.getArticleFromLocalStorage()
+      const articles : Articles [] = await this.articleService.getArticles()
       var articlesNew : Articles [] = [];
 
       for(let article of articles){
@@ -290,13 +290,13 @@ export class ArticleListPage implements OnInit {
         codeFamille.push(article.familleCode)
       }
       var uniqueCodeFamille = [...new Set(codeFamille)]
-      const familles : FamilleArticle [] = [];
+      const familles : Familles [] = [];
       for(let code of uniqueCodeFamille){
         var famille = await this.articleService.searchFamilleByCode(code)
         familles.push(famille)
       }
 
-      const familleSortByLibelle = await this.articleService.sortByLibelleFamilleArticle(familles)
+      const familleSortByLibelle = await this.articleService.orderByLibelleFamille(familles)
 
       return familleSortByLibelle;
 
@@ -412,7 +412,7 @@ export class ArticleListPage implements OnInit {
 
       } // for
 
-      const articles = await this.articleService.sortByArticleName(groupByArticle)
+      const articles = await this.articleService.orderByArticleName(groupByArticle)
       this.articles = articles;
       }
 
@@ -431,7 +431,7 @@ export class ArticleListPage implements OnInit {
 
       async modifierFamilleArticle(article : Articles){
 
-        const familles : FamilleArticle [] = this.articleService.sortByLibelleFamilleArticle(await this.storage.get(this.u.localstorage['famille d\'articles']));
+        const familles : Familles [] = this.articleService.orderByLibelleFamille(await this.storage.get(this.u.localstorage['famille d\'articles']));
 
         var inputOption : AlertInput [] = [];
 
@@ -459,7 +459,7 @@ export class ArticleListPage implements OnInit {
           text: 'Valider',
           handler: async (result) => {
 
-              const familleInfo : FamilleArticle = familles.find(s => {
+              const familleInfo : Familles = familles.find(s => {
                 return s.code = result
               })
 
@@ -475,7 +475,7 @@ export class ArticleListPage implements OnInit {
         await alert.present();
       }
 
-      async isFamilleContainsAritcle(famille : FamilleArticle){
+      async isFamilleContainsAritcle(famille : Familles){
 
         const result : Articles [] = [];
         
@@ -534,7 +534,7 @@ export class ArticleListPage implements OnInit {
             }, {
             text: 'Ok',
             handler: async (formValue : Articles) => {
-                this.articleService.setArticleRealDataToLocalStorage({
+                this.articleService.postArticle({
                   code : (await this.articleService.generateArticleId()).toString(),
                   libelle : formValue.libelle,
                   prix : formValue.prix ,

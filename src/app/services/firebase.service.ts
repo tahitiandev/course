@@ -4,7 +4,7 @@ import { Deleted } from '../models/deleted';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { UtilityService } from './utility.service';
 import { Articles } from '../models/articles'
-import { FamilleArticle } from '../models/articles'
+import { Familles } from '../models/articles'
 import { Plats } from '../models/plats'
 import { Courses } from '../models/courses'
 import { MenuDelaSemaine } from '../models/menuDeLaSemaine'
@@ -92,9 +92,9 @@ export class FirebaseService {
       }
     }
 
-    const familles : Array<FamilleArticle> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    const familles : Array<Familles> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
     this.getCollectionFromFirebase(this.utility.localstorage['famille d\'articles'])
-    var famillesFirebase : Array<FamilleArticle> = await this.getDataCollectionTemp();
+    var famillesFirebase : Array<Familles> = await this.getDataCollectionTemp();
 
     for(let famille of famillesFirebase){
       for(let familler of familles){

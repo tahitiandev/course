@@ -45,27 +45,55 @@ export class CoursesService {
     return await courses.find(s => s.id === id);
   }
 
-  async postCourseToLocalStorage(course : Courses){
+  async postCourses(courses : Array<Courses>){
+
+    const result = await this.utility.saveToLocalStorage(this.utility.localstorage.Courses, courses);
+    return result;
+
+  }
+
+  async postCourse(course : Courses){
     
     const courses : Array<Courses> = await this.getCourses();
     courses.push(course);
-    await this.saveToLocalStorage(courses)
+    const result = await this.postCourses(courses)
+
+    return result;
 
   }
 
   async getIndexCourse(course : Courses){
     const courses : Array<Courses> = await this.getCourses();
-    return await courses.findIndex(s => s.id === course.id)
+    return await courses.findIndex(s => s.id === course.id);
   }
 
-  async updateCourseToLocalStorage(course : Courses){
+  async putCourse(course : Courses){
 
     const courses : Array<Courses> = await this.getCourses();
-    const index = await this.getIndexCourse(course);
-    course[index] = course;
 
-    await this.saveToLocalStorage(courses)
+    const ifCourseExiste = await this.searchCourseById(course);
 
+    if(ifCourseExiste.length === 0){
+
+      const index = await this.getIndexCourse(course);
+      course[index] = course;
+
+    }else{
+
+      this.utility.popupInformation('La course n\'existe pas');
+
+    }
+
+    await this.postCourses(courses)
+
+  }
+
+  private async searchCourseById(course : Courses){
+
+    const courses : Array<Courses> = await this.getCourses();
+    const result = await courses.filter(courses =>  courses.id === course.id);
+
+    return result;
   }
 
   private orderByIdAsc(course :  Courses[]){
@@ -121,12 +149,8 @@ export class CoursesService {
     const index = await this.getIndexCourse(course)
     courses[index].isDeleted = true;
     // courses.splice(index,1)
-    await this.saveToLocalStorage(courses)
+    await this.postCourses(courses)
     return await courses;
   }  
-  
-  async saveToLocalStorage(courses : Array<Courses>){
-    await this.storage.set(this.utility.localstorage.Courses, courses);
-  }
 
 }
