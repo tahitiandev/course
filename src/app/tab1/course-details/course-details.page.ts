@@ -353,7 +353,7 @@ export class CourseDetailsPage implements OnInit {
     }//else
   }
 
-  private async postArticleByBarreCode2(){
+  private async postArticleByBarreCode(){
 
     const barreCode = await this.barreCodeService.scanneBarreCode();
     const articles : Array<Articles> = await this.articleService.getArticles();
@@ -364,8 +364,8 @@ export class CourseDetailsPage implements OnInit {
 
       const alert = await this.alertController.create({
         cssClass: 'my-custom-class',
-        header: 'Information : Aucun article ne correspond au code barre : <strong>' + barreCode + '</strong>',
-        message: 'Renseigner les champs ci-dessous si vous souhaitez le créer',
+        header: 'Aucun article ne correspond au code barre : ' + barreCode,
+        message: 'Veuiller le créer',
         inputs : [
           {
             name: 'libelle',
@@ -402,7 +402,7 @@ export class CourseDetailsPage implements OnInit {
                 magasin : this.course.magasin
               }
 
-              const response = await this.articleService.postArticle(article);
+              const response = await this.articleService.postArticle(articleNew);
 
               this.courseDetails.push({
                 articleId : response.article.code,
@@ -413,7 +413,8 @@ export class CourseDetailsPage implements OnInit {
               });
 
               this.course.liste = this.courseDetails;
-              this.courseService.postCourse(this.course);
+              await this.courseService.postCourse(this.course);
+              this.calculeTotal();
 
   
             }
@@ -436,12 +437,13 @@ export class CourseDetailsPage implements OnInit {
 
       this.course.liste = this.courseDetails;
       this.courseService.postCourse(this.course);
+      this.calculeTotal();
 
     }
 
   }
 
-  private async postArticleByBarreCode(){
+  private async postArticleByBarreCode3(){
 
       const barreCode = await this.barreCodeService.scanneBarreCode();
       const article = await this.articleService.searchArticleByBarreCode(barreCode);
@@ -676,23 +678,8 @@ export class CourseDetailsPage implements OnInit {
               }) 
             }
 
-            const courseUpdate : Courses = await {
-              id : this.course.id,
-              date : this.course.date,
-              actif : this.course.actif,
-              total : this.course.total,
-              liste : this.courseDetails,
-              firebase : this.course.firebase,
-              isModified : this.course.firebase ? true : false,
-              documentId : this.course.documentId,
-              plafond : this.course.plafond,
-              isDeleted : this.course.isDeleted,
-              tag : this.course.tag,
-              payeur : this.course.payeur,
-              magasin : this.course.magasin,
-            }
-
-            this.courseService.putCourse(courseUpdate)
+            this.course.liste = this.courseDetails;
+            this.courseService.putCourse(this.course);
             this.calculeTotal();
 
           }

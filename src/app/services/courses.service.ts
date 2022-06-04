@@ -55,9 +55,14 @@ export class CoursesService {
   async postCourse(course : Courses){
     
     const courses : Array<Courses> = await this.getCourses();
-    courses.push(course);
-    const result = await this.postCourses(courses);
     const index = await this.getIndexCourse(course);
+    
+    if(course.firebase){
+      course.isModified = true;
+    }
+
+    courses[index] = course;
+    const result = await this.postCourses(courses);
 
     const response = {
       all : result,
@@ -76,7 +81,6 @@ export class CoursesService {
   async putCourse(course : Courses){
 
     const courses : Array<Courses> = await this.getCourses();
-
     const ifCourseExiste = await this.searchCourseById(course);
 
     if(ifCourseExiste.length === 0){

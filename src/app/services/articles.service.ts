@@ -76,18 +76,22 @@ export class ArticlesService {
   async updateArticle(article : Articles){
 
     const articles : Array<Articles> = await this.getArticles();
-    const index = await articles.findIndex(s => s.code === article.code);
-    
-    articles.splice(index,1)
+    const index = await this.getIndexArticle(article);
 
     if(article.firebase){
       article.isModified = true
     }
 
-    articles.push(article)
-    await this.postArticles(articles);
+    articles[index] = article
 
-    return articles;
+    const result = await this.postArticles(articles);
+
+    const response = {
+      all : result,
+      article : result[index]
+    }
+
+    return response;
   }
 
   async getArticles(){
