@@ -119,7 +119,7 @@ export class FamilleListPage implements OnInit {
             const familleNew = await familles.find(s => s.code === famille.code)
             familleNew.code = famille.code
             familleNew.libelle = famille.libelle
-            await this.articleService.updateFamille(familleNew);
+            await this.articleService.putFamille(familleNew);
             this.onInit()
           }
         }

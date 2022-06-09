@@ -90,7 +90,7 @@ export class IngredientPage implements OnInit {
 
         if(code.codeArticle === article.code){
 
-          const articless = await this.articleService.searchArticleByArticleCode(code.codeArticle)
+          const articless = await this.articleService.getArticleByArticleCode(code.codeArticle)
           const ingred = {
             codeArticle : code.codeArticle,
             quantite : code.quantite,
@@ -207,7 +207,7 @@ export class IngredientPage implements OnInit {
 
   async addIngredientByBarreCode(){
     const barreCode = await this.barreCodeService.scanneBarreCode()
-    const article = await this.articleService.searchArticleByBarreCode(barreCode);
+    const article = await this.articleService.getArticleByBarreCode(barreCode);
 
     var newIngredient = {
       codeArticle : article.code,
@@ -387,7 +387,7 @@ export class IngredientPage implements OnInit {
             }
             
             
-            this.platsservice.updatePlatToLocalStorage(plat)
+            this.platsservice.putPlat(plat)
 
             // 4- On rajoute le libellé et le prix et le libellé
             this.ingredients = []

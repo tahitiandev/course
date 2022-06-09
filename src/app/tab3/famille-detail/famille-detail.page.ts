@@ -46,7 +46,7 @@ export class FamilleDetailPage implements OnInit {
   }
 
   private async getDetail(){
-    const familleDetail = await this.articleservice.searchFamilleByCode(this.codeFamille);
+    const familleDetail = await this.articleservice.getFamilleByCode(this.codeFamille);
     this.familleDetail = familleDetail
   }
 
@@ -59,7 +59,7 @@ export class FamilleDetailPage implements OnInit {
 
   async onSubmit(){
     const formValue : Familles = await this.familleForm.value
-    this.articleservice.updateFamille(formValue)
+    this.articleservice.putFamille(formValue)
     this.nav.back()
   }
 

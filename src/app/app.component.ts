@@ -85,7 +85,7 @@ export class AppComponent implements OnInit {
     }
   }
   async setPlat(){
-    const plats = await this.platService.getPlatFromLocalStorage()
+    const plats = await this.platService.getPlats()
     if(plats === null){
       await this.platService.setDefaultPlatData()
     }
@@ -97,7 +97,7 @@ export class AppComponent implements OnInit {
     }
   }
   async setMenu(){
-    const menues = await this.menuService.getMenuFromLocaoStorage()
+    const menues = await this.menuService.getMenus()
     if(menues === null){
       await this.menuService.setDefaultValue()
     }

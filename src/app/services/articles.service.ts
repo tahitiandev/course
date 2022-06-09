@@ -8,6 +8,7 @@ import { FirebaseService } from './firebase.service';
 import { AlertController } from '@ionic/angular';
 import { CreerArticleAPartirDuCodeBarreResponse } from '../models/creerArticleAPartirDuCodeBarreResponse';
 import { Settings } from '../models/setting';
+import { Liste } from '../models/courses';
 
 @Injectable({
   providedIn: 'root'
@@ -73,25 +74,25 @@ export class ArticlesService {
 
   }
 
-  async updateArticle(article : Articles){
+  async putArticle(article : Articles){
 
     const articles : Array<Articles> = await this.getArticles();
-    const index = await this.getIndexArticle(article);
-
+    const index = await articles.findIndex(articles =>  articles.code === article.code && articles.documentId === article.documentId);
+    
     if(article.firebase){
-      article.isModified = true
+      article.isModified = true;
     }
-
-    articles[index] = article
-
-    const result = await this.postArticles(articles);
+    articles.splice(index,1);
+    articles.push(article);
+    const result = this.postArticles(articles);
 
     const response = {
       all : result,
-      article : result[index]
+      article : article
     }
 
     return response;
+
   }
 
   async getArticles(){
@@ -101,6 +102,12 @@ export class ArticlesService {
 
     return articlesOrderBy;
   }
+  
+  async getArticleIndex(article : Articles){
+    const articles = await this.getArticles();
+    const index = await articles.findIndex(articles => articles === article);
+    return index;
+  }
 
   async postArticles(articles : Array<Articles>){
 
@@ -109,19 +116,13 @@ export class ArticlesService {
 
   }
 
-  async getIndexArticle(article : Articles){
-    const articles = await this.getArticles();
-    const index = await articles.findIndex(articles => articles === article);
-    return index;
-  }
-
   async postArticle(article : Articles){
 
     const articles = await this.getArticles();
     articles.push(article);
 
     const result = await this.postArticles(articles);
-    const index = await this.getIndexArticle(article);
+    const index = await this.getArticleIndex(article);
 
     const response = {
       all : result,
@@ -131,10 +132,10 @@ export class ArticlesService {
     return response;
   }
 
-  async updateFamille(famille : Familles){
+  async putFamille(famille : Familles){
 
     const familles : Array<Familles> = await this.getFamilles();
-    const index = await familles.findIndex(s => s.code === famille.code);
+    const index = await familles.findIndex(familles => familles.code === famille.code && familles.documentId === famille.documentId);
     familles[index] = famille;
 
     if(famille.firebase){
@@ -187,7 +188,7 @@ export class ArticlesService {
 
   }
   
-  async searchFamilleByCode(code : string){
+  async getFamilleByCode(code : string){
 
     const famille = await this.getFamilles();
     const result = await famille.find((famille : Familles) => famille.code == code);
@@ -226,7 +227,7 @@ export class ArticlesService {
     return resultat;
   }
 
-  async searchArticleByArticleCode(articleCode : string){
+  async getArticleByArticleCode(articleCode : string){
 
     const articles : Array<Articles> = await this.getArticles();
     const article : Articles = await articles.find(article => article.code === articleCode);
@@ -234,13 +235,22 @@ export class ArticlesService {
     return article;
   }
 
-  async searchArticleByLibelle(libelle : string){
+  async getArticleByLibelle(libelle : string){
 
     const articles : Array<Articles> = await this.getArticles();
     const result : Articles = articles.find((res : Articles) => res.libelle == libelle);
 
     return result
   }
+
+  async getArticleByIdAndLibelle(code : string, libelle : string){
+
+    const articles : Array<Articles> = await this.getArticles();
+    const result : Articles = articles.find((res : Articles) => res.code == code && res.libelle == libelle);
+
+    return result
+  }
+
 
   sortByArticleCode(articles : Array<Articles>){
     return articles.sort((a,b) => {
@@ -294,7 +304,7 @@ export class ArticlesService {
     })
   }
 
-  async searchArticleByBarreCode(barreCode : string){
+  async getArticleByBarreCode(barreCode : string){
 
     const articles : Array<Articles> = await this.getArticles();
     const article : Articles = await articles.find((articles) => articles.barreCode === barreCode);
@@ -302,11 +312,11 @@ export class ArticlesService {
     return article;
   }
 
-  async verifieSiPrixDifferent(codeArticle : string, prix : number){
+  async verifieSiPrixDifferent(articleSelected : Liste, prix : number){
 
-    const article : Articles = await this.searchArticleByArticleCode(codeArticle);
+    const article : Articles = await this.getArticleByIdAndLibelle(articleSelected.articleId, articleSelected.libelle);
     
-    if(prix !== article.prix && codeArticle != null){
+    if(prix !== article.prix){
 
       const alert = await this.alertController.create({
         cssClass: 'my-custom-class',
@@ -324,7 +334,7 @@ export class ArticlesService {
             handler: async () => {
 
               article.prix = prix;
-              await this.updateArticle(article);
+              await this.putArticle(article);
 
             }
           }
@@ -336,7 +346,7 @@ export class ArticlesService {
     }
   }
 
-  async postArticleByBarreCode(barreCode : string, ifMethodeUseInpostArticleByBarreCode : boolean){
+  async popUpPostArticleByBarreCode(barreCode : string){
     
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -354,7 +364,7 @@ export class ArticlesService {
           text: 'Oui',
           handler: async () => {
 
-            await this.formulaireCreerArticleAPartirduBarreCode(barreCode,ifMethodeUseInpostArticleByBarreCode);
+            await this.postArticleAPartirduBarreCode(barreCode);
 
           }
         }
@@ -364,7 +374,7 @@ export class ArticlesService {
     await alert.present()
   }
 
-  private async formulaireCreerArticleAPartirduBarreCode(codeBarre : string,ifMethodeUseInpostArticleByBarreCode:boolean){
+  private async postArticleAPartirduBarreCode(codeBarre : string){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -418,6 +428,19 @@ export class ArticlesService {
       ]
     });
     await alert.present();
+  }
+
+  async updateAllArticlesId(){
+
+    const articles : Array<Articles> = await this.getArticles();
+    var id = 0;
+
+    for(let article of articles){
+      article.code = id.toString();
+      article.isModified = true;
+      id++;
+    }
+
   }
 
 

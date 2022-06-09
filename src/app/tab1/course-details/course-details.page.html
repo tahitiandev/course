@@ -23,7 +23,7 @@
         <ion-label>{{ detail.libelle }}</ion-label>
         <ion-label style="text-align: right;">{{ detail.prixUnitaire }} xpf (x{{ detail.quantite != null ? detail.quantite : 1 }})</ion-label>
         <ion-label style="text-align: right;"> {{ detail.quantite != null ? (detail.quantite-0) * (detail.prixUnitaire-0) : detail.prixUnitaire }} xpf</ion-label>
-        <ion-checkbox style="margin-left: 30px;" (click)="clickCheckBox(index)" [checked]="detail.actif"></ion-checkbox>
+        <ion-checkbox style="margin-left: 30px;" (click)="checkBox(detail)" [checked]="detail.actif"></ion-checkbox>
       </ion-item>
       
       <ion-item-options side="end">
@@ -74,6 +74,8 @@
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
+
+  <div id="spinner"></div>
 
   <br>
   <br>

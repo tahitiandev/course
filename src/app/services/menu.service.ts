@@ -57,24 +57,24 @@ export class MenuService {
     ]
   ];
   
-  private menuDeLaSemaine : MenuDelaSemaine [] = [];
+  private menuDeLaSemaine : Array<MenuDelaSemaine> = [];
 
   public getJourDeLaSemaine(){
     return this.JourDeLaSemaines;
   }
 
-  async getMenuFromLocaoStorage(){
+  async getMenus(){
 
-      const data = await this.storage.get(this.utility.localstorage['menu de la semaine'])
+      const data = await this.storage.get(this.utility.localstorage['menu de la semaine']);
       return data;
   }
 
   async setDefaultValue(){
-    this.storage.set(this.utility.localstorage['menu de la semaine'], this.menuDeLaSemaine)
+    this.storage.set(this.utility.localstorage['menu de la semaine'], this.menuDeLaSemaine);
 
   }
 
-  async saveMenuToLocalStorage(newMenu : MenuDelaSemaine){
+  async postMenu(newMenu : MenuDelaSemaine){
 
     const menu = await this.storage.get(this.utility.localstorage['menu de la semaine']);
     const lastMenu : MenuDelaSemaine = await menu.find((result) => {

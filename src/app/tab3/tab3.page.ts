@@ -863,6 +863,11 @@ export class Tab3Page implements OnInit {
     }
 
   }
+
+  async updateArticlesId(){
+    await this.articleService.updateAllArticlesId();
+    this.utility.popupInformation('Ids modifiés. Il faut maintenant les envoyées sur FireBase')
+  }
  
 
 }

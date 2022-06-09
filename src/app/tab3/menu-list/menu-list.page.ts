@@ -20,7 +20,7 @@ export class MenuListPage implements OnInit {
   }
 
   async initialiseMenu(){
-    const menus : MenuDelaSemaine [] = await this.menuService.getMenuFromLocaoStorage()
+    const menus : MenuDelaSemaine [] = await this.menuService.getMenus();
     this.menus = this.menuService.sortMenuByDate(menus)
   }
 

@@ -53,7 +53,7 @@ export class PlatAddPage implements OnInit {
   async loadIngredient(){
     const articleCode = await this.formgroup.get('ingredient').value
     const quantite = await this.formgroup.get('quantite').value
-    const ingredientDetail = await this.articleService.searchArticleByArticleCode(articleCode)
+    const ingredientDetail = await this.articleService.getArticleByArticleCode(articleCode)
     ingredientDetail.quantite = quantite
     await this.ingredients.push(ingredientDetail)
     await this.ListeCodeArticle.push(articleCode)
@@ -140,7 +140,7 @@ export class PlatAddPage implements OnInit {
     const prix = await this.platsService.calculePrixTotalPlat(plat);
     plat.prix = prix
     
-    await this.platsService.setPlatToLocalStorage(plat)
+    await this.platsService.postPlat(plat)
     this.utility.goToUrl('tab3','plats');
     
   }

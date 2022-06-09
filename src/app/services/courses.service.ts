@@ -55,7 +55,7 @@ export class CoursesService {
   async postCourse(course : Courses){
     
     const courses : Array<Courses> = await this.getCourses();
-    const index = await this.getIndexCourse(course);
+    const index = await this.getCourseIndex(course);
     
     if(course.firebase){
       course.isModified = true;
@@ -73,7 +73,7 @@ export class CoursesService {
 
   }
 
-  async getIndexCourse(course : Courses){
+  async getCourseIndex(course : Courses){
     const courses : Array<Courses> = await this.getCourses();
     return await courses.findIndex(s => s.id === course.id);
   }
@@ -83,14 +83,22 @@ export class CoursesService {
     const courses : Array<Courses> = await this.getCourses();
     const ifCourseExiste = await this.searchCourseById(course);
 
+    
+    if(ifCourseExiste.length === 1){
+
+      const index = await this.getCourseIndex(course);
+      courses.splice(index,1);
+      courses.push(course);
+
+    }
     if(ifCourseExiste.length === 0){
 
-      const index = await this.getIndexCourse(course);
-      course[index] = course;
-
-    }else{
-
       this.utility.popupInformation('La course n\'existe pas');
+
+    }
+    if(ifCourseExiste.length > 1){
+
+      this.utility.popupInformation('Attention !  doublon d\'Id de course');
 
     }
 
@@ -156,7 +164,7 @@ export class CoursesService {
   async deleteCourse(course : Courses){
 
     const courses : Array<Courses> = await this.getCourses();
-    const index = await this.getIndexCourse(course)
+    const index = await this.getCourseIndex(course)
     courses[index].isDeleted = true;
     // courses.splice(index,1)
     await this.postCourses(courses)

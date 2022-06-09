@@ -52,7 +52,6 @@ export class CourseDetailsPage implements OnInit {
     // Init setting
     const settings = await this.settingInit();
     this.settings = settings;
-
   }
 
   private async settingInit(){
@@ -93,6 +92,21 @@ export class CourseDetailsPage implements OnInit {
       var difference = (montantCourse) - (this.settings.budget)
       this.utility.popupInformation('Vous avez dépasser votre budget de ' + difference + ' xpf')
     }
+  }
+
+  async checkBox(article : Liste){
+
+    const courses : Array<Courses> = await this.courseService.getCourses();
+    const articleIndex = await courses[this.courseId].liste.findIndex(listes => listes.articleId === article.articleId);
+    courses[this.courseId].liste[articleIndex].actif = courses[this.courseId].liste[articleIndex].actif;
+
+    if(courses[this.courseId].firebase){
+      courses[this.courseId].isModified = true;
+    }
+
+    this.courseService.postCourses(courses);
+    await this.getCourse();
+
   }
 
   async clickCheckBox(index : number){
@@ -285,10 +299,15 @@ export class CourseDetailsPage implements OnInit {
             courses[index].liste[indexList].quantite = data.quantite;
             courses[index].liste[indexList].actif = data.actif;
             this.courseDetails = []
+            if(courses[index].firebase){
+              courses[index].isModified = true;
+            }
             this.courseDetails = courses[index].liste
             await this.courseService.postCourses(courses);
-            await this.calculeTotal();           
+            await this.calculeTotal();
 
+            this.articleService.verifieSiPrixDifferent(articleSelected, data.prixUnitaire);
+            
           }
         }
       ]
@@ -402,21 +421,30 @@ export class CourseDetailsPage implements OnInit {
                 magasin : this.course.magasin
               }
 
-              const response = await this.articleService.postArticle(articleNew);
+              this.utility.spinner(true);
 
-              this.courseDetails.push({
-                articleId : response.article.code,
-                libelle : response.article.libelle,
-                quantite : 1,
-                prixUnitaire : response.article.prix,
-                actif : false
-              });
+              await this.articleService.postArticle(articleNew);
 
-              this.course.liste = this.courseDetails;
-              await this.courseService.postCourse(this.course);
-              this.calculeTotal();
+              setTimeout(async() => {
+                  
+                const articleResult = await this.articleService.getArticleByBarreCode(barreCode); 
 
-  
+                this.courseDetails.push({
+                  articleId : articleResult.code,
+                  libelle : articleResult.libelle,
+                  quantite : 1,
+                  prixUnitaire : articleResult.prix,
+                  actif : false
+                });
+
+                this.course.liste = this.courseDetails;
+                await this.courseService.postCourse(this.course);
+                this.calculeTotal();
+
+                this.utility.spinner(false);
+
+              }, 1500);
+              
             }
           }
         ]
@@ -446,12 +474,12 @@ export class CourseDetailsPage implements OnInit {
   private async postArticleByBarreCode3(){
 
       const barreCode = await this.barreCodeService.scanneBarreCode();
-      const article = await this.articleService.searchArticleByBarreCode(barreCode);
+      const article = await this.articleService.getArticleByBarreCode(barreCode);
       
     if(article === null || article === undefined){
 
-      await this.articleService.postArticleByBarreCode(barreCode, true);
-      const article : Articles = await this.articleService.searchArticleByBarreCode(barreCode);
+      await this.articleService.popUpPostArticleByBarreCode(barreCode);
+      const article : Articles = await this.articleService.getArticleByBarreCode(barreCode);
 
       window.alert(article.libelle)
         
@@ -588,7 +616,7 @@ export class CourseDetailsPage implements OnInit {
 
   async insertPlat(){
 
-    const platsBrute : Array<Plats> = await this.platsService.getPlatFromLocalStorage()
+    const platsBrute : Array<Plats> = await this.platsService.getPlats()
     const plats = await this.platsService.sortByLibelleFamilleArticle(platsBrute)
     var radioOption : Array<AlertInput> = [];
     
@@ -640,10 +668,10 @@ export class CourseDetailsPage implements OnInit {
       articlePlat.push(result)
     }
 
-    var radioOption : Array<AlertInput> = [];
+    var inputsOptions : Array<AlertInput> = [];
     
     for(let article of articlePlat){
-      radioOption.push({
+      inputsOptions.push({
         type : 'checkbox',
         name : article.code,
         label : article.libelle,
@@ -655,7 +683,7 @@ export class CourseDetailsPage implements OnInit {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Décocher les articles que vous ne souhaitez pas ajouter',
-      inputs: radioOption,
+      inputs: inputsOptions,
       buttons: [
         {
           text: 'Annuler',
@@ -679,7 +707,7 @@ export class CourseDetailsPage implements OnInit {
             }
 
             this.course.liste = this.courseDetails;
-            this.courseService.putCourse(this.course);
+            await this.courseService.putCourse(this.course);
             this.calculeTotal();
 
           }
@@ -693,47 +721,47 @@ export class CourseDetailsPage implements OnInit {
 
   async insertMenu(){
 
-    const menusInfo : Array<MenuDelaSemaine> = await this.menuService.getMenuFromLocaoStorage()
+    const menusInfo : Array<MenuDelaSemaine> = await this.menuService.getMenus()
     const semaineEnCours = await this.utility.getDateDebutetDateDeFinDeSemaine()
     const index = await menusInfo.findIndex((data : MenuDelaSemaine) => {
       return data.dateDebut === semaineEnCours.dateDebut && data.dateFin === semaineEnCours.dateFin
     })
 
-    const articlesInfo : Array<Articles> = await this.articleService.getArticles()
+    const articles : Array<Articles> = await this.articleService.getArticles()
     const platSemaineEnCours : Array<Plats> = []
     
     if(menusInfo[index].lundi != ''){
-      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].lundi)
+      const plat = await this.platsService.getPlatByLibelle(menusInfo[index].lundi)
       platSemaineEnCours.push(plat)
       this.chooseArticle(plat, 'lundi')
     }
     if(menusInfo[index].mardi != ''){
-      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].mardi)
+      const plat = await this.platsService.getPlatByLibelle(menusInfo[index].mardi)
       platSemaineEnCours.push(plat)
       this.chooseArticle(plat,'mardi')
     }
     if(menusInfo[index].mercredi != ''){
-      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].mercredi)
+      const plat = await this.platsService.getPlatByLibelle(menusInfo[index].mercredi)
       platSemaineEnCours.push(plat)
       this.chooseArticle(plat, 'mercredi')
     }
     if(menusInfo[index].jeudi != ''){
-      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].jeudi)
+      const plat = await this.platsService.getPlatByLibelle(menusInfo[index].jeudi)
       platSemaineEnCours.push(plat)
       this.chooseArticle(plat, 'Jeudi')
     }
     if(menusInfo[index].vendredi != ''){
-      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].vendredi)
+      const plat = await this.platsService.getPlatByLibelle(menusInfo[index].vendredi)
       platSemaineEnCours.push(plat)
       this.chooseArticle(plat, 'Vendredi')
     }
     if(menusInfo[index].samedi != ''){
-      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].samedi)
+      const plat = await this.platsService.getPlatByLibelle(menusInfo[index].samedi)
       platSemaineEnCours.push(plat)
       this.chooseArticle(plat, 'Samedi')
     }
     if(menusInfo[index].dimanche != ''){
-      const plat = await this.platsService.searchPlatByLibelle(menusInfo[index].dimanche)
+      const plat = await this.platsService.getPlatByLibelle(menusInfo[index].dimanche)
       platSemaineEnCours.push(plat)
       this.chooseArticle(plat, 'Dimanche')
     }

@@ -311,7 +311,36 @@ export class UtilityService {
     await this.storage.set(localStorageName, values);
   }
 
+  spinner(enAttente : boolean){
 
+    /* 
+    1- Rajouter une <div id="spinner"></div>
+
+    2- CSS à rajouter sur la page
+    #spinner{
+      // background-color: yellow;
+      position: fixed; z-index: 9;
+      top: 45%; left: 45%;
+  }
+  
+  .displayBackground{
+      background: gray;
+      opacity: 1;
+  } */
+
+    const spinnerElement = document.getElementById('spinner');
+    const bodyElement = document.getElementById('body-display');
+    
+    if(enAttente){
+      spinnerElement.innerHTML = "<ion-spinner name='lines-small'></ion-spinner>";
+      bodyElement.classList.add('displayBackground')
+    }
+    
+    if(!enAttente){
+      spinnerElement.innerHTML = '';
+      bodyElement.classList.remove('displayBackground')
+    }
+  }
 
 
 

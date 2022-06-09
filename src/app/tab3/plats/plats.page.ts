@@ -45,7 +45,7 @@ export class PlatsPage implements OnInit {
 
 
   async getPlats(){
-    const plats :Array<Plats> = await this.platsService.getPlatFromLocalStorage();
+    const plats :Array<Plats> = await this.platsService.getPlats();
     return plats;
   }
 
@@ -64,7 +64,7 @@ export class PlatsPage implements OnInit {
 
   private async setTotal(){
 
-    const platsLS = await this.platsService.getPlatFromLocalStorage();
+    const platsLS = await this.platsService.getPlats();
     const plats = await this.platsService.sortByLibelleFamilleArticle(platsLS)
     const platsWithPrix : Plats[] = [];
     for(let plat of plats){
@@ -89,7 +89,7 @@ export class PlatsPage implements OnInit {
 
   async supprimerPlat(plat : Plats){
     
-    const plats : Array<Plats> = await this.platsService.getPlatFromLocalStorage();
+    const plats : Array<Plats> = await this.platsService.getPlats();
     const index = await plats.findIndex(result => result.libelle === plat.libelle)
     plats[index].isDeleted = true;
     this.storage.set(this.utility.localstorage.Plats, plats)

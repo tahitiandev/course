@@ -17,7 +17,7 @@ export class ArticleListPage implements OnInit {
 
   constructor(private storage : Storage,
     private alertController: AlertController,
-    private u : UtilityService,
+    private utility : UtilityService,
     private articleService : ArticlesService,
     private nav : NavController,
     private barreCodeService : BarreCodeService) {}
@@ -40,7 +40,7 @@ export class ArticleListPage implements OnInit {
       });
 
       // Charger les settings
-      const settings : Settings = await this.storage.get(this.u.localstorage.Setting)
+      const settings : Settings = await this.storage.get(this.utility.localstorage.Setting)
       this.settings = await settings
 
       // Charger la liste des magasins
@@ -98,7 +98,7 @@ export class ArticleListPage implements OnInit {
         text: 'Ok',
         handler: async (result : Articles) => {
 
-          var articles = await this.storage.get(this.u.localstorage.articles);
+          var articles = await this.storage.get(this.utility.localstorage.articles);
           var article : Articles = await articles.find(s => {
             return s.code === result.code;
           })
@@ -108,7 +108,7 @@ export class ArticleListPage implements OnInit {
           article.prix = result.prix;
           article.barreCode = result.barreCode
 
-          await this.articleService.updateArticle(article)
+          await this.articleService.putArticle(article)
           await this.getArticle()
           await this.spinner(false)
 
@@ -153,14 +153,14 @@ export class ArticleListPage implements OnInit {
           
           article.magasin = result
           
-          const articles : Articles [] = await this.storage.get(this.u.localstorage.articles);
+          const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
           const index =  await articles.findIndex(s => {
             return s.code === article.code
           })
 
           articles[index] = article
 
-          this.storage.set(this.u.localstorage.articles, articles).then(() => {
+          this.storage.set(this.utility.localstorage.articles, articles).then(() => {
             this.getArticle().then(() => {
               this.spinner(false)
             })
@@ -207,7 +207,7 @@ export class ArticleListPage implements OnInit {
         text: 'Ok',
         handler: async (result : Articles) => {
 
-          var articles : Array<Articles> = await this.storage.get(this.u.localstorage.articles);
+          var articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles);
           
           if(result.code !== article.code){
 
@@ -220,7 +220,7 @@ export class ArticleListPage implements OnInit {
               articles[index].isModified = true
             }
 
-            await this.storage.set(this.u.localstorage.articles, articles);
+            await this.storage.set(this.utility.localstorage.articles, articles);
             await this.getArticle()
             await this.spinner(false);
 
@@ -241,15 +241,15 @@ export class ArticleListPage implements OnInit {
       const index = await articles.findIndex(s => s.code === article.code)
       articles[index].barreCode = barreCode.toString();
 
-      await this.storage.set(this.u.localstorage.articles, articles)
-      await this.u.popupInformation('Le code barre a bien été renseigné');
+      await this.storage.set(this.utility.localstorage.articles, articles)
+      await this.utility.popupInformation('Le code barre a bien été renseigné');
       await this.getArticle();
       await this.spinner(false)
 
     }
     
     private async getFamilleQuiOntDesArticles(){
-      const articles : Articles [] = await this.storage.get(this.u.localstorage.articles);
+      const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
       const codeFamille = [];
       for(let article of articles){
         codeFamille.push(article.familleCode)
@@ -257,7 +257,7 @@ export class ArticleListPage implements OnInit {
       var uniqueCodeFamille = [...new Set(codeFamille)]
       const familles : Familles [] = [];
       for(let code of uniqueCodeFamille){
-        var famille = await this.articleService.searchFamilleByCode(code)
+        var famille = await this.articleService.getFamilleByCode(code)
         familles.push(famille)
       }
 
@@ -304,7 +304,7 @@ export class ArticleListPage implements OnInit {
       text: 'Ok',
       handler: async (newArticle : Articles) => {
 
-        const articles : Articles [] = await this.storage.get(this.u.localstorage.articles)
+        const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles)
         var articleTemp : Articles [] = [];
         
         for(let article of articles){
@@ -318,7 +318,7 @@ export class ArticleListPage implements OnInit {
           magasin : this.settings.magasinParDefaut
         })
 
-        this.storage.set(this.u.localstorage.articles, articleTemp).then(() => this.getArticle())
+        this.storage.set(this.utility.localstorage.articles, articleTemp).then(() => this.getArticle())
         
           
         }
@@ -345,7 +345,7 @@ export class ArticleListPage implements OnInit {
       const familles = await this.getFamilleQuiOntDesArticles()
       this.familles = familles;
       
-      const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
+      const articlesLS : Articles[] = await this.storage.get(this.utility.localstorage.articles);
       var groupByArticle : Articles[] = []
 
 
@@ -415,7 +415,7 @@ export class ArticleListPage implements OnInit {
 
       async modifierFamilleArticle(article : Articles){
 
-        const familles : Array<Familles> = this.articleService.orderByLibelleFamille(await this.storage.get(this.u.localstorage['famille d\'articles']));
+        const familles : Array<Familles> = this.articleService.orderByLibelleFamille(await this.storage.get(this.utility.localstorage['famille d\'articles']));
 
         var inputOption : Array<AlertInput> = [];
 
@@ -450,7 +450,7 @@ export class ArticleListPage implements OnInit {
               article.familleCode = result
               article.familleLibelle = familleInfo.libelle
 
-              await this.articleService.updateArticle(article)       
+              await this.articleService.putArticle(article)       
               await this.getArticle()
               await this.spinner(false)
             }
@@ -494,7 +494,7 @@ export class ArticleListPage implements OnInit {
   
       async postArticleByBarreCode(){
         const barreCode = await this.barreCodeService.scanneBarreCode();
-        const article = await this.articleService.searchArticleByBarreCode(barreCode);
+        const article = await this.articleService.getArticleByBarreCode(barreCode);
         if(article === null || article === undefined){
           const alert = await this.alertController.create({
             header: 'Ajouter un article',
@@ -542,7 +542,7 @@ export class ArticleListPage implements OnInit {
           await alert.present();
         }//if
         else{
-          this.u.popupInformation('Le code barre <strong>' + barreCode + '</strong> est déjà associé à l\'article ' + article.libelle)
+          this.utility.popupInformation('Le code barre <strong>' + barreCode + '</strong> est déjà associé à l\'article ' + article.libelle)
         }
       }
 
