@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Articles, FamilleArticle } from '../models/articles';
+import { Articles, Familles } from '../models/articles';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from './utility.service';
 import { CodeArticle } from '../models/plats';
 import { Deleted } from '../models/deleted';
 import { FirebaseService } from './firebase.service';
-import { of } from 'rxjs';
+import { AlertController } from '@ionic/angular';
+import { CreerArticleAPartirDuCodeBarreResponse } from '../models/creerArticleAPartirDuCodeBarreResponse';
+import { Settings } from '../models/setting';
+import { Liste } from '../models/courses';
 
 @Injectable({
   providedIn: 'root'
@@ -14,497 +17,184 @@ export class ArticlesService {
 
   constructor(private storage : Storage,
               private utility : UtilityService,
-              private firebaseService : FirebaseService) { }
+              private firebaseService : FirebaseService,
+              private alertController: AlertController) { }
 
-    private articles : Articles [] = [
-    {
-      code : 'FLORA',
-      libelle : 'Oranges',
-      prix : 100,
-      firebase : false
-    },
-    {
-      code : 'FLTOM',
-      libelle : 'Tomates',
-      prix : 10,
-      firebase : false
-    },
-    {
-      code : 'FLCAR',
-      libelle : 'Carrotte',
-      prix : 500,
-      firebase : false
-    },
-    {
-      code : 'FLSALA',
-      libelle : 'Salade',
-      prix : 500,
-      firebase : false
-    },
-    {
-      code : 'FLAUBER',
-      libelle : 'Aubergines',
-      prix : 500,
-      firebase : false
-    },
-    {
-      code : 'FLPOIV',
-      libelle : 'Poivron',
-      prix : 500,
-      firebase : false
-    },
-    {
-      code : 'VCJAM',
-      libelle : 'Jambon',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'VCLAR',
-      libelle : 'Lardon',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'VCRACL',
-      libelle : 'Fromage à raclette',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'VCSAUON',
-      libelle : 'Saucisson',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'VCSAUFU',
-      libelle : 'Saumon fumé',
-      prix : 109,
-      firebase : false
-    },
-    {
-      code : 'BOILAI',
-      libelle : 'Lait Vai Ora',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'BOICOC',
-      libelle : 'Coca',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'BOIVOLF',
-      libelle : 'Volvic aux fruits',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'BOIVAI',
-      libelle : 'Vaimato',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'VIANSTE',
-      libelle : 'Steck',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'VIANTRAV',
-      libelle : 'Travers de porc',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'VIANSAUC',
-      libelle : 'Saucisse',
-      prix : 95,
-      firebase : false
-    },
-    {
-      code : 'VIANPOUL',
-      libelle : 'Poulet',
-      prix : 95,
-      firebase : false
-    }
-  ];
+  private articles : Array<Articles> = [];
+  private settings : Settings;
+  private familles : Array<Familles> = [];
 
-  private famille : FamilleArticle[] = [
-    {
-      code : 'CON',
-      libelle : 'Congelé',
-      firebase : false
-    },
-    {
-      code : 'BOI',
-      libelle : 'Boisson',
-      firebase : false
-    },
-    {
-      code : 'PDJ',
-      libelle : 'Petit déjeuner',
-      firebase : false
-    },
-    {
-      code : 'OUT',
-      libelle : 'Outillage',
-      firebase : false
-    },
-    {
-      code : 'FRIA',
-      libelle : 'Friandise',
-      firebase : false
-    },
-    {
-      code : 'BEB',
-      libelle : 'Article bébé',
-      firebase : false
-    },
-    {
-      code : 'FRU',
-      libelle : 'Fruits',
-      firebase : false
-    },
-    {
-      code : 'LEG',
-      libelle : 'Légumes',
-      firebase : false
-    },
-    {
-      code : 'VIAN',
-      libelle : 'Viandes',
-      firebase : false
-    },
-    {
-      code : 'MUL',
-      libelle : 'Multi-médias',
-      firebase : false
-    },
-    {
-      code : 'COUV',
-      libelle : 'Couverts',
-      firebase : false
-    },
-    {
-      code : 'LIV',
-      libelle : 'Papeterie',
-      firebase : false
-    },
-    {
-      code : 'LESSI',
-      libelle : 'Lessives',
-      firebase : false
-    },
-    {
-      code : 'MENAG',
-      libelle : 'Produits ménagers',
-      firebase : false
-    },
-    {
-      code : 'BAIN',
-      libelle : 'Articles de bain (ex savons)',
-      firebase : false
-    },
-    {
-      code : 'CHAR',
-      libelle : 'Charcuterie',
-      firebase : false
-    },
-    {
-      code : 'REF',
-      libelle : 'Produits réfrigéré',
-      firebase : false
-    }
-  ]
+  async onInit(){
+    const settings : Settings = await this.utility.getSetting();
+    this.settings = settings
+  }
 
-    articlesFromLocalStorage : Articles[];
+  async getFamilles(){
 
-  async generateFamilleArticleId(){
-    const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-    return parseInt(familles[familles.length - 1].code) + 1
+    const familles : Array<Familles> =  await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    const famillesOrderBy : Array<Familles> = await this.sortByCodeFamilleArticle(familles);
+
+    return famillesOrderBy;
+  }
+
+  async generateFamilleId(){
+
+    const familles : Array<Familles> = await this.getFamilles();
+    var id = parseInt(familles[familles.length - 1].code) + 1
+
+    return id.toString();
   }
 
   async generateArticleId(){
-    const articlesLS : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-    const articles : Articles [] = this.sortByArticleCode(articlesLS)
-    return parseInt(articles[articles.length - 1].code) + 1
-  }
 
-  async temp(){
-    const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-    const temp = []
-    var id = 0;
+    const articlesLS : Array<Articles> = await this.getArticles();
+    const articles : Array<Articles> = await this.sortByArticleCode(articlesLS);
+    const articleSansErreur : Array<Articles> = await articles.filter(result => result.code !== '[object Promise]');
 
-    for(let famille of familles){
-      temp.push({
-        old : famille.code,
-        new : id.toString()
-      })
+    if(articleSansErreur.length > 0){
 
-      id = id +1
-    }
+      return parseInt(articleSansErreur[articleSansErreur.length - 1].code) + 1
 
-    this.storage.set('temp', temp)
+    }else{
 
-  }
-
-  async modifyFamilleArticleIdByNumber(){
-    const familles : FamilleArticle [] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-    const famillesNew : FamilleArticle [] = [];
-    var index = 0;
-    for(let famille of familles){
-      var isModified = false;
-      if(famille.isModified){
-        isModified = true
-      }
-
-      famillesNew.push({
-        code : index.toString(),
-        libelle : famille.libelle,
-        firebase : famille.firebase,
-        isModified : true,
-        documentId : famille.documentId
-      })
-      index = index + 1
-    }
-    
-    this.storage.set(this.utility.localstorage['famille d\'articles'], famillesNew)
-
-  }
-
-  async modifyArticleId(){
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-    const articlesNew : Articles [] = [];
-    var id = 0;
-
-    for(let article of articles){
-
-      articlesNew.push({
-        code : id.toString(),
-        libelle : article.libelle,
-        prix : article.prix,
-        prixModifier : article.familleLibelle == undefined ? 0 : article.prixModifier,
-        quantite : article.familleLibelle == undefined ? 1 : article.quantite,
-        firebase : article.firebase,
-        isModified : article.isModified == undefined ? false : article.isModified,
-        documentId : article.documentId,
-        familleCode : article.familleCode == undefined ? "" : article.familleCode,
-        familleLibelle : article.familleLibelle == undefined ? "" : article.libelle
-      })
-
-      id = id + 1
-    }
-
-    this.storage.set(this.utility.localstorage.articles, articlesNew)
-  }
-
-  async modifyFamilleCodeForeachArticle(){
-
-    // Get all articles
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-    // Get map old articleId and new articleId
-    const temp = await this.storage.get('temp');
-    
-    var articlesNew : Articles [] = [];
-
-    const articleDivers = ['FLA','VCJ','VCL','VCR','FLC','FLP','VCS','FLS','SK1','FLO','FLT'];
-
-    for(let article of articles){
-
-      for(let tmp of temp){
-        if(tmp.old.substring(0,3) === article.code.substring(0,3)){
-          articlesNew.push({
-            code : article.code,
-            libelle : article.libelle,
-            prix : article.prix,
-            prixModifier : article.familleLibelle == undefined ? 0 : article.prixModifier,
-            quantite : article.familleLibelle == undefined ? 1 : article.quantite,
-            firebase : article.firebase,
-            isModified : article.isModified == undefined ? false : article.isModified,
-            documentId : article.documentId,
-            familleCode : tmp.new,
-            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle
-          })
-        }
-      }
-
-      for(let div of articleDivers){
-        if(div === article.code.substring(0,3)){
-          articlesNew.push({
-            code : article.code,
-            libelle : article.libelle,
-            prix : article.prix,
-            prixModifier : article.familleLibelle == undefined ? 0 : article.prixModifier,
-            quantite : article.familleLibelle == undefined ? 1 : article.quantite,
-            firebase : article.firebase,
-            isModified : article.isModified == undefined ? false : article.isModified,
-            documentId : article.documentId,
-            familleCode : '20',
-            familleLibelle : article.familleLibelle == undefined ? "" : article.libelle
-          })
-        }
-      }
+      return 0
 
     }
-    this.storage.set(this.utility.localstorage.articles, articlesNew)
-
   }
+
   async setDefaultArticleData(){
-    await this.storage.set(this.utility.localstorage.articles, this.articles)
+
+    await this.postArticles(this.articles);
+    
   }
+  
   async setDefaultFamilleArticleData(){
-    await this.storage.set(this.utility.localstorage['famille d\'articles'], this.famille)
+    
+    await this.postFamilles(this.familles);
+
   }
 
-  async updateArticle(newArticle : Articles){
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-    var articleUpdate : Articles [] = [];
+  async putArticle(article : Articles){
 
-    for(let article of articles){
-
-      if(article.code != newArticle.code){
-        articleUpdate.push(article)
-      }
-      if(article.code === newArticle.code){
-        articleUpdate.push(newArticle)
-      }
+    const articles : Array<Articles> = await this.getArticles();
+    const index = await articles.findIndex(articles =>  articles.code === article.code && articles.documentId === article.documentId);
+    
+    if(article.firebase){
+      article.isModified = true;
     }
-    this.storage.set(this.utility.localstorage.articles, articleUpdate)
+    articles.splice(index,1);
+    articles.push(article);
+    const result = this.postArticles(articles);
+
+    const response = {
+      all : result,
+      article : article
+    }
+
+    return response;
+
   }
 
-  async getArticleFromLocalStorage (){
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles)
+  async getArticles(){
+
+    const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles)
+    const articlesOrderBy : Array<Articles> = await this.sortByArticleCode(articles)
+
+    return articlesOrderBy;
+  }
+  
+  async getArticleIndex(article : Articles){
+    const articles = await this.getArticles();
+    const index = await articles.findIndex(articles => articles === article);
+    return index;
+  }
+
+  async postArticles(articles : Array<Articles>){
+
+    await this.utility.saveToLocalStorage(this.utility.localstorage.articles, articles);
+    return this.getArticles();
+
+  }
+
+  async postArticle(article : Articles){
+
+    const articles = await this.getArticles();
+    articles.push(article);
+
+    const result = await this.postArticles(articles);
+    const index = await this.getArticleIndex(article);
+
+    const response = {
+      all : result,
+      article : result[index]
+    };
+
+    return response;
+  }
+
+  async putFamille(famille : Familles){
+
+    const familles : Array<Familles> = await this.getFamilles();
+    const index = await familles.findIndex(familles => familles.code === famille.code && familles.documentId === famille.documentId);
+    familles[index] = famille;
+
+    if(famille.firebase){
+      familles[index].isModified = true;
+    }
+
+    await this.postFamilles(familles);
+
+    return familles;
+
+  }
+
+  async deleteArticle(articleDeleted : Articles){ 
+
+    const articles : Array<Articles> = await this.getArticles();
+    const index = await articles.findIndex(s => s.code === articleDeleted.code);
+    
+    articles[index].isDeleted = true;
+    await this.postArticles(articles);
+
     return articles;
-  }
-
-  async setArticleRealDataToLocalStorage(newArticle : Articles){
-
-    var articles : Articles [] = [];
-    const articlesLS = await this.getArticleFromLocalStorage();
-
-    if(articlesLS){
-      for(let article of articlesLS){
-        if(article.code != newArticle.code){
-          await articles.push(article)
-        }
-      }
-
-      await articles.push(newArticle)
-      await this.storage.set(this.utility.localstorage.articles, articles)
-
-    }
-  }
-
-  async setFamilleArticleRealDataToLocalStorage(familleArticle : FamilleArticle){
-    const temp : FamilleArticle[] = [];
-
-    const familles = await this.storage.get(this.utility.localstorage['famille d\'articles'])
-
-    for(let famille of familles){
-      if(famille.code != familleArticle.code){
-        await temp.push(famille)
-      }
-      if(famille.code === familleArticle.code){
-
-        const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code)
-
-        const newFamilleArticle : FamilleArticle = {
-          code : familleArticle.code.toUpperCase(),
-          libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle),
-          firebase : false,
-          isModified : familleInfo.isModified,
-          documentId : familleInfo.documentId
-        }
-
-        if(familleInfo.firebase){
-          newFamilleArticle.isModified =  true;
-        }else{
-          newFamilleArticle.isModified = false;
-        }
-
-        await temp.push(newFamilleArticle)
-        
-      }
-    }
-
-    this.storage.set(this.utility.localstorage['famille d\'articles'], temp)
 
   }
 
-  async deleteArticle(articleDeleted : Articles){
+  async deleteFamille(famille : Familles){
 
-    const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
-
-    // Mise àjour dans le localstorage
-    const articlesNew : Articles [] = [];
-    for(let article of articles){
-      if(article.code != articleDeleted.code){
-        articlesNew.push(article)
-      }
-    }
-    this.storage.set(this.utility.localstorage.articles, articlesNew);
-
-    // Mise à jour sur firebase (via localstorage : deleted)
-    const articleInfo = await this.searchArticleByArticleCode(articleDeleted.code);
-    this.firebaseService.postToLocalStorageDeleted(articleInfo.firebase, this.utility.localstorage.articles, articleInfo.documentId);
-
-  }
-
-  async deleteFamilleArticle(familleArticle : FamilleArticle){
-    const familles : FamilleArticle[] = await this.storage.get(this.utility.localstorage['famille d\'articles']);
-    const famillesNew : FamilleArticle [] = [];
-    for(let famille of familles){
-      if(famille.code != familleArticle.code){
-        famillesNew.push(famille)
-      }
-    }
+    const familles : Array<Familles> = await this.storage.get(this.utility.localstorage['famille d\'articles']);
+    const index = await familles.findIndex(s => s.code === famille.code);
+    familles[index].isDeleted = true;
     
-    this.storage.set(this.utility.localstorage['famille d\'articles'], famillesNew)
-    
-    // Supprimer dans firebase
-    const familleInfo : FamilleArticle = await this.searchFamilleByCode(familleArticle.code);
-    this.firebaseService.postToLocalStorageDeleted(familleInfo.firebase, this.utility.localstorage['famille d\'articles'], familleInfo.documentId);
+    const result = await this.postFamilles(familles)
+
+    return result;
     
   }
 
-  async addNewFamilleArticleRealDataToLocalStorage(familleArticle : FamilleArticle){
-    const temp : FamilleArticle[] = [];
+  async postFamilles(familles : Array<Familles>){
 
-    const familles = await this.storage.get(this.utility.localstorage['famille d\'articles'])
+    await this.storage.set(this.utility.localstorage['famille d\'articles'], familles);
+    return familles;
+  }
 
-    for(let famille of familles){
-        await temp.push(famille)
-    }
-    
-    const newFamilleArticle : FamilleArticle = {
-      code : familleArticle.code.toUpperCase(),
-      libelle : this.utility.premierLettreEnMajuscule(familleArticle.libelle),
-      firebase : false
-    }
-    await temp.push(newFamilleArticle)
+  async postFamille(famille : Familles){
 
-    this.storage.set(this.utility.localstorage['famille d\'articles'], temp)
+    const familles : Array<Familles> = await this.getFamilles();
+    familles.push(famille)
+    await this.postFamilles(familles);
+
+    return await familles;
 
   }
   
-  async searchFamilleByCode(code : string){
+  async getFamilleByCode(code : string){
 
-    const famille = await this.getFamilleArticleFromLocalStorage();
-    const result = await famille.find((famille : FamilleArticle) => {
-      return famille.code == code
-    })
+    const famille = await this.getFamilles();
+    const result = await famille.find((famille : Familles) => famille.code == code);
 
     return result;
 
-  }
-
-  async getFamilleArticleFromLocalStorage(){
-    const familles : FamilleArticle [] =  await this.storage.get(this.utility.localstorage['famille d\'articles'])
-    return familles;
   }
 
   // A utiliser uniquement pour la page course-add-page.ts
@@ -513,7 +203,7 @@ export class ArticlesService {
       this.articles = [];
       
       // J'ajoute les données du localstorage
-      const articles = await this.getArticleFromLocalStorage();
+      const articles = await this.getArticles();
       this.articles = articles;
       
       // Init données à renvoyer
@@ -528,7 +218,8 @@ export class ArticlesService {
               prix : article.prix,
               prixModifier : article.prixModifier,
               quantite : articleCode.quantite,
-              firebase : false
+              firebase : false,
+              magasin : this.settings.magasinParDefaut
             }
         }
   
@@ -536,45 +227,30 @@ export class ArticlesService {
     return resultat;
   }
 
-    async searchArticleByArticleCode(articleCode : string){
-      // Je vide articles
-      this.articles = [];
-      
-      // J'ajoute les données du localstorage
-      const articles = await this.getArticleFromLocalStorage();
-      this.articles = articles;
-      
-      // Init données à renvoyer
-      var resultat : Articles;
-  
-      for(let article of this.articles){
-        
-        if(article.code == articleCode){
-            resultat = article
-        }
-  
-      }
+  async getArticleByArticleCode(articleCode : string){
 
-    const plats = await this.storage.get(this.utility.localstorage.Plats)
+    const articles : Array<Articles> = await this.getArticles();
+    const article : Articles = await articles.find(article => article.code === articleCode);
 
-    // Je recherche l'article en question
-    // const result = await this.articles.find((article : Articles) => {
-    //   return article.code === articleCode
-    // })
-
-    // Je retourne le resultat
-    return resultat;
-
+    return article;
   }
 
-  async searchArticleByLibelle(libelle : string){
+  async getArticleByLibelle(libelle : string){
 
-    const articles : Articles [] = await this.getArticleFromLocalStorage()
-    const result : Articles = articles.find((res : Articles) => {
-      return res.libelle == libelle
-    })
+    const articles : Array<Articles> = await this.getArticles();
+    const result : Articles = articles.find((res : Articles) => res.libelle == libelle);
+
     return result
   }
+
+  async getArticleByIdAndLibelle(code : string, libelle : string){
+
+    const articles : Array<Articles> = await this.getArticles();
+    const result : Articles = articles.find((res : Articles) => res.code == code && res.libelle == libelle);
+
+    return result
+  }
+
 
   sortByArticleCode(articles : Array<Articles>){
     return articles.sort((a,b) => {
@@ -589,7 +265,7 @@ export class ArticlesService {
     })
   }
 
-  sortByArticleName(articles : Array<Articles>){
+  orderByArticleName(articles : Array<Articles>){
     return articles.sort((a,b) => {
       let x  = a.libelle.toLowerCase();
       let y  = b.libelle.toLowerCase();
@@ -602,7 +278,7 @@ export class ArticlesService {
     })
   }
 
-  sortByLibelleFamilleArticle(familles:FamilleArticle[]){
+  orderByLibelleFamille(familles:Familles[]){
     return familles.sort((a,b) => {
       let x  = a.libelle.toLowerCase();
       let y  = b.libelle.toLowerCase();
@@ -613,6 +289,158 @@ export class ArticlesService {
       }
       return 0;
     })
+  }
+
+  sortByCodeFamilleArticle(familles:Familles[]){
+    return familles.sort((a,b) => {
+      let x  = parseInt(a.code) ;
+      let y  = parseInt(b.code);
+      if(x < y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
+  }
+
+  async getArticleByBarreCode(barreCode : string){
+
+    const articles : Array<Articles> = await this.getArticles();
+    const article : Articles = await articles.find((articles) => articles.barreCode === barreCode);
+
+    return article;
+  }
+
+  async verifieSiPrixDifferent(articleSelected : Liste, prix : number){
+
+    const article : Articles = await this.getArticleByIdAndLibelle(articleSelected.articleId, articleSelected.libelle);
+    
+    if(prix !== article.prix && !article.articleSpecial){
+
+      const alert = await this.alertController.create({
+        cssClass: 'my-custom-class',
+        header: 'Information - Le prix a été modifié',
+        message: 'Doit-on utiliser ce prix pour vos futus achats ?',
+        buttons: [
+          {
+            text: 'Non',
+            role: 'cancel',
+            cssClass: 'secondary',
+            handler: () => {
+            }
+          }, {
+            text: 'Oui',
+            handler: async () => {
+
+              article.prix = prix;
+              await this.putArticle(article);
+
+            }
+          }
+        ]
+      });
+
+      await alert.present()
+
+    }
+  }
+
+  async popUpPostArticleByBarreCode(barreCode : string){
+    
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      message: 'Aucun article ne correspond au code barre : <strong>' + barreCode + '</strong>. Souhaitez-vous le créer ?',
+      buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.utility.popupInformation('Fin de l\'opération')
+          }
+        }, {
+          text: 'Oui',
+          handler: async () => {
+
+            await this.postArticleAPartirduBarreCode(barreCode);
+
+          }
+        }
+      ]
+    });
+
+    await alert.present()
+  }
+
+  private async postArticleAPartirduBarreCode(codeBarre : string){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Créer un article',
+      inputs: [
+        {
+          name: 'libelle',
+          type: 'text',
+          placeholder : 'Libellé'
+        },
+        {
+          name: 'prix',
+          type: 'number',
+          placeholder : 'Prix'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Créer',
+          handler: async (article : Articles) => {
+
+            
+            var codeArticle = (await this.generateArticleId()).toString();
+
+            const newArticle : Articles = {
+              code : codeArticle,
+              libelle : article.libelle,
+              prix : article.prix ,
+              prixModifier : null,
+              quantite : 1,
+              firebase : false,
+              isModified : false,
+              documentId : null,
+              familleCode : '22',
+              familleLibelle : null,
+              barreCode : codeBarre,
+              magasin : this.settings.magasinParDefaut
+            }
+
+            await this.postArticle(newArticle);
+            
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async updateAllArticlesId(){
+
+    const articles : Array<Articles> = await this.getArticles();
+    var id = 0;
+
+    for(let article of articles){
+      article.code = id.toString();
+      article.isModified = true;
+      id++;
+    }
+
   }
 
 

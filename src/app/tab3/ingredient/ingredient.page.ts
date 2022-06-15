@@ -8,6 +8,7 @@ import { ArticlesService } from 'src/app/services/articles.service';
 import { AlertController } from '@ionic/angular';
 import { AlertInput } from '@ionic/core';
 import { PlatsService } from 'src/app/services/plats.service';
+import { BarreCodeService } from 'src/app/services/barre-code.service';
 
 @Component({
   selector: 'app-ingredient',
@@ -36,7 +37,8 @@ export class IngredientPage implements OnInit {
               private utility : UtilityService,
               private articleService : ArticlesService,
               private alertController: AlertController,
-              private platsservice : PlatsService) { }
+              private platsservice : PlatsService,
+              private barreCodeService : BarreCodeService) { }
 
   ngOnInit() {
     this.loadPlatsFromLocalStorage();
@@ -88,7 +90,7 @@ export class IngredientPage implements OnInit {
 
         if(code.codeArticle === article.code){
 
-          const articless = await this.articleService.searchArticleByArticleCode(code.codeArticle)
+          const articless = await this.articleService.getArticleByArticleCode(code.codeArticle)
           const ingred = {
             codeArticle : code.codeArticle,
             quantite : code.quantite,
@@ -107,96 +109,32 @@ export class IngredientPage implements OnInit {
   }//getIngredient
 
   
-  async deleteArticle(index : number){
+  async deleteArticle(ingredient : CodeArticle){
     
-    var codeArticleCorrige : CodeArticle [] = []
-
-    for(let i = 0; i < this.platDetail.codeArticle.length; i++){
-      if(i != index){
-        await codeArticleCorrige.push(this.platDetail.codeArticle[i])
-      }
-    }
-
-    var platDetailCorrige : Plats = await {
-      libelle : this.libelle,
-      codeArticle : codeArticleCorrige,
-      firebase : false
-    }
-
-    this.ingredients = []
-    this.getIngredient(codeArticleCorrige)
-
-    var platsCorrige : Plats [] = [];
-
-    for(let plat of this.plats){
-
-      if(plat.libelle === this.libelle){
-        platsCorrige.push(platDetailCorrige)
-      }
-
-      if(plat.libelle != this.libelle){
-        platsCorrige.push(plat)
-      }
-
-    }
-
-    this.storage.set(this.utility.localstorage.Plats, platsCorrige)
-
-  }
-
-
-  async deleteArticletest(index : number){
-
-    // 1 - Recherche le plat en cours
-    const plat = await this.plats.find(s => {
-      return s.libelle === this.libelle
+   // ingredients
+    const indexIngredient = await this.ingredients.findIndex(result => {
+      return result.codeArticle === ingredient.codeArticle && result.quantite === ingredient.quantite;
     })
 
+    // platDetail
+    const indexPlatDetail = await this.platDetail.codeArticle.findIndex(result => {
+      return result.codeArticle === ingredient.codeArticle && result.quantite === ingredient.quantite;
+    })
 
-    // 2- Init varaible qui stock les nouveaux ingrédients
-    var newIngredient = [];
-
-    // 3- Ajouter les nouveaux ingédients
-    for(var x = 0; x < plat.codeArticle.length; x++){
-      // On Vérifique qu'on ne prenne bien pas en compte l'ingédient en cours
-      if(x != index){
-        newIngredient.push(plat.codeArticle[x])
-      }
-    }
-
-    // 4- On rajoute le libellé et le prix et le libellé
-    this.ingredients = []
-    this.getIngredient(newIngredient)
-
-    var newCodeArticle : CodeArticle[] = []
-    for(let code of this.ingredients){
-      newCodeArticle.push({
-        codeArticle : code.codeArticle,
-        quantite : code.quantite
-      })
-    }
-
-    // 4- On set le plat avec les nouveaux ingrédients
-    var newPlat : Plats = await {
-      libelle : this.libelle,
-      codeArticle : newCodeArticle,
-      firebase : false
-    }
-
-    // 5- On met à jour le nouveau plat dans la liste complète
-    var newAllPlat : Plats [] = await [];
+    // plats
+    const indexPlat = await this.plats.findIndex(result => {
+      return result.libelle === this.platDetail.libelle
+    })
     
-    for(let plat of this.plats){
-      if(plat.libelle != newPlat.libelle){
-        await newAllPlat.push(plat)
-      }
-      if(plat.libelle === newPlat.libelle){
-        await newAllPlat.push(newPlat)
-      }
-    }
+    this.platDetail.codeArticle.splice(indexPlatDetail,1)
+    this.plats[indexPlat].codeArticle.splice(indexPlat,1)
+    this.ingredients.splice(indexIngredient,1)
 
-    // 6- On met à jour le localstorage
-    await this.storage.set(this.utility.localstorage.Plats, newAllPlat)
+    // Recalcule le prix total du plat
+    var prix = await this.platsservice.calculePrixTotalPlat(this.plats[indexPlat]);
+    this.plats[indexPlat].prix = prix
+    
+    this.storage.set(this.utility.localstorage.Plats, this.plats)
 
   }
 
@@ -215,7 +153,7 @@ export class IngredientPage implements OnInit {
 
   async addIngredient(){
 
-    const articlesToLocalStorage : Articles [] = await this.storage.get(this.utility.localstorage.articles)
+    const articlesToLocalStorage : Array<Articles> = await this.storage.get(this.utility.localstorage.articles)
     const articles = await this.sortByArticleName(articlesToLocalStorage)
     var radioOption : AlertInput [] = [];
     
@@ -267,6 +205,20 @@ export class IngredientPage implements OnInit {
 
   } // addIngredient
 
+  async addIngredientByBarreCode(){
+    const barreCode = await this.barreCodeService.scanneBarreCode()
+    const article = await this.articleService.getArticleByBarreCode(barreCode);
+
+    var newIngredient = {
+      codeArticle : article.code,
+      libelle : article.libelle,
+      prix : article.prix
+    };
+    this.newIngredient = newIngredient
+    this.addIngredientQuantite();
+
+  }
+
   private async addIngredientQuantite(){
 
     const alert = await this.alertController.create({
@@ -299,7 +251,7 @@ export class IngredientPage implements OnInit {
             }
 
             // 1 - Recherche le plat en cours
-            const plat = await this.plats.find(s => {
+            const plat : Plats = await this.plats.find(s => {
                 return s.libelle === this.libelle
             })
 
@@ -307,6 +259,10 @@ export class IngredientPage implements OnInit {
                codeArticle : this.newIngredient.codeArticle,
                quantite : this.newIngredient.quantite
             })
+
+            // Recalcule le prix total du plat
+            var prix = await this.platsservice.calculePrixTotalPlat(plat)
+            plat.prix = prix
 
             if(plat.firebase){
               plat.isModified = true;
@@ -361,16 +317,20 @@ export class IngredientPage implements OnInit {
         {
           type : 'text',
           name : 'codeArticle',
-          value : this.ingredients[index].codeArticle
+          label : 'Code article',
+          value : this.ingredients[index].codeArticle,
+          disabled : true
         },
         {
           type : 'text',
           name : 'libelle',
+          label : 'Libellé',
           value : this.ingredients[index].libelle
         },
         {
           type : 'number',
           name : 'quantite',
+          label : 'Qantité',
           value : this.ingredients[index].quantite
         }
       ],
@@ -384,7 +344,7 @@ export class IngredientPage implements OnInit {
           }
         },
         {
-          text: 'Ok',
+          text: 'Valider',
           handler: async (resultat : any) => {
 
             var codeArticles : CodeArticle [] = [];
@@ -403,7 +363,7 @@ export class IngredientPage implements OnInit {
               }
             }
 
-            const platsInfo = await this.articles.find(s => {
+            const platsInfo = await this.plats.find(s => {
               return s.libelle === this.libelle;
             })
 
@@ -416,15 +376,18 @@ export class IngredientPage implements OnInit {
               documentId : platsInfo.documentId
             }
 
+            // Recalcule le prix total du plat
+            const prix = await this.platsservice.calculePrixTotalPlat(plat)
+            plat.prix = prix;
+
             if(platsInfo.firebase){
               plat.isModified = true;
             }else{
               plat.isModified = false;
             }
             
-
             
-            this.platsservice.updatePlatToLocalStorage(plat)
+            this.platsservice.putPlat(plat)
 
             // 4- On rajoute le libellé et le prix et le libellé
             this.ingredients = []

@@ -9,18 +9,18 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" id="body-display">
   
+  <div id="spinner"></div>
+
   <br>
-
-
 
     <ion-toolbar>
       <ion-searchbar [(ngModel)]="searchValue"></ion-searchbar>
     </ion-toolbar>
 
-    <ion-item-group *ngFor="let famille of familles; let index = index" (click)="toggleArticleDetail(index)">
-      <ion-item-divider>
+    <ion-item-group *ngFor="let famille of familles; let index = index">
+      <ion-item-divider (click)="toggleArticleDetail(index)">
         <ion-label>{{ famille.libelle }}</ion-label>
         <ion-icon slot="end" style="margin-right: 25px;" name="arrow-down-circle-outline"></ion-icon>
       </ion-item-divider>
@@ -30,23 +30,29 @@
         <ion-item-sliding *ngIf="famille.code === article.familleCode">
 
           <ion-item-options side="start">
-            <ion-item-option (click)="pairArticleWithAnBarreCode(article)" color="medium">Associer un code barre</ion-item-option>
+            <ion-item-option (click)="pairArticleWithAnBarreCode(article)" color="medium">Code barre</ion-item-option>
+            <ion-item-option color="medium" (click)="modifierArticleId(article)">Id</ion-item-option>
           </ion-item-options>
 
-          <ion-item button (click)="modifierUnArticle(article)">
+          <ion-item button>
+            <ion-icon *ngIf="article.barreCode != null || article.barreCode != undefined" name="barcode-outline"></ion-icon>
             <ion-label>
-              <h3>{{ article.libelle }} {{ article.barreCode }}</h3>
+              <h3>{{ article.libelle }}</h3>
             </ion-label>
+
             <ion-label>
               <h3 slot="end" style="text-align: right;">{{ article.prix }} xpf</h3>
             </ion-label>
             <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+
+
           </ion-item>
 
           <ion-item-options side="end">
-            <ion-item-option (click)="goToArticleAdd()">Ajouter</ion-item-option>
+            <ion-item-option color="medium" (click)="modifierFamilleArticle(article)">Famille</ion-item-option>
             <ion-item-option color="medium" (click)="modifierUnArticle(article)">Modifier</ion-item-option>
             <ion-item-option color="danger" (click)="deleteArticle(article)">Supprimer</ion-item-option>
+
           </ion-item-options>
 
         </ion-item-sliding>
@@ -54,15 +60,19 @@
       </span>
     </ion-item-group>
 
-
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="this.getArticle()">
+    <ion-fab-button (click)="this.actualiser()" style="opacity: 0.7;">
       <ion-icon name="sync-outline"></ion-icon>
     </ion-fab-button>
     <br>
-    <ion-fab-button (click)="goToArticleAdd()">
+    <ion-fab-button (click)="goToArticleAdd()" style="opacity: 0.7;">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
+    <br>
+    <ion-fab-button (click)="this.postArticleByBarreCode()" style="opacity: 0.7;">
+      <ion-icon name="barcode-outline"></ion-icon>
+    </ion-fab-button>
+    
   </ion-fab> 
 
 </ion-content>

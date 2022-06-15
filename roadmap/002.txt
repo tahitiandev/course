@@ -1,0 +1,5 @@
+- montant des courses à afficher en haut du détail
+- plafond du budget des courses
+- ajouter un article à partir du détail des courses (deux boutons à rajouter)
+ - ajouter à partir d'un code barre
+ - ajouter à partir d'une saisie manuel

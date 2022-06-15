@@ -34,7 +34,23 @@ const routes: Routes = [
   {
     path: 'scanner',
     loadChildren: () => import('./scanner/scanner.module').then( m => m.ScannerPageModule)
+  },  {
+    path: 'article-list',
+    loadChildren: () => import('./article-list/article-list.module').then( m => m.ArticleListPageModule)
+  },
+  {
+    path: 'stats',
+    loadChildren: () => import('./stats/stats.module').then( m => m.StatsPageModule)
+  },
+  {
+    path: 'depense',
+    loadChildren: () => import('./depense/depense.module').then( m => m.DepensePageModule)
+  },
+  {
+    path: 'depense-list',
+    loadChildren: () => import('./depense-list/depense-list.module').then( m => m.DepenseListPageModule)
   }
+
 
 ];
 

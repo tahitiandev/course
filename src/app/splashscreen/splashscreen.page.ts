@@ -13,7 +13,7 @@ export class SplashscreenPage implements OnInit {
   ngOnInit() {
     setTimeout(() => {
       this.route.navigateRoot('tabs')
-    }, 2000);
+    }, 3000);
   }
 
 }

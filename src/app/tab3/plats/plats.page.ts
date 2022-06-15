@@ -5,6 +5,8 @@ import { PlatsService } from 'src/app/services/plats.service';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Articles } from 'src/app/models/articles';
+import { FirebaseService } from 'src/app/services/firebase.service';
+
 
 @Component({
   selector: 'app-plats',
@@ -20,25 +22,31 @@ export class PlatsPage implements OnInit {
               private alertController: AlertController,
               private storage : Storage,
               private utility : UtilityService,
-              private nav : NavController) {
-                this.getPlats()
+              private nav : NavController,
+              private firebase : FirebaseService) {
                }
 
   ngOnInit() {
-    this.getArticle()
-    this.setTotal()
-    this.getPlats()
+    this.onInit();    
+  }
+
+  async onInit(){
+    const plats : Array<Plats> = await this.getPlats();
+    this.plats = plats.filter(s => s.isDeleted !== true)
+
+    const articles : Array<Articles> = await this.getArticle();
+    this.articles = articles;
   }
 
   async getArticle(){
     const articles = await this.storage.get(this.utility.localstorage.articles);
-    this.articles = articles;
-  }  
+    return articles;
+  }
+
 
   async getPlats(){
-    const platsLS = await this.storage.get(this.utility.localstorage.Plats)
-    const plats = await this.platsService.sortByLibelleFamilleArticle(platsLS)
-    this.plats = plats;
+    const plats :Array<Plats> = await this.platsService.getPlats();
+    return plats;
   }
 
   goDetail(libelle : string, autresChemin? : string){
@@ -54,27 +62,14 @@ export class PlatsPage implements OnInit {
     this.plats = plats
   }
 
-  private calculeTotal(plat : Plats){
-    var total : number = 0;
-    
-    for(let article of plat.codeArticle){
-      var articleInfo = this.articles.find(s => {
-        return s.code === article.codeArticle;
-      })
-      total += (articleInfo.prix-0) * (article.quantite-0)
-    }
-    return total;
-  }
-
   private async setTotal(){
 
-    const platsLS = await this.platsService.getPlatFromLocalStorage();
+    const platsLS = await this.platsService.getPlats();
     const plats = await this.platsService.sortByLibelleFamilleArticle(platsLS)
     const platsWithPrix : Plats[] = [];
-
     for(let plat of plats){
 
-      var prix = this.calculeTotal(plat)
+      var prix = await this.platsService.calculePrixTotalPlat(plat)
 
       platsWithPrix.push({
         libelle : plat.libelle,
@@ -92,11 +87,22 @@ export class PlatsPage implements OnInit {
 
   }
 
-  async supprimerPlat(index : number){
+  async supprimerPlat(plat : Plats){
     
-    const platsNew = await this.platsService.deletePlat(index);
-    this.plats = []
-    this.plats = platsNew
+    const plats : Array<Plats> = await this.platsService.getPlats();
+    const index = await plats.findIndex(result => result.libelle === plat.libelle)
+    plats[index].isDeleted = true;
+    this.storage.set(this.utility.localstorage.Plats, plats)
+
+    // plats.splice(index,1)
+    // this.plats = []
+    // this.plats = plats;
+    // this.storage.set(this.utility.localstorage.Plats, plats)
+    // this.firebase.postToLocalStorageDeleted(
+    //   plat.firebase,
+    //   this.utility.localstorage.Plats,
+    //   plat.documentId
+    //   )
 
   } // supprimerPlat
 

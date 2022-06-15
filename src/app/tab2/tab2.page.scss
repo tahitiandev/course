@@ -1,0 +1,68 @@
+#spinner{
+    // background-color: yellow;
+    position: fixed; z-index: 9;
+    top: 45%; left: 45%;
+}
+
+ion-col{
+    // border: 1px solid black;
+    text-align: center;
+    transition-duration: 1s;
+}
+ion-col:hover{
+    transition-duration: 1s;
+    // border-left: 1px solid blue;
+    box-shadow: 0 0 10px black;
+}
+
+img{
+    width: 50%;
+}
+
+.NomDuMenu{
+    font-weight: bold;
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+.ImgDuMenu{
+    padding-top: 4px;
+    padding-bottom: 2px;
+}
+
+.nomTitre h4 {
+    // text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
+    font-weight: bold;
+    color: rgba(51, 53, 54, 0.568);
+}
+
+.art-opacite h2 {
+    // color: rgb(49, 150, 142, 0.5);
+    // color: rgb(79, 41, 247);
+    // text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
+    
+    // Rajout hors style personnalisé
+    font-weight: bold;
+    color: rgb(43, 117, 49);
+}
+
+.art-opacite{
+    height: 100px;
+    padding-top: 10px;
+}
+
+.col-style{
+    // box-shadow: inset 0px 0px 50px 10px rgba(0,0,0,0.54);
+    border: 1px solid rgb(168, 162, 162);
+    border-radius: 10px;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+.nomTitre{
+    border-bottom: 1px solid rgb(168, 162, 162);
+}
+
+.test{
+    
+}

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
-import { Articles, FamilleArticle } from 'src/app/models/articles';
+import { Articles, Familles } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Storage } from '@ionic/storage';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
+import { AlertInput } from '@ionic/core';
 
 @Component({
   selector: 'app-article-list',
@@ -15,17 +16,29 @@ export class ArticleListPage implements OnInit {
 
   constructor(private storage : Storage,
     private alertController: AlertController,
-    private u : UtilityService,
+    private utility : UtilityService,
     private articleService : ArticlesService,
     private nav : NavController,
     private barreCodeService : BarreCodeService) {}
 
     articles : Articles [];
-    familles : FamilleArticle [];
+    familles : Familles [];
     searchValue : string = "";
 
     ngOnInit(){
-      this.getArticle();
+      this.getArticle().then(() => {
+        this.spinner(false)
+      });
+
+      // this.aa()
+    }
+
+    async aa(){
+      const articles: Articles[] = await this.articleService.sortByArticleCode(await this.storage.get('articles'));
+      for(let a of articles){
+          
+        console.log(a.code + ' ' + a.magasin)
+      }
     }
 
     async modifierUnArticle(articles : Articles){
@@ -64,52 +77,39 @@ export class ArticleListPage implements OnInit {
           text: 'Cancel',
           role: 'cancel',
           cssClass: 'secondary',
-        handler: () => {
-        }
-        }, {
+          handler: () => {
+          }
+        },
+        {
+          text: 'Magasin : ' + articles.magasin,
+          cssClass: 'primary',
+          handler: async (result) => {
+            this.modifierMagasin(articles)
+          }
+        },
+        {
         text: 'Ok',
         handler: async (result : Articles) => {
-          var articleAJour : Articles;
 
-          var allArticle = await this.storage.get(this.u.localstorage.articles);
-          var oldDataArticle : Articles = await allArticle.find(s => {
+          var articles = await this.storage.get(this.utility.localstorage.articles);
+          var article : Articles = await articles.find(s => {
             return s.code === result.code;
           })
 
-          if(oldDataArticle.firebase){
-            articleAJour = {
-              code : result.code,
-              libelle : result.libelle,
-              prix : result.prix,
-              prixModifier : oldDataArticle.prixModifier,//
-              quantite : oldDataArticle.quantite, //
-              firebase : true,
-              isModified : true,
-              documentId :oldDataArticle.documentId,
-              familleCode : oldDataArticle.familleCode, //
-              familleLibelle : oldDataArticle.familleLibelle, //
-              barreCode : result.barreCode
-            }
-          }
-          else {
-            articleAJour = {
-              code : result.code,
-              libelle : result.libelle,
-              prix : result.prix,
-              prixModifier : oldDataArticle.prixModifier,//
-              quantite : oldDataArticle.quantite, //
-              firebase : false,
-              isModified : false,
-              documentId :oldDataArticle.documentId,
-              familleCode : oldDataArticle.familleCode, //
-              familleLibelle : oldDataArticle.familleLibelle, //
-              barreCode : result.barreCode
-            }
+          article.code = result.code;
+          article.libelle = result.libelle;
+          article.prix = result.prix;
+          article.barreCode = result.barreCode
+          
+          if(article.firebase){
+            article.isModified = true
           }
 
-            this.articleService.updateArticle(articleAJour).then(() => {
-              this.getArticle()
+          this.articleService.putArticle(article).then(() => {
+            this.getArticle().then(() => {
+              this.spinner(false)
             })
+          })
           
           }
         }
@@ -120,9 +120,135 @@ export class ArticleListPage implements OnInit {
 
     }
 
+    async modifierMagasin(article : Articles){
+
+      const alert = await this.alertController.create({
+        header: 'Modifier l\'article',
+        inputs: [
+        {
+          name: 'magasin',
+          type: 'radio',
+          label : 'Carrefour',
+          value : 'Carrefour'
+        },
+        {
+          name: 'magasin',
+          type: 'radio',
+          label : 'Easy market',
+          value : 'Easy market'
+        },
+        {
+          name: 'magasin',
+          type: 'radio',
+          label : 'Hyper U',
+          value : 'Hyper U'
+        }
+        ],
+        buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+        text: 'Ok',
+        handler: async (result) => {
+          
+          article.magasin = result
+          
+          const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+          const index =  await articles.findIndex(s => {
+            return s.code === article.code
+          })
+
+          articles[index] = article
+
+          this.storage.set(this.utility.localstorage.articles, articles).then(() => {
+            this.getArticle().then(() => {
+              this.spinner(false)
+            })
+          })
+
+        }
+        }
+        ]
+      });
+  
+      await alert.present();
+
+    }
+
+
+    async modifierArticleId(article : Articles){
+
+      const alert = await this.alertController.create({
+        header: 'Modifier l\'article',
+        inputs: [
+        {
+          name: 'code',
+          type: 'text',
+          placeholder: 'Code article',
+          value : article.code
+        }
+        ],
+        buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Modifier la famille',
+          cssClass: 'primary',
+          handler: async (result) => {
+
+          }
+        },
+        {
+        text: 'Ok',
+        handler: async (result : Articles) => {
+
+          var articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
+          
+          if(result.code !== article.code){
+
+            const index = await articles.findIndex((articleResult : Articles)=> {
+              return articleResult.libelle === article.libelle
+            })
+            
+            articles[index].code = result.code
+            if(articles[index].firebase){
+              articles[index].isModified = true
+            }
+
+            this.storage.set(this.utility.localstorage.articles, articles).then(() => {
+              this.getArticle().then(() => {
+                this.spinner(false)
+              })
+            })
+
+          }
+
+          
+        }
+        }
+        ]
+      });
+  
+      await alert.present();
+    }
+
+    private async alertListFamilleArticle(){
+      // await alert.present();
+    }
+
     async pairArticleWithAnBarreCode(articleForm : Articles){
       const barreCode =  await this.barreCodeService.scanneBarreCode()
-      const articles : Articles [] = await this.articleService.getArticleFromLocalStorage()
+      const articles : Articles [] = await this.articleService.getArticles()
       var articlesNew : Articles [] = [];
 
       for(let article of articles){
@@ -142,32 +268,35 @@ export class ArticleListPage implements OnInit {
             familleCode : article.familleCode,
             familleLibelle : article.familleLibelle,
             barreCode : barreCode.toString(),
+            magasin : article.magasin
           }
           articlesNew.push(articleUpdate);
-          alert(article)
         }
       }
-
-
-      this.storage.set(this.u.localstorage.articles, articlesNew)
+      this.storage.set(this.utility.localstorage.articles, articlesNew).then(() => {
+        this.utility.popupInformation('Le code barre a bien été renseigné')
+        this.getArticle()
+      }).catch(e => {
+        alert(e)
+      })
 
 
     }
     
     private async getFamilleQuiOntDesArticles(){
-      const articles : Articles [] = await this.storage.get(this.u.localstorage.articles);
+      const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles);
       const codeFamille = [];
       for(let article of articles){
         codeFamille.push(article.familleCode)
       }
       var uniqueCodeFamille = [...new Set(codeFamille)]
-      const familles : FamilleArticle [] = [];
+      const familles : Familles [] = [];
       for(let code of uniqueCodeFamille){
-        var famille = await this.articleService.searchFamilleByCode(code)
+        var famille = await this.articleService.getFamilleByCode(code)
         familles.push(famille)
       }
 
-      const familleSortByLibelle = await this.articleService.sortByLibelleFamilleArticle(familles)
+      const familleSortByLibelle = await this.articleService.orderByLibelleFamille(familles)
 
       return familleSortByLibelle;
 
@@ -210,7 +339,7 @@ export class ArticleListPage implements OnInit {
       text: 'Ok',
       handler: async (newArticle : Articles) => {
 
-        const articles : Articles [] = await this.storage.get(this.u.localstorage.articles)
+        const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles)
         var articleTemp : Articles [] = [];
         
         for(let article of articles){
@@ -220,17 +349,11 @@ export class ArticleListPage implements OnInit {
           code : newArticle.code,
           libelle : newArticle.libelle,
           prix : newArticle.prix,
-          firebase : false
+          firebase : false,
+          magasin : 'Carrefour'
         })
 
-        this.storage.set(this.u.localstorage.articles, articleTemp).then(() => this.getArticle())
-        
-        
-        // Récupère les données du LS et le met dans une variable temporaire
-        // this.storage.get(this.u.localstorage.articles).then(articles => {
-        //   this.addNewArticle(newArticle, articles)
-        //   // this.refreshArticleList()
-        // });
+        this.storage.set(this.utility.localstorage.articles, articleTemp).then(() => this.getArticle())
           
         }
       }
@@ -242,10 +365,15 @@ export class ArticleListPage implements OnInit {
 
     async getArticle(){
 
+      this.spinner(true)
+
+      this.articles = []
+      this.familles = []
+
       const familles = await this.getFamilleQuiOntDesArticles()
       this.familles = familles;
       
-      const articlesLS : Articles[] = await this.storage.get(this.u.localstorage.articles);
+      const articlesLS : Articles[] = await this.storage.get(this.utility.localstorage.articles);
       var groupByArticle : Articles[] = []
 
 
@@ -254,7 +382,7 @@ export class ArticleListPage implements OnInit {
         for(let article of articlesLS){
 
           // if(article.code.substring(0,3) === familles[i].code.substring(0,3)){
-          if(article.familleCode === familles[i].code){
+          if(article.familleCode == familles[i].code){
             
             var articleGroup : Articles = {
               code : article.code,
@@ -266,7 +394,9 @@ export class ArticleListPage implements OnInit {
               familleLibelle : familles[i].libelle,
               firebase : article.firebase,
               isModified : article.isModified,
-              documentId : article.documentId
+              documentId : article.documentId,
+              barreCode : article.barreCode,
+              magasin : article.magasin
             }
 
             groupByArticle.push(articleGroup)
@@ -275,8 +405,13 @@ export class ArticleListPage implements OnInit {
 
       } // for
 
-      const articles = await this.articleService.sortByArticleName(groupByArticle)
+      const articles = await this.articleService.orderByArticleName(groupByArticle)
       this.articles = articles;
+      }
+
+      actualiser(){
+        this.getArticle().then(()=> this.spinner(false))
+        
       }
 
       goDetail(id : number){
@@ -287,10 +422,53 @@ export class ArticleListPage implements OnInit {
       this.nav.navigateRoot('tabs/tab2/article-add')
       }
 
+      async modifierFamilleArticle(article : Articles){
+
+        const familles : Familles [] = this.articleService.orderByLibelleFamille(await this.storage.get(this.utility.localstorage['famille d\'articles']));
+
+        var inputOption : AlertInput [] = [];
+
+        for(let famille of familles){
+          inputOption.push({
+            name : 'famille',
+            type : 'radio',
+            label : famille.libelle,
+            value : famille.code
+          })
+        }
 
 
+        const alert = await this.alertController.create({
+          header: 'Ajouter un article',
+          inputs: inputOption,
+          buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            cssClass: 'secondary',
+          handler: () => {
+          }
+          }, {
+          text: 'Valider',
+          handler: async (result) => {
 
-      async isFamilleContainsAritcle(famille : FamilleArticle){
+              const familleInfo : Familles = familles.find(s => {
+                return s.code = result
+              })
+
+              article.familleCode = await result
+              article.familleLibelle = await familleInfo.libelle
+              await this.articleService.putArticle(article)       
+              this.getArticle()
+            }
+          }
+          ]
+        });
+    
+        await alert.present();
+      }
+
+      async isFamilleContainsAritcle(famille : Familles){
 
         const result : Articles [] = [];
         
@@ -312,14 +490,84 @@ export class ArticleListPage implements OnInit {
 
       }
 
-      async deleteArticle(article : Articles){
+      deleteArticle(article : Articles){
         
-        await this.articleService.deleteArticle(article);
-        await this.getArticle();
+        this.articleService.deleteArticle(article).then(() => {
+          this.getArticle();
+        })
+        
 
       }
   
-  
+      async postArticleByBarreCode(){
+        const barreCode = await this.barreCodeService.scanneBarreCode();
+        const article = await this.articleService.getArticleByBarreCode(barreCode);
+        if(article === null || article === undefined){
+          const alert = await this.alertController.create({
+            header: 'Ajouter un article',
+            inputs: [
+            {
+              name: 'libelle',
+              type: 'text',
+              placeholder: 'Libellé'
+            },
+            {
+              name: 'prix',
+              type: 'number',
+              placeholder: 'Prix'
+            }
+            ],
+            buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              cssClass: 'secondary',
+            handler: () => {
+            }
+            }, {
+            text: 'Ok',
+            handler: async (formValue : Articles) => {
+                this.articleService.postArticle({
+                  code : (await this.articleService.generateArticleId()).toString(),
+                  libelle : formValue.libelle,
+                  prix : formValue.prix ,
+                  prixModifier : null,
+                  quantite : 1,
+                  firebase : false,
+                  isModified : false,
+                  documentId : null,
+                  familleCode : '22',
+                  familleLibelle : null,
+                  barreCode : barreCode,
+                  magasin : 'Carrefour'
+                })
+              }
+            }
+            ]
+          });
+      
+          await alert.present();
+        }//if
+        else{
+          this.utility.popupInformation('Le code barre <strong>' + barreCode + '</strong> est déjà associé à l\'article ' + article.libelle)
+        }
+      }
+
+      spinner(enAttente : boolean){
+
+        const spinnerElement = document.getElementById('spinner');
+        const bodyElement = document.getElementById('body-display');
+        
+        if(enAttente){
+          spinnerElement.innerHTML = "<ion-spinner name='lines-small'></ion-spinner>";
+          bodyElement.classList.add('displayBackground')
+        }
+        
+        if(!enAttente){
+          spinnerElement.innerHTML = '';
+          bodyElement.classList.remove('displayBackground')
+        }
+      }
 
 
 }

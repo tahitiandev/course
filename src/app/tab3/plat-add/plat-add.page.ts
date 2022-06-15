@@ -27,49 +27,43 @@ export class PlatAddPage implements OnInit {
               ) {
                 
                }
-
   articles : Articles [];
   formgroup : FormGroup;
   ingredients : any[] = [];
-  ListeCodeArticle : any[] = [];
+  ListeCodeArticle : CodeArticle[] = [];
   platTmp : Plats [] = [];
+  searchValue : string = "";
+  
 
   ngOnInit() {
-    // this.plats.setPlatsToLocalStorage();
-    this.storage.get(this.utility.localstorage.articles).then(articles => this.articles = articles)
+    this.storage.get(this.utility.localstorage.articles).then((articles : Articles []) => {
+      this.articles = this.articleService.orderByArticleName(articles)
+    })
     this.init()
   }
 
   init(){
     this.formgroup = this.formbuilder.group({
       libelle : '',
-      ingredient : '',
+      searchValue : '',
       quantite : 1
-      // ingredient0 : '',
-      // ingredient1 : '',
-      // ingredient2 : '',
-      // ingredient3 : '',
-      // ingredient4 : ''
     })
   }
 
   async loadIngredient(){
     const articleCode = await this.formgroup.get('ingredient').value
     const quantite = await this.formgroup.get('quantite').value
-    const ingredientDetail = await this.articleService.searchArticleByArticleCode(articleCode)
+    const ingredientDetail = await this.articleService.getArticleByArticleCode(articleCode)
     ingredientDetail.quantite = quantite
     await this.ingredients.push(ingredientDetail)
     await this.ListeCodeArticle.push(articleCode)
     this.formgroup.patchValue({
       ingredient : '',
-      quantite : '1'
+      // searchValue : '',
+      quantite : 1
     })
     
   }
-
-  // reset(){
-  //   this.plats.setPlatsToLocalStorage();
-  // }
 
   ajouterIngredient(){
 
@@ -87,30 +81,81 @@ export class PlatAddPage implements OnInit {
 
   }
 
+  async loadOneArticle(article : Articles, index : number){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Information',
+      message: 'Renseigner une quantite',
+      inputs: [
+        {
+          name: 'Quantite',
+          type: 'number'
+          
+        }
+      ],
+      buttons: [
+        {
+          text: 'Valider',
+          handler: async (res) => {
+            article.quantite = res.Quantite
+            this.ListeCodeArticle.push({
+              codeArticle : article.code,
+              quantite : article.quantite
+            })
+
+            const button = document.getElementById('testAricle-' + index)
+            button.classList.add("addArticle");
+
+          }
+        }
+      ]
+    });
+
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
+
+    
+    
+  }
+
   async onSubmitForm(){
 
     const formValues = this.formgroup.value;
-    const libelle = formValues['libelle'];
-    const ingredient : CodeArticle [] = []
-    
-    for(let ingre of this.ingredients){
-      ingredient.push({
-        codeArticle : ingre.code,
-        quantite : ingre.quantite
-      })
-    }
 
+    const libelle = formValues['libelle'];
+    const ingredient = this.ListeCodeArticle;
 
     var plat : Plats = {
       libelle : libelle,
       codeArticle : ingredient,
-      firebase : false
+      firebase : false,
+      isModified : false,
+      documentId : null,
     }
+
+    const prix = await this.platsService.calculePrixTotalPlat(plat);
+    plat.prix = prix
     
-    this.platsService.setPlatToLocalStorage(plat)
+    await this.platsService.postPlat(plat)
     this.utility.goToUrl('tab3','plats');
     
   }
+
+  async searchArticle(event){
+    const query = await event.target.value.toLowerCase();
+    const articles = await this.articleService.getArticles();
+    
+    const result = await articles.filter(s => {
+      return s.libelle.toLocaleLowerCase().startsWith(query.toLocaleLowerCase())
+    })
+
+    this.articles = this.articleService.orderByArticleName(result)
+  }
+
 
   private async saveInLocalStorage(){
 
@@ -194,6 +239,17 @@ export class PlatAddPage implements OnInit {
     this.loadIngredient()
     slides.slideNext()
 
+  }
+
+  ajouterUnNouvelleIngredient(slides){
+    slides.slidePrev()
+    slides.slidePrev()
+    this.loadIngredient()
+    // .then(() => {
+    //   setTimeout(() => {
+    //     slides.slidePrev()
+    //   }, 1500);
+    // })
   }
 
 

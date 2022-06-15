@@ -217,12 +217,12 @@ export class MenuTodayPage implements OnInit {
   }
 
   async getPlat(){
-    const plats = await this.platservice.getPlatFromLocalStorage();
+    const plats = await this.platservice.getPlats();
     this.plats = plats;
   }
   
   async getPlatByLibelle(libelle : string, jour : string){
-    const result = await this.platservice.searchPlatByLibelle(libelle);
+    const result = await this.platservice.getPlatByLibelle(libelle);
     if(jour === 'lundi'){
       this.menuDeLaSemaine.lundi = result.libelle
     }
@@ -277,7 +277,7 @@ export class MenuTodayPage implements OnInit {
       this.getPlatByLibelle(selectedValue, jour)
     }
 
-    await this.menuService.saveMenuToLocalStorage(this.menuDeLaSemaine)
+    await this.menuService.postMenu(this.menuDeLaSemaine)
 
   }
 

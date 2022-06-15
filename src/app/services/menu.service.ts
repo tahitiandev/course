@@ -14,69 +14,67 @@ export class MenuService {
               private utility : UtilityService,
               private firebaseService : FirebaseService) { }
 
- private menuDeLaSemaine : MenuDelaSemaine [] = [
-  {
-    lundi : 'test',
-    mardi : 'testes',
-    mercredi : 'aaaaa',
-    jeudi : 'bbb',
-    vendredi : 'ccc',
-    samedi : 'ddd',
-    dimanche : 'eeee',
-    dateDebut : '19/07/2021',
-    dateFin : '25/07/2021',
-    firebase : false
-  },
-  {
-    lundi : 'Pâte carbonara',
-    mardi : 'Steak pâte',
-    mercredi : 'Hamburger',
-    jeudi : 'Hamburger',
-    vendredi : 'Boeuf braisé',
-    samedi : 'Steak pâte',
-    dimanche : 'Boeuf braisé',
-    dateDebut : '26/07/2021',
-    dateFin : '01/08/2021',
-    firebase : false
-  },
-  {
-    lundi : 'qsdfqsdfsqdf',
-    mardi : 'tessdqfqsdftes',
-    mercredi : 'qsdfqsdfqsdfqsdfqds',
-    jeudi : 'bqsdfqsdfbb',
-    vendredi : 'ccsqdfqsdfc',
-    samedi : 'sqssddd',
-    dimanche : 'eessssdee',
-    dateDebut : '02/08/2021',
-    dateFin : '08/08/2021',
-    firebase : false
-  },
-  {
-    lundi : 'lundi',
-    mardi : 'mardi',
-    mercredi : 'mercredi',
-    jeudi : 'jeudi',
-    vendredi : 'vendredi',
-    samedi : 'samedi',
-    dimanche : 'dimanche',
-    dateDebut : '07/08/2021',
-    dateFin : '08/08/2021',
-    firebase : false
-  },
- ]
+  private JourDeLaSemaines = [
+    [
+      {
+        jour : 'Lundi',
+        menu : ''
+      },
+      {
+        jour : 'Mardi',
+        menu : ''
+      },
+    ],
+    [
+      {
+        jour : 'Mercredi',
+        menu : ''
+      },
+      {
+        jour : 'Jeudi',
+        menu : ''
+      },
+    ],
+    [
+      {
+        jour : 'Vendredi',
+        menu : ''
+      },
+      {
+        jour : 'Samedi',
+        menu : ''
+      },
+    ],
+    [
+      {
+        jour : 'Dimanche',
+        menu : ''
+      },
+      {
+        jour : '',
+        menu : ''
+      },
+    ]
+  ];
+  
+  private menuDeLaSemaine : Array<MenuDelaSemaine> = [];
 
-  async getMenuFromLocaoStorage(){
+  public getJourDeLaSemaine(){
+    return this.JourDeLaSemaines;
+  }
 
-      const data = await this.storage.get(this.utility.localstorage['menu de la semaine'])
+  async getMenus(){
+
+      const data = await this.storage.get(this.utility.localstorage['menu de la semaine']);
       return data;
   }
 
   async setDefaultValue(){
-    this.storage.set(this.utility.localstorage['menu de la semaine'], this.menuDeLaSemaine)
+    this.storage.set(this.utility.localstorage['menu de la semaine'], this.menuDeLaSemaine);
 
   }
 
-  async saveMenuToLocalStorage(newMenu : MenuDelaSemaine){
+  async postMenu(newMenu : MenuDelaSemaine){
 
     const menu = await this.storage.get(this.utility.localstorage['menu de la semaine']);
     const lastMenu : MenuDelaSemaine = await menu.find((result) => {
@@ -147,20 +145,101 @@ export class MenuService {
     })
   }
 
+  sortByDateDebut(menus : Array<MenuDelaSemaine>){
+
+    
+
+    return menus.sort((a,b) => {
+      let x  = parseInt(a.dateDebut);
+      let y  = parseInt(b.dateDebut);
+      if(x < y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
+  }
+
+  async initPeriodeSemaine(){
+
+    var menuDeLaSemaine : MenuDelaSemaine = {
+      lundi : '',
+      mardi : '',
+      mercredi : '',
+      jeudi : '',
+      vendredi : '',
+      samedi : '',
+      dimanche : '',
+      dateDebut : '',
+      dateFin : '',
+      firebase : false}
+
+    var jourToday=new Date()
+    var jourDeLaSemaine=new Array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi");
+
+    const today = await this.generateDateAujourdhui()
+    
+    var aujourrhui = new Date(Date.parse(today.mois + '/' + today.jour + '/' + today.annnee))
+
+    switch(jourDeLaSemaine[jourToday.getDay()]){
+      case 'Lundi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(0,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
+        break;
+      case 'Mardi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-1,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(5,aujourrhui)
+        break;
+      case 'Mercredi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-2,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(4,aujourrhui)
+        break;
+      case 'Jeudi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-3,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(3,aujourrhui)
+        break;
+      case 'Vendredi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-4,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(2,aujourrhui)
+        break;
+      case 'Samedi':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-5,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(1,aujourrhui)
+        break;
+      case 'Dimanche':
+        menuDeLaSemaine.dateDebut = this.ajoutOuSupprimeDesJoursDuneDate(-6,aujourrhui)
+        menuDeLaSemaine.dateFin = this.ajoutOuSupprimeDesJoursDuneDate(0,aujourrhui)
+        break;
+    }
+
+    return menuDeLaSemaine;
+  }
+
 
   async loadMenuOfTheWeek(){
     
     const today = await (await this.generateDateAujourdhui()).dateComplete
-    const menu = await this.storage.get('menus')
-    const lastMenu = await menu.slice(-1)[0];
+    const menus : MenuDelaSemaine [] = await this.storage.get('menus')
+    // const lastMenu = await menus.slice(-1)[0];
+    const dateDeButDeSemaine = (await this.initPeriodeSemaine()).dateDebut
 
-    if(today >= lastMenu.dateDebut && today <= lastMenu.dateFin){
+    const lastMenu = await menus.find(s => {
+      return s.dateDebut === dateDeButDeSemaine
+    })
 
-        return lastMenu
+    return lastMenu
 
-    }else{
-      return null
-    }
+
+
+
+    // if(today >= lastMenu.dateDebut && today <= lastMenu.dateFin){
+
+    //     return lastMenu
+
+    // }else{
+    //   return null
+    // }
 
   }// loadMenuOfTheWeek
 

@@ -29,11 +29,13 @@ var firebaseConfig = {
 
 
 import { BarcodeScanner } from '@awesome-cordova-plugins/barcode-scanner/ngx';
+// import { PlatArticleSearchPipe } from './pipes/plat-article-search.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     OrderByArticlePipe,
+    // PlatArticleSearchPipe,
     // ArticlesFilterPipe
   ],
   entryComponents: [],

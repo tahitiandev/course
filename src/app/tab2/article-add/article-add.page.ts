@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NavController } from '@ionic/angular';
-import { Articles, FamilleArticle } from 'src/app/models/articles';
+import { Articles, Familles } from 'src/app/models/articles';
+import { Settings } from 'src/app/models/setting';
 import { ArticlesService } from 'src/app/services/articles.service';
+import { BarreCodeService } from 'src/app/services/barre-code.service';
+import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-article-add',
@@ -12,12 +15,15 @@ import { ArticlesService } from 'src/app/services/articles.service';
 export class ArticleAddPage implements OnInit {
 
   articleForm : FormGroup;
-  familles : FamilleArticle [] = [];
+  familles : Familles [] = [];
   articlesLS : Articles [] = [];
+  barreCode : string = null;
 
   constructor(private formbuilder : FormBuilder,
               private articleService : ArticlesService,
-              private nav : NavController) { }
+              private nav : NavController,
+              private barrecCodeService : BarreCodeService,
+              private utility : UtilityService) { }
 
   ngOnInit() {
     this.init()
@@ -34,34 +40,43 @@ export class ArticleAddPage implements OnInit {
   }
 
   async getFamilleFromLocalStorage(){
-    const familleLS = await this.articleService.getFamilleArticleFromLocalStorage()
-    const familles = await this.articleService.sortByLibelleFamilleArticle(familleLS)
+    const familleLS = await this.articleService.getFamilles()
+    const familles = await this.articleService.orderByLibelleFamille(familleLS)
     this.familles = familles
   }
 
   async getArticleToLocalStorage(){
-    const articlesLS = await this.articleService.getArticleFromLocalStorage()
-    const articles = await this.articleService.sortByArticleName(articlesLS)
+    const articlesLS = await this.articleService.getArticles()
+    const articles = await this.articleService.orderByArticleName(articlesLS)
     this.articlesLS = articles
   }
 
+  async pairWithABarreCode(slide){
+    const barreCode = await this.barrecCodeService.scanneBarreCode();
+    this.barreCode = barreCode;
+    this.slideNext(slide)
+  }
 
   async onSubmit(){
     const formValue = await this.articleForm.value
+    const setting : Settings = await this.utility.getSetting();
+
     const newArticle : Articles = {
       code : (await this.articleService.generateArticleId()).toString(),
-      documentId : null,
-      familleCode : formValue.familles,
-      familleLibelle : null,
-      firebase : false,
-      isModified : false,
       libelle : formValue.libelle,
       prix : formValue.prix ,
       prixModifier : null,
-      quantite : 1
+      quantite : 1,
+      firebase : false,
+      isModified : false,
+      documentId : null,
+      familleCode : formValue.familles,
+      familleLibelle : null,
+      barreCode : this.barreCode,
+      magasin : setting.magasinParDefaut
     }    
     
-    this.articleService.setArticleRealDataToLocalStorage(newArticle)
+    this.articleService.postArticle(newArticle)
 
     this.nav.back()
 
@@ -121,5 +136,6 @@ export class ArticleAddPage implements OnInit {
       slides.slideNext()
     } )
   }
+  
 
 }

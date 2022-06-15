@@ -3,54 +3,84 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
     </ion-buttons>
-    <ion-title>Detail</ion-title>
+    <ion-title>Liste de course</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
+  <div class="montantDesCourses">
+    Total : {{ total }} XPF
+  </div>
+
   <ion-list style="margin-top: 5%;">
-    <ion-item-sliding *ngFor="let detail of listeArticle; let index = index">
+    <ion-item-sliding *ngFor="let detail of courseDetails; let index = index">
       <ion-item-options side="start">
         <ion-item-option >Modifier<br>article</ion-item-option>
       </ion-item-options>
       
       <ion-item>
         <ion-label>{{ detail.libelle }}</ion-label>
-        <!-- <ion-label style="text-align: right;">Qté:{{ detail.quantite === null ? detail.quantite : 1 }}</ion-label> -->
         <ion-label style="text-align: right;">{{ detail.prixUnitaire }} xpf (x{{ detail.quantite != null ? detail.quantite : 1 }})</ion-label>
         <ion-label style="text-align: right;"> {{ detail.quantite != null ? (detail.quantite-0) * (detail.prixUnitaire-0) : detail.prixUnitaire }} xpf</ion-label>
-        <ion-checkbox style="margin-left: 30px;" (click)="clickCheckBox(index)" [checked]="detail.actif"></ion-checkbox>
+        <ion-checkbox style="margin-left: 30px;" (click)="checkBox(detail)" [checked]="detail.actif"></ion-checkbox>
       </ion-item>
       
       <ion-item-options side="end">
-        <ion-item-option (click)="updateArticle(detail, index)">Modifier</ion-item-option>
-        <ion-item-option (click)="supprimerArticle(index)" color="danger" >Supprimer</ion-item-option>
+        <ion-item-option (click)="putArticle(detail, index)">Modifier</ion-item-option>
+        <ion-item-option (click)="supprimerArticle(detail)" color="danger" >Supprimer</ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
 
+  <ion-fab vertical="bottom" horizontal="end" edge slot="fixed" style="margin-bottom:40px">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="checkArticle()">
+        <ion-icon name="checkmark-outline"></ion-icon> 
+      </ion-fab-button>
+      <ion-fab-button (click)="postArticleToCourse('barreCode')">
+        <ion-icon name="barcode-outline"></ion-icon> 
+      </ion-fab-button>
+      <ion-fab-button (click)="postArticleToCourse('rafale')">
+        <ion-icon name="barcode-outline"></ion-icon>
+        <ion-icon name="barcode-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
 
+    <ion-fab-list side="start">
+      <ion-fab-button (click)="postArticleToCourse('manuel')">
+        <ion-icon name="pencil-outline"></ion-icon>
+      </ion-fab-button>
+      
+      <ion-fab-button (click)="insertSpecialArticle()">
+        <ion-icon name="pencil-outline"></ion-icon>
+        <ion-icon name="pencil-outline"></ion-icon>
+      </ion-fab-button>
 
+      <ion-fab-button (click)="insertPlat()">
+        <ion-icon name="pizza-outline"></ion-icon>
+      </ion-fab-button>
 
+      <ion-fab-button (click)="insertMenu()">
+        <ion-icon name="pizza-outline"></ion-icon>
+        <ion-icon name="pizza-outline"></ion-icon>
+      </ion-fab-button>
+      
+      <ion-fab-button (click)="actualiser()">
+        <ion-icon name="reload-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
 
-  <!-- <ion-list>
-    <ion-item *ngFor="let detail of listeArticle">
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-label>{{ detail.libelle }}</ion-label>
-          </ion-col>
-          <ion-col>
-            {{ detail.prixUnitaire }} xpf
-          </ion-col>
-          <ion-col>
-            <ion-checkbox [checked]="detail.actif"></ion-checkbox>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-item>
-  </ion-list> -->
+  <div id="spinner"></div>
+
+  <br>
+  <br>
+  <br>
+  <br>
 
 
 </ion-content>

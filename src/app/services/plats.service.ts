@@ -5,6 +5,8 @@ import { Storage } from '@ionic/storage';
 import { calcPossibleSecurityContexts } from '@angular/compiler/src/template_parser/binding_parser';
 import { Deleted } from '../models/deleted';
 import { FirebaseService } from './firebase.service';
+import { ArticlesService } from './articles.service';
+import { Articles } from '../models/articles';
 
 @Injectable({
   providedIn: 'root'
@@ -13,172 +15,65 @@ export class PlatsService {
 
   constructor(private utility : UtilityService,
               private storage : Storage,
-              private firebaseService : FirebaseService) { }
+              private firebaseService : FirebaseService,
+              private articleService : ArticlesService) { }
 
-  private plats : Plats [] = [
-    {
-      libelle : 'Pâte carbonara',
-      codeArticle : [{
-        codeArticle : 'FLCAR',
-        quantite : 2
-      },{
-        codeArticle : 'VCJAM',
-        quantite : 5
-      }],
-      firebase : false
-    },
-    {
-      libelle : 'Hamburger',
-      codeArticle : [{
-        codeArticle : 'FLORA',
-        quantite : 1
-      },{
-        codeArticle : 'FLORA',
-        quantite : 5
-      }],
-      firebase : false
-    },
-    {
-      libelle : 'Steak pâte',
-      codeArticle : [{
-        codeArticle : 'FLCAR',
-        quantite : 2
-      },{
-        codeArticle : 'VCJAM',
-        quantite : 5
-      }],
-      firebase : false
-    },
-    {
-      libelle : 'Boeuf braisé',
-      codeArticle : [{
-        codeArticle : 'FLTOM',
-        quantite : 1
-      },{
-        codeArticle : 'FLORA',
-        quantite : 9
-      }],
-      firebase : false
-    },
-    {
-      libelle : 'Lentille',
-      codeArticle : [{
-        codeArticle : 'FLTOM',
-        quantite : 1
-      },{
-        codeArticle : 'FLORA',
-        quantite : 9
-      }],
-      firebase : false
-    },
-    {
-      libelle : 'Sashimis',
-      codeArticle : [{
-        codeArticle : 'FLTOM',
-        quantite : 1
-      },{
-        codeArticle : 'FLORA',
-        quantite : 9
-      }],
-      firebase : false
-    },
-    {
-      libelle : 'Charcuterie',
-      codeArticle : [{
-        codeArticle : 'FLTOM',
-        quantite : 1
-      },{
-        codeArticle : 'FLORA',
-        quantite : 9
-      }],
-      firebase : false
-    },
-    {
-      libelle : 'Poulet rôti',
-      codeArticle : [{
-        codeArticle : 'FLTOM',
-        quantite : 1
-      },{
-        codeArticle : 'FLORA',
-        quantite : 9
-      }],
-      firebase : false
-    },
-    {
-      libelle : 'Poulet blanc',
-      codeArticle : [{
-        codeArticle : 'FLTOM',
-        quantite : 1
-      },{
-        codeArticle : 'FLORA',
-        quantite : 9
-      }],
-      firebase : false
-    },
-    {
-      libelle : 'Quiche',
-      codeArticle : [{
-        codeArticle : 'FLTOM',
-        quantite : 1
-      },{
-        codeArticle : 'FLORA',
-        quantite : 9
-      }],
-      firebase : false
-    },
-
-
-
-
-
-  ];
-
-  // setPlatsToLocalStorage(){
-  //   this.storage.set(this.utility.localstorage.Plats, this.plats);
-  // }
+  private plats : Array<Plats> = [];
 
   async setDefaultPlatData(){
     await this.storage.set(this.utility.localstorage.Plats, this.plats)
   }
 
-  async getPlatFromLocalStorage(){
-    const plats : Plats [] = await this.storage.get(this.utility.localstorage.Plats)
-    return plats;
+  async getPlats(){
+
+    const plats : Array<Plats> = await this.storage.get(this.utility.localstorage.Plats)
+    const PlatsParse : Array<Plats> = await this.sortByLibelleFamilleArticle(plats);
+
+    return PlatsParse;
   }
 
-  async searchPlatByLibelle(libelle : string){
+  async getPlatIndex(plat : Plats){
 
-    this.plats = [];
-    const plats = await this.getPlatFromLocalStorage();
-    this.plats = plats;
-    
-    const result = await this.plats.find((plats : Plats) => {
-      return plats.libelle === libelle
-    })
+    const plats : Array<Plats> = await this.getPlats();
+    const index = await plats.findIndex(plats => plats === plat);
 
-    return result;
-
+    return index;
   }
 
-  async setPlatToLocalStorage(newPlat : Plats){
-    var plats : Plats [] = [];
+  async getPlatByLibelle(libelle : string){
 
-    const platsLS : Plats[] = await this.getPlatFromLocalStorage();
+    const plats : Array<Plats> = await this.getPlats();    
+    const plat = await plats.find((plats : Plats) => plats.libelle === libelle);
+
+    return plat;
+  }
+
+  async postPlats(plats : Array<Plats>){
+
+    await this.utility.saveToLocalStorage(this.utility.localstorage.Plats, plats);
+
+    return await this.getPlats();
+  }
+
+  async postPlat(plat : Plats){
     
-    if(platsLS){
-      for(let plat of platsLS){
-        await plats.push(plat)
-      }
+    const plats: Array<Plats> = await this.getPlats();
+    plats.push(plat);
+    await this.postPlats(plats);
+
+    const response = {
+      all : this.getPlats(),
+      plat : plat
     }
 
-    await plats.push(newPlat)
-    await this.storage.set(this.utility.localstorage.Plats, plats)
+    return response;
+    
   }
   
-  async updatePlatToLocalStorage(platupdate : Plats){
+  async putPlat(platupdate : Plats){
     
     var plats : Plats [] = [];
-    const platsLS : Plats[] = await this.getPlatFromLocalStorage();
+    const platsLS : Plats[] = await this.getPlats();
     
     for(let plat of platsLS){
       if(plat.libelle === platupdate.libelle){
@@ -219,12 +114,50 @@ export class PlatsService {
     this.storage.set(this.utility.localstorage.Plats, platsNew)
 
     // delete to firebase
-    const platInfo : Plats = await this.searchPlatByLibelle(plats[index].libelle);
+    const platInfo : Plats = await this.getPlatByLibelle(plats[index].libelle);
     this.firebaseService.postToLocalStorageDeleted(platInfo.firebase, this.utility.localstorage.Plats, platInfo.documentId)
 
     return platsNew;
 
 
   }
+
+  // fonctionne pas
+  async actualisePrixPlat(){
+    const plats : Plats [] = await this.getPlats();
+    var total : number = 0;
+    
+    for(let plat of plats){
+
+      for(let articlesss of plat.codeArticle){
+        
+        const article = await this.articleService.getArticleByArticleCode(articlesss.codeArticle);
+        total += (article.prix - 0) * (articlesss.quantite - 0)
+
+      }
+      
+      plat.prix = total
+      total = 0;
+    }
+
+  } // actualisePrixPlat
+
+  async calculePrixTotalPlat(plat : Plats){
+
+    const articles : Array<Articles> = await this.articleService.getArticles();
+
+    var total : number = 0;
+    
+    for(let article of plat.codeArticle){
+      var articleInfo = articles.find(s => {
+        return s.code === article.codeArticle;
+      })
+      total += (articleInfo.prix-0) * (article.quantite-0)
+    }
+    return total;
+    
+  }
+
+
   
 }

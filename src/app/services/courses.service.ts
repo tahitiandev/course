@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Courses } from 'src/app/models/courses';
+import { Courses, Liste } from 'src/app/models/courses';
 import { Storage } from '@ionic/storage';
 import { UtilityService } from './utility.service';
+import { FirebaseService } from './firebase.service';
+import { Deleted } from '../models/deleted';
 
 @Injectable({
   providedIn: 'root'
@@ -9,125 +11,164 @@ import { UtilityService } from './utility.service';
 export class CoursesService {
 
   constructor(private storage : Storage,
-              private utility : UtilityService) { }
+              private utility : UtilityService,
+              private firebaseService : FirebaseService) { }
 
-
-  private courses : Courses[] = [
-    {
-      id : 1,
-      date : '21/07/2021',
-      actif : true,
-      total : 1050,
-      liste : [
-        {
-          articleId : '',
-          libelle : '',
-          quantite : 2,
-          prixUnitaire : 10,
-          actif : false
-        }
-      ],
-      firebase : false
-    }
-  ]
-
-  private defaultData : Courses [] = [
-    {
-      id : 1,
-      date : '2021-08-17T10:55:41.500-10:00',
-      actif : true,
-      total : 1050,
-      liste : [
-        {
-          articleId : 'FLORA',
-          libelle : 'test Oranges',
-          quantite : 2,
-          prixUnitaire : 10,
-          actif : false
-        }
-      ],
-      firebase : false
-    }
-  ]
+  private defaultData : Array<Courses> = []
 
   async setDefaultCourseData(){
     await this.storage.set(this.utility.localstorage.Courses, this.defaultData)
   }
 
-  async getCourseFromLocalStorage(){
-    this.courses = [];
-    const courses : Courses [] =  await this.storage.get(this.utility.localstorage.Courses)
-    this.courses = courses
-    return courses;
+  private orderByDesc(course :  Courses[]){
+    return course.sort((a,b) => {
+      let x  = a.id;
+      let y  = b.id;
+      if(x < y){
+        return 1;
+      }else{
+        return -1;
+      }
+      return 0;
+    })
   }
 
-  async getCourse(){
-    return await this.courses;
+  async getCourses(){
+    const courses : Array<Courses> =  await this.storage.get(this.utility.localstorage.Courses);
+    const courseNotDeleted : Array<Courses> = await courses.filter(course => course.isDeleted !== true);
+    return this.orderByDesc(courseNotDeleted);
   }
-
 
   async getCourseById(id : number){
 
-    this.courses = [];
-    const courses = await this.getCourseFromLocalStorage()
-    this.courses = courses;
-
-    const courseDetail = this.courses.find(s => {
-      return s.id === id
-    })
-    return courseDetail;
+    const courses : Array<Courses> = await this.getCourses();
+    return await courses.find(s => s.id === id);
   }
 
-  async setCourseInLocalStorage(course : Courses){
-    var courses : Courses [] = [];
-    const coursesLS : Courses [] = await this.getCourseFromLocalStorage()
+  async postCourses(courses : Array<Courses>){
 
-      for(let coursen of coursesLS){
-        courses.push(coursen)
-      }
-      courses.push(course)
-
-    this.storage.set(this.utility.localstorage.Courses, courses)
-
+    const result = await this.utility.saveToLocalStorage(this.utility.localstorage.Courses, courses);
+    return result;
 
   }
 
-  async updateCourseInLocalStorage(course : Courses){
-
-    var coursesLS : Courses [] = await this.getCourseFromLocalStorage()
-    var newData : Courses [] = [];
+  async postCourse(course : Courses){
     
-    for(let courseUnite of coursesLS){
-      if(courseUnite.id != course.id){
-        newData.push(courseUnite)
-      }
-      if(courseUnite.id === course.id){
-        newData.push(course)
-      }
+    const courses : Array<Courses> = await this.getCourses();
+    const index = await this.getCourseIndex(course);
+    
+    if(course.firebase){
+      course.isModified = true;
     }
 
-    this.storage.set(this.utility.localstorage.Courses, newData)
+    courses[index] = course;
+    const result = await this.postCourses(courses);
 
+    const response = {
+      all : result,
+      course : await result[index]
+    }
+
+    return response;
+
+  }
+
+  async getCourseIndex(course : Courses){
+    const courses : Array<Courses> = await this.getCourses();
+    return await courses.findIndex(s => s.id === course.id);
+  }
+
+  async putCourse(course : Courses){
+
+    const courses : Array<Courses> = await this.getCourses();
+    const ifCourseExiste = await this.searchCourseById(course);
+
+    
+    if(ifCourseExiste.length === 1){
+
+      const index = await this.getCourseIndex(course);
+      courses.splice(index,1);
+      courses.push(course);
+
+    }
+    if(ifCourseExiste.length === 0){
+
+      this.utility.popupInformation('La course n\'existe pas');
+
+    }
+    if(ifCourseExiste.length > 1){
+
+      this.utility.popupInformation('Attention !  doublon d\'Id de course');
+
+    }
+
+    await this.postCourses(courses)
+
+  }
+
+  private async searchCourseById(course : Courses){
+
+    const courses : Array<Courses> = await this.getCourses();
+    const result = await courses.filter(courses =>  courses.id === course.id);
+
+    return result;
+  }
+
+  private orderByIdAsc(course :  Courses[]){
+    return course.sort((a,b) => {
+      let x  = a.id;
+      let y  = b.id;
+      if(x > y){
+        return 1;
+      }else{
+        return -1;
+      }
+      return 0;
+    })
   }
 
   async generateCourseId(){
 
-    const listeOfCourse = await this.getCourseFromLocalStorage();
-    const lastId = await listeOfCourse.pop().id
-    var newId = 1;
+    const listeOfCourse : Array<Courses> = await this.getCourses();
 
-    if(lastId){
-      newId = lastId + 1
+    if(listeOfCourse.length > 0){
+      
+      const listeOfCourseSortById = this.orderByIdAsc(listeOfCourse)
+      const lastId = await listeOfCourseSortById.pop().id
+      var newId = 1;
+  
+      if(lastId){
+        newId = lastId + 1
+      }else{
+        newId = 1
+      }
+  
+      return newId;
+      
     }else{
-      newId = 1
+
+      return 0;
+
     }
 
-    return newId;
   }
 
+  calculeMontantTotal(listes : Liste[]){
+    var total = 0;
+    for(let liste of listes){
+      total += (liste.quantite) * (liste.prixUnitaire)
+    }
+    return total;
+  }
 
+  async deleteCourse(course : Courses){
 
-
-
+    const courses : Array<Courses> = await this.getCourses();
+    const index = await this.getCourseIndex(course)
+    courses[index].isDeleted = true;
+    // courses.splice(index,1)
+    await this.postCourses(courses)
+    return await courses;
+  }  
 
 }

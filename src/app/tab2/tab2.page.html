@@ -1,16 +1,41 @@
-<!-- <ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Les articles
-    </ion-title>
+    <ion-title (click)="this.loadMenuOfTheWeek()">Menu de la semaine</ion-title>
+    <p id="spinner" style="text-align: center;">{{ menuDeLaSemaine.dateDebut }} - {{ menuDeLaSemaine.dateFin }}</p>
+    
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  
+<ion-content class="slide-content">
 
-</ion-content> -->
+  <ion-grid>
+    <ion-row *ngFor="let groupJour of this.jourDelaSemaine">
 
-<app-menu-today></app-menu-today>
+      <ion-col *ngFor="let jour of groupJour" (click)="selectionMenuDuJour(jour.jour)"
+              [ngClass]="jour.jour !== '' ? 'col-style' : 'test'"> 
+        
 
-<!-- <ion-button size="large" (click)="goToPage()">planning</ion-button> -->
+        <div class="nomTitre" *ngIf="jour.jour !== ''">
+          <h4>{{ jour.jour }}</h4>
+        </div>
+
+
+        <div class="art-opacite" *ngIf="jour.menu !== ''">
+          <h2>{{ jour.menu }}</h2>
+        </div>
+
+        <img class="ImgDuMenu" src="assets/plat.png"  *ngIf="jour.jour !== '' && jour.menu === ''">
+
+      </ion-col>
+
+    </ion-row>
+
+  </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="end" edge slot="fixed" style="margin-bottom:40px">
+    <ion-fab-button (click)="initialize()">
+        <ion-icon name="reload-outline"></ion-icon>
+      </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

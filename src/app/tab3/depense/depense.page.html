@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3/depense-list"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mouvement divers</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  
+  <form [formGroup]="depenseForm" (ngSubmit)="onSubmit()">
+    <ion-grid>
+      <ion-row>
+        <h4>Définir la période : </h4>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating">Date d'opération</ion-label>
+            <ion-input type="date" formControlName="date"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-list style="width: 100%;">
+          <ion-item>
+            <ion-label>Payeur</ion-label>
+            <ion-select formControlName="payeur" interface="popover">
+              <ion-select-option *ngFor="let payeur of this.payeurs" value="{{payeur}}">{{ payeur }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+      </ion-row>
+      <ion-row>
+        <ion-list style="width: 100%;">
+          <ion-item>
+            <ion-label>Enseigne</ion-label>
+            <ion-select formControlName="enseigne" interface="popover">
+              <ion-select-option *ngFor="let magasin of this.magasins" value="{{magasin}}">{{ magasin }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+      </ion-row>
+      <ion-row>
+        <ion-item>
+          <ion-label>Montant</ion-label>
+          <ion-input formControlName="montant" type="number" placeholder="dépense -1 apport 1"></ion-input>
+        </ion-item>
+      </ion-row>
+      <ion-row>
+        <ion-item>
+          <ion-label >Commentaire</ion-label>
+          <ion-textarea formControlName="description" placeholder="placeholder"></ion-textarea>
+        </ion-item>
+      </ion-row>
+  
+      <ion-row>
+        <ion-button type="submit" expand="full" color="secondary">A full-width button</ion-button>
+      </ion-row>
+    </ion-grid>
+  </form>
+
+</ion-content>

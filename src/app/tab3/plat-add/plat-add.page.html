@@ -21,7 +21,7 @@
           <ion-row>
             <ion-col>
               <h1>Choisir<br>un nom du plat</h1>
-              <h5>1/4</h5>
+              <h5>1/3</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -39,29 +39,51 @@
       <!-- SLIDE 2 -->
       <ion-slide>
 
-        <ion-grid>
+        <ion-grid style="margin-top: -180px;">
           <ion-row>
-            <ion-col>
-              <h1>Ajouter<br>un ingredient</h1>
-              <h5>2/4</h5>
+            <ion-col (click)="slideNext(slides)">
+              <h1>Sélectionner<br>les ingrédients</h1>
+              <h5>2/3</h5>
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-col>
-              <ion-item>
-                <ion-label position="floating">Ajouter un Ingrédient</ion-label>
-                <ion-select (ionChange)="slideNext(slides)" id="slideDeux" formControlName="ingredient">
-                  <ion-select-option *ngFor="let article of this.articles" value="{{article.code}}">{{ this.article.libelle }}</ion-select-option>
-                </ion-select>
+            <ion-toolbar>
+              <ion-searchbar (ionInput)="searchArticle($event)"></ion-searchbar>
+            </ion-toolbar>
+          </ion-row>
+  
+          <ion-row>
+  
+            <ion-list class="article-list" style="margin: 5%;width: 100%; height: 340px; overflow: scroll;">
+              <ion-item id="testAricle-{{index}}" *ngFor="let article of articles; let index = index">
+                  <ion-icon (click)="loadOneArticle(article, index)" slot="end" name="add-circle-outline"></ion-icon>
+                <ion-label>{{ article.libelle }}</ion-label>
               </ion-item>
-            </ion-col>
+            </ion-list>
           </ion-row>
+
+
+
+
+
+
+
+
+          <!-- <button style="position: fixed; bottom: 10px; left: 50px; z-index: 1;">test</button> -->
+          
+          <!-- <ion-row>
+            <ion-col>
+              <ion-button slot="end" color="primary" style="z-index: 9;">Primary</ion-button>
+            </ion-col>
+          </ion-row> -->
+
         </ion-grid>
-
-
+  
       </ion-slide>
 
-      <ion-slide >
+
+      <!-- SLIDE 3 -->
+      <!-- <ion-slide >
 
         <ion-grid>
           <ion-row>
@@ -73,17 +95,22 @@
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-input (click)="slidetrois(slides)" id="slidetrois" type="number" placeholder="Ecrire ici" formControlName="quantite"></ion-input>
+                <ion-input id="slidetrois" type="number" placeholder="Ecrire ici" formControlName="quantite"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-button style="position:absolute; right: 20px; margin-top: 20px;" (click)="this.terminerSlideTrois(slides)" color="warning">Terminer</ion-button>
+            <ion-col>
+              <ion-button style="position:absolute; right: 20px; margin-top: 20px;" (click)="this.ajouterUnNouvelleIngredient(slides)" color="warning">Nouveau</ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button style="position:absolute; right: 20px; margin-top: 20px;" (click)="this.terminerSlideTrois(slides)" color="warning">Terminer</ion-button>
+            </ion-col>
           </ion-row>
         </ion-grid>
 
 
-      </ion-slide>
+      </ion-slide> -->
 
       <!-- SLIDE 5 -->
     <ion-slide >
@@ -91,7 +118,7 @@
         <ion-row>
           <ion-col>
             <h1>Valider vos choix</h1>
-            <h5>4/4</h5>
+            <h5>3/3</h5>
             <br>
           </ion-col>
         </ion-row>
@@ -111,58 +138,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-  <!-- <ion-item-group>
-
-
-
-  <br>
-  
-
-  <br>
-  <ion-item>
-    <ion-label>Quantité</ion-label>
-    <ion-input type="number" placeholder="Quantité" formControlName="quantite"></ion-input>
-  </ion-item>
-
-  <br>
-
-  <section>
-
-    <ion-button (click)="loadIngredient()" expand="full">Ajouter</ion-button>
-
-  </section>
-  
-</ion-item-group>
-
-
-  <section>
-    <ion-button type="submit" expand="full">Enregistrer</ion-button>
-  </section>
-
-
-  <ion-item-group>
-    <ion-item-divider>
-      <ion-label>Liste des articles ajoutés</ion-label>
-    </ion-item-divider>
-
-    <ion-list>
-      <ion-item *ngFor="let ingredient of ingredients">
-        <ion-label>{{ ingredient.libelle }}</ion-label>
-        <ion-label>Qté : {{ ingredient.quantite }}</ion-label>
-      </ion-item>
-    </ion-list>
-    
-  </ion-item-group> -->
 
 
 </form>

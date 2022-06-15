@@ -10,5 +10,6 @@ export interface MenuDelaSemaine{
     dateFin : string;
     firebase : boolean;
     isModified? : boolean;
+    isDeleted? : boolean;
     documentId? : string;
 }

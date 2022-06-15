@@ -14,7 +14,6 @@
     <ion-item-sliding *ngFor="let famille of this.familles; let i = index">
 
       <ion-item button (click)="updateFamille(famille)">
-      <!-- <ion-item button (click)="goDetail(famille.code)"> -->
         
         <ion-label>
           <h3>{{ famille.libelle }}</h3>
@@ -24,7 +23,7 @@
       </ion-item>
 
       <ion-item-options side="end">
-        <ion-item-option (click)="setNewFamille()">Ajouter</ion-item-option>
+        <ion-item-option (click)="postFamille()">Ajouter</ion-item-option>
         <ion-item-option color="medium" (click)="updateFamille(famille)">Modifier</ion-item-option>
         <ion-item-option color="danger" (click)="deleteFamilleArticle(famille)">Supprimer</ion-item-option>
       </ion-item-options>
@@ -34,11 +33,11 @@
 
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="initFamilleFromDataLocalStorage()">
+    <ion-fab-button (click)="this.onInit()">
       <ion-icon name="sync-outline"></ion-icon>
     </ion-fab-button>
     <br>
-    <ion-fab-button (click)="setNewFamille()">
+    <ion-fab-button (click)="postFamille()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

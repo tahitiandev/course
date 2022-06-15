@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { PlatAddPageRoutingModule } from './plat-add-routing.module';
 
 import { PlatAddPage } from './plat-add.page';
+// import { PlatArticleSearchPipe } from 'src/app/pipes/plat-article-search.pipe';
 
 @NgModule({
   imports: [
@@ -17,6 +18,8 @@ import { PlatAddPage } from './plat-add.page';
     FormsModule,
     ReactiveFormsModule
   ],
-  declarations: [PlatAddPage]
+  declarations: [PlatAddPage
+    // ,PlatArticleSearchPipe
+  ]
 })
 export class PlatAddPageModule {}

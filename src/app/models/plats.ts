@@ -4,6 +4,7 @@ export interface Plats {
     prix? : number;
     firebase : boolean;
     isModified? : boolean;
+    isDeleted? : boolean;
     documentId? : string;
 }
 

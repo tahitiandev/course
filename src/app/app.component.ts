@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { Setting } from './models/setting';
+import * as firebase from 'firebase';
+import { Depenses } from './models/depenses';
+import { Settings } from './models/setting';
 import { ArticlesService } from './services/articles.service';
 import { CoursesService } from './services/courses.service';
 import { MenuService } from './services/menu.service';
@@ -22,28 +24,42 @@ export class AppComponent implements OnInit {
               private utility : UtilityService) {}
   
   splashscreen : boolean = true;
-  settings : Setting;
-  
+  nbConnection : number = 0;
+  settings : Settings;
+  demarrageSansSplashscreen : boolean = true;
   
   ngOnInit(){
-    // this.initSplashscreen()
-    // this.loadDefaultData()
-    this.route.navigateRoot('splashscreen')
-    // this.route.navigateRoot('http://localhost:8100/tabs/tab3')
+    this.initSplashscreen()
   }
 
   initSplashscreen(){
+    this.loadDefaultData()
     document.addEventListener('deviceready', () => {
       this.loadDefaultData()
     })
   }
 
   loadDefaultData(){
+    
+    if(!this.demarrageSansSplashscreen){
 
-    // if(this.splashscreen){
-    //   this.splashscreen = false;
-    //   this.route.navigateRoot('splashscreen')
-    // }else{
+      if(this.splashscreen){
+        this.splashscreen = false;
+        if(this.nbConnection === 0){
+          this.route.navigateRoot('splashscreen')
+        }
+      }else{
+        this.setArticle()
+        this.setFamilleArticle()
+        this.setPlat()
+        this.setCourse()
+        this.setMenu()
+        this.initSetting()
+        this.initTheme()
+        this.setDeletedElement()
+        this.initDepense()
+      }
+    }else{
       this.setArticle()
       this.setFamilleArticle()
       this.setPlat()
@@ -52,35 +68,36 @@ export class AppComponent implements OnInit {
       this.initSetting()
       this.initTheme()
       this.setDeletedElement()
-    // }
+      this.initDepense()
+    }
   }
 
   async setArticle(){
-    const articles = await this.articleService.getArticleFromLocalStorage()
+    const articles = await this.articleService.getArticles()
     if(articles === null){
       await this.articleService.setDefaultArticleData()
     }
   }
   async setFamilleArticle(){
-    const famillles = await this.articleService.getFamilleArticleFromLocalStorage()
+    const famillles = await this.articleService.getFamilles()
     if(famillles === null){
       await this.articleService.setDefaultFamilleArticleData()
     }
   }
   async setPlat(){
-    const plats = await this.platService.getPlatFromLocalStorage()
+    const plats = await this.platService.getPlats()
     if(plats === null){
       await this.platService.setDefaultPlatData()
     }
   }
   async setCourse(){
-    const courses = await this.courseService.getCourseFromLocalStorage()
+    const courses = await this.courseService.getCourses()
     if(courses === null){
       await this.courseService.setDefaultCourseData()
     }
   }
   async setMenu(){
-    const menues = await this.menuService.getMenuFromLocaoStorage()
+    const menues = await this.menuService.getMenus()
     if(menues === null){
       await this.menuService.setDefaultValue()
     }
@@ -95,24 +112,11 @@ export class AppComponent implements OnInit {
   async initSetting() {
 
     const setting = await this.storage.get(this.utility.localstorage.Setting);
-    
-    if(!setting){
-      // Je met à jour le thème
-      this.settings = {
-        theme : true
-      }
-      // je met à jour le LS
-      this.storage.set(this.utility.localstorage.Setting, this.settings)
+    if(setting === null){
+      const settingInfo : Settings = await this.utility.initSettingData()
+      this.storage.set(this.utility.localstorage.Setting, settingInfo)
     }
-
-    this.storage.get(this.utility.localstorage.Setting).then(s => {
-      if(!s){
-        this.settings = {
-          theme : true
-        }
-        this.storage.set(this.utility.localstorage.Setting, this.settings)
-      }
-    })
+    
   }
 
   async initTheme(){
@@ -129,6 +133,17 @@ export class AppComponent implements OnInit {
       document.body.setAttribute('color-theme','light');
     }
 
+  }
+
+  async initDepense(){
+    
+    const depenses : Array<Depenses> = await this.storage.get(this.utility.localstorage.Dépenses);
+    
+    if(depenses === null){
+      const data : Array<Depenses> = []
+      this.storage.set(this.utility.localstorage.Dépenses, data)
+
+    }
   }
 
 }
