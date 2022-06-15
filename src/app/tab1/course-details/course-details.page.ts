@@ -198,7 +198,8 @@ export class CourseDetailsPage implements OnInit {
           name: 'quantite',
           label : 'Quantité',
           placeholder : 'Quantité',
-          type: 'number'
+          type: 'number',
+          value : 1
         }
       ],
       buttons: [
@@ -545,16 +546,22 @@ export class CourseDetailsPage implements OnInit {
     var radioOption : Array<AlertInput> = [];
     
     for(let article of articles){
-      radioOption.push({
-        type : 'radio',
-        name : article.code,
-        label : article.libelle + ' ' + article.prix + ' xpf',
-        value : {
-          code : article.code,
-          libelle : article.libelle,
-          prix : article.prix
-        }
-      })
+      if(article.articleSpecial){
+        radioOption.push({
+          type : 'radio',
+          name : article.code,
+          label : '=> Article spécial <=',
+          value : article,
+          cssClass : 'articleSpecial'
+        })
+      }else{
+        radioOption.push({
+          type : 'radio',
+          name : article.code,
+          label : article.libelle + ' ' + article.prix + ' xpf',
+          value : article
+        })
+      }
     }
 
 
@@ -572,7 +579,84 @@ export class CourseDetailsPage implements OnInit {
           }
         }, {
           text: 'Valider',
+          handler: async (article : Articles) => {
+
+            if(article.articleSpecial){
+              await this.updateArticleSpecial(article);
+            }
+
+            if(!article.articleSpecial){
+              var liste : Liste = {
+                articleId : article.code,
+                libelle : article.libelle,
+                quantite : 1,
+                prixUnitaire : article.prix,
+                actif : false
+              }
+  
+  
+              this.courseDetails.push(liste)
+              this.course.liste = []
+              this.course.liste = this.courseDetails
+              this.course.isModified = true;
+  
+              const courses : Array<Courses> = await this.courseService.getCourses();
+              const index = await courses.findIndex(s => s.id === this.course.id);
+              courses[index].liste = this.courseDetails;
+              
+              if(courses[index].firebase){
+                courses[index].isModified = true;
+              }
+  
+              await this.courseService.postCourses(courses);
+              await this.calculeTotal();
+            }
+            
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+    
+
+  } // addIngredient
+
+  private async updateArticleSpecial(article : Articles){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Modifier les informations',
+      inputs: [
+        {
+          type : 'text',
+          name : 'libelle',
+          placeholder : 'Nom du produit'
+        },
+        {
+          type : 'number',
+          name : 'quantite',
+          value : 1
+        },
+        {
+          type : 'number',
+          name : 'prix',
+          value : 100
+        }
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Valider',
           handler: async (article : any) => {
+            
+            
 
             var liste : Liste = {
               articleId : article.code,
@@ -604,11 +688,12 @@ export class CourseDetailsPage implements OnInit {
         }
       ]
     });
-
-    await alert.present();
-    
-
-  } // addIngredient
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
+  }
 
   actualiser(){
     this.calculeTotal()

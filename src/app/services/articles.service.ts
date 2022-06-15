@@ -316,7 +316,7 @@ export class ArticlesService {
 
     const article : Articles = await this.getArticleByIdAndLibelle(articleSelected.articleId, articleSelected.libelle);
     
-    if(prix !== article.prix){
+    if(prix !== article.prix && !article.articleSpecial){
 
       const alert = await this.alertController.create({
         cssClass: 'my-custom-class',
