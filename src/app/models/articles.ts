@@ -3,6 +3,7 @@ export interface Articles{
     libelle : string;
     prix : number;
     prixModifier? : number;
+    PrixMagasin? : Array<PrixMagasin>;
     quantite?:number;
     firebase? : boolean;
     isModified? : boolean;
