@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
-import { Articles, Familles } from 'src/app/models/articles';
+import { Articles, Familles, PrixMagasin } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Storage } from '@ionic/storage';
@@ -44,10 +44,13 @@ export class ArticleListPage implements OnInit {
 
       // Charger la liste des magasins
       this.magasins = settings.magasins;
+
+      // this.tempSetMagasinPrix();
+
     }
 
 
-    async modifierUnArticle(articles : Articles){
+    async updateArticle(articles : Articles){
 
       const alert = await this.alertController.create({
         header: 'Modifier l\'article',
@@ -94,7 +97,14 @@ export class ArticleListPage implements OnInit {
           }
         },
         {
-        text: 'Ok',
+          text: 'Ajouter un prix',
+          cssClass: 'primary',
+          handler: async (result) => {
+            this.setPrixMagasinStep1(articles)
+          }
+        },
+        {
+        text: 'Valider',
         handler: async (result : Articles) => {
 
           var articles = await this.storage.get(this.utility.localstorage.articles);
@@ -112,6 +122,85 @@ export class ArticleListPage implements OnInit {
           await this.spinner(false)
 
           }
+        }
+        ]
+      });
+  
+      await alert.present();
+
+    }
+
+    private async setPrixMagasinStep1(article : Articles){
+
+      const magasins = this.settings.magasins
+
+      var inputsOption : Array<AlertInput> = [];
+
+      for(let magasin of magasins){
+        inputsOption.push({
+          name: 'magasin',
+          type: 'radio',
+          label : magasin,
+          value : magasin
+        })
+      }
+
+      const alert = await this.alertController.create({
+        header: 'Ajouter un prix',
+        inputs: inputsOption,
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+        text: 'Valider',
+        handler: async (result) => {
+
+          await this.setPrixMagasinStep2(article, result);
+
+        }
+        }
+        ]
+      });
+  
+      await alert.present();
+    }
+
+    private async setPrixMagasinStep2(article : Articles, magasin : string){
+
+      const alert = await this.alertController.create({
+        header: 'Ajouter un prix',
+        inputs: [{
+          type : 'number',
+          label : 'Prix',
+          name : 'prix'
+        }],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+        text: 'Valider',
+        handler: async (result) => {
+          
+          article.PrixMagasin.push({
+            prix : result.prix,
+            magasin : magasin
+          })
+
+          await this.articleService.putArticle(article);
+          await this.getArticle();
+          this.spinner(false);
+
+        }
         }
         ]
       });
@@ -303,8 +392,8 @@ export class ArticleListPage implements OnInit {
       text: 'Ok',
       handler: async (newArticle : Articles) => {
 
-        const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles)
-        var articleTemp : Articles [] = [];
+        const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles)
+        var articleTemp : Array<Articles> = [];
         
         for(let article of articles){
           articleTemp.push(article)
@@ -328,10 +417,58 @@ export class ArticleListPage implements OnInit {
     await alert.present();
     }
 
+    async tempSetMagasinPrix(){
+
+      const articles : Array<Articles> = await this.articleService.getArticles();
+      articles.map(articles => {
+        articles.PrixMagasin = [
+          {
+            magasin : articles.magasin === 'Carrefour' ? 'Carrefour Arue' : articles.magasin,
+            prix : articles.prix
+          }
+        ];
+        if(articles.magasin === 'Carrefour'){
+          articles.magasin = 'Carrefour Arue';
+        }
+        articles.isModified = true;
+      })
+
+      await this.articleService.postArticles(articles);
+
+    }
+
     async changeMagasin(event){
       const magasin = await event.target.value
       this.filtreMagasin = await magasin
       this.getArticle().then(() => this.spinner(false))
+      this.getArticleByMagasin();
+    }
+
+    async getArticleByMagasin(){
+
+      const magasinSelected = this.filtreMagasin;
+      const articles : Array<Articles> = await this.articleService.getArticles();
+      const articlesFiltre : Array<Articles> = [];
+
+      if(magasinSelected !== ''){
+        for(let article of articles){
+
+          for(let index = 0; index < article.PrixMagasin.length; index++){
+  
+            if(article.PrixMagasin[index].magasin === magasinSelected){
+              article.prix = article.PrixMagasin[index].prix;
+              articlesFiltre.push(article);
+            }
+  
+          }//for
+  
+        }//for
+        
+        return await articlesFiltre;
+      }else{
+        return articles;
+      } 
+
     }
 
     async getArticle(){
@@ -341,37 +478,23 @@ export class ArticleListPage implements OnInit {
       this.articles = []
       this.familles = []
 
-      const familles = await this.getFamilleQuiOntDesArticles()
+      const familles = await this.getFamilleQuiOntDesArticles();
       this.familles = familles;
       
-      const articlesLS : Articles[] = await this.storage.get(this.utility.localstorage.articles);
-      var groupByArticle : Articles[] = []
+      const articlesByMagasin : Array<Articles> = await this.getArticleByMagasin();
+      var groupByArticle : Array<Articles> = []
 
 
       for(let i = 0 ; i < familles.length; i++){
 
-        for(let article of articlesLS){
+        for(let article of articlesByMagasin){
 
-          // if(article.code.substring(0,3) === familles[i].code.substring(0,3)){
           if(article.familleCode == familles[i].code){
-            
-            var articleGroup : Articles = {
-              code : article.code,
-              libelle : article.libelle,
-              prix : article.prix,
-              prixModifier : article.prixModifier,
-              quantite : article.quantite,
-              familleCode : article.familleCode,
-              familleLibelle : familles[i].libelle,
-              firebase : article.firebase,
-              isModified : article.isModified,
-              documentId : article.documentId,
-              barreCode : article.barreCode,
-              magasin : article.magasin
-            }
+
+            article.familleLibelle = familles[i].libelle
 
             if(!article.isDeleted){
-              groupByArticle.push(articleGroup)
+              groupByArticle.push(article)
             }
           } // if          
         }
@@ -379,7 +502,10 @@ export class ArticleListPage implements OnInit {
       } // for
 
       const articles = await this.articleService.orderByArticleName(groupByArticle)
-      this.filtreArticleByMagasin(articles);
+
+      this.articles = articles;
+
+      // this.filtreArticleByMagasin(articles);
       }
 
       private async filtreArticleByMagasin(articles : Array<Articles>){
@@ -412,7 +538,7 @@ export class ArticleListPage implements OnInit {
       this.nav.navigateRoot('tabs/tab2/article-add')
       }
 
-      async modifierFamilleArticle(article : Articles){
+      async updateFamilleAssociee(article : Articles){
 
         const familles : Array<Familles> = this.articleService.orderByLibelleFamille(await this.storage.get(this.utility.localstorage['famille d\'articles']));
 
