@@ -57,7 +57,7 @@
             <ion-item-option color="medium" (click)="modifierArticleId(article)">Id</ion-item-option>
           </ion-item-options>
 
-          <ion-item button>
+          <ion-item button (click)="this.getListePrixMagasin(article)">
             <ion-icon *ngIf="article.barreCode != null || article.barreCode != undefined" name="barcode-outline"></ion-icon>
             <ion-label>
               <h3>{{ article.libelle }}</h3>

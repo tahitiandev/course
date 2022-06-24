@@ -71,6 +71,7 @@ export class ArticleListPage implements OnInit {
           name: 'prix',
           type: 'number',
           placeholder: 'Prix',
+          disabled : true,
           value : articles.prix
         },
         {
@@ -95,27 +96,27 @@ export class ArticleListPage implements OnInit {
         //     this.modifierMagasin(articles)
         //   }
         // },
-        {
-          text: 'Ajouter un prix',
-          cssClass: 'primary',
-          handler: async (result) => {
-            this.chooseMagasinPrixMagasin(articles, 'create')
-          }
-        },
-        {
-          text: 'Modifier un prix',
-          cssClass: 'primary',
-          handler: async (result) => {
-            this.chooseMagasinPrixMagasin(articles, 'update')
-          }
-        },
-        {
-          text: 'Supprimer un prix',
-          cssClass: 'primary',
-          handler: async (result) => {
-            this.chooseMagasinPrixMagasin(articles, 'delete')
-          }
-        },
+        // {
+        //   text: 'Ajouter un prix',
+        //   cssClass: 'primary',
+        //   handler: async (result) => {
+        //     this.chooseMagasinPrixMagasin(articles, 'create')
+        //   }
+        // },
+        // {
+        //   text: 'Modifier un prix',
+        //   cssClass: 'primary',
+        //   handler: async (result) => {
+        //     this.chooseMagasinPrixMagasin(articles, 'update')
+        //   }
+        // },
+        // {
+        //   text: 'Supprimer un prix',
+        //   cssClass: 'primary',
+        //   handler: async (result) => {
+        //     this.chooseMagasinPrixMagasin(articles, 'delete')
+        //   }
+        // },
         {
         text: 'Valider',
         handler: async (result : Articles) => {
@@ -202,6 +203,59 @@ export class ArticleListPage implements OnInit {
       await alert.present();
     }
 
+    async getListePrixMagasin(article : Articles) {
+
+      const prixMagasins = article.PrixMagasin;
+      const inputsOption = [];
+
+      for(let prixMagasin of prixMagasins){
+        inputsOption.push({
+          name: 'magasin',
+          type: 'radio',
+          label : prixMagasin.magasin + ' ' + prixMagasin.prix,
+          value : prixMagasin
+        })
+      }
+
+      const alert = await this.alertController.create({
+        header: 'Listes des prix',
+        inputs: inputsOption,
+        buttons: [
+        {
+          text: 'Ajouter',
+          handler: () => {
+            this.chooseMagasinPrixMagasin(article, 'create')
+          }
+        },
+        {
+          text: 'Modifier',
+          handler: async (result) => {
+            await this.updatePrixMagasin(article, result.magasin, result.prix);
+          }
+        },
+        {
+        text: 'Supprimer',
+        handler: async (result) => {
+
+        //  await this.articleService.deleteArticle(article);
+        const index = article.PrixMagasin.findIndex(prixMagasins => prixMagasins.magasin === result.magasin);
+        article.PrixMagasin.splice(index, 1);
+        await this.articleService.putArticle(article);
+          
+        }
+        },{
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        }
+        ]
+      });
+  
+      await alert.present();
+    }
+
     private async updatePrixMagasin(article : Articles, magasin : string, prix : number){
 
       const alert = await this.alertController.create({
@@ -225,6 +279,7 @@ export class ArticleListPage implements OnInit {
         handler: async (result) => {
           
           const index = article.PrixMagasin.findIndex(prixMagasin => prixMagasin.magasin === magasin);
+          article.PrixMagasin[index].prix = result.prix
           await this.articleService.putArticle(article);
           await this.getArticle();
           this.spinner(false);
