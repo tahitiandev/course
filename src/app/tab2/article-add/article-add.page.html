@@ -22,7 +22,7 @@
           <ion-row>
             <ion-col>
               <h1>Renseigner<br>le nom de l'article</h1>
-              <h5>1/5</h5>
+              <h5>1/6</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -44,7 +44,7 @@
           <ion-row>
             <ion-col>
               <h1>Choisir<br>une famille d'article</h1>
-              <h5>2/5</h5>
+              <h5>2/6</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -87,7 +87,7 @@
           <ion-row>
             <ion-col>
               <h1>Renseigner<br>le prix</h1>
-              <h5>3/5</h5>
+              <h5>3/6</h5>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -107,7 +107,7 @@
           <ion-row>
             <ion-col>
               <h1>Associer un code barre</h1>
-              <h5>4/5</h5>
+              <h5>4/6</h5>
               <br>
             </ion-col>
           </ion-row>
@@ -121,12 +121,37 @@
       </ion-slide>
 
       <!-- SLIDE 5 -->
+
+      <ion-slide >
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h1>Choisir<br>un magasin</h1>
+              <h5>5/6</h5>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <!-- <ion-label>Famille</ion-label> -->
+                <ion-select (click)="slideCinq(slides)" id="slideCinq" placeholder="Sélectionner un magasin" formControlName="magasins">
+                  <ion-select-option *ngFor="let magasin of this.magasins" value="{{magasin}}">{{ magasin }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+      </ion-slide>
+
+      <!-- SLIDE 6 -->
     <ion-slide >
       <ion-grid>
         <ion-row>
           <ion-col>
             <h1>Valider vos choix</h1>
-            <h5>5/5</h5>
+            <h5>6/6</h5>
             <br>
           </ion-col>
         </ion-row>

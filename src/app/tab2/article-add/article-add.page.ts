@@ -15,9 +15,11 @@ import { UtilityService } from 'src/app/services/utility.service';
 export class ArticleAddPage implements OnInit {
 
   articleForm : FormGroup;
-  familles : Familles [] = [];
-  articlesLS : Articles [] = [];
+  familles : Array<Familles> = [];
+  articles : Array<Articles> = [];
   barreCode : string = null;
+  settings : Settings;
+  magasins;
 
   constructor(private formbuilder : FormBuilder,
               private articleService : ArticlesService,
@@ -26,29 +28,52 @@ export class ArticleAddPage implements OnInit {
               private utility : UtilityService) { }
 
   ngOnInit() {
-    this.init()
-    this.getFamilleFromLocalStorage()
+    
+    this.initFormulaire();
+    this.onInit();
   }
 
-  init (){
+  private async onInit(){
+
+    const settings = this.getSettings();
+    this.settings = await settings;
+    this.magasins = (await settings).magasins;
+
+    this.getFamilles();
+
+    const familles = await this.getFamilles();
+    this.familles = this.articleService.orderByLibelleFamille(familles);
+
+    const articles = await this.getArticles();
+    this.articles = articles;
+
+  }
+
+  initFormulaire (){
     this.articleForm = this.formbuilder.group({
       familles : '',
       code : '',
       libelle : '',
-      prix : ''
+      prix : '',
+      magasins : ''
     })
   }
 
-  async getFamilleFromLocalStorage(){
-    const familleLS = await this.articleService.getFamilles()
-    const familles = await this.articleService.orderByLibelleFamille(familleLS)
-    this.familles = familles
+  private async getSettings(){
+    const settings = await this.utility.getSetting();
+    return settings;
   }
 
-  async getArticleToLocalStorage(){
-    const articlesLS = await this.articleService.getArticles()
-    const articles = await this.articleService.orderByArticleName(articlesLS)
-    this.articlesLS = articles
+  async getFamilles(){
+    const familles : Array<Familles> = await this.articleService.getFamilles();
+    return  familles;
+  }
+
+  async getArticles(){
+
+    const articles : Array<Articles> = await this.articleService.getArticles();
+    return articles;
+
   }
 
   async pairWithABarreCode(slide){
@@ -61,7 +86,7 @@ export class ArticleAddPage implements OnInit {
     const formValue = await this.articleForm.value
     const setting : Settings = await this.utility.getSetting();
 
-    const newArticle : Articles = {
+    const article : Articles = {
       code : (await this.articleService.generateArticleId()).toString(),
       libelle : formValue.libelle,
       prix : formValue.prix ,
@@ -73,10 +98,17 @@ export class ArticleAddPage implements OnInit {
       familleCode : formValue.familles,
       familleLibelle : null,
       barreCode : this.barreCode,
-      magasin : setting.magasinParDefaut
-    }    
+      magasin : formValue.magasins,
+      PrixMagasin : [
+        {
+          magasin : formValue.magasins,
+          prix : formValue.prix
+        }
+      ]
+    } 
     
-    this.articleService.postArticle(newArticle)
+    await this.articleService.postArticle(article);
+
 
     this.nav.back()
 
@@ -109,13 +141,20 @@ export class ArticleAddPage implements OnInit {
     } )
   }
 
+  slideCinq(slides){
+    const input = document.getElementById('slideCinq');
+    input.addEventListener('focusin', () => {
+      slides.slideNext()
+    } )
+  }
+
   async slidetrois(slides){
     const input = await document.getElementById('slidetrois');
 
     input.addEventListener('focusout', async () => {
 
       // fonctionne pas
-      const ifCodeExiste = await this.articlesLS.find((artilces) => {
+      const ifCodeExiste = await this.articles.find((artilces) => {
         return artilces.code.substring(3, artilces.code.length - 3) === this.articleForm.get('code').value
       })
   

@@ -105,7 +105,7 @@ export class ArticlesService {
   
   async getArticleIndex(article : Articles){
     const articles = await this.getArticles();
-    const index = await articles.findIndex(articles => articles === article);
+    const index = await articles.findIndex(articles => articles.code === article.code && articles.barreCode === article.barreCode);
     return index;
   }
 
@@ -121,13 +121,15 @@ export class ArticlesService {
     const articles = await this.getArticles();
     articles.push(article);
 
+    
     const result = await this.postArticles(articles);
     const index = await this.getArticleIndex(article);
-
+    
     const response = {
       all : result,
       article : result[index]
     };
+    console.log(response)
 
     return response;
   }
@@ -312,9 +314,15 @@ export class ArticlesService {
     return article;
   }
 
-  async verifieSiPrixDifferent(articleSelected : Liste, prix : number){
+  async verifieSiPrixDifferent(articleSelected : Liste, prix : number, magasin : string){
 
     const article : Articles = await this.getArticleByIdAndLibelle(articleSelected.articleId, articleSelected.libelle);
+
+    for(let prixMagasin of article.PrixMagasin){
+      if(prixMagasin.magasin === magasin){
+        article.prix = prixMagasin.prix;
+      }
+    }
     
     if(prix !== article.prix && !article.articleSpecial){
 
@@ -333,7 +341,14 @@ export class ArticlesService {
             text: 'Oui',
             handler: async () => {
 
-              article.prix = prix;
+              // article.prix = prix;
+
+              for(let prixMagasin of article.PrixMagasin){
+                if(prixMagasin.magasin === magasin){
+                  prixMagasin.prix = prix
+                }
+              }
+
               await this.putArticle(article);
 
             }

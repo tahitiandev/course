@@ -36,7 +36,8 @@ export class CourseDetailsPage implements OnInit {
   course : Courses;
   courseDetails : Array<Liste> = [];
   total : number = 0;
-  settings : Settings
+  settings : Settings;
+  budget : number;
 
   ngOnInit() {
     this.onInit();
@@ -52,6 +53,7 @@ export class CourseDetailsPage implements OnInit {
     // Init setting
     const settings = await this.settingInit();
     this.settings = settings;
+    this.budget = settings.budget;
   }
 
   private async settingInit(){
@@ -88,8 +90,8 @@ export class CourseDetailsPage implements OnInit {
 
     const montantCourse = await this.courseService.calculeMontantTotal(this.courseDetails);
     this.total = montantCourse;  
-    if(montantCourse > this.settings.budget){
-      var difference = (montantCourse) - (this.settings.budget)
+    if(montantCourse > this.budget){
+      var difference = (montantCourse) - (this.budget)
       this.utility.popupInformation('Vous avez dépasser votre budget de ' + difference + ' xpf')
     }
   }
@@ -307,7 +309,7 @@ export class CourseDetailsPage implements OnInit {
             await this.courseService.postCourses(courses);
             await this.calculeTotal();
 
-            this.articleService.verifieSiPrixDifferent(articleSelected, data.prixUnitaire);
+            this.articleService.verifieSiPrixDifferent(articleSelected, data.prixUnitaire, this.course.magasin);
             
           }
         }
@@ -419,7 +421,13 @@ export class CourseDetailsPage implements OnInit {
                 familleCode : '22',
                 familleLibelle : null,
                 barreCode : barreCode,
-                magasin : this.course.magasin
+                magasin : this.course.magasin,
+                PrixMagasin : [
+                  {
+                    magasin : this.course.magasin,
+                    prix : article.prix
+                  }
+                ]
               }
 
               this.utility.spinner(true);
@@ -541,18 +549,30 @@ export class CourseDetailsPage implements OnInit {
 
   private async postArticleManuel(){
 
-    const articlesToLocalStorage : Array<Articles> = await this.articleService.getArticles()
-    const articles = await this.sortByArticleName(articlesToLocalStorage)
+    const articles : Array<Articles> = await this.articleService.getArticles();
+    const articlesSort = await this.sortByArticleName(articles);
+    const articlesPrixMagasin : Array<Articles> = [];
+
+    for(let article of articlesSort){
+      for(var index = 0; index < article.PrixMagasin.length; index++){
+        if(article.PrixMagasin[index].magasin === this.course.magasin){
+          article.isPrixMagasin = true;
+          article.prix = article.PrixMagasin[index].prix
+          articlesPrixMagasin.push(article);
+        }
+      }
+    }
+
     var radioOption : Array<AlertInput> = [];
     
-    for(let article of articles){
+    for(let article of articlesSort){
       if(article.articleSpecial){
         radioOption.push({
           type : 'radio',
           name : article.code,
           label : '=> Article spécial <=',
           value : article,
-          cssClass : 'articleSpecial'
+          cssClass : 'test'
         })
       }else{
         radioOption.push({

@@ -45,10 +45,9 @@ export class ArticleListPage implements OnInit {
       // Charger la liste des magasins
       this.magasins = settings.magasins;
 
-      // this.tempSetMagasinPrix();
+      this.tempSetMagasinPrix();
 
     }
-
 
     async updateArticle(articles : Articles){
 
@@ -89,18 +88,32 @@ export class ArticleListPage implements OnInit {
           handler: () => {
           }
         },
-        {
-          text: 'Magasin : ' + articles.magasin,
-          cssClass: 'primary',
-          handler: async (result) => {
-            this.modifierMagasin(articles)
-          }
-        },
+        // {
+        //   text: 'Magasin : ' + articles.magasin,
+        //   cssClass: 'primary',
+        //   handler: async (result) => {
+        //     this.modifierMagasin(articles)
+        //   }
+        // },
         {
           text: 'Ajouter un prix',
           cssClass: 'primary',
           handler: async (result) => {
-            this.setPrixMagasinStep1(articles)
+            this.chooseMagasinPrixMagasin(articles, 'create')
+          }
+        },
+        {
+          text: 'Modifier un prix',
+          cssClass: 'primary',
+          handler: async (result) => {
+            this.chooseMagasinPrixMagasin(articles, 'update')
+          }
+        },
+        {
+          text: 'Supprimer un prix',
+          cssClass: 'primary',
+          handler: async (result) => {
+            this.chooseMagasinPrixMagasin(articles, 'delete')
           }
         },
         {
@@ -130,9 +143,18 @@ export class ArticleListPage implements OnInit {
 
     }
 
-    private async setPrixMagasinStep1(article : Articles){
+    private async chooseMagasinPrixMagasin(article : Articles, typeCrudPrixMagasin : string){
 
-      const magasins = this.settings.magasins
+      var magasins = [];
+
+      if(typeCrudPrixMagasin === 'create'){
+        magasins = this.settings.magasins;
+      }
+      if(typeCrudPrixMagasin === 'update' || typeCrudPrixMagasin === 'delete'){
+        for(let prixMagasin of article.PrixMagasin){
+          magasins.push(prixMagasin.magasin)
+        } 
+      }
 
       var inputsOption : Array<AlertInput> = [];
 
@@ -160,7 +182,17 @@ export class ArticleListPage implements OnInit {
         text: 'Valider',
         handler: async (result) => {
 
-          await this.setPrixMagasinStep2(article, result);
+          if(typeCrudPrixMagasin === 'create'){
+            await this.setPrixMagasinStep2(article, result);
+          }
+
+          if(typeCrudPrixMagasin === 'update'){
+            for(let prixMagasin of article.PrixMagasin){
+              if(prixMagasin.magasin === result){
+                await this.updatePrixMagasin(article, result, prixMagasin.prix);
+              }
+            }
+          }
 
         }
         }
@@ -168,6 +200,45 @@ export class ArticleListPage implements OnInit {
       });
   
       await alert.present();
+    }
+
+    private async updatePrixMagasin(article : Articles, magasin : string, prix : number){
+
+      const alert = await this.alertController.create({
+        header: 'Modifier le prix de ' + magasin,
+        inputs: [{
+          type : 'number',
+          label : 'Prix',
+          name : 'prix',
+          value : prix
+        }],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+        text: 'Valider',
+        handler: async (result) => {
+          
+          const index = article.PrixMagasin.findIndex(prixMagasin => prixMagasin.magasin === magasin);
+          await this.articleService.putArticle(article);
+          await this.getArticle();
+          this.spinner(false);
+
+        }
+        }
+        ]
+      });
+  
+      await alert.present().then(() => {
+        const firstInput: any = document.querySelector('ion-alert input');
+        firstInput.focus();
+        return;
+      });
     }
 
     private async setPrixMagasinStep2(article : Articles, magasin : string){
@@ -205,7 +276,11 @@ export class ArticleListPage implements OnInit {
         ]
       });
   
-      await alert.present();
+      await alert.present().then(() => {
+        const firstInput: any = document.querySelector('ion-alert input');
+        firstInput.focus();
+        return;
+      });
 
     }
 

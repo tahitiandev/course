@@ -14,6 +14,7 @@ export interface Articles{
     barreCode? :string;
     magasin : string;
     articleSpecial? : boolean;
+    isPrixMagasin?: boolean;
 }
 
 export interface Familles{
