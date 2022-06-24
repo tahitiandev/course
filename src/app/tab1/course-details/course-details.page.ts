@@ -430,7 +430,7 @@ export class CourseDetailsPage implements OnInit {
                 ]
               }
 
-              this.utility.spinner(true);
+              // this.utility.spinner(true);
 
               await this.articleService.postArticle(articleNew);
 
@@ -450,7 +450,7 @@ export class CourseDetailsPage implements OnInit {
                 await this.courseService.postCourse(this.course);
                 this.calculeTotal();
 
-                this.utility.spinner(false);
+                // this.utility.spinner(false);
 
               }, 1500);
               
