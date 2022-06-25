@@ -380,7 +380,7 @@ export class CourseDetailsPage implements OnInit {
     const barreCode = await this.barreCodeService.scanneBarreCode();
     const articles : Array<Articles> = await this.articleService.getArticles();
 
-    const article = await articles.filter(articles =>  articles.barreCode === barreCode);
+    const article = await articles.filter(articles => articles.barreCode === barreCode);
 
     if(article.length === 0){
 
@@ -430,8 +430,6 @@ export class CourseDetailsPage implements OnInit {
                 ]
               }
 
-              // this.utility.spinner(true);
-
               await this.articleService.postArticle(articleNew);
 
               setTimeout(async() => {
@@ -450,8 +448,6 @@ export class CourseDetailsPage implements OnInit {
                 await this.courseService.postCourse(this.course);
                 this.calculeTotal();
 
-                // this.utility.spinner(false);
-
               }, 1500);
               
             }
@@ -464,20 +460,89 @@ export class CourseDetailsPage implements OnInit {
     } // if(article.length === 0)
     else{
 
-      this.courseDetails.push({
-        articleId : article[0].code,
-        libelle : article[0].libelle,
-        quantite : 1,
-        prixUnitaire : article[0].prix,
-        actif : false
-      })
+      // Vérifier si un prix magasin existe
+      const prixMagasin = await article[0].PrixMagasin.filter(prixMagasins => prixMagasins.magasin === this.course.magasin);
+      const index = await article[0].PrixMagasin.findIndex(prixMagasins => prixMagasins.magasin === this.course.magasin);
+
+      alert(prixMagasin.length)
+
+      if(prixMagasin.length === 0){
+
+        await this.postNewPrixMagasin(article[0]);
+        
+      }else{
+        
+        this.courseDetails.push({
+          articleId : article[0].code,
+          libelle : article[0].libelle,
+          quantite : 1,
+          prixUnitaire : article[0].PrixMagasin[index].prix,
+          actif : false
+        })
+
+      }
 
       this.course.liste = this.courseDetails;
       this.courseService.postCourse(this.course);
       this.calculeTotal();
 
-    }
+    } //else
 
+  }
+
+  private async postNewPrixMagasin(article : Articles){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Renseigner un prix sur ce magasin',
+      inputs: [
+        {
+          name: 'magasin',
+          type: 'text',
+          value : this.course.magasin,
+          disabled : true
+        },
+        {
+          name: 'prix',
+          type: 'number',
+          value : article.prix
+        }
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Valider',
+          handler: async (result) => {    
+            
+            this.courseDetails.push({
+              articleId : article.code,
+              libelle : article.libelle,
+              quantite : 1,
+              prixUnitaire : result.prix,
+              actif : false
+            })
+
+            article.PrixMagasin.push({
+              magasin : result.magasin,
+              prix : result.prix
+            })
+
+            this.articleService.putArticle(article);
+
+            this.course.liste = this.courseDetails;
+            this.courseService.postCourse(this.course);
+            this.calculeTotal();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   private async postArticleByBarreCode3(){
