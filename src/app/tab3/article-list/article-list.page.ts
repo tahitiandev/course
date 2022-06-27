@@ -788,24 +788,17 @@ export class ArticleListPage implements OnInit {
                 familleCode : '22',
                 familleLibelle : null,
                 barreCode : barreCode,
-                magasin : this.settings.magasinParDefaut
+                magasin : this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin,
+                PrixMagasin : [
+                  {
+                    magasin : this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin,
+                    prix : formValue.prix
+                  }
+                ]
               }
 
               await this.chooseMagasins(article);
-                // this.articleService.postArticle({
-                //   code : (await this.articleService.generateArticleId()).toString(),
-                //   libelle : formValue.libelle,
-                //   prix : formValue.prix ,
-                //   prixModifier : null,
-                //   quantite : 1,
-                //   firebase : false,
-                //   isModified : false,
-                //   documentId : null,
-                //   familleCode : '22',
-                //   familleLibelle : null,
-                //   barreCode : barreCode,
-                //   magasin : this.settings.magasinParDefaut
-                // })
+
               }
             }
             ]
@@ -814,8 +807,58 @@ export class ArticleListPage implements OnInit {
           await alert.present();
         }//if
         else{
-          this.utility.popupInformation('Le code barre <strong>' + barreCode + '</strong> est déjà associé à l\'article ' + article.libelle)
+
+          const magasin = this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin;
+          const prixMagasin = article.PrixMagasin.filter(prixMagasins => prixMagasins.magasin === magasin);
+
+          if(prixMagasin.length === 0){
+            await this.postPrixMagasin(article, magasin);
+          }else{
+            this.utility.popupInformation('Le code barre <strong>' + barreCode + '</strong> est déjà associé à l\'article ' + article.libelle + ' sur le magasin ' + magasin)
+          }
+
         }
+      }
+
+      private async postPrixMagasin(article : Articles, magasin : string){
+
+        const alert = await this.alertController.create({
+          header: 'Ajouter un article',
+          inputs: [
+            {
+              name: 'prix',
+              type: 'text',
+              placeholder: 'Prix'
+            }
+          ],
+          buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            cssClass: 'secondary',
+          handler: () => {
+          }
+          }, {
+          text: 'Valider',
+          handler: async (result) => {
+
+            article.PrixMagasin.push({
+              prix : result.prix,
+              magasin : magasin
+            })
+
+            await this.articleService.putArticle(article);
+
+            }// valider
+          }
+          ]
+        });
+
+        await alert.present().then(() => {
+          const firstInput: any = document.querySelector('ion-alert input');
+          firstInput.focus();
+          return;
+        });
       }
 
       private async chooseMagasins(article : Articles){

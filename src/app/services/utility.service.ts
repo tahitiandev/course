@@ -274,7 +274,7 @@ export class UtilityService {
   //#endregion
 
 
-  async postAlert(inputs : Array<AlertInput>){
+  async postAlert(inputs : Array<AlertInput>, functionParam){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -292,7 +292,7 @@ export class UtilityService {
         {
           text: 'Valider',
           handler: async (data) => {
-            await this.getAlertValue(data);
+            await functionParam(data)
           }
         }
       ]
@@ -300,11 +300,6 @@ export class UtilityService {
 
     await alert.present();
 
-  }
-  
-  private getAlertValue(data : any){
-    console.log(data);
-    return data;
   }
 
   async saveToLocalStorage(localStorageName : string, values : Array<any>){

@@ -96,7 +96,7 @@ export class CourseDetailsPage implements OnInit {
     }
   }
 
-  async checkBox(article : Liste){
+  public async checkBox(article : Liste){
 
     const courses : Array<Courses> = await this.courseService.getCourses();
     const articleIndex = await courses[this.courseId].liste.findIndex(listes => listes.articleId === article.articleId);
@@ -111,7 +111,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async clickCheckBox(index : number){
+  public async clickCheckBox(index : number){
 
     var actifCheckBox : boolean = await this.courseDetails[index].actif
     var newListe : Array<Liste> = []
@@ -155,7 +155,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async supprimerArticle(article : Liste){
+  public async deleteArticle(article : Liste){
 
     const index = await this.courseDetails.findIndex(s => s === article);
     this.courseDetails.splice(index, 1);
@@ -173,7 +173,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async insertSpecialArticle(){
+  public async insertSpecialArticle(){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -245,7 +245,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async putArticle(articleSelected : Liste, index : number) {
+  public async putArticle(articleSelected : Liste, index : number) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Modifier les données de l\'article',
@@ -319,7 +319,7 @@ export class CourseDetailsPage implements OnInit {
     await alert.present();
   }
 
-  async postArticleToCourse(option : string){
+  public async postArticleToCourse(option : string){
 
     if(option === 'barreCode'){
       this.postArticleByBarreCode()
@@ -464,8 +464,6 @@ export class CourseDetailsPage implements OnInit {
       const prixMagasin = await article[0].PrixMagasin.filter(prixMagasins => prixMagasins.magasin === this.course.magasin);
       const index = await article[0].PrixMagasin.findIndex(prixMagasins => prixMagasins.magasin === this.course.magasin);
 
-      alert(prixMagasin.length)
-
       if(prixMagasin.length === 0){
 
         await this.postNewPrixMagasin(article[0]);
@@ -543,54 +541,6 @@ export class CourseDetailsPage implements OnInit {
     });
 
     await alert.present();
-  }
-
-  private async postArticleByBarreCode3(){
-
-      const barreCode = await this.barreCodeService.scanneBarreCode();
-      const article = await this.articleService.getArticleByBarreCode(barreCode);
-      
-    if(article === null || article === undefined){
-
-      await this.articleService.popUpPostArticleByBarreCode(barreCode);
-      const article : Articles = await this.articleService.getArticleByBarreCode(barreCode);
-
-      window.alert(article.libelle)
-        
-      var articleNew : Liste = {
-        articleId : article.code,
-        libelle : article.libelle,
-        quantite : 1,
-        prixUnitaire : article.prix,
-        prixTotal : null,
-        actif : false
-      }
-      
-      this.courseDetails.push(articleNew)
-      this.course.liste = this.courseDetails;
-
-      window.alert(articleNew.libelle)
-
-      await this.courseService.postCourse(this.course);
-           
-      this.calculeTotal();
-
-    }else{
-
-      var articleNew : Liste = {
-        articleId : article.code,
-        libelle : article.libelle,
-        quantite : 1,
-        prixUnitaire : article.prix,
-        prixTotal : null,
-        actif : false
-      }
-      
-      this.courseDetails.push(articleNew)
-      this.course.liste = this.courseDetails;
-      await this.courseService.postCourse(this.course);
-      this.calculeTotal();
-    }
   }
 
   async checkArticle(){
@@ -780,11 +730,11 @@ export class CourseDetailsPage implements OnInit {
     });
   }
 
-  actualiser(){
+  public actualiser(){
     this.calculeTotal()
   }
 
-  async insertPlat(){
+  public async insertPlat(){
 
     const platsBrute : Array<Plats> = await this.platsService.getPlats()
     const plats = await this.platsService.sortByLibelleFamilleArticle(platsBrute)
@@ -826,7 +776,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async chooseArticle(plat : Plats, jour? : string){
+  private async chooseArticle(plat : Plats, jour? : string){
 
     const articlesInfo : Array<Articles> = await this.articleService.getArticles();
     const articlePlat : Array<Articles> = [];
@@ -889,7 +839,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async insertMenu(){
+  public async insertMenu(){
 
     const menusInfo : Array<MenuDelaSemaine> = await this.menuService.getMenus()
     const semaineEnCours = await this.utility.getDateDebutetDateDeFinDeSemaine()
