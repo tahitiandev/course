@@ -177,7 +177,7 @@ export class CourseDetailsPage implements OnInit {
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Modifier les données de l\'article',
+      header: 'Ajouter un article',
       inputs: [
         {
           name: 'libelle',
@@ -241,7 +241,11 @@ export class CourseDetailsPage implements OnInit {
       ]
     });
 
-    await alert.present();
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
 
   }
 
@@ -455,7 +459,11 @@ export class CourseDetailsPage implements OnInit {
         ]
       });
   
-      await alert.present();
+      await alert.present().then(() => {
+        const firstInput: any = document.querySelector('ion-alert input');
+        firstInput.focus();
+        return;
+      });
 
     } // if(article.length === 0)
     else{
@@ -671,12 +679,12 @@ export class CourseDetailsPage implements OnInit {
         {
           type : 'number',
           name : 'quantite',
-          value : 1
+          placeholder : '1'
         },
         {
           type : 'number',
           name : 'prix',
-          value : 100
+          placeholder : '100'
         }
       ],
       buttons: [
@@ -695,9 +703,9 @@ export class CourseDetailsPage implements OnInit {
 
             var liste : Liste = {
               articleId : article.code,
-              libelle : article.libelle,
-              quantite : 1,
-              prixUnitaire : article.prix,
+              libelle : article.libelle === '' ? 'Article divers' : article.libelle,
+              quantite : article.quantite === '' ? 1 : article.quantite,
+              prixUnitaire : article.prix === '' ? 100 : article.prix,
               actif : false
             }
 
