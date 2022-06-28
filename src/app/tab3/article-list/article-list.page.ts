@@ -746,6 +746,19 @@ export class ArticleListPage implements OnInit {
         
 
       }
+
+      public async getArticleByBarreCode(){
+        const barreCode = await this.barreCodeService.scanneBarreCode();
+        const article = this.articleService.getArticleByBarreCode(barreCode);
+        const articles = [];
+        articles.push(article);
+        this.articles = articles;
+
+        const famille = this.articleService.getFamilleByCode((await article).code);
+        const familles = [];
+        familles.push(famille);
+        this.familles = familles;
+      }
   
       async postArticleByBarreCode(){
         const barreCode = await this.barreCodeService.scanneBarreCode();
