@@ -749,18 +749,25 @@ export class ArticleListPage implements OnInit {
 
       public async getArticleByBarreCode(){
         const barreCode = await this.barreCodeService.scanneBarreCode();
-        const article = this.articleService.getArticleByBarreCode(barreCode);
-        const articles = [];
-        articles.push(article);
-        this.articles = articles;
 
-        const famille = this.articleService.getFamilleByCode((await article).code);
-        const familles = [];
-        familles.push(famille);
-        this.familles = familles;
+        if(barreCode === undefined || barreCode === ''){
+          this.utility.popupInformation('Le code bare <strong>' + barreCode + '</strong> n\'existe pas');
+        }
+        else{
+          const article = await this.articleService.getArticleByBarreCode(barreCode);
+          const articles = [];
+          articles.push(article);
+          this.articles = articles;
+          
+          const famille = await this.articleService.getFamilleByCode(article.code);
+          const familles = [];
+          familles.push(famille);
+          this.familles = familles;
+        }
       }
   
       async postArticleByBarreCode(){
+
         const barreCode = await this.barreCodeService.scanneBarreCode();
         const article = await this.articleService.getArticleByBarreCode(barreCode);
         if(article === null || article === undefined){
