@@ -809,12 +809,13 @@ export class ArticleListPage implements OnInit {
                 familleLibelle : null,
                 barreCode : barreCode,
                 magasin : this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin,
-                PrixMagasin : [
-                  {
-                    magasin : this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin,
-                    prix : formValue.prix
-                  }
-                ]
+                PrixMagasin : []
+                // PrixMagasin : [
+                //   {
+                //     magasin : this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin,
+                //     prix : formValue.prix
+                //   }
+                // ]
               }
 
               await this.chooseMagasins(article);
