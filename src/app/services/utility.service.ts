@@ -85,7 +85,7 @@ export class UtilityService {
     }
   }
 
-  async settingIsModified(setting : Settings){
+  async updateSettings(setting : Settings){
     if(setting.firebase){
       setting.isModified = true;
     }

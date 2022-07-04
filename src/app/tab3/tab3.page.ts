@@ -114,7 +114,7 @@ export class Tab3Page implements OnInit {
           text: 'Oui',
           handler: (magasin) => {
             this.setting.magasinParDefaut = magasin
-            this.utility.settingIsModified(this.setting)
+            this.utility.updateSettings(this.setting)
             
             this.storage.set(this.utility.localstorage.Setting, this.setting)
           }
@@ -137,7 +137,7 @@ export class Tab3Page implements OnInit {
       const setting = await this.storage.get(this.utility.localstorage.Setting);
       this.setting = setting;
       this.setting.theme = true
-      this.utility.settingIsModified(setting);
+      this.utility.updateSettings(setting);
       this.storage.set(this.utility.localstorage.Setting, this.setting)
     }else{
       document.body.setAttribute('color-theme',this.theme.light);
@@ -434,7 +434,7 @@ export class Tab3Page implements OnInit {
           text: 'Modifier',
           handler: (formValue) => {
               this.setting.budget = parseInt(formValue.budget);
-              this.utility.settingIsModified(this.setting)
+              this.utility.updateSettings(this.setting)
               this.storage.set(this.utility.localstorage.Setting, this.setting)
           }
         }
@@ -480,7 +480,7 @@ export class Tab3Page implements OnInit {
 
             payeurs.splice(index,1)
             this.setting.payeurs = payeurs
-            this.utility.settingIsModified(this.setting)
+            this.utility.updateSettings(this.setting)
 
             this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
               this.utility.popupInformation('Le payeur <strong>' + payeur + '</strong> a bien été supprimé')
@@ -574,7 +574,7 @@ export class Tab3Page implements OnInit {
 
             tags.splice(index,1)
             this.setting.tags = tags
-            this.utility.settingIsModified(this.setting)
+            this.utility.updateSettings(this.setting)
 
             this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
               this.utility.popupInformation('Le tag <strong>' + tag + '</strong> a bien été supprimé')
@@ -632,11 +632,11 @@ export class Tab3Page implements OnInit {
     await alert.present();
   }
 
-  async listeDesMagasins(){
+  async getMagasins(){
 
     const magasins = await this.setting.magasins;
 
-    const input : AlertInput [] = []
+    const input : Array<AlertInput> = []
 
     for(let magasin of magasins){
       await input.push({
@@ -662,13 +662,13 @@ export class Tab3Page implements OnInit {
           text: 'Supprimer',
           handler: async (magasin) => {
 
-            const index = await magasins.findIndex(magasinSetting => {
-              return magasinSetting === magasin
+            const index = await magasins.findIndex(magasins => {
+              return magasins === magasin
             })
 
             magasins.splice(index,1)
             this.setting.magasins = magasins
-            this.utility.settingIsModified(this.setting);
+            this.utility.updateSettings(this.setting);
 
             this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
               this.utility.popupInformation('Le magasin <strong>' + magasin + '</strong> a bien été supprimé')
@@ -714,10 +714,9 @@ export class Tab3Page implements OnInit {
           handler: async (magasin) => {
               const magasins =  await this.setting.magasins
               magasins.push(magasin.magasin)
-              this.setting.tags = magasins
-              this.storage.set(this.utility.localstorage.Setting, this.setting).then(()=> {
-              this.utility.popupInformation('Le magasin <strong>' + magasin.magasin + '</strong> a bien été créé')
-              })
+              this.setting.magasins = magasins
+              await this.utility.updateSettings(this.setting);
+              this.utility.popupInformation('Le magasin +' + magasin.magasin + ' a bien été créé');
           }
         }
       ]
