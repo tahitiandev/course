@@ -17,7 +17,7 @@ export class UtilityService {
   
   
   //#region getter 
-  async getSetting(){
+  async getSettings(){
     const settings : Settings = await this.storage.get(this.localstorage.Setting);
     return settings;
   }

@@ -25,7 +25,7 @@ export class ArticlesService {
   private familles : Array<Familles> = [];
 
   async onInit(){
-    const settings : Settings = await this.utility.getSetting();
+    const settings : Settings = await this.utility.getSettings();
     this.settings = settings
   }
 

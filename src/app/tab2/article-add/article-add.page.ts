@@ -60,7 +60,7 @@ export class ArticleAddPage implements OnInit {
   }
 
   private async getSettings(){
-    const settings = await this.utility.getSetting();
+    const settings = await this.utility.getSettings();
     return settings;
   }
 
@@ -84,7 +84,7 @@ export class ArticleAddPage implements OnInit {
 
   async onSubmit(){
     const formValue = await this.articleForm.value
-    const setting : Settings = await this.utility.getSetting();
+    const setting : Settings = await this.utility.getSettings();
 
     const article : Articles = {
       code : (await this.articleService.generateArticleId()).toString(),

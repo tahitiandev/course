@@ -39,7 +39,7 @@ export class DepensePage implements OnInit {
     this.magasins = await settings.magasins;
   }
   private async getSetting(){
-    const settings : Settings = await this.utility.getSetting();
+    const settings : Settings = await this.utility.getSettings();
     return settings;
   }
 

@@ -206,27 +206,21 @@ export class Tab3Page implements OnInit {
   }); // foreach localStorageNames
 
   // Envoi des settings
-  const setting : Settings = await this.storage.get(this.utility.localstorage.Setting);
+  const settings : Settings = await this.utility.getSettings();
 
-  if(setting.firebase){
-    if(setting.isModified){
-      // this.firestore.collection(this.utility.localstorage.Setting)
-      //               .doc(setting.documentId)
-      //               .delete()
-      // this.firestore.collection(this.utility.localstorage.Setting)
-      //               .add(setting)
+  if(settings.firebase){
+    if(settings.isModified){
       this.firestore.collection(this.utility.localstorage.Setting)
-                    .doc(setting.documentId)
-                    .update(setting)
-      setting.isModified = false
+                    .doc(settings.documentId)
+                    .update(settings)
+      settings.isModified = false
     }
   }
-  if(!setting.firebase){
+  if(!settings.firebase){
     this.firestore.collection(this.utility.localstorage.Setting)
-                    .add(setting)
-    setting.firebase =  true
+                    .add(settings)
+    settings.firebase =  true
   }
-  // await this.storage.set(this.utility.localstorage.Setting, setting)
 
   // GetAllData
   setTimeout(() => {
@@ -285,21 +279,22 @@ export class Tab3Page implements OnInit {
 
   }
 
-  private async getSettingFromFirebase(){
+  private async getSettingsFromFirebase(){
 
     this.firestore.collection(this.utility.localstorage.Setting)
                  .snapshotChanges()
                  .subscribe(async(result) => {
 
-                  var data = await result[0].payload.doc.data()
+                  var data = await result[0].payload.doc.data();
+
                   this.storage.set(this.utility.localstorage.Setting, data)
                               .then( async ()=> {
-                                const setting : Settings = await this.storage.get(this.utility.localstorage.Setting);
-                                setting.documentId = await result[0].payload.doc.id
-                                setting.firebase = true;
-                                setting.isModified = false;
-                                this.storage.set(this.utility.localstorage.Setting, setting)
-                                            .then(() => this.initSetting())
+                                const settings : Settings = await this.utility.getSettings();
+                                settings.documentId = await result[0].payload.doc.id
+                                settings.firebase = true;
+                                settings.isModified = false;
+                                await this.storage.set(this.utility.localstorage.Setting, settings);
+                                this.initSetting();
                               })
                  })
 
@@ -314,7 +309,7 @@ export class Tab3Page implements OnInit {
       }      
     });
     
-    this.getSettingFromFirebase()
+    this.getSettingsFromFirebase()
 
     if(showAlerte){
       this.loaderOn()
@@ -668,12 +663,9 @@ export class Tab3Page implements OnInit {
 
             magasins.splice(index,1)
             this.setting.magasins = magasins
-            this.utility.updateSettings(this.setting);
+            await this.utility.updateSettings(this.setting);
+            this.utility.popupInformation('Le magasin <strong>' + magasin + '</strong> a bien été supprimé');
 
-            this.storage.set(this.utility.localstorage.Setting, this.setting).then(() => {
-              this.utility.popupInformation('Le magasin <strong>' + magasin + '</strong> a bien été supprimé')
-            })
-              
           }
         },
         {
@@ -712,11 +704,11 @@ export class Tab3Page implements OnInit {
         }, {
           text: 'Ajouter',
           handler: async (magasin) => {
-              const magasins =  await this.setting.magasins
-              magasins.push(magasin.magasin)
-              this.setting.magasins = magasins
+              const magasins =  await this.setting.magasins;
+              magasins.push(magasin.magasin);
+              this.setting.magasins = magasins;
               await this.utility.updateSettings(this.setting);
-              this.utility.popupInformation('Le magasin +' + magasin.magasin + ' a bien été créé');
+              this.utility.popupInformation('Le magasin ' + magasin.magasin + ' a bien été créé');
           }
         }
       ]
