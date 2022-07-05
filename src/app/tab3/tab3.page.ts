@@ -26,7 +26,7 @@ export class Tab3Page implements OnInit {
     'light' : 'light'
   }
 
-  articles : Articles [] = []
+  articles : Array<Articles> = []
   budget : number;
 
   constructor(private utility : UtilityService,
@@ -58,7 +58,7 @@ export class Tab3Page implements OnInit {
 
   }
   async consoleLogFamile(){
-    const familles : Familles []  = await this.storage.get('familles');
+    const familles : Array<Familles>  = await this.storage.get('familles');
     console.log(familles)
 
   }
@@ -86,10 +86,10 @@ export class Tab3Page implements OnInit {
 
     const magasins = await this.setting.magasins;
 
-    const input : AlertInput [] = []
+    const inputs : Array<AlertInput> = []
 
     for(let magasin of magasins){
-      await input.push({
+      await inputs.push({
         name : 'payeur',
         type : 'radio',
         label : magasin,
@@ -101,7 +101,7 @@ export class Tab3Page implements OnInit {
       cssClass: 'my-custom-class',
       header: 'Information',
       message: 'Définir un magasin par défaut',
-      inputs : input,
+      inputs : inputs,
       buttons: [
         {
           text: 'Non',
