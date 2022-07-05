@@ -36,7 +36,8 @@ export class CourseDetailsPage implements OnInit {
   course : Courses;
   courseDetails : Array<Liste> = [];
   total : number = 0;
-  settings : Settings
+  settings : Settings;
+  budget : number;
 
   ngOnInit() {
     this.onInit();
@@ -52,6 +53,7 @@ export class CourseDetailsPage implements OnInit {
     // Init setting
     const settings = await this.settingInit();
     this.settings = settings;
+    this.budget = settings.budget;
   }
 
   private async settingInit(){
@@ -88,13 +90,13 @@ export class CourseDetailsPage implements OnInit {
 
     const montantCourse = await this.courseService.calculeMontantTotal(this.courseDetails);
     this.total = montantCourse;  
-    if(montantCourse > this.settings.budget){
-      var difference = (montantCourse) - (this.settings.budget)
+    if(montantCourse > this.budget){
+      var difference = (montantCourse) - (this.budget)
       this.utility.popupInformation('Vous avez dépasser votre budget de ' + difference + ' xpf')
     }
   }
 
-  async checkBox(article : Liste){
+  public async checkBox(article : Liste){
 
     const courses : Array<Courses> = await this.courseService.getCourses();
     const articleIndex = await courses[this.courseId].liste.findIndex(listes => listes.articleId === article.articleId);
@@ -109,7 +111,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async clickCheckBox(index : number){
+  public async clickCheckBox(index : number){
 
     var actifCheckBox : boolean = await this.courseDetails[index].actif
     var newListe : Array<Liste> = []
@@ -153,7 +155,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async supprimerArticle(article : Liste){
+  public async deleteArticle(article : Liste){
 
     const index = await this.courseDetails.findIndex(s => s === article);
     this.courseDetails.splice(index, 1);
@@ -171,11 +173,11 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async insertSpecialArticle(){
+  public async insertSpecialArticle(){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Modifier les données de l\'article',
+      header: 'Ajouter un article',
       inputs: [
         {
           name: 'libelle',
@@ -239,11 +241,15 @@ export class CourseDetailsPage implements OnInit {
       ]
     });
 
-    await alert.present();
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
 
   }
 
-  async putArticle(articleSelected : Liste, index : number) {
+  public async putArticle(articleSelected : Liste, index : number) {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Modifier les données de l\'article',
@@ -307,7 +313,7 @@ export class CourseDetailsPage implements OnInit {
             await this.courseService.postCourses(courses);
             await this.calculeTotal();
 
-            this.articleService.verifieSiPrixDifferent(articleSelected, data.prixUnitaire);
+            this.articleService.verifieSiPrixDifferent(articleSelected, data.prixUnitaire, this.course.magasin);
             
           }
         }
@@ -317,7 +323,7 @@ export class CourseDetailsPage implements OnInit {
     await alert.present();
   }
 
-  async postArticleToCourse(option : string){
+  public async postArticleToCourse(option : string){
 
     if(option === 'barreCode'){
       this.postArticleByBarreCode()
@@ -378,7 +384,7 @@ export class CourseDetailsPage implements OnInit {
     const barreCode = await this.barreCodeService.scanneBarreCode();
     const articles : Array<Articles> = await this.articleService.getArticles();
 
-    const article = await articles.filter(articles =>  articles.barreCode === barreCode);
+    const article = await articles.filter(articles => articles.barreCode === barreCode);
 
     if(article.length === 0){
 
@@ -419,10 +425,14 @@ export class CourseDetailsPage implements OnInit {
                 familleCode : '22',
                 familleLibelle : null,
                 barreCode : barreCode,
-                magasin : this.course.magasin
+                magasin : this.course.magasin,
+                PrixMagasin : [
+                  {
+                    magasin : this.course.magasin,
+                    prix : article.prix
+                  }
+                ]
               }
-
-              this.utility.spinner(true);
 
               await this.articleService.postArticle(articleNew);
 
@@ -442,8 +452,6 @@ export class CourseDetailsPage implements OnInit {
                 await this.courseService.postCourse(this.course);
                 this.calculeTotal();
 
-                this.utility.spinner(false);
-
               }, 1500);
               
             }
@@ -451,73 +459,96 @@ export class CourseDetailsPage implements OnInit {
         ]
       });
   
-      await alert.present();
+      await alert.present().then(() => {
+        const firstInput: any = document.querySelector('ion-alert input');
+        firstInput.focus();
+        return;
+      });
 
     } // if(article.length === 0)
     else{
 
-      this.courseDetails.push({
-        articleId : article[0].code,
-        libelle : article[0].libelle,
-        quantite : 1,
-        prixUnitaire : article[0].prix,
-        actif : false
-      })
+      // Vérifier si un prix magasin existe
+      const prixMagasin = await article[0].PrixMagasin.filter(prixMagasins => prixMagasins.magasin === this.course.magasin);
+      const index = await article[0].PrixMagasin.findIndex(prixMagasins => prixMagasins.magasin === this.course.magasin);
+
+      if(prixMagasin.length === 0){
+
+        await this.postNewPrixMagasin(article[0]);
+        
+      }else{
+        
+        this.courseDetails.push({
+          articleId : article[0].code,
+          libelle : article[0].libelle,
+          quantite : 1,
+          prixUnitaire : article[0].PrixMagasin[index].prix,
+          actif : false
+        })
+
+      }
 
       this.course.liste = this.courseDetails;
       this.courseService.postCourse(this.course);
       this.calculeTotal();
 
-    }
+    } //else
 
   }
 
-  private async postArticleByBarreCode3(){
+  private async postNewPrixMagasin(article : Articles){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Renseigner un prix sur ce magasin',
+      inputs: [
+        {
+          name: 'magasin',
+          type: 'text',
+          value : this.course.magasin,
+          disabled : true
+        },
+        {
+          name: 'prix',
+          type: 'number',
+          value : article.prix
+        }
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
 
-      const barreCode = await this.barreCodeService.scanneBarreCode();
-      const article = await this.articleService.getArticleByBarreCode(barreCode);
-      
-    if(article === null || article === undefined){
+          }
+        }, {
+          text: 'Valider',
+          handler: async (result) => {    
+            
+            this.courseDetails.push({
+              articleId : article.code,
+              libelle : article.libelle,
+              quantite : 1,
+              prixUnitaire : result.prix,
+              actif : false
+            })
 
-      await this.articleService.popUpPostArticleByBarreCode(barreCode);
-      const article : Articles = await this.articleService.getArticleByBarreCode(barreCode);
+            article.PrixMagasin.push({
+              magasin : result.magasin,
+              prix : result.prix
+            })
 
-      window.alert(article.libelle)
-        
-      var articleNew : Liste = {
-        articleId : article.code,
-        libelle : article.libelle,
-        quantite : 1,
-        prixUnitaire : article.prix,
-        prixTotal : null,
-        actif : false
-      }
-      
-      this.courseDetails.push(articleNew)
-      this.course.liste = this.courseDetails;
+            this.articleService.putArticle(article);
 
-      window.alert(articleNew.libelle)
+            this.course.liste = this.courseDetails;
+            this.courseService.postCourse(this.course);
+            this.calculeTotal();
+          }
+        }
+      ]
+    });
 
-      await this.courseService.postCourse(this.course);
-           
-      this.calculeTotal();
-
-    }else{
-
-      var articleNew : Liste = {
-        articleId : article.code,
-        libelle : article.libelle,
-        quantite : 1,
-        prixUnitaire : article.prix,
-        prixTotal : null,
-        actif : false
-      }
-      
-      this.courseDetails.push(articleNew)
-      this.course.liste = this.courseDetails;
-      await this.courseService.postCourse(this.course);
-      this.calculeTotal();
-    }
+    await alert.present();
   }
 
   async checkArticle(){
@@ -541,18 +572,30 @@ export class CourseDetailsPage implements OnInit {
 
   private async postArticleManuel(){
 
-    const articlesToLocalStorage : Array<Articles> = await this.articleService.getArticles()
-    const articles = await this.sortByArticleName(articlesToLocalStorage)
+    const articles : Array<Articles> = await this.articleService.getArticles();
+    const articlesSort = await this.sortByArticleName(articles);
+    const articlesPrixMagasin : Array<Articles> = [];
+
+    for(let article of articlesSort){
+      for(var index = 0; index < article.PrixMagasin.length; index++){
+        if(article.PrixMagasin[index].magasin === this.course.magasin){
+          article.isPrixMagasin = true;
+          article.prix = article.PrixMagasin[index].prix
+          articlesPrixMagasin.push(article);
+        }
+      }
+    }
+
     var radioOption : Array<AlertInput> = [];
     
-    for(let article of articles){
+    for(let article of articlesSort){
       if(article.articleSpecial){
         radioOption.push({
           type : 'radio',
           name : article.code,
           label : '=> Article spécial <=',
           value : article,
-          cssClass : 'articleSpecial'
+          cssClass : 'test'
         })
       }else{
         radioOption.push({
@@ -636,12 +679,12 @@ export class CourseDetailsPage implements OnInit {
         {
           type : 'number',
           name : 'quantite',
-          value : 1
+          placeholder : '1'
         },
         {
           type : 'number',
           name : 'prix',
-          value : 100
+          placeholder : '100'
         }
       ],
       buttons: [
@@ -660,9 +703,9 @@ export class CourseDetailsPage implements OnInit {
 
             var liste : Liste = {
               articleId : article.code,
-              libelle : article.libelle,
-              quantite : 1,
-              prixUnitaire : article.prix,
+              libelle : article.libelle === '' ? 'Article divers' : article.libelle,
+              quantite : article.quantite === '' ? 1 : article.quantite,
+              prixUnitaire : article.prix === '' ? 100 : article.prix,
               actif : false
             }
 
@@ -695,11 +738,11 @@ export class CourseDetailsPage implements OnInit {
     });
   }
 
-  actualiser(){
+  public actualiser(){
     this.calculeTotal()
   }
 
-  async insertPlat(){
+  public async insertPlat(){
 
     const platsBrute : Array<Plats> = await this.platsService.getPlats()
     const plats = await this.platsService.sortByLibelleFamilleArticle(platsBrute)
@@ -741,7 +784,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async chooseArticle(plat : Plats, jour? : string){
+  private async chooseArticle(plat : Plats, jour? : string){
 
     const articlesInfo : Array<Articles> = await this.articleService.getArticles();
     const articlePlat : Array<Articles> = [];
@@ -804,7 +847,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  async insertMenu(){
+  public async insertMenu(){
 
     const menusInfo : Array<MenuDelaSemaine> = await this.menuService.getMenus()
     const semaineEnCours = await this.utility.getDateDebutetDateDeFinDeSemaine()

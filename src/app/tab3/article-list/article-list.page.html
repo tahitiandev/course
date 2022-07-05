@@ -57,7 +57,7 @@
             <ion-item-option color="medium" (click)="modifierArticleId(article)">Id</ion-item-option>
           </ion-item-options>
 
-          <ion-item button>
+          <ion-item button (click)="this.getListePrixMagasin(article)">
             <ion-icon *ngIf="article.barreCode != null || article.barreCode != undefined" name="barcode-outline"></ion-icon>
             <ion-label>
               <h3>{{ article.libelle }}</h3>
@@ -70,8 +70,8 @@
           </ion-item>
 
           <ion-item-options side="end">
-            <ion-item-option color="medium" (click)="modifierFamilleArticle(article)">Famille</ion-item-option>
-            <ion-item-option color="medium" (click)="modifierUnArticle(article)">Modifier</ion-item-option>
+            <ion-item-option color="medium" (click)="updateFamilleAssociee(article)">Famille</ion-item-option>
+            <ion-item-option color="medium" (click)="updateArticle(article)">Modifier</ion-item-option>
             <ion-item-option color="danger" (click)="deleteArticle(article)">Supprimer</ion-item-option>
           </ion-item-options>
 
@@ -89,15 +89,24 @@
       <ion-fab-button (click)="this.actualiser()">
         <ion-icon name="sync-outline"></ion-icon>
       </ion-fab-button>
+      
       <ion-fab-button (click)="goToArticleAdd()">
         <ion-icon name="add"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
 
     <ion-fab-list side="start">
+
       <ion-fab-button (click)="postArticleByBarreCode()">
         <ion-icon name="barcode-outline"></ion-icon>
       </ion-fab-button>
+
+      <ion-fab-button (click)="getArticleByBarreCode()">
+        <ion-icon name="barcode-outline"></ion-icon>
+        <ion-icon name="search-outline"></ion-icon>
+      </ion-fab-button>
+
+
     </ion-fab-list>
 
   </ion-fab>

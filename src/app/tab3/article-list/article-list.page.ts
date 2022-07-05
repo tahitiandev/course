@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
-import { Articles, Familles } from 'src/app/models/articles';
+import { Articles, Familles, PrixMagasin } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Storage } from '@ionic/storage';
@@ -35,20 +35,19 @@ export class ArticleListPage implements OnInit {
 
     async onInit(){
       // Charger les articles
-      this.getArticle().then(() => {
-        this.spinner(false)
-      });
+      await this.getArticles();
+      this.spinner(false);
 
       // Charger les settings
-      const settings : Settings = await this.storage.get(this.utility.localstorage.Setting)
-      this.settings = await settings
+      const settings : Settings = await this.storage.get(this.utility.localstorage.Setting);
+      this.settings = await settings;
 
       // Charger la liste des magasins
-      this.magasins = await settings.magasins
+      this.magasins = settings.magasins;
+
     }
 
-
-    async modifierUnArticle(articles : Articles){
+    async updateArticle(articles : Articles){
 
       const alert = await this.alertController.create({
         header: 'Modifier l\'article',
@@ -70,6 +69,7 @@ export class ArticleListPage implements OnInit {
           name: 'prix',
           type: 'number',
           placeholder: 'Prix',
+          disabled : true,
           value : articles.prix
         },
         {
@@ -87,15 +87,36 @@ export class ArticleListPage implements OnInit {
           handler: () => {
           }
         },
+        // {
+        //   text: 'Magasin : ' + articles.magasin,
+        //   cssClass: 'primary',
+        //   handler: async (result) => {
+        //     this.modifierMagasin(articles)
+        //   }
+        // },
+        // {
+        //   text: 'Ajouter un prix',
+        //   cssClass: 'primary',
+        //   handler: async (result) => {
+        //     this.chooseMagasinPrixMagasin(articles, 'create')
+        //   }
+        // },
+        // {
+        //   text: 'Modifier un prix',
+        //   cssClass: 'primary',
+        //   handler: async (result) => {
+        //     this.chooseMagasinPrixMagasin(articles, 'update')
+        //   }
+        // },
+        // {
+        //   text: 'Supprimer un prix',
+        //   cssClass: 'primary',
+        //   handler: async (result) => {
+        //     this.chooseMagasinPrixMagasin(articles, 'delete')
+        //   }
+        // },
         {
-          text: 'Magasin : ' + articles.magasin,
-          cssClass: 'primary',
-          handler: async (result) => {
-            this.modifierMagasin(articles)
-          }
-        },
-        {
-        text: 'Ok',
+        text: 'Valider',
         handler: async (result : Articles) => {
 
           var articles = await this.storage.get(this.utility.localstorage.articles);
@@ -109,7 +130,7 @@ export class ArticleListPage implements OnInit {
           article.barreCode = result.barreCode
 
           await this.articleService.putArticle(article)
-          await this.getArticle()
+          await this.getArticles()
           await this.spinner(false)
 
           }
@@ -118,6 +139,201 @@ export class ArticleListPage implements OnInit {
       });
   
       await alert.present();
+
+    }
+
+    private async chooseMagasinPrixMagasin(article : Articles, typeCrudPrixMagasin : string){
+
+      var magasins = [];
+
+      if(typeCrudPrixMagasin === 'create'){
+        magasins = this.settings.magasins;
+      }
+      if(typeCrudPrixMagasin === 'update' || typeCrudPrixMagasin === 'delete'){
+        for(let prixMagasin of article.PrixMagasin){
+          magasins.push(prixMagasin.magasin)
+        } 
+      }
+
+      var inputsOption : Array<AlertInput> = [];
+
+      for(let magasin of magasins){
+        inputsOption.push({
+          name: 'magasin',
+          type: 'radio',
+          label : magasin,
+          value : magasin
+        })
+      }
+
+      const alert = await this.alertController.create({
+        header: 'Ajouter un prix',
+        inputs: inputsOption,
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+        text: 'Valider',
+        handler: async (result) => {
+
+          if(typeCrudPrixMagasin === 'create'){
+            await this.setPrixMagasinStep2(article, result);
+          }
+
+          if(typeCrudPrixMagasin === 'update'){
+            for(let prixMagasin of article.PrixMagasin){
+              if(prixMagasin.magasin === result){
+                await this.updatePrixMagasin(article, result, prixMagasin.prix);
+              }
+            }
+          }
+
+        }
+        }
+        ]
+      });
+  
+      await alert.present();
+    }
+
+    async getListePrixMagasin(article : Articles) {
+
+      const prixMagasins = article.PrixMagasin;
+      const inputsOption = [];
+
+      for(let prixMagasin of prixMagasins){
+        inputsOption.push({
+          name: 'magasin',
+          type: 'radio',
+          label : prixMagasin.magasin + ' ' + prixMagasin.prix,
+          value : prixMagasin
+        })
+      }
+
+      const alert = await this.alertController.create({
+        header: 'Listes des prix',
+        inputs: inputsOption,
+        buttons: [
+        {
+          text: 'Ajouter',
+          handler: () => {
+            this.chooseMagasinPrixMagasin(article, 'create')
+          }
+        },
+        {
+          text: 'Modifier',
+          handler: async (result) => {
+            await this.updatePrixMagasin(article, result.magasin, result.prix);
+          }
+        },
+        {
+        text: 'Supprimer',
+        handler: async (result) => {
+
+        //  await this.articleService.deleteArticle(article);
+        const index = article.PrixMagasin.findIndex(prixMagasins => prixMagasins.magasin === result.magasin);
+        article.PrixMagasin.splice(index, 1);
+        await this.articleService.putArticle(article);
+          
+        }
+        },{
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        }
+        ]
+      });
+  
+      await alert.present();
+    }
+
+    private async updatePrixMagasin(article : Articles, magasin : string, prix : number){
+
+      const alert = await this.alertController.create({
+        header: 'Modifier le prix de ' + magasin,
+        inputs: [{
+          type : 'number',
+          label : 'Prix',
+          name : 'prix',
+          value : prix
+        }],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+        text: 'Valider',
+        handler: async (result) => {
+          
+          const index = article.PrixMagasin.findIndex(prixMagasin => prixMagasin.magasin === magasin);
+          article.PrixMagasin[index].prix = result.prix
+          await this.articleService.putArticle(article);
+          await this.getArticles();
+          this.spinner(false);
+
+        }
+        }
+        ]
+      });
+  
+      await alert.present().then(() => {
+        const firstInput: any = document.querySelector('ion-alert input');
+        firstInput.focus();
+        return;
+      });
+    }
+
+    private async setPrixMagasinStep2(article : Articles, magasin : string){
+
+      const alert = await this.alertController.create({
+        header: 'Ajouter un prix',
+        inputs: [{
+          type : 'number',
+          label : 'Prix',
+          name : 'prix'
+        }],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+        text: 'Valider',
+        handler: async (result) => {
+          
+          article.PrixMagasin.push({
+            prix : result.prix,
+            magasin : magasin
+          })
+
+          await this.articleService.putArticle(article);
+          await this.getArticles();
+          this.spinner(false);
+
+        }
+        }
+        ]
+      });
+  
+      await alert.present().then(() => {
+        const firstInput: any = document.querySelector('ion-alert input');
+        firstInput.focus();
+        return;
+      });
 
     }
 
@@ -161,7 +377,7 @@ export class ArticleListPage implements OnInit {
           articles[index] = article
 
           this.storage.set(this.utility.localstorage.articles, articles).then(() => {
-            this.getArticle().then(() => {
+            this.getArticles().then(() => {
               this.spinner(false)
             })
           })
@@ -221,7 +437,7 @@ export class ArticleListPage implements OnInit {
             }
 
             await this.storage.set(this.utility.localstorage.articles, articles);
-            await this.getArticle()
+            await this.getArticles()
             await this.spinner(false);
 
           }
@@ -243,7 +459,7 @@ export class ArticleListPage implements OnInit {
 
       await this.storage.set(this.utility.localstorage.articles, articles)
       await this.utility.popupInformation('Le code barre a bien été renseigné');
-      await this.getArticle();
+      await this.getArticles();
       await this.spinner(false)
 
     }
@@ -304,8 +520,8 @@ export class ArticleListPage implements OnInit {
       text: 'Ok',
       handler: async (newArticle : Articles) => {
 
-        const articles : Articles [] = await this.storage.get(this.utility.localstorage.articles)
-        var articleTemp : Articles [] = [];
+        const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles)
+        var articleTemp : Array<Articles> = [];
         
         for(let article of articles){
           articleTemp.push(article)
@@ -318,7 +534,7 @@ export class ArticleListPage implements OnInit {
           magasin : this.settings.magasinParDefaut
         })
 
-        this.storage.set(this.utility.localstorage.articles, articleTemp).then(() => this.getArticle())
+        this.storage.set(this.utility.localstorage.articles, articleTemp).then(() => this.getArticles())
         
           
         }
@@ -332,47 +548,61 @@ export class ArticleListPage implements OnInit {
     async changeMagasin(event){
       const magasin = await event.target.value
       this.filtreMagasin = await magasin
-      this.getArticle().then(() => this.spinner(false))
+      this.getArticles().then(() => this.spinner(false))
+      this.getArticleByMagasin();
     }
 
-    async getArticle(){
+    async getArticleByMagasin(){
+
+      const magasinSelected = this.filtreMagasin;
+      const articles : Array<Articles> = await this.articleService.getArticles();
+      const articlesFiltre : Array<Articles> = [];
+
+      if(magasinSelected !== ''){
+        for(let article of articles){
+
+          for(let index = 0; index < article.PrixMagasin.length; index++){
+  
+            if(article.PrixMagasin[index].magasin === magasinSelected){
+              article.prix = article.PrixMagasin[index].prix;
+              articlesFiltre.push(article);
+            }
+  
+          }//for
+  
+        }//for
+        
+        return await articlesFiltre;
+      }else{
+        return articles;
+      } 
+
+    }
+
+    async getArticles(){
 
       this.spinner(true)
 
       this.articles = []
       this.familles = []
 
-      const familles = await this.getFamilleQuiOntDesArticles()
+      const familles = await this.getFamilleQuiOntDesArticles();
       this.familles = familles;
       
-      const articlesLS : Articles[] = await this.storage.get(this.utility.localstorage.articles);
-      var groupByArticle : Articles[] = []
+      const articlesByMagasin : Array<Articles> = await this.getArticleByMagasin();
+      var groupByArticle : Array<Articles> = []
 
 
       for(let i = 0 ; i < familles.length; i++){
 
-        for(let article of articlesLS){
+        for(let article of articlesByMagasin){
 
-          // if(article.code.substring(0,3) === familles[i].code.substring(0,3)){
           if(article.familleCode == familles[i].code){
-            
-            var articleGroup : Articles = {
-              code : article.code,
-              libelle : article.libelle,
-              prix : article.prix,
-              prixModifier : article.prixModifier,
-              quantite : article.quantite,
-              familleCode : article.familleCode,
-              familleLibelle : familles[i].libelle,
-              firebase : article.firebase,
-              isModified : article.isModified,
-              documentId : article.documentId,
-              barreCode : article.barreCode,
-              magasin : article.magasin
-            }
+
+            article.familleLibelle = familles[i].libelle
 
             if(!article.isDeleted){
-              groupByArticle.push(articleGroup)
+              groupByArticle.push(article)
             }
           } // if          
         }
@@ -380,7 +610,10 @@ export class ArticleListPage implements OnInit {
       } // for
 
       const articles = await this.articleService.orderByArticleName(groupByArticle)
-      this.filtreArticleByMagasin(articles);
+
+      this.articles = articles;
+
+      // this.filtreArticleByMagasin(articles);
       }
 
       private async filtreArticleByMagasin(articles : Array<Articles>){
@@ -401,7 +634,7 @@ export class ArticleListPage implements OnInit {
       }
 
       actualiser(){
-        this.getArticle().then(()=> this.spinner(false))
+        this.getArticles().then(()=> this.spinner(false))
         
       }
 
@@ -413,7 +646,7 @@ export class ArticleListPage implements OnInit {
       this.nav.navigateRoot('tabs/tab2/article-add')
       }
 
-      async modifierFamilleArticle(article : Articles){
+      async updateFamilleAssociee(article : Articles){
 
         const familles : Array<Familles> = this.articleService.orderByLibelleFamille(await this.storage.get(this.utility.localstorage['famille d\'articles']));
 
@@ -451,7 +684,7 @@ export class ArticleListPage implements OnInit {
               article.familleLibelle = familleInfo.libelle
 
               await this.articleService.putArticle(article)       
-              await this.getArticle()
+              await this.getArticles()
               await this.spinner(false)
             }
           }
@@ -486,13 +719,33 @@ export class ArticleListPage implements OnInit {
       async deleteArticle(article : Articles){
         
         await this.articleService.deleteArticle(article)
-        await this.getArticle();
+        await this.getArticles();
         await this.spinner(false);
         
 
       }
+
+      public async getArticleByBarreCode(){
+        const barreCode = await this.barreCodeService.scanneBarreCode();
+
+        if(barreCode === undefined || barreCode === ''){
+          this.utility.popupInformation('Le code bare <strong>' + barreCode + '</strong> n\'existe pas');
+        }
+        else{
+          const article = await this.articleService.getArticleByBarreCode(barreCode);
+          const articles = [];
+          articles.push(article);
+          this.articles = articles;
+          
+          const famille = await this.articleService.getFamilleByCode(article.code);
+          const familles = [];
+          familles.push(famille);
+          this.familles = familles;
+        }
+      }
   
       async postArticleByBarreCode(){
+
         const barreCode = await this.barreCodeService.scanneBarreCode();
         const article = await this.articleService.getArticleByBarreCode(barreCode);
         if(article === null || article === undefined){
@@ -512,28 +765,33 @@ export class ArticleListPage implements OnInit {
             ],
             buttons: [
             {
-              text: 'Cancel',
+              text: 'Annuler',
               role: 'cancel',
               cssClass: 'secondary',
             handler: () => {
             }
             }, {
-            text: 'Ok',
+            text: 'Valider',
             handler: async (formValue : Articles) => {
-                this.articleService.postArticle({
-                  code : (await this.articleService.generateArticleId()).toString(),
-                  libelle : formValue.libelle,
-                  prix : formValue.prix ,
-                  prixModifier : null,
-                  quantite : 1,
-                  firebase : false,
-                  isModified : false,
-                  documentId : null,
-                  familleCode : '22',
-                  familleLibelle : null,
-                  barreCode : barreCode,
-                  magasin : this.settings.magasinParDefaut
-                })
+
+              const article : Articles = {
+                code : (await this.articleService.generateArticleId()).toString(),
+                libelle : formValue.libelle,
+                prix : formValue.prix ,
+                prixModifier : null,
+                quantite : 1,
+                firebase : false,
+                isModified : false,
+                documentId : null,
+                familleCode : '22',
+                familleLibelle : null,
+                barreCode : barreCode,
+                magasin : this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin,
+                PrixMagasin : []
+              }
+
+              await this.chooseMagasins(article);
+
               }
             }
             ]
@@ -542,8 +800,103 @@ export class ArticleListPage implements OnInit {
           await alert.present();
         }//if
         else{
-          this.utility.popupInformation('Le code barre <strong>' + barreCode + '</strong> est déjà associé à l\'article ' + article.libelle)
+
+          const magasin = this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin;
+          const prixMagasin = article.PrixMagasin.filter(prixMagasins => prixMagasins.magasin === magasin);
+
+          if(prixMagasin.length === 0){
+            await this.postPrixMagasin(article, magasin);
+          }else{
+            this.utility.popupInformation('Le code barre <strong>' + barreCode + '</strong> est déjà associé à l\'article ' + article.libelle + ' sur le magasin ' + magasin)
+          }
+
         }
+      }
+
+      private async postPrixMagasin(article : Articles, magasin : string){
+
+        const alert = await this.alertController.create({
+          header: 'Ajouter un article',
+          inputs: [
+            {
+              name: 'prix',
+              type: 'text',
+              placeholder: 'Prix'
+            }
+          ],
+          buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            cssClass: 'secondary',
+          handler: () => {
+          }
+          }, {
+          text: 'Valider',
+          handler: async (result) => {
+
+            article.PrixMagasin.push({
+              prix : result.prix,
+              magasin : magasin
+            })
+
+            await this.articleService.putArticle(article);
+
+            }// valider
+          }
+          ]
+        });
+
+        await alert.present().then(() => {
+          const firstInput: any = document.querySelector('ion-alert input');
+          firstInput.focus();
+          return;
+        });
+      }
+
+      private async chooseMagasins(article : Articles){
+
+        const inputOptions : Array<AlertInput> = [];
+
+        for(let magasin of this.magasins){
+          inputOptions.push({
+            type : 'radio',
+            label : magasin,
+            value : magasin
+          })
+        }
+
+        const alert = await this.alertController.create({
+          header: 'Ajouter un article',
+          inputs: inputOptions,
+          buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            cssClass: 'secondary',
+          handler: () => {
+          }
+          }, {
+          text: 'Valider',
+          handler: async (magasin) => {
+
+            article.PrixMagasin.push({
+              magasin : magasin.magasin,
+              prix : article.prix
+            })
+
+            await this.articleService.postArticle(article);
+            await this.getArticles();
+            this.spinner(false);
+
+
+            }// valider
+          }
+          ]
+        });
+
+        await alert.present();
+
       }
 
       spinner(enAttente : boolean){

@@ -3,6 +3,7 @@ export interface Articles{
     libelle : string;
     prix : number;
     prixModifier? : number;
+    PrixMagasin? : Array<PrixMagasin>;
     quantite?:number;
     firebase? : boolean;
     isModified? : boolean;
@@ -13,6 +14,7 @@ export interface Articles{
     barreCode? :string;
     magasin : string;
     articleSpecial? : boolean;
+    isPrixMagasin?: boolean;
 }
 
 export interface Familles{

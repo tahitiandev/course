@@ -17,7 +17,7 @@ export class UtilityService {
   
   
   //#region getter 
-  async getSetting(){
+  async getSettings(){
     const settings : Settings = await this.storage.get(this.localstorage.Setting);
     return settings;
   }
@@ -85,7 +85,7 @@ export class UtilityService {
     }
   }
 
-  async settingIsModified(setting : Settings){
+  async updateSettings(setting : Settings){
     if(setting.firebase){
       setting.isModified = true;
     }
@@ -274,7 +274,7 @@ export class UtilityService {
   //#endregion
 
 
-  async postAlert(inputs : Array<AlertInput>){
+  async postAlert(inputs : Array<AlertInput>, functionParam){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -292,7 +292,7 @@ export class UtilityService {
         {
           text: 'Valider',
           handler: async (data) => {
-            await this.getAlertValue(data);
+            await functionParam(data)
           }
         }
       ]
@@ -300,11 +300,6 @@ export class UtilityService {
 
     await alert.present();
 
-  }
-  
-  private getAlertValue(data : any){
-    console.log(data);
-    return data;
   }
 
   async saveToLocalStorage(localStorageName : string, values : Array<any>){
