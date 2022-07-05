@@ -29,6 +29,16 @@
         <span side="end" [ngClass]="{'magasin' : course.magasin != undefined}">{{ course.magasin }}</span>
         <span side="end" [ngClass]="{'tag' : course.tag != undefined}">{{ course.tag }}</span>
         <span side="end" [ngClass]="{'payeur' : course.payeur != undefined}">{{ course.payeur }}</span>
+        
+        <!-- <ion-chip *ngIf="course.payeur != undefined">
+          <ion-avatar>
+            <img
+              src="assets\avatar.svg"
+            />
+          </ion-avatar>
+          <ion-label>{{ course.payeur }}</ion-label>
+        </ion-chip> -->
+
         <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
       </ion-item>
 
