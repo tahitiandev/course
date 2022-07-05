@@ -35,7 +35,7 @@ export class ArticleListPage implements OnInit {
 
     async onInit(){
       // Charger les articles
-      await this.getArticle();
+      await this.getArticles();
       this.spinner(false);
 
       // Charger les settings
@@ -44,8 +44,6 @@ export class ArticleListPage implements OnInit {
 
       // Charger la liste des magasins
       this.magasins = settings.magasins;
-
-      this.tempSetMagasinPrix();
 
     }
 
@@ -132,7 +130,7 @@ export class ArticleListPage implements OnInit {
           article.barreCode = result.barreCode
 
           await this.articleService.putArticle(article)
-          await this.getArticle()
+          await this.getArticles()
           await this.spinner(false)
 
           }
@@ -281,7 +279,7 @@ export class ArticleListPage implements OnInit {
           const index = article.PrixMagasin.findIndex(prixMagasin => prixMagasin.magasin === magasin);
           article.PrixMagasin[index].prix = result.prix
           await this.articleService.putArticle(article);
-          await this.getArticle();
+          await this.getArticles();
           this.spinner(false);
 
         }
@@ -323,7 +321,7 @@ export class ArticleListPage implements OnInit {
           })
 
           await this.articleService.putArticle(article);
-          await this.getArticle();
+          await this.getArticles();
           this.spinner(false);
 
         }
@@ -379,7 +377,7 @@ export class ArticleListPage implements OnInit {
           articles[index] = article
 
           this.storage.set(this.utility.localstorage.articles, articles).then(() => {
-            this.getArticle().then(() => {
+            this.getArticles().then(() => {
               this.spinner(false)
             })
           })
@@ -439,7 +437,7 @@ export class ArticleListPage implements OnInit {
             }
 
             await this.storage.set(this.utility.localstorage.articles, articles);
-            await this.getArticle()
+            await this.getArticles()
             await this.spinner(false);
 
           }
@@ -461,7 +459,7 @@ export class ArticleListPage implements OnInit {
 
       await this.storage.set(this.utility.localstorage.articles, articles)
       await this.utility.popupInformation('Le code barre a bien été renseigné');
-      await this.getArticle();
+      await this.getArticles();
       await this.spinner(false)
 
     }
@@ -536,7 +534,7 @@ export class ArticleListPage implements OnInit {
           magasin : this.settings.magasinParDefaut
         })
 
-        this.storage.set(this.utility.localstorage.articles, articleTemp).then(() => this.getArticle())
+        this.storage.set(this.utility.localstorage.articles, articleTemp).then(() => this.getArticles())
         
           
         }
@@ -547,30 +545,10 @@ export class ArticleListPage implements OnInit {
     await alert.present();
     }
 
-    async tempSetMagasinPrix(){
-
-      const articles : Array<Articles> = await this.articleService.getArticles();
-      articles.map(articles => {
-        articles.PrixMagasin = [
-          {
-            magasin : articles.magasin === 'Carrefour' ? 'Carrefour Arue' : articles.magasin,
-            prix : articles.prix
-          }
-        ];
-        if(articles.magasin === 'Carrefour'){
-          articles.magasin = 'Carrefour Arue';
-        }
-        articles.isModified = true;
-      })
-
-      await this.articleService.postArticles(articles);
-
-    }
-
     async changeMagasin(event){
       const magasin = await event.target.value
       this.filtreMagasin = await magasin
-      this.getArticle().then(() => this.spinner(false))
+      this.getArticles().then(() => this.spinner(false))
       this.getArticleByMagasin();
     }
 
@@ -601,7 +579,7 @@ export class ArticleListPage implements OnInit {
 
     }
 
-    async getArticle(){
+    async getArticles(){
 
       this.spinner(true)
 
@@ -656,7 +634,7 @@ export class ArticleListPage implements OnInit {
       }
 
       actualiser(){
-        this.getArticle().then(()=> this.spinner(false))
+        this.getArticles().then(()=> this.spinner(false))
         
       }
 
@@ -706,7 +684,7 @@ export class ArticleListPage implements OnInit {
               article.familleLibelle = familleInfo.libelle
 
               await this.articleService.putArticle(article)       
-              await this.getArticle()
+              await this.getArticles()
               await this.spinner(false)
             }
           }
@@ -741,7 +719,7 @@ export class ArticleListPage implements OnInit {
       async deleteArticle(article : Articles){
         
         await this.articleService.deleteArticle(article)
-        await this.getArticle();
+        await this.getArticles();
         await this.spinner(false);
         
 
@@ -810,12 +788,6 @@ export class ArticleListPage implements OnInit {
                 barreCode : barreCode,
                 magasin : this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin,
                 PrixMagasin : []
-                // PrixMagasin : [
-                //   {
-                //     magasin : this.filtreMagasin === '' ? this.settings.magasinParDefaut : this.filtreMagasin,
-                //     prix : formValue.prix
-                //   }
-                // ]
               }
 
               await this.chooseMagasins(article);
@@ -914,7 +886,7 @@ export class ArticleListPage implements OnInit {
             })
 
             await this.articleService.postArticle(article);
-            await this.getArticle();
+            await this.getArticles();
             this.spinner(false);
 
 
