@@ -3,6 +3,8 @@ import { AlertController } from '@ionic/angular';
 import { Articles } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { AlertInput } from '@ionic/core';
+import { UtilityService } from 'src/app/services/utility.service';
+import { Memos } from 'src/app/models/memo';
 
 @Component({
   selector: 'app-memo',
@@ -12,7 +14,8 @@ import { AlertInput } from '@ionic/core';
 export class MemoPage implements OnInit {
 
   constructor(private alertController : AlertController,
-              private articleService : ArticlesService) { }
+              private articleService : ArticlesService,
+              private utility : UtilityService) { }
   
   articles : Array<Articles>;
 
@@ -30,11 +33,16 @@ export class MemoPage implements OnInit {
     return articles;
   }
 
+  private async getArticlesAlertResponse(response : Articles){
+
+    const memo : Array<Memos> = this.utility
+
+  }
+
   public async getArticlesAlert(){
 
     const articles = await this.articleService.orderByArticleName(await this.getArticles());
     const inputs : Array<AlertInput> = [];
-
     articles.map(articles => {
       inputs.push({
         name : 'article',
@@ -45,30 +53,12 @@ export class MemoPage implements OnInit {
       })
     })
 
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Choisir un article',
-      inputs : inputs,
-      buttons: [
-        {
-          text: 'Non',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-
-          }
-        }, {
-          text: 'Oui',
-          handler: () => {
-
-          }
-        }
-      ]
-    });
-
-    await alert.present()
+    this.utility.postAlert(inputs, this.getArticlesAlertResponse);
+    
 
   }
+
+
 
 
 }

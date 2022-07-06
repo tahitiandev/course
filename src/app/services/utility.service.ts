@@ -31,7 +31,8 @@ export class UtilityService {
     'Courses' : 'courses',
     'menu de la semaine' : 'menus',
     'Setting' : 'settings',
-    'Dépenses' : 'depense'
+    'Dépenses' : 'depense',
+    'Mémo' : 'memorisations'
   }
 
   public objectName = {
@@ -274,31 +275,30 @@ export class UtilityService {
   //#endregion
 
 
-  async postAlert(inputs : Array<AlertInput>, functionParam){
+  async postAlert(inputs : Array<AlertInput>, responseYesGetResponseInParam){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Créer un article',
-      inputs: inputs,
+      header: 'Choisir un article',
+      inputs : inputs,
       buttons: [
         {
-          text: 'Annuler',
+          text: 'Non',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: async () => {
-            await this.popupInformation('')
+          handler: () => {
+            this.popupInformation('Fin de l\'opération');
           }
-        },
-        {
-          text: 'Valider',
-          handler: async (data) => {
-            await functionParam(data)
+        }, {
+          text: 'Oui',
+          handler: (data) => {
+            responseYesGetResponseInParam(data);
           }
         }
       ]
-    })
+    });
 
-    await alert.present();
+    await alert.present()
 
   }
 
