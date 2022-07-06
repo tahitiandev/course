@@ -34,15 +34,17 @@ export class MemoService {
     }
   }
 
-  private async getMemoId(memo : Memos){
+  private async getMemoIndex(memo : Memos){
     const memos : Array<Memos> = await this.getMemos();
-    const index = await memos.findIndex(memos => memos === memo);
+    const index = await memos.findIndex(memos => {
+      return memos.id === memo.id
+    });
     return index;
   }
 
   public async putMemo(memo : Memos){
     const memos : Array<Memos> = await this.getMemos();
-    const index = await this.getMemoId(memo);
+    const index = await this.getMemoIndex(memo);
     memos[index] = memo;
     const response = await this.postMemos(memos);
     return {
@@ -52,13 +54,11 @@ export class MemoService {
   }
 
   public async deleteMemo(memo : Memos){
-    const memos : Array<Memos> = await this.getMemos();
-    const index = await this.getMemoId(memo);
-    memos.splice(index,1);
-    const response = await this.postMemos(memos);
+    memo.isDeleted = true;
+    const response = await this.putMemo(memo);
     return {
-      all : response,
-      memo : memo
+      all : response.all,
+      memo : response.memo
     }
   }
 

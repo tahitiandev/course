@@ -99,6 +99,32 @@ export class MemoPage implements OnInit {
 
   }
 
+  public async deleteMemo(memo : Memos){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Souhaitez-vous réellement l\'effacer ?',
+      buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.utility.popupInformation('Opération annulée');
+          }
+        }, {
+          text: 'Oui',
+          handler: async () => {
+            const response = await this.memoService.deleteMemo(memo);
+            this.memos = response.all;
+            await this.utility.popupInformation('Opération effectuée');
+          }
+        }
+      ]
+    });
+
+    await alert.present()
+  }
+
 
 
 
