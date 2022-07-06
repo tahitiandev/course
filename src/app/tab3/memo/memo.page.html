@@ -12,18 +12,9 @@
 <ion-content>
 
   <ion-list>
-    <ion-item-sliding>
+    <ion-item-sliding *ngFor="let memo of memos">
       <ion-item>
-        <ion-label>Item</ion-label>
-      </ion-item>
-      <ion-item-options side="end">
-        <ion-item-option >Unread</ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  
-    <ion-item-sliding>
-      <ion-item>
-        <ion-label>Item</ion-label>
+        <ion-label>{{ memo.date }} - {{ memo.libelle }}</ion-label>
       </ion-item>
       <ion-item-options side="end">
         <ion-item-option >Unread</ion-item-option>
@@ -37,12 +28,12 @@
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="top">
-      <ion-fab-button (click)="getArticlesAlert()">
+      <ion-fab-button (click)="postMemo()">
         <ion-icon name="server-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
     <ion-fab-list side="start">
-      <ion-fab-button (click)="this.test()">
+      <ion-fab-button>
         <ion-icon name="add"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>

@@ -11,24 +11,25 @@ export class MemoService {
   constructor(private storage : Storage,
               private utility : UtilityService) { }
 
-  protected async getMemos(){
+  public async getMemos(){
     const memos : Array<Memos> = await this.storage.get(this.utility.localstorage.Mémo);
-    return memos;
+    const memosActif = await memos.filter(memos => !memos.isDeleted);
+    return memosActif;
   }
 
-  protected async postMemos(memos : Array<Memos>){
+  public async postMemos(memos : Array<Memos>){
     await this.utility.saveToLocalStorage(this.utility.localstorage.Mémo, memos);
     const response : Array<Memos> = await this.getMemos();
     return response;
   }
 
-  protected async postMemo(memo : Memos){
+  public async postMemo(memo : Memos){
     const memos : Array<Memos> = await this.getMemos();
     memos.push(memo);
-    const reponse = await this.postMemos(memos);
+    const response = await this.postMemos(memos);
     
     return {
-      all : reponse,
+      all : response,
       memo : memo
     }
   }
@@ -39,7 +40,7 @@ export class MemoService {
     return index;
   }
 
-  protected async putMemo(memo : Memos){
+  public async putMemo(memo : Memos){
     const memos : Array<Memos> = await this.getMemos();
     const index = await this.getMemoId(memo);
     memos[index] = memo;
@@ -50,7 +51,7 @@ export class MemoService {
     }
   }
 
-  protected async deleteMemo(memo : Memos){
+  public async deleteMemo(memo : Memos){
     const memos : Array<Memos> = await this.getMemos();
     const index = await this.getMemoId(memo);
     memos.splice(index,1);
@@ -59,6 +60,35 @@ export class MemoService {
       all : response,
       memo : memo
     }
+  }
+
+  private async orderById(memos : Array<Memos>){
+    return memos.sort((a,b) => {
+      let x  = a.id;
+      let y  = b.id;
+      if(x < y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
+  }
+
+  public async generateMemoId(){
+    
+    const memos : Array<Memos> = await this.orderById(await this.getMemos());
+
+    if(memos.length !== 0){
+
+      return memos[memos.length - 1].id + 1;
+
+    }else{
+
+      return 0;
+
+    }
+
   }
 
 

@@ -181,7 +181,7 @@ export class UtilityService {
 
   }
 
-  private async generateDateAujourdhui(){
+  public async getDateDuJour(){
     var date = await new Date();
 
     // JOUR
@@ -227,7 +227,7 @@ export class UtilityService {
 
     var jourToday = new Date()
     var jourDeLaSemaine = new Array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi");
-    const today = await this.generateDateAujourdhui()
+    const today = await this.getDateDuJour()
     
     var aujourrhui = new Date(Date.parse(today.mois + '/' + today.jour + '/' + today.annnee))
 
