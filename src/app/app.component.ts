@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   demarrageSansSplashscreen : boolean = true;
   
   ngOnInit(){
-    this.initSplashscreen()
+    this.initSplashscreen();
   }
 
   initSplashscreen(){

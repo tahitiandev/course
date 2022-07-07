@@ -2,8 +2,12 @@ import { Injectable } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { AlertInput } from '@ionic/core';
 import { Storage } from '@ionic/storage';
+import { Articles } from '../models/articles';
 import { Deleted } from '../models/deleted';
+import { Memos } from '../models/memo';
 import { Settings } from '../models/setting';
+import { MemoService } from '../service/memo.service';
+import { ArticlesService } from './articles.service';
 
 @Injectable({
   providedIn: 'root'
@@ -336,9 +340,5 @@ export class UtilityService {
       bodyElement.classList.remove('displayBackground')
     }
   }
-
-
-
-
 
 }

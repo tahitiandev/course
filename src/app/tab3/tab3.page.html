@@ -65,6 +65,13 @@
       <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
     </ion-item>
 
+    <ion-item button (click)="this.deleteDataUselessOnLocalStorage()">
+      <ion-label>
+        <h3>Alléger la base de données</h3>
+      </ion-label>
+      <ion-icon name="bug-outline"></ion-icon>  
+    </ion-item>
+
   </ion-item-group>
 
   <ion-item-group>
@@ -181,7 +188,6 @@
       </ion-label>
       <ion-icon name="bug-outline"></ion-icon>  
     </ion-item>
-
     
     <ion-item button (click)="this.listeDesArticlesEnErreur()">
       <ion-label>

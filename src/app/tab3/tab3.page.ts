@@ -11,6 +11,10 @@ import { Deleted } from '../models/deleted';
 import { ArticlesService } from '../services/articles.service';
 import { FirebaseService } from '../services/firebase.service';
 import { AlertInput } from '@ionic/core';
+import { Memos } from '../models/memo';
+import { MemoService } from '../service/memo.service';
+import { Plats } from '../models/plats';
+import { PlatsService } from '../services/plats.service';
 
 @Component({
   selector: 'app-tab3',
@@ -34,7 +38,9 @@ export class Tab3Page implements OnInit {
               private firestore : AngularFirestore,
               private alertController : AlertController,
               private articleService : ArticlesService,
-              private firebaseService : FirebaseService) {}
+              private platService : PlatsService,
+              private firebaseService : FirebaseService,
+              private memoService : MemoService) {}
   
   ngOnInit(): void {
     this.initSetting()
@@ -858,6 +864,28 @@ export class Tab3Page implements OnInit {
   async updateArticlesId(){
     await this.articleService.updateAllArticlesId();
     this.utility.popupInformation('Ids modifiés. Il faut maintenant les envoyées sur FireBase')
+  }
+
+  public async deleteDataUselessOnLocalStorage(){
+
+    // SUPPRESSION DES ELEMENTS iSDelete
+    // MEMOS
+    const memos : Array<Memos> = await this.storage.get(this.utility.localstorage.Mémo);
+    const memosNotDeleted = await memos.filter(memos => !memos.isDeleted);
+    this.memoService.postMemos(memosNotDeleted);
+
+    // ARTICLES
+    const articles : Array<Articles> = await this.storage.get(this.utility.localstorage.articles);
+    const articlesNotDeleted = await articles.filter(articles => !articles.isDeleted);
+    this.articleService.postArticles(articlesNotDeleted);
+
+    // PLATS
+    const plats : Array<Plats> = await this.storage.get(this.utility.localstorage.Plats);
+    const platsNotDeleted = await plats.filter(plats => !plats.isDeleted);
+    this.platService.postPlats(platsNotDeleted);
+
+    await this.utility.popupInformation('Base de données allégées')
+
   }
  
 
