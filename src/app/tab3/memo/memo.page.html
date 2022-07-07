@@ -11,7 +11,7 @@
 
 <ion-content>
 
-  <ion-list>
+  <ion-list *ngIf="!isRechercheRapideActif">
     <ion-item-sliding *ngFor="let memo of memos">
       <ion-item>
         <ion-label>{{ memo.date }} - {{ memo.libelle }}</ion-label>
@@ -22,12 +22,18 @@
     </ion-item-sliding>
   </ion-list>
 
-
+  <app-search-article-card *ngIf="isRechercheRapideActif"></app-search-article-card>
+  
+  
   <ion-fab vertical="bottom" horizontal="end" edge slot="fixed" style="margin-bottom:40px">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="top">
+      <ion-fab-button (click)="rechercheRapide()">
+        <ion-icon name="server-outline"></ion-icon>
+        <ion-icon name="server-outline"></ion-icon>
+      </ion-fab-button>
       <ion-fab-button (click)="postMemo()">
         <ion-icon name="server-outline"></ion-icon>
       </ion-fab-button>
@@ -39,5 +45,5 @@
     </ion-fab-list>
   </ion-fab>
 
-
+  
 </ion-content>

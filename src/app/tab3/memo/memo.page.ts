@@ -22,6 +22,7 @@ export class MemoPage implements OnInit {
   
   articles : Array<Articles>;
   memos : Array<Memos>;
+  isRechercheRapideActif : boolean = false;
 
   ngOnInit() {
     this.onInit();
@@ -169,6 +170,10 @@ export class MemoPage implements OnInit {
     });
 
     await alert.present()
+  }
+
+  public rechercheRapide(){
+    this.isRechercheRapideActif = !this.isRechercheRapideActif;
   }
 
 

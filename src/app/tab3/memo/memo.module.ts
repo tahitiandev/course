@@ -7,7 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { MemoPageRoutingModule } from './memo-routing.module';
 
 import { MemoPage } from './memo.page';
-
+import { SearchArticleCardComponent } from 'src/app/utility/search-article-card/search-article-card.component';
+import { ArticlesFilterPipe } from '../../pipes/articles-filter.pipe';
 @NgModule({
   imports: [
     CommonModule,
@@ -15,6 +16,9 @@ import { MemoPage } from './memo.page';
     IonicModule,
     MemoPageRoutingModule
   ],
-  declarations: [MemoPage]
+  declarations: [
+    MemoPage,
+    SearchArticleCardComponent,
+    ArticlesFilterPipe]
 })
 export class MemoPageModule {}
