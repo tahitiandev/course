@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Articles } from 'src/app/models/articles';
 import { ArticlesService } from 'src/app/services/articles.service';
+
 
 @Component({
   selector: 'app-search-article-card',
@@ -13,6 +14,7 @@ export class SearchArticleCardComponent implements OnInit {
 
   searchValue : string = "";
   articles : Array<Articles>;
+  @Output() articlesOutput = new EventEmitter<Articles>();
 
   ngOnInit() {
     this.onInit();
@@ -26,6 +28,10 @@ export class SearchArticleCardComponent implements OnInit {
   private async getArticles (){
     const articles : Array<Articles> = await this.articleService.getArticles();
     return articles;
+  }
+
+  public getArticle(article : Articles){
+    this.articlesOutput.emit(article);
   }
 
 

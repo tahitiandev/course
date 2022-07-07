@@ -176,6 +176,22 @@ export class MemoPage implements OnInit {
     this.isRechercheRapideActif = !this.isRechercheRapideActif;
   }
 
+  public async getArticleFromArticleOutput(article : Articles){
+    
+    const response = await this.memoService.postMemo({
+      id : await this.memoService.generateMemoId(),
+      libelle : article.libelle,
+      date : (await this.utility.getDateDuJour()).dateComplete,
+      firebase : false,
+      isModified : false,
+      isDeleted :false
+    })
+
+    this.memos = response.all;
+    this.rechercheRapide();
+
+  }
+
 
 
 

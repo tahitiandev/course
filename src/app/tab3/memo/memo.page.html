@@ -22,7 +22,7 @@
     </ion-item-sliding>
   </ion-list>
 
-  <app-search-article-card *ngIf="isRechercheRapideActif"></app-search-article-card>
+  <app-search-article-card class="search-article-animation" (articlesOutput)="getArticleFromArticleOutput($event)" *ngIf="isRechercheRapideActif"></app-search-article-card>
   
   
   <ion-fab vertical="bottom" horizontal="end" edge slot="fixed" style="margin-bottom:40px">
