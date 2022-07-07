@@ -77,7 +77,8 @@ export class MemoService {
 
   public async generateMemoId(){
     
-    const memos : Array<Memos> = await this.orderById(await this.getMemos());
+    const allmemos : Array<Memos> = await this.storage.get(this.utility.localstorage.Mémo);
+    const memos : Array<Memos> = await this.orderById(allmemos);
 
     if(memos.length !== 0){
 
