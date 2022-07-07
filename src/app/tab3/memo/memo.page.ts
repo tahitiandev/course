@@ -125,6 +125,52 @@ export class MemoPage implements OnInit {
     await alert.present()
   }
 
+  public async postMemoPersonnalise(){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Créer une note personnalisée',
+      inputs : [
+        {
+          type : 'text',
+          label : 'Libellé',
+          name : 'libelle'
+          
+        }
+      ],
+      buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.utility.popupInformation('Opération annulée');
+          }
+        }, {
+          text: 'Oui',
+          handler: async (data) => {
+
+            const memo : Memos = {
+              id : await this.memoService.generateMemoId(),
+              libelle : data.libelle,
+              date : (await this.utility.getDateDuJour()).dateComplete,
+              firebase : false,
+              isModified : false,
+              isDeleted : false
+            }
+
+            const response = await this.memoService.postMemo(memo);
+            
+            this.memos = response.all;
+            
+          }
+        }
+      ]
+    });
+
+    await alert.present()
+  }
+
 
 
 
