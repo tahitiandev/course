@@ -2,8 +2,12 @@ import { Injectable } from '@angular/core';
 import { AlertController, NavController } from '@ionic/angular';
 import { AlertInput } from '@ionic/core';
 import { Storage } from '@ionic/storage';
+import { Articles } from '../models/articles';
 import { Deleted } from '../models/deleted';
+import { Memos } from '../models/memo';
 import { Settings } from '../models/setting';
+import { MemoService } from '../service/memo.service';
+import { ArticlesService } from './articles.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +35,8 @@ export class UtilityService {
     'Courses' : 'courses',
     'menu de la semaine' : 'menus',
     'Setting' : 'settings',
-    'Dépenses' : 'depense'
+    'Dépenses' : 'depense',
+    'Mémo' : 'memorisations'
   }
 
   public objectName = {
@@ -180,7 +185,7 @@ export class UtilityService {
 
   }
 
-  private async generateDateAujourdhui(){
+  public async getDateDuJour(){
     var date = await new Date();
 
     // JOUR
@@ -226,7 +231,7 @@ export class UtilityService {
 
     var jourToday = new Date()
     var jourDeLaSemaine = new Array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi");
-    const today = await this.generateDateAujourdhui()
+    const today = await this.getDateDuJour()
     
     var aujourrhui = new Date(Date.parse(today.mois + '/' + today.jour + '/' + today.annnee))
 
@@ -274,31 +279,30 @@ export class UtilityService {
   //#endregion
 
 
-  async postAlert(inputs : Array<AlertInput>, functionParam){
+  async postAlert(inputs : Array<AlertInput>, responseYesGetResponseInParam){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Créer un article',
-      inputs: inputs,
+      header: 'Choisir un article',
+      inputs : inputs,
       buttons: [
         {
-          text: 'Annuler',
+          text: 'Non',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: async () => {
-            await this.popupInformation('')
+          handler: () => {
+            this.popupInformation('Fin de l\'opération');
           }
-        },
-        {
-          text: 'Valider',
-          handler: async (data) => {
-            await functionParam(data)
+        }, {
+          text: 'Oui',
+          handler: (data) => {
+            responseYesGetResponseInParam(data);
           }
         }
       ]
-    })
+    });
 
-    await alert.present();
+    await alert.present()
 
   }
 
@@ -336,9 +340,5 @@ export class UtilityService {
       bodyElement.classList.remove('displayBackground')
     }
   }
-
-
-
-
 
 }

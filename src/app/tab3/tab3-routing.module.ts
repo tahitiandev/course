@@ -49,6 +49,10 @@ const routes: Routes = [
   {
     path: 'depense-list',
     loadChildren: () => import('./depense-list/depense-list.module').then( m => m.DepenseListPageModule)
+  },
+  {
+    path: 'memo',
+    loadChildren: () => import('./memo/memo.module').then( m => m.MemoPageModule)
   }
 
 

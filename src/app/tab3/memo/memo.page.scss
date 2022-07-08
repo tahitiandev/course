@@ -1,0 +1,10 @@
+.search-article-animation{
+    animation: searchAnimationKeyFrames;
+    animation-duration: 2s;
+}
+
+@keyframes example {
+    100%{
+        background: blue;
+    }
+  }

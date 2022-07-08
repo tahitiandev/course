@@ -3,6 +3,7 @@ import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import * as firebase from 'firebase';
 import { Depenses } from './models/depenses';
+import { Memos } from './models/memo';
 import { Settings } from './models/setting';
 import { ArticlesService } from './services/articles.service';
 import { CoursesService } from './services/courses.service';
@@ -29,7 +30,7 @@ export class AppComponent implements OnInit {
   demarrageSansSplashscreen : boolean = true;
   
   ngOnInit(){
-    this.initSplashscreen()
+    this.initSplashscreen();
   }
 
   initSplashscreen(){
@@ -49,26 +50,28 @@ export class AppComponent implements OnInit {
           this.route.navigateRoot('splashscreen')
         }
       }else{
-        this.setArticle()
-        this.setFamilleArticle()
-        this.setPlat()
-        this.setCourse()
-        this.setMenu()
-        this.initSetting()
-        this.initTheme()
-        this.setDeletedElement()
-        this.initDepense()
+        this.setArticle();
+        this.setFamilleArticle();
+        this.setPlat();
+        this.setCourse();
+        this.setMenu();
+        this.initSetting();
+        this.initTheme();
+        this.setDeletedElement();
+        this.initDepense();
+        this.initMemo();
       }
     }else{
-      this.setArticle()
-      this.setFamilleArticle()
-      this.setPlat()
-      this.setCourse()
-      this.setMenu()
-      this.initSetting()
-      this.initTheme()
-      this.setDeletedElement()
-      this.initDepense()
+      this.setArticle();
+      this.setFamilleArticle();
+      this.setPlat();
+      this.setCourse();
+      this.setMenu();
+      this.initSetting();
+      this.initTheme();
+      this.setDeletedElement();
+      this.initDepense();
+      this.initMemo();
     }
   }
 
@@ -142,6 +145,17 @@ export class AppComponent implements OnInit {
     if(depenses === null){
       const data : Array<Depenses> = []
       this.storage.set(this.utility.localstorage.Dépenses, data)
+
+    }
+  
+  }
+  async initMemo(){
+    
+    const memo : Array<Memos> = await this.storage.get(this.utility.localstorage.Mémo);
+    
+    if(memo === null){
+      const data : Array<Memos> = []
+      this.storage.set(this.utility.localstorage.Mémo, data)
 
     }
   }
