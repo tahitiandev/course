@@ -25,7 +25,7 @@ export class Tab3Page implements OnInit {
 
   darkModeBtn : boolean;
   setting : Settings;
-  theme = {
+  private theme = {
     'dark' : 'dark',
     'light' : 'light'
   }
@@ -44,39 +44,17 @@ export class Tab3Page implements OnInit {
   
   ngOnInit(): void {
     this.initSetting()
-    this.firebaseService.getCollectionFromFirebase('articles')
+    // this.firebaseService.getCollectionFromFirebase('articles')
   }
 
-  async step(){
-    const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
-    for(let divers of localStorageNames){
-      if(divers[1] != 'settings'){
-        this.utility.changeValueiSModified(divers[1], false)
-      }
-    }
-  }
+  private async initSetting(){
 
-  async consoleLog(){
-    const articlesLS : Articles[] = await this.storage.get('articles');
-    // console.log(articlesLS)
-    const articles : Articles [] = this.articleService.sortByArticleCode(articlesLS)
-    console.log(articles)
+    const settings : Settings = await this.utility.getSettings();
 
-  }
-  async consoleLogFamile(){
-    const familles : Array<Familles>  = await this.storage.get('familles');
-    console.log(familles)
+    if(settings  != null){
+      this.setting = settings
+      this.budget = settings.budget
 
-  }
-
-  async initSetting(){
-    const setting : Settings = await this.storage.get('settings')
-
-    if(setting  != null){
-      this.setting = setting
-      this.budget = setting.budget
-
-      // Init thème
       if(this.setting.theme === true){
         this.darkModeBtn = true
       }else{
@@ -88,11 +66,10 @@ export class Tab3Page implements OnInit {
     }
   }
 
-  async setMagasinParDefaut(){
+  public async postMagasinParDefaut(){
 
     const magasins = await this.setting.magasins;
-
-    const inputs : Array<AlertInput> = []
+    const inputs : Array<AlertInput> = [];
 
     for(let magasin of magasins){
       await inputs.push({
@@ -132,7 +109,7 @@ export class Tab3Page implements OnInit {
   }
 
 
-  goToUrl(tabNumber : string, pageName? : string){
+  public goToUrl(tabNumber : string, pageName? : string){
     this.utility.goToUrl(tabNumber, pageName);    
   }
 
@@ -142,21 +119,21 @@ export class Tab3Page implements OnInit {
       document.body.setAttribute('color-theme',this.theme.dark);
       const setting = await this.storage.get(this.utility.localstorage.Setting);
       this.setting = setting;
-      this.setting.theme = true
+      this.setting.theme = true;
       this.utility.updateSettings(setting);
-      this.storage.set(this.utility.localstorage.Setting, this.setting)
+      this.storage.set(this.utility.localstorage.Setting, this.setting);
     }else{
       document.body.setAttribute('color-theme',this.theme.light);
       const setting = await this.storage.get(this.utility.localstorage.Setting);
-      this.setting.theme = false
-      this.storage.set(this.utility.localstorage.Setting, this.setting)
+      this.setting.theme = false;
+      this.storage.set(this.utility.localstorage.Setting, this.setting);
     }
   }
 
   async postDataToFireStore(){
     
-    this.loaderOn()
-    const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
+    this.loaderOn();
+    const localStorageNames = await this.utility.transformToObject(this.utility.localstorage);
     var dataAjour : any [] = [];
 
     localStorageNames.forEach( async(localStorageName) => {
@@ -170,18 +147,13 @@ export class Tab3Page implements OnInit {
           if(!data.firebase){
             data.firebase = true;
             await this.firestore.collection(localStorageName[1])
-            .add(data)
+                                .add(data);
             dataAjour.push(data)
           }// si la donnée a déjà été envoyé dans firebase
           else{
 
             // Si la données a été modifié
             if(data.isModified){
-              // await this.firestore.collection(localStorageName[1])
-              //                     .doc(data.documentId)
-              //                     .delete()
-              // await this.firestore.collection(localStorageName[1])
-              //                     .add(data)
               await this.firestore.collection(localStorageName[1])
                                   .doc(data.documentId)
                                   .update(data)
@@ -190,14 +162,13 @@ export class Tab3Page implements OnInit {
             }//isModified
 
             if(data.isDeleted){
-
               await this.firestore.collection(localStorageName[1])
                                   .doc(data.documentId)
                                   .update(data)
 
             }//isDeleted
 
-            dataAjour.push(data)
+            dataAjour.push(data);
             
           }
           
@@ -249,8 +220,8 @@ export class Tab3Page implements OnInit {
 
   }
 
-  this.loaderOff()
-  this.utility.popupInformation('Les données ont bien été envoyées')
+  this.loaderOff();
+  this.utility.popupInformation('Les données ont bien été envoyées');
 
   }//postDataToFireStore
 
@@ -271,19 +242,6 @@ export class Tab3Page implements OnInit {
                    this.storage.set(collectionName, alldata)
                  })    
   } //getDataFromFireStore
-
-  private async saveOnLocalStorage(collectionName : string, data){
-    await this.storage.set(collectionName,data)
-  }
-
-  private async verifieSiToutesLesDataSontEnvoye(localName : string){
-
-    const dataFromLocalStora = await this.storage.get(localName);
-    return dataFromLocalStora.find(data => {
-        return data.firebase === true;
-    });
-
-  }
 
   private async getSettingsFromFirebase(){
 
@@ -306,27 +264,27 @@ export class Tab3Page implements OnInit {
 
   }
 
-  async getAllData(showAlerte : boolean = true){
+  private async getAllData(showAlerte : boolean = true){
 
     const localStorageNames = await this.utility.transformToObject(this.utility.localstorage)
     localStorageNames.forEach( async(localStorageName) => {
       if(localStorageName[1] != 'settings'){
-        await this.getDataFromFireStore(localStorageName[1])
+        await this.getDataFromFireStore(localStorageName[1]);
       }      
     });
     
-    this.getSettingsFromFirebase()
+    this.getSettingsFromFirebase();
 
     if(showAlerte){
-      this.loaderOn()
+      this.loaderOn();
       setTimeout(() => {
-        this.loaderOff()
-        this.utility.popupInformation('Les données ont bien été récupérées')
+        this.loaderOff();
+        this.utility.popupInformation('Les données ont bien été récupérées');
       }, 3000);
     }
 
   }
-  async messageGetAllData(){
+  public async messageGetAllData(){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -352,7 +310,7 @@ export class Tab3Page implements OnInit {
     await alert.present()
   }
 
-  async messagePostDataToFireBase(){
+  public async messagePostDataToFireBase(){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -378,9 +336,6 @@ export class Tab3Page implements OnInit {
     await alert.present()
   }
 
-
-
-
   private loaderOn(){
     document.getElementById('wait').innerHTML = "<ion-spinner name='dots' style='height:65px;width:65px'></ion-spinner>";
     document.querySelector('.selector-to-display').classList.add('elementOff')
@@ -390,28 +345,8 @@ export class Tab3Page implements OnInit {
     document.getElementById('wait').innerHTML = "";
     document.querySelector('.selector-to-display').classList.remove('elementOff')
   }
-  
 
-  private async MAJdataLocalStorageFromDataFromFireStore(collectionName : string){
-
-    this.firestore.collection(collectionName).snapshotChanges().subscribe(async(res)=>{
-
-      var obj = await res[0].payload.doc.data()
-      var result = await Object.keys(obj).map((key) => [Number(key), obj[key]]);
-      var data : any [] = []
-
-      for(let i of result){
-        data.push(i[1])
-      }
-
-      this.storage.set(collectionName, data)
-
-
-    })
-
-  }
-
-  async budgetDeLaSemaine(){
+  public async postBudgetDeLaSemaine(){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Budget de la semaine',
@@ -445,14 +380,13 @@ export class Tab3Page implements OnInit {
     await alert.present();
   }
 
-  async listeDesPayeurs(){
+  async getPayeurs(){
 
     const payeurs = await this.setting.payeurs;
-
-    const input : AlertInput [] = []
+    const inputs : Array<AlertInput> = []
 
     for(let payeur of payeurs){
-      await input.push({
+      await inputs.push({
         name : 'payeur',
         type : 'radio',
         label : payeur,
@@ -463,7 +397,7 @@ export class Tab3Page implements OnInit {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Liste des payeurs',
-      inputs: input,
+      inputs: inputs,
       buttons: [
         {
           text: 'Ajouter',

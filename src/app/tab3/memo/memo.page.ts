@@ -80,6 +80,7 @@ export class MemoPage implements OnInit {
             const memo : Memos = {
               id : await this.memoService.generateMemoId(),
               libelle : article.libelle,
+              articleId : article.code,
               date : (await this.utility.getDateDuJour()).dateComplete,
               firebase : false,
               isModified : false,
@@ -154,6 +155,7 @@ export class MemoPage implements OnInit {
             const memo : Memos = {
               id : await this.memoService.generateMemoId(),
               libelle : data.libelle,
+              articleId : null,
               date : (await this.utility.getDateDuJour()).dateComplete,
               firebase : false,
               isModified : false,
@@ -181,6 +183,7 @@ export class MemoPage implements OnInit {
     const response = await this.memoService.postMemo({
       id : await this.memoService.generateMemoId(),
       libelle : article.libelle,
+      articleId : article.code,
       date : (await this.utility.getDateDuJour()).dateComplete,
       firebase : false,
       isModified : false,

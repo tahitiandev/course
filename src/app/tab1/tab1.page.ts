@@ -30,7 +30,7 @@ export class Tab1Page implements OnInit {
     this.onInit()
   }
   
-  async onInit(){
+  private async onInit(){
 
     // Init setting
     const settings = await this.settingsInit()
@@ -61,11 +61,10 @@ export class Tab1Page implements OnInit {
     
   }
 
-  async listeDesMagasins(){
+  public async postCourseFaster(){
 
     const magasins = await this.settings.magasins;
-
-    const input : AlertInput [] = []
+    const input : Array<AlertInput> = []
 
     magasins.map(magasin => {
       input.push({
@@ -93,7 +92,7 @@ export class Tab1Page implements OnInit {
           text: 'Valider',
           handler: async (magasin) => {
 
-            this.generateCourseVide(magasin)
+            this.generateCourseVide(magasin);
               
           }
         }
@@ -132,7 +131,7 @@ export class Tab1Page implements OnInit {
     })
   }
 
-  async toggleShowListeDisabled(){
+  public async toggleShowListeDisabled(){
     this.masquerLesCoursesCloture = !this.masquerLesCoursesCloture
     if(this.masquerLesCoursesCloture){
       const courses: Courses [] = await this.coursesService.getCourses();
@@ -154,7 +153,7 @@ export class Tab1Page implements OnInit {
     
   }
 
-  async getCourses(){
+  public async getCourses(){
     const courses : Array<Courses> = await this.coursesService.getCourses();
 
     if(this.masquerLesCoursesCloture){
@@ -169,7 +168,7 @@ export class Tab1Page implements OnInit {
     return await courses;
   }
 
-  calculeTotal(course : Courses){
+  public calculeTotal(course : Courses){
     var total : number = 0;
     course.liste.map(article => total += (article.prixUnitaire-0) * (article.quantite-0))
     return total.toLocaleString();
@@ -181,27 +180,27 @@ export class Tab1Page implements OnInit {
     return total;
   }
 
-  async majTotalGeneral(){
+  public async majTotalGeneral(){
     const courses : Courses[] = await this.getCourses();
     courses.map(course => course.total = this.calculeTotalReturnInt(course))
     this.storage.set(this.utility.localstorage.Courses, courses)
   }
 
-  goDetail(id : number){
+  public goDetail(id : number){
     this.nav.navigateRoot('tabs/tab1/course-details/' + id)
   }
 
-  goToCourseAdd(){
+  public goToCourseAdd(){
     this.nav.navigateRoot('tabs/tab1/course-add')
   }
 
-  async popUpPayeur(course : Courses){
+  public async popUpPayeur(course : Courses){
 
     const payeurs = await this.settings.payeurs;
-    const input : AlertInput [] = [];
+    const inputs : Array<AlertInput> = [];
 
     payeurs.map(payeur => {
-      input.push({
+      inputs.push({
         name : 'payeur',
         label : payeur,
         value : payeur,
@@ -209,7 +208,7 @@ export class Tab1Page implements OnInit {
       })
     })
 
-    input.push({
+    inputs.push({
       name: 'payeur',
       label: 'Effacer le payeur',
       value : null,
@@ -219,7 +218,7 @@ export class Tab1Page implements OnInit {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Information',
-      inputs: input,
+      inputs: inputs,
       buttons: [
         {
           text: 'Non',
@@ -254,7 +253,7 @@ export class Tab1Page implements OnInit {
     await alert.present()
   }
 
-  async popUpTag(course : Courses){
+  public async popUpTag(course : Courses){
 
     const tags = await this.settings.tags;
     const input : AlertInput [] = [];
@@ -314,7 +313,7 @@ export class Tab1Page implements OnInit {
     await alert.present()
   }
 
-  async popUpMagasin(course : Courses){
+  public async popUpMagasin(course : Courses){
 
     const magasins = await this.settings.magasins;
     const input : AlertInput [] = [];
@@ -373,7 +372,7 @@ export class Tab1Page implements OnInit {
     await alert.present()
   }
 
-  async cloturer(courseSelected : Courses){
+  public async cloturer(courseSelected : Courses){
 
     const courses : Array<Courses> = await this.storage.get(this.utility.localstorage.Courses)
     const index = await courses.findIndex(s => {
@@ -407,7 +406,7 @@ export class Tab1Page implements OnInit {
 
   }
 
-  async supprimer(course : Courses){
+  public async deleteCourse(course : Courses){
     const courses = await this.coursesService.deleteCourse(course)
     await this.getCourses();
   }

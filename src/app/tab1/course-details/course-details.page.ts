@@ -5,9 +5,11 @@ import { AlertInput } from '@ionic/core';
 import { Articles } from 'src/app/models/articles';
 import { Courses, Liste } from 'src/app/models/courses';
 import { CreerArticleAPartirDuCodeBarreResponse } from 'src/app/models/creerArticleAPartirDuCodeBarreResponse';
+import { Memos } from 'src/app/models/memo';
 import { MenuDelaSemaine } from 'src/app/models/menuDeLaSemaine';
 import { Plats } from 'src/app/models/plats';
 import { Settings } from 'src/app/models/setting';
+import { MemoService } from 'src/app/service/memo.service';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { CoursesService } from 'src/app/services/courses.service';
@@ -29,6 +31,7 @@ export class CourseDetailsPage implements OnInit {
               private barreCodeService : BarreCodeService,
               private articleService : ArticlesService,
               private platsService : PlatsService,
+              private memoService : MemoService,
               private utility : UtilityService,
               private menuService : MenuService) { }
 
@@ -894,6 +897,64 @@ export class CourseDetailsPage implements OnInit {
       this.chooseArticle(plat, 'Dimanche')
     }
 
+  }
+
+  public async postMemo(){
+
+    const memos : Array<Memos> = await this.memoService.getMemos();
+    const inputs : Array<AlertInput> = [];
+
+    memos.map(memos => {
+      inputs.push({
+        type : 'checkbox',
+        value : memos,
+        label : memos.libelle
+      })
+    })
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Créer un article',
+      inputs: inputs,
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: async () => {
+
+          }
+        },
+        {
+          text: 'Valider',
+          handler: async (memos : Array<Memos>) => {
+
+            memos.map(async memos => {
+              memos.isDeleted = true;
+              await this.memoService.putMemo(memos);
+
+              const article : Articles = await this.articleService.getArticleByArticleCode(memos.articleId);
+
+              this.courseDetails.push({
+                articleId : memos.articleId,
+                libelle : memos.libelle,
+                quantite : 1,
+                prixUnitaire : article.prix,
+                actif : false
+              })
+
+            });
+
+            this.course.liste = this.courseDetails;
+            await this.courseService.putCourse(this.course);
+            this.calculeTotal();
+
+          }
+        }
+      ]
+    })
+
+    await alert.present();
   }
 
 }

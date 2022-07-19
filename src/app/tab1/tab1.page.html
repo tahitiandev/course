@@ -46,7 +46,7 @@
         <ion-item-option style="background: #979e59; color: black;" (click)="popUpMagasin(course)">Magasin</ion-item-option>
         <ion-item-option style="background: #a0d145; color: black;" (click)="popUpPayeur(course)">Payeur</ion-item-option>
         <ion-item-option style="background: rgb(71, 69, 209); color: white;" (click)="popUpTag(course)">Tag</ion-item-option>
-        <ion-item-option style="background: red;" (click)="supprimer(course)">Supprimer</ion-item-option>
+        <ion-item-option style="background: red;" (click)="deleteCourse(course)">Supprimer</ion-item-option>
       </ion-item-options>
     </span>
     </ion-item-sliding>
@@ -65,7 +65,7 @@
       </ion-fab-button>
     </ion-fab-list>
     <ion-fab-list side="start">
-      <ion-fab-button (click)="listeDesMagasins()">
+      <ion-fab-button (click)="postCourseFaster()">
         <ion-icon name="document-outline"></ion-icon>
       </ion-fab-button>
       <ion-fab-button (click)="goToCourseAdd()">
