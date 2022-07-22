@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { AlertInput } from '@ionic/core';
+import { AlertInput, AlertButton } from '@ionic/core';
 import { Articles } from 'src/app/models/articles';
 import { Courses, Liste } from 'src/app/models/courses';
 import { CreerArticleAPartirDuCodeBarreResponse } from 'src/app/models/creerArticleAPartirDuCodeBarreResponse';
@@ -88,8 +88,6 @@ export class CourseDetailsPage implements OnInit {
   }
 
   private async calculeTotal(){
-
-    this.settingInit();
 
     const montantCourse = await this.courseService.calculeMontantTotal(this.courseDetails);
     this.total = montantCourse;  
@@ -899,7 +897,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  public async postMemo(){
+  public async postMemo(allCheckboxSelected? : boolean){
 
     const memos : Array<Memos> = await this.memoService.getMemos();
     const inputs : Array<AlertInput> = [];
@@ -908,50 +906,65 @@ export class CourseDetailsPage implements OnInit {
       inputs.push({
         type : 'checkbox',
         value : memos,
-        label : memos.libelle
+        label : memos.libelle,
+        checked : allCheckboxSelected === undefined ? false : true
       })
     })
 
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Créer un article',
-      inputs: inputs,
-      buttons: [
+    const buttons : Array<AlertButton> = [];
+
+    if(!allCheckboxSelected){
+      buttons.push(
         {
-          text: 'Annuler',
-          role: 'cancel',
+          text: 'Tout selectionner',
           cssClass: 'secondary',
           handler: async () => {
-
-          }
-        },
-        {
-          text: 'Valider',
-          handler: async (memos : Array<Memos>) => {
-
-            memos.map(async memos => {
-              memos.isDeleted = true;
-              await this.memoService.putMemo(memos);
-
-              const article : Articles = await this.articleService.getArticleByArticleCode(memos.articleId);
-
-              this.courseDetails.push({
-                articleId : memos.articleId,
-                libelle : memos.libelle,
-                quantite : 1,
-                prixUnitaire : article.prix,
-                actif : false
-              })
-
-            });
-
-            this.course.liste = this.courseDetails;
-            await this.courseService.putCourse(this.course);
-            this.calculeTotal();
-
+            this.postMemo(true);
           }
         }
-      ]
+      )
+    }
+
+    buttons.push({
+      text: 'Annuler',
+      role: 'cancel',
+      cssClass: 'secondary',
+      handler: () => {}
+    },
+    {
+      text: 'Valider',
+      handler: async (memos : Array<Memos>) => {
+
+        await memos.map(async memos => {
+          memos.isDeleted = true;
+          await this.memoService.putMemo(memos);
+
+          const article : Articles = await this.articleService.getArticleByArticleCode(memos.articleId);
+
+          this.courseDetails.push({
+            articleId : memos.articleId,
+            libelle : memos.libelle,
+            quantite : 1,
+            prixUnitaire : article.prix,
+            actif : false
+          })
+
+        });
+
+        this.course.liste = this.courseDetails;
+        await this.courseService.putCourse(this.course);
+        setTimeout(this.calculeTotal,2000);
+
+      }
+    })
+
+    
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Ajouter des articles',
+      inputs: inputs,
+      buttons: buttons
     })
 
     await alert.present();
