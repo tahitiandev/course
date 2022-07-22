@@ -3,6 +3,7 @@ import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import * as firebase from 'firebase';
 import { Depenses } from './models/depenses';
+import { HistoriquePrix } from './models/historiquePrix';
 import { Memos } from './models/memo';
 import { Settings } from './models/setting';
 import { ArticlesService } from './services/articles.service';
@@ -60,6 +61,7 @@ export class AppComponent implements OnInit {
         this.setDeletedElement();
         this.initDepense();
         this.initMemo();
+        this.initHistorixPrix();
       }
     }else{
       this.setArticle();
@@ -72,6 +74,7 @@ export class AppComponent implements OnInit {
       this.setDeletedElement();
       this.initDepense();
       this.initMemo();
+      this.initHistorixPrix();
     }
   }
 
@@ -156,6 +159,17 @@ export class AppComponent implements OnInit {
     if(memo === null){
       const data : Array<Memos> = []
       this.storage.set(this.utility.localstorage.Mémo, data)
+
+    }
+  
+  }
+  async initHistorixPrix(){
+    
+    const historiquePrix : Array<HistoriquePrix> = await this.storage.get(this.utility.localstorage['Hitorique prix']);
+    
+    if(historiquePrix === null){
+      const data : Array<HistoriquePrix> = []
+      this.storage.set(this.utility.localstorage['Hitorique prix'], data)
 
     }
   }
