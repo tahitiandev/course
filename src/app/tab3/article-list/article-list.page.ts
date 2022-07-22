@@ -7,6 +7,7 @@ import { Storage } from '@ionic/storage';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { AlertInput } from '@ionic/core';
 import { Settings } from 'src/app/models/setting';
+import { HistoriquePrixService } from 'src/app/services/historique-prix.service';
 
 @Component({
   selector: 'app-article-list',
@@ -19,6 +20,7 @@ export class ArticleListPage implements OnInit {
     private alertController: AlertController,
     private utility : UtilityService,
     private articleService : ArticlesService,
+    private historiquePrixService : HistoriquePrixService,
     private nav : NavController,
     private barreCodeService : BarreCodeService) {}
 
@@ -87,34 +89,6 @@ export class ArticleListPage implements OnInit {
           handler: () => {
           }
         },
-        // {
-        //   text: 'Magasin : ' + articles.magasin,
-        //   cssClass: 'primary',
-        //   handler: async (result) => {
-        //     this.modifierMagasin(articles)
-        //   }
-        // },
-        // {
-        //   text: 'Ajouter un prix',
-        //   cssClass: 'primary',
-        //   handler: async (result) => {
-        //     this.chooseMagasinPrixMagasin(articles, 'create')
-        //   }
-        // },
-        // {
-        //   text: 'Modifier un prix',
-        //   cssClass: 'primary',
-        //   handler: async (result) => {
-        //     this.chooseMagasinPrixMagasin(articles, 'update')
-        //   }
-        // },
-        // {
-        //   text: 'Supprimer un prix',
-        //   cssClass: 'primary',
-        //   handler: async (result) => {
-        //     this.chooseMagasinPrixMagasin(articles, 'delete')
-        //   }
-        // },
         {
         text: 'Valider',
         handler: async (result : Articles) => {
@@ -129,9 +103,9 @@ export class ArticleListPage implements OnInit {
           article.prix = result.prix;
           article.barreCode = result.barreCode
 
-          await this.articleService.putArticle(article)
-          await this.getArticles()
-          await this.spinner(false)
+          await this.articleService.putArticle(article);
+          await this.getArticles();
+          await this.spinner(false);
 
           }
         }
@@ -279,6 +253,11 @@ export class ArticleListPage implements OnInit {
           const index = article.PrixMagasin.findIndex(prixMagasin => prixMagasin.magasin === magasin);
           article.PrixMagasin[index].prix = result.prix
           await this.articleService.putArticle(article);
+          await this.historiquePrixService.postHistoriquePrix(
+            article,
+            prix,
+            magasin
+          );
           await this.getArticles();
           this.spinner(false);
 
