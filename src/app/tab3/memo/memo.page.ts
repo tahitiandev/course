@@ -175,7 +175,9 @@ export class MemoPage implements OnInit {
   }
 
   public rechercheRapide(){
-    this.isRechercheRapideActif = !this.isRechercheRapideActif;
+
+    this.isRechercheRapideActif = !this.isRechercheRapideActif
+    
   }
 
   public async getArticleFromArticleOutput(article : Articles){
