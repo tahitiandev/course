@@ -32,9 +32,10 @@ export class HistoriquePrixService {
 
     const data : HistoriquePrix = {
       date : (await this.utility.getDateDuJour()).dateComplete,
-      prixAncien : article.PrixMagasin[indexAncienPrix].prix,
-      prixNouveau : nouveauPrix,
-      articleId : article.code
+      prixAncien : parseInt(article.PrixMagasin[indexAncienPrix].prix.toString()),
+      prixNouveau : parseInt(nouveauPrix.toString()),
+      articleId : article.code,
+      magasin : magasin
     }
 
     historiquePrix.push(data);

@@ -251,7 +251,8 @@ export class ArticleListPage implements OnInit {
         handler: async (result) => {
           
           const index = article.PrixMagasin.findIndex(prixMagasin => prixMagasin.magasin === magasin);
-          article.PrixMagasin[index].prix = result.prix
+          article.PrixMagasin[index].prix = result.prix;
+          article.prix = result.prix;
           await this.articleService.putArticle(article);
           await this.historiquePrixService.postHistoriquePrix(
             article,

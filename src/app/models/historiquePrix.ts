@@ -3,4 +3,5 @@ export interface HistoriquePrix{
     prixAncien : number;
     prixNouveau : number;
     date : string;
+    magasin : string;
 }
