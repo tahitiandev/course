@@ -9,6 +9,8 @@ import { AlertController } from '@ionic/angular';
 import { CreerArticleAPartirDuCodeBarreResponse } from '../models/creerArticleAPartirDuCodeBarreResponse';
 import { Settings } from '../models/setting';
 import { Liste } from '../models/courses';
+import { HistoriquePrix } from '../models/historiquePrix';
+import { HistoriquePrixService } from './historique-prix.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,7 @@ export class ArticlesService {
 
   constructor(private storage : Storage,
               private utility : UtilityService,
-              private firebaseService : FirebaseService,
+              private historiquePrixService : HistoriquePrixService,
               private alertController: AlertController) { }
 
   private articles : Array<Articles> = [];
@@ -350,6 +352,11 @@ export class ArticlesService {
               }
 
               await this.putArticle(article);
+              this.historiquePrixService.postHistoriquePrix(
+                article,
+                prix,
+                magasin
+              )
 
             }
           }

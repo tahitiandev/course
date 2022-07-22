@@ -36,7 +36,8 @@ export class UtilityService {
     'menu de la semaine' : 'menus',
     'Setting' : 'settings',
     'Dépenses' : 'depense',
-    'Mémo' : 'memorisations'
+    'Mémo' : 'memorisations',
+    'Hitorique prix' : 'historiqueprix'
   }
 
   public objectName = {
