@@ -1,0 +1,7 @@
+{
+  "name": "Gestion du bugdet",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
