@@ -1,0 +1,29 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title>Se connecter</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="authentificationForm" (ngSubmit)="onValide()">
+    <ion-item>
+      <ion-input formControlName="username" label="Votre login" label-placement="floating" fill="outline" placeholder="Votre login"></ion-input>
+    </ion-item>
+    <br>
+    
+    <ion-item>
+      <ion-input formControlName="password" label="Votre mot de passe" type="password" label-placement="floating" fill="outline" placeholder="Votre mot de passe"></ion-input>
+    </ion-item>
+    <br>
+
+    <ion-button type="submit" expand="full">VALIDER</ion-button>
+
+    <p (click)="navigateToCreerUtilisateur()" style="cursor: pointer;">Se créer un compte</p>
+    
+  </form>
+</ion-content>

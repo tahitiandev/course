@@ -1,7 +1,8 @@
 {
   "name": "Gestion du bugdet",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {},
+    "cordova": {}
   },
   "type": "angular"
 }

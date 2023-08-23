@@ -1,0 +1,47 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+        
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    
+    <ion-title>Configurer vos articles</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-list *ngFor="let famille of familles">
+    <ion-item>
+      <ion-label>
+        <h3>{{ famille.libelle }}</h3>
+
+        <ion-list *ngFor="let article of articles">
+          <div *ngIf="article.familleId == famille.id">
+          <ion-item button detail="true" (click)="put(article)">
+            <ion-label>
+              <h3>{{ article.libelle }}</h3>
+            </ion-label>
+          </ion-item>
+          </div>
+        </ion-list>
+
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  
+  <!-- <ion-list *ngFor="let article of articles">
+    <ion-item button detail="true" (click)="put(article)">
+      <ion-label>
+        <h3>{{ article.libelle }}</h3>
+      </ion-label>
+    </ion-item>
+  </ion-list> -->
+
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="post()">
+    <ion-fab-button size="small">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

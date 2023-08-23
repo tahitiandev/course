@@ -1,0 +1,52 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title>Création d'un utilisateur</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="createUserForm" (ngSubmit)="onValide()">
+    <ion-list>
+      <br>
+      <ion-list>
+        <ion-item>
+          <ion-input formControlName="libelle" label="Votre nom et prénom" label-placement="floating" fill="outline" placeholder="Votre nom et prénom"></ion-input>
+        </ion-item>
+        <br>
+        
+        <ion-item>
+          <ion-input formControlName="username" label="Votre login" label-placement="floating" fill="outline" placeholder="Votre login"></ion-input>
+        </ion-item>
+        <br>
+        
+        <ion-item>
+          <ion-input formControlName="password" label="Votre mot de passe" type="password" label-placement="floating" fill="outline" placeholder="Votre mot de passe"></ion-input>
+        </ion-item>
+        <br>
+        
+        <ion-item>
+          <ion-input formControlName="email" label="Votre email" type="email" label-placement="floating" fill="outline" placeholder="Votre email"></ion-input>
+        </ion-item>
+        <br>
+  
+        <ion-item>
+          <ion-select *ngFor="let groupe of utilisateurGroupes" formControlName="groupeId" aria-label="Famille" placeholder="Sélectionner votre famille">
+            <ion-select-option value="{{ groupe.id }}">{{ groupe.libelle }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+              
+      </ion-list>
+      
+      
+    </ion-list>
+    <ion-button type="submit" expand="full">VALIDER</ion-button>
+  </form>
+
+  <p (click)="this.navigateToAuthentification()" style="cursor: pointer;">Se connecter</p>
+
+</ion-content>
