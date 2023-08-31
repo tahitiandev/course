@@ -30,6 +30,7 @@ export class CourseDetailsPage implements OnInit {
   coursedetails : Array<CourseDetails> = [];
   articles : Array<Articles> = [];
   content_visibility = '';
+  rechercheAvance : boolean = false;
 
   constructor(private coursesService : CoursesService,
               private alertController : AlertController,
@@ -56,7 +57,7 @@ export class CourseDetailsPage implements OnInit {
 
     const codeBarre = await this.scanne();
     const article : Array<Articles> = await this.articleservice.getArticleByCodeBarre(codeBarre);
-    await this.postePrix(article[0])
+    await this.postPrix(article[0])
     
   }
 
@@ -137,12 +138,19 @@ export class CourseDetailsPage implements OnInit {
           handler: async () => {
             await this.postNouvelleArticle();
           }
+        },
+        {
+          text: 'Recherche avancée',
+          cssClass: 'secondary',
+          handler: () => {
+            this.rechercheAvance = !this.rechercheAvance
+          }
         }
         ,{
           text: 'Valider',
           handler: async (article : Articles) => {
 
-            await this.postePrix(article)
+            await this.postPrix(article)
 
           }
         }
@@ -191,7 +199,7 @@ export class CourseDetailsPage implements OnInit {
           handler: async (data : any) => {
 
               var article : Articles = {
-                id : 0,
+                id : this.utility.generateId(),
                 libelle : data.libelle,
                 prix : [
                   {
@@ -204,7 +212,23 @@ export class CourseDetailsPage implements OnInit {
                 familleId : 0
               }
 
-              // await this.articleservice.post(article);
+              await this.articleservice.post(article);
+
+              var coursedetails : CourseDetails = {
+                id : Date.now(),
+                ordre : 1,
+                courseId : this.courseid,
+                libelle : article.libelle,
+                quantite : data.quantite,
+                articleId : article.id,
+                prixArticle : article.prix[0].prix,
+                prixReel : data.prix,
+                checked : false,
+                total : data.quantite * data.prix
+              }
+
+              await this.coursesService.postCourseDetails(coursedetails);
+
               await this.refresh();
 
           }
@@ -216,7 +240,7 @@ export class CourseDetailsPage implements OnInit {
     await alert.present();
   }
 
-  public async postePrix(articles : Articles){
+  public async postPrix(articles : Articles){
 
     const inputs : Array<AlertInput> = [];
     var goodPrix = 0;
@@ -391,6 +415,40 @@ export class CourseDetailsPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  public async selectArticle(article : Articles){
+    await this.postPrix(article)
+    this.rechercheAvance = !this.rechercheAvance;
+  }
+
+  public async delete(courseDetail : CourseDetails){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Souhaitez-vous réellement retirer l\'article de votre liste ?',
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'Non',
+          cssClass: 'secondary',
+          handler: () => {
+            
+          }
+        }
+        ,{
+          text: 'Oui',
+          handler: async () => {
+            await this.coursesService.deleteCourseDetails(courseDetail);
+            await this.refresh();
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+    
   }
 
 }

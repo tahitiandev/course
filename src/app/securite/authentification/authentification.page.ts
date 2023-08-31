@@ -38,13 +38,16 @@ export class AuthentificationPage implements OnInit {
     const utilisateurs : Array<Utilisateurs> = await this.utilisateursService.get();
     const utilisateur = await utilisateurs.filter(utilisateur => utilisateur.username === data.username);
 
+    // const connexionInfo : ConnexionInfo = await this.utility.getConnexionInfo();
+
     if(utilisateur.length > 0){
       if(utilisateur[0].password === data.password){
 
         const infoConnexion : ConnexionInfo = {
           isConnected : true,
           utilisateurId : utilisateur[0].id,
-          groupeId : utilisateur[0].groupeId
+          groupeId : utilisateur[0].groupeId,
+          // magasinParDefaut : connexionInfo.magasinParDefaut
         }
 
         await this.storage.set(LocalName.InfoConnexion, infoConnexion);

@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { CourseDetailsPageRoutingModule } from './course-details-routing.module';
 
 import { CourseDetailsPage } from './course-details.page';
+import { ArticleFiltrePipe } from 'src/app/pipes/article-filtre.pipe';
+import { SearchArticleComponent } from 'src/app/utility/search-article/search-article.component';
 
 @NgModule({
   imports: [
@@ -15,6 +17,6 @@ import { CourseDetailsPage } from './course-details.page';
     IonicModule,
     CourseDetailsPageRoutingModule
   ],
-  declarations: [CourseDetailsPage]
+  declarations: [CourseDetailsPage, ArticleFiltrePipe, SearchArticleComponent]
 })
 export class CourseDetailsPageModule {}

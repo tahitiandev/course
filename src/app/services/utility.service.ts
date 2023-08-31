@@ -12,12 +12,17 @@ export class UtilityService {
   constructor(public navigate : NavController,
     private storage : Storage) { }
 
-public navigateTo(route : string){
-this.navigate.navigateRoot(route);
-}
+    public navigateTo(route : string){
+    this.navigate.navigateRoot(route);
+    }
 
-public async getConnexionInfo(){
-const infoConnexion : ConnexionInfo = await this.storage.get(LocalName.InfoConnexion);
-return infoConnexion;
-}
+    public async getConnexionInfo(){
+    const infoConnexion : ConnexionInfo = await this.storage.get(LocalName.InfoConnexion);
+    return infoConnexion;
+    }
+
+    public generateId(){
+      return Date.now();
+    }
+
 }

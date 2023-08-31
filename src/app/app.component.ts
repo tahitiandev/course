@@ -3,6 +3,8 @@ import { UtilityService } from './services/utility.service';
 import { LocalName } from './enums/LocalName';
 import { ConnexionInfo } from './models/ConnexionInfo';
 import { Storage } from '@ionic/storage';
+import { Magasins } from './models/Magasins';
+import { MagasinsService } from './services/magasins.service';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -33,7 +35,9 @@ export class AppComponent {
   public labels = ['Test'];
 
   constructor(private storage : Storage,
-    private utility : UtilityService) {
+              private magasinService : MagasinsService,
+              private utility : UtilityService
+    ) {
     this.storage.create();
     this.setLocalStorage();
   }
@@ -155,10 +159,13 @@ export class AppComponent {
     const infoConnexion = await this.storage.get(LocalName.InfoConnexion);
     if(infoConnexion === null){
 
+      // const magasins : Array<Magasins> = await this.magasinService.get();
+
       const infoConnexion : ConnexionInfo = {
         isConnected : false,
         utilisateurId : 0,
-        groupeId : 0
+        groupeId : 0,
+        // magasinParDefaut : magasins[0]
       }
 
       await this.storage.set(LocalName.InfoConnexion, infoConnexion);

@@ -68,8 +68,11 @@ export class CoursesService {
     await this.storage.put(LocalName.CourseDetails, courseDetails);
   }
 
-  public async deleteCourseDetails(courseDetails : CourseDetails){
-    await this.storage.delete(LocalName.CourseDetails, courseDetails);
+  public async deleteCourseDetails(courseDetail : CourseDetails){
+    const allcoursedetail : Array<any> = await this.storage.getAll(LocalName.CourseDetails);
+    const index = await allcoursedetail.findIndex(data => data.id === courseDetail.id);
+    allcoursedetail.splice(index,1)
+    await this.storage.postAll(LocalName.CourseDetails,allcoursedetail)
   }
 
 

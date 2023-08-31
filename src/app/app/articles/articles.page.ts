@@ -39,7 +39,7 @@ export class ArticlesPage implements OnInit {
     const visibilityEnd = await this.barreCode.STEP3disableCameraReturnVisility();
     this.content_visibility = visibilityEnd;
     // alert(barreCodeContent)
-    return barreCodeContent;
+    return await barreCodeContent;
   }
 
   public async postArticleByCodeBarre(){
@@ -68,8 +68,8 @@ export class ArticlesPage implements OnInit {
         ,{
           text: 'Valider',
           handler: async (article : Articles) => {
-            article.codeBarre = codeBarre;
-            this.postChooseMagasin(article)
+            article.codeBarre = await codeBarre;
+            await this.postChooseMagasin(article)
 
           }
         }
@@ -324,6 +324,13 @@ export class ArticlesPage implements OnInit {
           handler: async () => {
             await this.putCodeBarre(article);
           }
+        },
+        {
+          text: 'Modifier la famille',
+          cssClass: 'secondary',
+          handler: async () => {
+            await this.putFamilleArticleOfArticle(article)
+          }
         }
         ,{
           text: 'Valider',
@@ -331,6 +338,49 @@ export class ArticlesPage implements OnInit {
 
             article.libelle = data.libelle;
             await this.articlesService.put(article);
+
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  public async putFamilleArticleOfArticle(article : Articles){
+
+    const familles : Array<Familles> = await this.famillesService.get();
+    const inputs : Array<AlertInput> = [];
+
+    familles.map(famille => {
+      inputs.push({
+        type : 'radio',
+        label : famille.libelle,
+        value : famille
+      })
+    })
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Nouvelle article',
+      inputs: inputs,
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (famille : Familles) => {
+
+            article.familleId = famille.id
+            await this.articlesService.put(article);
+            await this.refresh();
 
           }
         }

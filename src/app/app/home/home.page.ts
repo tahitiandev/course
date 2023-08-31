@@ -8,7 +8,9 @@ import { UtilityService } from 'src/app/services/utility.service';
 })
 export class HomePage implements OnInit {
 
-  constructor(private utility : UtilityService) { }
+  constructor(private utility : UtilityService) { 
+    this.redirection();
+  }
 
   ngOnInit() {
     this.redirection();

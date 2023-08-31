@@ -2,14 +2,21 @@
   <ion-toolbar>
     
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button defaultHref="/courses"></ion-back-button>
     </ion-buttons>
 
     <ion-title>Votre liste de course</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" [style.visibility]="content_visibility">
+<ion-content *ngIf="rechercheAvance">
+  <app-search-article 
+    (articlesOutput)="selectArticle($event)"></app-search-article>
+</ion-content>
+
+<ion-content *ngIf="!rechercheAvance" [fullscreen]="true" [style.visibility]="content_visibility">
+
+
   <div style="display: flex; justify-content: center; padding: 10px;">
     <ion-chip style="font-weight: bold; font-size: x-large;" color="white">{{ totalCourse }} XPF</ion-chip>
   </div>
@@ -22,6 +29,11 @@
         <ion-icon *ngIf="coursedetail.checked" name="lock-closed-outline"></ion-icon>
       </ion-item>
 
+      <ion-item-options side="start">
+        <ion-item-option style="background: red;" (click)="delete(coursedetail)">
+          Supprimer    
+        </ion-item-option>
+      </ion-item-options>
       <ion-item-options side="end">
         <ion-item-option (click)="check(coursedetail)">
           Check    
