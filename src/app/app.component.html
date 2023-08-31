@@ -3,8 +3,9 @@
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>Menu de navigation</ion-list-header>
-          <ion-note>Environnement de test</ion-note>
+          <ion-list-header>Vos courses</ion-list-header>
+
+          <ion-note>Menu principal</ion-note>
 
           <ion-menu-toggle auto-hide="false" *ngFor="let page of pages; let i = index">
             <ion-item routerDirection="root" [routerLink]="[page.url]" lines="none" detail="false" routerLinkActive="selected">
@@ -12,20 +13,16 @@
               <ion-label>{{ page.title }}</ion-label>
             </ion-item>
           </ion-menu-toggle>
+        </ion-list>
+
+        <ion-list id="labels-list">
+          <ion-list-header>Gestion de la session</ion-list-header>
+
           <ion-item (click)="seDeconnecter()" lines="none" detail="false">
             <ion-label>Se déconnecter</ion-label>
           </ion-item>
           <ion-item (click)="actualiser()" lines="none" detail="false">
             <ion-label>Actualiser</ion-label>
-          </ion-item>
-        </ion-list>
-
-        <ion-list id="labels-list">
-          <ion-list-header>Ne sert à rien</ion-list-header>
-
-          <ion-item *ngFor="let label of labels" lines="none">
-            <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-            <ion-label>{{ label }}</ion-label>
           </ion-item>
         </ion-list>
       </ion-content>

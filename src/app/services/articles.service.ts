@@ -34,6 +34,11 @@ export class ArticlesService {
       return articles.filter(article => article.id == articleId);
     }
 
+    public async getArticleByCodeBarre(codebarre : any){
+      const articles : Array<Articles> = await this.get();
+      return articles.filter(article => article.codeBarre == codebarre);
+    }
+
     orderByFamille(article : Array<Articles>){
       return article.sort((a,b) => {
       let x  = a.familleId;

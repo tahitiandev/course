@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" [style.visibility]="content_visibility">
   <div style="display: flex; justify-content: center; padding: 10px;">
     <ion-chip style="font-weight: bold; font-size: x-large;" color="white">{{ totalCourse }} XPF</ion-chip>
   </div>
@@ -32,8 +32,11 @@
 
   </ion-list>
   
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="postArticle()">
-    <ion-fab-button size="small">
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab-button size="small" (click)="postArticleWithBarCode()">
+      <ion-icon name="barcode"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button size="small" (click)="postArticle()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

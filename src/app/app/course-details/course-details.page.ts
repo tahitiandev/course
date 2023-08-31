@@ -7,6 +7,7 @@ import { CourseDetails } from '../../models/Course-details';
 import { ArticlesService } from '../../services/articles.service';
 import { Articles } from '../../models/Articles';
 import { UtilityService } from '../../services/utility.service';
+import { BarreCodeService } from 'src/app/services/barre-code.service';
 
 @Component({
   selector: 'app-course-details',
@@ -28,16 +29,38 @@ export class CourseDetailsPage implements OnInit {
   };
   coursedetails : Array<CourseDetails> = [];
   articles : Array<Articles> = [];
+  content_visibility = '';
 
   constructor(private coursesService : CoursesService,
               private alertController : AlertController,
               private articleservice : ArticlesService,
               private utility : UtilityService,
+              private codeBarre : BarreCodeService,
               private route : ActivatedRoute) { }
 
   ngOnInit() {
     this.refresh();
   }
+
+  public async scanne(){
+    const visibilityStart = await this.codeBarre.STEP1EnableCameraReturnVisility();
+    this.content_visibility = visibilityStart;
+    const barreCodeContent = await this.codeBarre.STEP2ScanneBarCodeAndReturnContent();
+    const visibilityEnd = await this.codeBarre.STEP3disableCameraReturnVisility();
+    this.content_visibility = visibilityEnd;
+    // alert(barreCodeContent)
+    return barreCodeContent;
+  }
+
+  public async postArticleWithBarCode(){
+
+    const codeBarre = await this.scanne();
+    const article : Array<Articles> = await this.articleservice.getArticleByCodeBarre(codeBarre);
+    await this.postePrix(article[0])
+    
+  }
+
+
 
   public async refresh(){
     this.courseid = this.getId();

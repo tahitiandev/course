@@ -12,7 +12,6 @@ export class AppComponent {
   public pages : Array<any> = [];
 
   public pagesConnected : Array<any> = [
-    { title: 'Groupes', url: 'utilisateur-groupes', icon: 'mail' },
     { title: 'Tableau de bord', url: 'home', icon: 'mail' },
     { title: 'Liste de course', url: 'courses', icon: 'paper-plane' },
     { title: 'Menu de la semaine', url: 'menu-semaine', icon: 'paper-plane' },
@@ -21,6 +20,7 @@ export class AppComponent {
     { title: 'Familles', url: 'familles', icon: 'paper-plane' },
     { title: 'Magasins', url: 'magasins', icon: 'paper-plane' },
     { title: 'Paramétrages', url: 'settings', icon: 'paper-plane' },
+    { title: 'Groupes', url: 'utilisateur-groupes', icon: 'mail' },
   ];
 
   public pagesNotConnected : Array<any> = [

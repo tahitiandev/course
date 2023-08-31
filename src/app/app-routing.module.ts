@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () => import('./securite/authentification/authentification.module').then( m => m.AuthentificationPageModule),
+    loadChildren: () => import('./app/home/home.module').then( m => m.HomePageModule),
     pathMatch: 'full'
   },
   {
@@ -58,6 +58,10 @@ const routes: Routes = [
   {
     path: 'settings',
     loadChildren: () => import('./app/settings/settings.module').then( m => m.SettingsPageModule)
+  },
+  {
+    path: 'plat-details/:id',
+    loadChildren: () => import('./app/plat-details/plat-details.module').then( m => m.PlatDetailsPageModule)
   }
 
 ];

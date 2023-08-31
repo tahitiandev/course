@@ -7,6 +7,7 @@ import { MagasinsService } from '../../services/magasins.service';
 import { FamillesService } from '../../services/familles.service';
 import { Familles } from '../../models/Familles';
 import { UtilityService } from '../../services/utility.service';
+import { BarreCodeService } from 'src/app/services/barre-code.service';
 
 @Component({
   selector: 'app-articles',
@@ -18,15 +19,69 @@ export class ArticlesPage implements OnInit {
   articles : Array<Articles> = [];
   familles : Array<Familles> = [];
   magasins : Array<Magasins> = [];
+  content_visibility = '';
 
   constructor(private articlesService : ArticlesService,
               private magasinsService : MagasinsService,
               private famillesService : FamillesService,
               private utility : UtilityService,
+              private barreCode : BarreCodeService,
               private alertController : AlertController) { }
 
     ngOnInit() {
     this.refresh();
+  }
+
+  public async scanne(){
+    const visibilityStart = await this.barreCode.STEP1EnableCameraReturnVisility();
+    this.content_visibility = visibilityStart;
+    const barreCodeContent = await this.barreCode.STEP2ScanneBarCodeAndReturnContent();
+    const visibilityEnd = await this.barreCode.STEP3disableCameraReturnVisility();
+    this.content_visibility = visibilityEnd;
+    // alert(barreCodeContent)
+    return barreCodeContent;
+  }
+
+  public async postArticleByCodeBarre(){
+
+    const codeBarre = await this.scanne();
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Nouvelle article',
+      inputs: [
+        {
+          type : 'text',
+          name : 'libelle',
+          label : 'Nom de l\'article'
+        }
+      ],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (article : Articles) => {
+            article.codeBarre = codeBarre;
+            this.postChooseMagasin(article)
+
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
   }
 
   private async refresh(){
@@ -78,7 +133,7 @@ export class ArticlesPage implements OnInit {
           text: 'Valider',
           handler: async (article : Articles) => {
 
-            this.postChooseMagasin(article.libelle)
+            this.postChooseMagasin(article)
 
           }
         }
@@ -93,7 +148,7 @@ export class ArticlesPage implements OnInit {
     });
   }
 
-  public async postChooseMagasin(libelle : string){
+  public async postChooseMagasin(article : Articles){
 
     var inputs : Array<AlertInput> = [];
 
@@ -122,8 +177,9 @@ export class ArticlesPage implements OnInit {
           handler: async (magasinId : number) => {
 
             var dataSend = {
-              libelle : libelle,
-              magasinId : magasinId
+              libelle : article.libelle,
+              magasinId : magasinId,
+              codeBarre : article.codeBarre
             }
 
             await this.postChoosePrix(dataSend);
@@ -216,7 +272,8 @@ export class ArticlesPage implements OnInit {
               ],
               createdOn : new Date(),
               groupeId : [ (await this.utility.getConnexionInfo()).groupeId ],
-              familleId : familleId
+              familleId : familleId,
+              codeBarre : dataSend.codeBarre
             };
 
             await this.articlesService.post(article);
@@ -260,6 +317,13 @@ export class ArticlesPage implements OnInit {
           handler: async () => {
             await this.putPrix(article)
           }
+        },
+        {
+          text: 'Associer un code barre',
+          cssClass: 'secondary',
+          handler: async () => {
+            await this.putCodeBarre(article);
+          }
         }
         ,{
           text: 'Valider',
@@ -275,6 +339,12 @@ export class ArticlesPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async putCodeBarre(article : Articles){
+    const codeBarre = await this.scanne();
+    article.codeBarre = codeBarre;
+    await this.articlesService.put(article);
   }
 
   private async putPrix(article : Articles){

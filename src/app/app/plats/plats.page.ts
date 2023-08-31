@@ -12,4 +12,6 @@ export class PlatsPage implements OnInit {
   ngOnInit() {
   }
 
+  
+
 }

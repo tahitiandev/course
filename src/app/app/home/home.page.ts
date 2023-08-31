@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePage implements OnInit {
 
-  constructor() { }
+  constructor(private utility : UtilityService) { }
 
   ngOnInit() {
+    this.redirection();
+  }
+
+  private async redirection(){
+    const infoConnexion = await this.utility.getConnexionInfo();
+    if(!infoConnexion.isConnected){
+      this.utility.navigateTo('authentification');
+    }
   }
 
 }

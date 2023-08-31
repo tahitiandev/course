@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" [style.visibility]="content_visibility">
 
   <ion-list *ngFor="let famille of familles">
     <ion-item>
@@ -19,6 +19,7 @@
         <ion-list *ngFor="let article of articles">
           <div *ngIf="article.familleId == famille.id">
           <ion-item button detail="true" (click)="put(article)">
+            <ion-icon *ngIf="article.codeBarre != null || article.codeBarre != undefined" name="barcode-outline"></ion-icon> 
             <ion-label>
               <h3>{{ article.libelle }}</h3>
             </ion-label>
@@ -38,8 +39,11 @@
     </ion-item>
   </ion-list> -->
 
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="post()">
-    <ion-fab-button size="small">
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab-button size="small" (click)="scanne()">
+      <ion-icon name="barcode"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button size="small" (click)="post()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

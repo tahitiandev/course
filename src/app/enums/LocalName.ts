@@ -9,5 +9,6 @@ export enum LocalName {
     Magasins = "Magasins",
     Menus = "Menus",
     Plats = "Plats",
+    PlatDetails = "PlatDetails",
     Utilisateurs = "Utilisateurs",
 }
