@@ -6,4 +6,5 @@ export interface Courses{
     montantReel : number;
     ecart : number;
     date : Date;
+    actif : boolean;
 }

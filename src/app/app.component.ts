@@ -3,14 +3,14 @@ import { UtilityService } from './services/utility.service';
 import { LocalName } from './enums/LocalName';
 import { ConnexionInfo } from './models/ConnexionInfo';
 import { Storage } from '@ionic/storage';
-import { Magasins } from './models/Magasins';
-import { MagasinsService } from './services/magasins.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
+  
   public pages : Array<any> = [];
 
   public pagesConnected : Array<any> = [
@@ -30,12 +30,9 @@ export class AppComponent {
     { title: 'Se connecter', url: 'authentification', icon: 'mail' },
   ]
   
-  
-  
   public labels = ['Test'];
 
   constructor(private storage : Storage,
-              private magasinService : MagasinsService,
               private utility : UtilityService
     ) {
     this.storage.create();
@@ -46,6 +43,7 @@ export class AppComponent {
     await this.IsConnected();
     await this.setLocalStorage();
   }
+
 
   private async setLocalStorage(){
     

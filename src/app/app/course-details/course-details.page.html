@@ -20,6 +20,7 @@
   <div style="display: flex; justify-content: center; padding: 10px;">
     <ion-chip style="font-weight: bold; font-size: x-large;" color="white">{{ totalCourse }} XPF</ion-chip>
   </div>
+  
   <ion-list>
     <ion-item-sliding *ngFor="let coursedetail of coursedetails">
       <ion-item button (click)="put(coursedetail)" [disabled]="coursedetail.checked">

@@ -38,14 +38,23 @@ export class ArticlesPage implements OnInit {
     const barreCodeContent = await this.barreCode.STEP2ScanneBarCodeAndReturnContent();
     const visibilityEnd = await this.barreCode.STEP3disableCameraReturnVisility();
     this.content_visibility = visibilityEnd;
-    // alert(barreCodeContent)
     return await barreCodeContent;
   }
 
   public async postArticleByCodeBarre(){
 
     const codeBarre = await this.scanne();
+    const article : Array<Articles> = await this.articlesService.getArticleByCodeBarre(codeBarre);
 
+    if(article.length > 0){
+      this.utility.popUp('Le code barre ' + codeBarre + 'a déjà été associé à un article')
+    }else{
+      await this.setArticleByCodeBarre(codeBarre);
+    }
+
+  }
+
+  private async setArticleByCodeBarre(codeBarre : any){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Nouvelle article',
@@ -392,8 +401,8 @@ export class ArticlesPage implements OnInit {
   }
 
   async putCodeBarre(article : Articles){
-    const codeBarre = await this.scanne();
-    article.codeBarre = codeBarre;
+    var codeBarre = await this.scanne();
+    article.codeBarre = codeBarre!;
     await this.articlesService.put(article);
   }
 
@@ -407,8 +416,9 @@ export class ArticlesPage implements OnInit {
         type : 'radio',
         label : prix.prix + 'F ' + magasin?.libelle,
         value : {
-          prix : prix,
-          article : article
+          prix : prix.prix,
+          article : article,
+          magasinId : prix.magasin
         }
       })
     }
@@ -416,7 +426,7 @@ export class ArticlesPage implements OnInit {
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Nouvelle article',
+      header: 'Les prix appliquées',
       inputs: inputs,
         buttons: [
         {
@@ -437,7 +447,46 @@ export class ArticlesPage implements OnInit {
         {
           text: 'Modifier le prix',
           handler: async (data : any) => {
-            console.log(data)
+            await this.updatePrixArticleMagasin(data);
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  public async updatePrixArticleMagasin(data : any){
+    console.log(data)
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Modifier le prix',
+      inputs: [
+        {
+          type : 'number',
+          name : 'prix',
+          value : data.prix
+        }
+      ],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        },
+        {
+          text: 'Valider',
+          handler: async (prix) => {
+            const article : Articles = data.article;
+            const index = await article.prix.findIndex(prix => prix.magasin === data.magasinId);
+            article.prix[index].prix = Number(prix.prix);
+            await this.articlesService.put(article);
+            await this.refresh();
+            
           }
         }
         
@@ -520,7 +569,7 @@ export class ArticlesPage implements OnInit {
             
             dataSend.article.prix.push({
               magasin : dataSend.magasin.id,
-              prix : data.prix
+              prix : Number(data.prix)
             })
 
             await this.articlesService.put(dataSend.article);

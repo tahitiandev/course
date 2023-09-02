@@ -1,18 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
+import { FirestoreService } from './firestore.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
 
-  constructor(private storage : Storage) { }
+  constructor(private storage : Storage,
+              private firestore : FirestoreService) { }
 
-  public postAll(localName : string, data : Array<any>){
+  public async postAll(localName : string, datas : Array<any>){
     this.storage.set(
       localName,
-      data
+      datas
     )
+
+    await datas.map(async(data) => {
+      console.log(data)
+      await this.firestore.post(
+        localName,
+        data
+      )
+    })
   }
 
   public async post(localName : string, data : any){

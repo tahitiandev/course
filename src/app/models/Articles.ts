@@ -16,5 +16,5 @@ export interface Articles{
     deletedOn? : Date;
     groupeId : Array<number>
     familleId : number;
-    codeBarre? : string;
+    codeBarre : string;
 }

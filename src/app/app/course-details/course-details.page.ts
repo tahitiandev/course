@@ -25,7 +25,8 @@ export class CourseDetailsPage implements OnInit {
     montantTheorique : 0,
     montantReel : 0,
     ecart : 0,
-    date : new Date()
+    date : new Date(),
+    actif : true
   };
   coursedetails : Array<CourseDetails> = [];
   articles : Array<Articles> = [];
@@ -37,6 +38,7 @@ export class CourseDetailsPage implements OnInit {
               private articleservice : ArticlesService,
               private utility : UtilityService,
               private codeBarre : BarreCodeService,
+              private articlesService : ArticlesService,
               private route : ActivatedRoute) { }
 
   ngOnInit() {
@@ -57,8 +59,109 @@ export class CourseDetailsPage implements OnInit {
 
     const codeBarre = await this.scanne();
     const article : Array<Articles> = await this.articleservice.getArticleByCodeBarre(codeBarre);
-    await this.postPrix(article[0])
+    if(article.length>0){
+      await this.postPrix(article[0])
+    }else{
+      await this.setArticleOnLocalStorageWithCodeBarre(codeBarre);
+    }
     
+  }
+
+  private async setArticleOnLocalStorageWithCodeBarre(codeBarre : any){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'L\'article n\'existe pas, veuillez la créé',
+      inputs: [
+        {
+          type : 'text',
+          name : 'libelle',
+          label : 'Nom de l\'article'
+        }
+      ],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (article : Articles) => {
+            article.codeBarre = await codeBarre;
+            await this.postChoosePrixAndSaveArticle(article)
+
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
+  }
+
+  public async postChoosePrixAndSaveArticle(dataSend : any){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Renseigner un prix',
+      inputs: [
+        {
+          type : 'number',
+          name : 'prix'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (prix : number) => {
+
+            var article : Articles = {
+              id : Date.now(),
+              libelle : dataSend.libelle,
+              prix : [
+                {
+                  magasin : this.course.magasinId,
+                  prix : prix
+                }
+              ],
+              createdOn : new Date(),
+              groupeId : [ (await this.utility.getConnexionInfo()).groupeId ],
+              familleId : 0,
+              codeBarre : dataSend.codeBarre
+            };
+
+            // Ici on ajoute l'article dans la liste des articles
+            await this.articlesService.post(article);
+            
+            // Ici on ajoute l'article au panier
+            await this.postPrix(article, true);
+
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
   }
 
 
@@ -209,7 +312,8 @@ export class CourseDetailsPage implements OnInit {
                 ],
                 createdOn : new Date(),
                 groupeId : [(await this.utility.getConnexionInfo()).groupeId],
-                familleId : 0
+                familleId : 0,
+                codeBarre : ""
               }
 
               await this.articleservice.post(article);
@@ -240,7 +344,7 @@ export class CourseDetailsPage implements OnInit {
     await alert.present();
   }
 
-  public async postPrix(articles : Articles){
+  public async postPrix(articles : Articles, addByBarCode? : boolean){
 
     const inputs : Array<AlertInput> = [];
     var goodPrix = 0;
@@ -250,6 +354,11 @@ export class CourseDetailsPage implements OnInit {
         goodPrix = prix.prix
       }
     })
+
+    // si on ajoute l'article en scannant par un codebarre, on prend le prix que l'on transmet
+    if(addByBarCode){
+      goodPrix = articles.prix[0].prix
+    }
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { ConnexionInfo } from '../models/ConnexionInfo';
 import { LocalName } from '../enums/LocalName';
 import { Storage } from '@ionic/storage';
@@ -10,7 +10,8 @@ import { Storage } from '@ionic/storage';
 export class UtilityService {
 
   constructor(public navigate : NavController,
-    private storage : Storage) { }
+              private alertController : AlertController,
+              private storage : Storage) { }
 
     public navigateTo(route : string){
     this.navigate.navigateRoot(route);
@@ -23,6 +24,24 @@ export class UtilityService {
 
     public generateId(){
       return Date.now();
+    }
+
+    public async popUp(Message : string){
+      const alert = await this.alertController.create({
+        cssClass: 'my-custom-class',
+        header: Message,
+        inputs: [],
+          buttons: [{
+            text: 'Fermer',
+            handler: async () => {
+  
+            }
+          }
+          
+        ]
+      });
+  
+      await alert.present();
     }
 
 }

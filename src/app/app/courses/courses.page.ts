@@ -17,6 +17,7 @@ export class CoursesPage implements OnInit {
 
   courses : Array<Courses> = [];
   magasins : Array<Magasins> = [];
+  isActif : boolean = true;
 
   constructor(private coursesService : CoursesService,
               private magasinsService : MagasinsService,
@@ -120,7 +121,8 @@ export class CoursesPage implements OnInit {
               montantTheorique : 0,
               montantReel : 0,
               ecart : 0,
-              date : date[0]
+              date : date[0],
+              actif : true
             }
             
             await this.coursesService.postCourse(course);
@@ -137,6 +139,12 @@ export class CoursesPage implements OnInit {
 
   public put(id : number){
     this.utility.navigateTo('course-details/' + id)
+  }
+
+  public async activer(course : Courses){
+    course.actif = !course.actif
+    await this.coursesService.putCourse(course);
+    await this.refresh();
   }
 
 }
