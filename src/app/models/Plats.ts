@@ -8,4 +8,5 @@ export interface Plats{
     createdOn : Date;
     modifiedOn : Date;
     deletedOn : Date;
+    isFirebase : false;
 }

@@ -4,4 +4,5 @@ export interface Magasins{
     createdOn : Date;
     modifiedOn : Date;
     deletedOn : Date;
+    isFirebase : false;
 }

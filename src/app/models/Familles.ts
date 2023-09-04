@@ -4,4 +4,5 @@ export interface Familles{
     createdOn : Date;
     modifiedOn? : Date;
     deletedOn? : Date;
+    isFirebase : false;
 }

@@ -6,4 +6,5 @@ export interface Utilisateurs{
     email : string;
     groupeId : number;
     actif : boolean;
+    isFirebase : false
 }

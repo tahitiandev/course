@@ -26,7 +26,8 @@ export class CourseDetailsPage implements OnInit {
     montantReel : 0,
     ecart : 0,
     date : new Date(),
-    actif : true
+    actif : true,
+    isFirebase : false
   };
   coursedetails : Array<CourseDetails> = [];
   articles : Array<Articles> = [];
@@ -91,7 +92,7 @@ export class CourseDetailsPage implements OnInit {
           text: 'Valider',
           handler: async (article : Articles) => {
             article.codeBarre = await codeBarre;
-            await this.postChoosePrixAndSaveArticle(article)
+            await this.postChoosePrixAndSaveArticle(article);
 
           }
         }
@@ -114,7 +115,8 @@ export class CourseDetailsPage implements OnInit {
       inputs: [
         {
           type : 'number',
-          name : 'prix'
+          name : 'prix',
+          value : dataSend.prix
         }
       ],
       buttons: [
@@ -142,7 +144,8 @@ export class CourseDetailsPage implements OnInit {
               createdOn : new Date(),
               groupeId : [ (await this.utility.getConnexionInfo()).groupeId ],
               familleId : 0,
-              codeBarre : dataSend.codeBarre
+              codeBarre : dataSend.codeBarre,
+              isFirebase : false
             };
 
             // Ici on ajoute l'article dans la liste des articles
@@ -313,7 +316,8 @@ export class CourseDetailsPage implements OnInit {
                 createdOn : new Date(),
                 groupeId : [(await this.utility.getConnexionInfo()).groupeId],
                 familleId : 0,
-                codeBarre : ""
+                codeBarre : "",
+                isFirebase : false
               }
 
               await this.articleservice.post(article);
@@ -328,7 +332,8 @@ export class CourseDetailsPage implements OnInit {
                 prixArticle : article.prix[0].prix,
                 prixReel : data.prix,
                 checked : false,
-                total : data.quantite * data.prix
+                total : data.quantite * data.prix,
+                isFirebase : false
               }
 
               await this.coursesService.postCourseDetails(coursedetails);
@@ -400,7 +405,8 @@ export class CourseDetailsPage implements OnInit {
                 prixArticle : articles.prix[0].prix,
                 prixReel : data.prix,
                 checked : false,
-                total : data.quantite * data.prix
+                total : data.quantite * data.prix,
+                isFirebase : false
               }
 
               await this.coursesService.postCourseDetails(coursedetails);

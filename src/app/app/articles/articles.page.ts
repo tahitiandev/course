@@ -188,7 +188,7 @@ export class ArticlesPage implements OnInit {
             var dataSend = {
               libelle : article.libelle,
               magasinId : magasinId,
-              codeBarre : article.codeBarre
+              codeBarre : article.codeBarre === undefined ? null : article.codeBarre
             }
 
             await this.postChoosePrix(dataSend);
@@ -282,7 +282,8 @@ export class ArticlesPage implements OnInit {
               createdOn : new Date(),
               groupeId : [ (await this.utility.getConnexionInfo()).groupeId ],
               familleId : familleId,
-              codeBarre : dataSend.codeBarre
+              codeBarre : dataSend.codeBarre,
+              isFirebase : false
             };
 
             await this.articlesService.post(article);
@@ -458,7 +459,6 @@ export class ArticlesPage implements OnInit {
   }
 
   public async updatePrixArticleMagasin(data : any){
-    console.log(data)
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Modifier le prix',

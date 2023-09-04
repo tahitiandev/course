@@ -7,4 +7,5 @@ export interface Courses{
     ecart : number;
     date : Date;
     actif : boolean;
+    isFirebase : false;
 }

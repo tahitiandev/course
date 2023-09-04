@@ -56,7 +56,8 @@ export class MagasinsPage implements OnInit {
               libelle : libelleMagasin.libelle,
               createdOn : new Date(),
               modifiedOn : new Date(),
-              deletedOn : new Date()
+              deletedOn : new Date(),
+              isFirebase : false
             }
 
             await this.magasinsService.post(magasin);

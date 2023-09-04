@@ -9,4 +9,5 @@ export interface CourseDetails{
     prixReel : number;
     total : number;
     checked : boolean;
+    isFirebase : false;
 }

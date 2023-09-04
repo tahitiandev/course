@@ -54,6 +54,7 @@ export class FamillesPage implements OnInit {
 
             famille.id = Date.now();
             famille.createdOn = new Date();
+            famille.isFirebase = false;
 
             await this.famillesService.post(famille);
             await this.refresh();

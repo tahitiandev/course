@@ -6,6 +6,8 @@ import { MagasinsService } from 'src/app/services/magasins.service';
 import { UtilityService } from 'src/app/services/utility.service';
 import { Storage } from '@ionic/storage';
 import { LocalName } from 'src/app/enums/LocalName';
+import { FirestoreService } from 'src/app/services/firestore.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-settings',
@@ -18,7 +20,7 @@ export class SettingsPage implements OnInit {
 
   constructor(private alertController : AlertController,
               private utility : UtilityService,
-              private storage : Storage,
+              private storage : StorageService,
               private magasinService : MagasinsService) { }
 
   ngOnInit() {
@@ -72,6 +74,10 @@ export class SettingsPage implements OnInit {
       firstInput.focus();
       return;
     });
+  }
+
+  public async synchroniser(){
+    await this.storage.synchroniserAvecFirestore();
   }
 
 }

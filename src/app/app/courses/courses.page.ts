@@ -122,7 +122,8 @@ export class CoursesPage implements OnInit {
               montantReel : 0,
               ecart : 0,
               date : date[0],
-              actif : true
+              actif : true,
+              isFirebase : false
             }
             
             await this.coursesService.postCourse(course);

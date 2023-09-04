@@ -8,4 +8,5 @@ export interface PlatDetails{
     quantite : number;
     article : Articles;
     total : number;
+    isFirebase : false;
 }

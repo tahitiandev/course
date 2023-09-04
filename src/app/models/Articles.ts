@@ -17,4 +17,5 @@ export interface Articles{
     groupeId : Array<number>
     familleId : number;
     codeBarre : string;
+    isFirebase : false;
 }
