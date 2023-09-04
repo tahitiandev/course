@@ -68,6 +68,65 @@ export class CourseDetailsPage implements OnInit {
     
   }
 
+  public async postArticleWithCalculator(){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'L\'article n\'existe pas, veuillez la créé',
+      inputs: [
+        {
+          type : 'number',
+          name : 'prix',
+          label : 'PRIX',
+          placeholder : 'PRIX'
+        },
+        {
+          type : 'number',
+          name : 'quantite',
+          label : 'QUANTITE',
+          placeholder : 'QUANTITE'
+        },
+      ],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (data) => {
+            var coursedetails : CourseDetails = {
+              id : Date.now(),
+              ordre : 1,
+              courseId : this.courseid,
+              libelle : 'Sans titre',
+              quantite : data.quantite,
+              articleId : 0,
+              prixArticle : data.prix,
+              prixReel : data.prix,
+              checked : true,
+              total : data.quantite * data.prix,
+              isFirebase : false
+            }
+
+            await this.coursesService.postCourseDetails(coursedetails);
+            await this.refresh();
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
+  }
+
   private async setArticleOnLocalStorageWithCodeBarre(codeBarre : any){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -116,6 +175,7 @@ export class CourseDetailsPage implements OnInit {
         {
           type : 'number',
           name : 'prix',
+          placeholder : 'PRIX',
           value : dataSend.prix
         }
       ],

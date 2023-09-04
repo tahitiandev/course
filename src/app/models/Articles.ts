@@ -14,7 +14,7 @@ export interface Articles{
     createdOn : Date;
     modifiedOn? :  Date;
     deletedOn? : Date;
-    groupeId : Array<number>
+    groupeId : Array<number>;
     familleId : number;
     codeBarre : string;
     isFirebase : false;
