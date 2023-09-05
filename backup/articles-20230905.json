@@ -1,0 +1,587 @@
+[
+    {
+        "deletedOn": null,
+        "isFirebase": true,
+        "familleId": 1693867371632,
+        "codeBarre": null,
+        "prix": [
+            {
+                "prix": 1000,
+                "magasin": 0
+            }
+        ],
+        "libelle": "Article 1",
+        "modifiedOn": null,
+        "groupeId": [
+            0
+        ],
+        "id": 1693867584112,
+        "createdOn": {
+            "seconds": 1693867584,
+            "nanoseconds": 119000000
+        }
+    },
+    {
+        "modifiedOn": null,
+        "isFirebase": true,
+        "createdOn": {
+            "seconds": 1693895498,
+            "nanoseconds": 771000000
+        },
+        "deletedOn": null,
+        "id": 1693895498742,
+        "familleId": 1693870339227,
+        "codeBarre": "5711953145506",
+        "libelle": "Starbucks nois/haze pet 220ml",
+        "groupeId": [
+            0
+        ],
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 495
+            }
+        ]
+    },
+    {
+        "codeBarre": "3517670000034",
+        "createdOn": {
+            "seconds": 1693895637,
+            "nanoseconds": 78000000
+        },
+        "groupeId": [
+            0
+        ],
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 600
+            }
+        ],
+        "isFirebase": true,
+        "familleId": 1693870339227,
+        "deletedOn": null,
+        "libelle": "Vaimato x6",
+        "modifiedOn": null,
+        "id": 1693895637054
+    },
+    {
+        "createdOn": {
+            "seconds": 1693895983,
+            "nanoseconds": 532000000
+        },
+        "id": 1693895983501,
+        "libelle": "Hi-c pomme pêche 25cl",
+        "prix": [
+            {
+                "prix": 120,
+                "magasin": 1
+            }
+        ],
+        "modifiedOn": null,
+        "deletedOn": null,
+        "isFirebase": true,
+        "groupeId": [
+            0
+        ],
+        "familleId": 1693870339227,
+        "codeBarre": "088009680218"
+    },
+    {
+        "codeBarre": "3057640407598",
+        "groupeId": [
+            0
+        ],
+        "id": 1693896204176,
+        "isFirebase": true,
+        "createdOn": {
+            "seconds": 1693896204,
+            "nanoseconds": 213000000
+        },
+        "libelle": "Volvic touch of fruit 1,5L",
+        "modifiedOn": {
+            "seconds": 1693896260,
+            "nanoseconds": 712000000
+        },
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 465
+            }
+        ],
+        "deletedOn": null,
+        "familleId": 1693870339227
+    },
+    {
+        "libelle": "Brique de lait \"lait de France\" ",
+        "modifiedOn": null,
+        "createdOn": {
+            "seconds": 1693896561,
+            "nanoseconds": 167000000
+        },
+        "deletedOn": null,
+        "isFirebase": true,
+        "id": 1693896561146,
+        "prix": [
+            {
+                "prix": 158,
+                "magasin": 1
+            }
+        ],
+        "codeBarre": "3428271930050",
+        "familleId": 1693870339227,
+        "groupeId": [
+            0
+        ]
+    },
+    {
+        "isFirebase": true,
+        "codeBarre": "8710908657092",
+        "libelle": "Dove baby bar",
+        "modifiedOn": null,
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 295
+            }
+        ],
+        "id": 1693896984436,
+        "deletedOn": null,
+        "familleId": 1693870339228,
+        "createdOn": {
+            "seconds": 1693896984,
+            "nanoseconds": 480000000
+        },
+        "groupeId": [
+            0
+        ]
+    },
+    {
+        "modifiedOn": null,
+        "deletedOn": null,
+        "codeBarre": "8853969003757",
+        "id": 1693896137742,
+        "libelle": "Riz jasmin bleu 1kg",
+        "familleId": 1693870339229,
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 290
+            }
+        ],
+        "groupeId": [
+            0
+        ],
+        "createdOn": {
+            "seconds": 1693896137,
+            "nanoseconds": 768000000
+        },
+        "isFirebase": true
+    },
+    {
+        "isFirebase": true,
+        "codeBarre": "3256221135411",
+        "groupeId": [
+            0
+        ],
+        "familleId": 1693870339229,
+        "deletedOn": null,
+        "libelle": "Nouille U 500g",
+        "createdOn": {
+            "seconds": 1693896327,
+            "nanoseconds": 607000000
+        },
+        "id": 1693896327584,
+        "prix": [
+            {
+                "prix": 155,
+                "magasin": 1
+            }
+        ],
+        "modifiedOn": null
+    },
+    {
+        "id": 1693896391247,
+        "modifiedOn": null,
+        "libelle": "Coquillette U 500g",
+        "codeBarre": "3256220298902",
+        "isFirebase": true,
+        "deletedOn": null,
+        "createdOn": {
+            "seconds": 1693896391,
+            "nanoseconds": 278000000
+        },
+        "groupeId": [
+            0
+        ],
+        "familleId": 1693870339229,
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 130
+            }
+        ]
+    },
+    {
+        "createdOn": {
+            "seconds": 1693896463,
+            "nanoseconds": 321000000
+        },
+        "isFirebase": true,
+        "libelle": "Sauce maggi 250g",
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 495
+            }
+        ],
+        "codeBarre": "3033710084913",
+        "deletedOn": null,
+        "id": 1693896463282,
+        "modifiedOn": null,
+        "groupeId": [
+            0
+        ],
+        "familleId": 1693870339229
+    },
+    {
+        "id": 1693896895003,
+        "familleId": 1693870339230,
+        "deletedOn": null,
+        "isFirebase": true,
+        "codeBarre": "3760178470025",
+        "createdOn": {
+            "seconds": 1693896895,
+            "nanoseconds": 41000000
+        },
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 580
+            }
+        ],
+        "modifiedOn": null,
+        "libelle": "Œuf extra presqu'île x12",
+        "groupeId": [
+            0
+        ]
+    },
+    {
+        "familleId": 1693870339231,
+        "id": 1693895929247,
+        "createdOn": {
+            "seconds": 1693895929,
+            "nanoseconds": 280000000
+        },
+        "modifiedOn": null,
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 1250
+            }
+        ],
+        "groupeId": [
+            0
+        ],
+        "isFirebase": true,
+        "deletedOn": null,
+        "codeBarre": "3280316017801",
+        "libelle": "Doux nuggets de poulet 1kg"
+    },
+    {
+        "libelle": "Tofu house firm rouge 396g",
+        "familleId": 1693870339231,
+        "createdOn": {
+            "seconds": 1693896842,
+            "nanoseconds": 666000000
+        },
+        "codeBarre": "076371011099",
+        "deletedOn": null,
+        "modifiedOn": null,
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 595
+            }
+        ],
+        "isFirebase": true,
+        "groupeId": [
+            0
+        ],
+        "id": 1693896842625
+    },
+    {
+        "deletedOn": null,
+        "codeBarre": "",
+        "modifiedOn": {
+            "seconds": 1693900597,
+            "nanoseconds": 79000000
+        },
+        "isFirebase": true,
+        "groupeId": [
+            0
+        ],
+        "id": 1693897526114,
+        "libelle": "Knack poulet x10",
+        "familleId": 1693870339231,
+        "prix": [
+            {
+                "prix": 615,
+                "magasin": 1
+            }
+        ],
+        "createdOn": {
+            "seconds": 1693897526,
+            "nanoseconds": 134000000
+        }
+    },
+    {
+        "codeBarre": "03431209",
+        "familleId": 1693895181504,
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 770
+            }
+        ],
+        "createdOn": {
+            "seconds": 1693895354,
+            "nanoseconds": 486000000
+        },
+        "modifiedOn": null,
+        "id": 1693895354461,
+        "groupeId": [
+            0
+        ],
+        "deletedOn": null,
+        "isFirebase": true,
+        "libelle": "Hershey's 680g"
+    },
+    {
+        "codeBarre": "9780201374339",
+        "isFirebase": true,
+        "familleId": 1693900450849,
+        "groupeId": [
+            0
+        ],
+        "libelle": "Patate douce local 1kg congelés ",
+        "prix": [
+            {
+                "prix": {
+                    "prix": "1095"
+                },
+                "magasin": 1
+            }
+        ],
+        "deletedOn": null,
+        "modifiedOn": {
+            "seconds": 1693900583,
+            "nanoseconds": 596000000
+        },
+        "id": 1693897253573,
+        "createdOn": {
+            "seconds": 1693897253,
+            "nanoseconds": 588000000
+        }
+    },
+    {
+        "familleId": 1693900709581,
+        "modifiedOn": {
+            "seconds": 1693900863,
+            "nanoseconds": 692000000
+        },
+        "deletedOn": null,
+        "isFirebase": true,
+        "groupeId": [
+            0
+        ],
+        "id": 1693896054677,
+        "codeBarre": "2901421004951",
+        "createdOn": {
+            "seconds": 1693896054,
+            "nanoseconds": 711000000
+        },
+        "prix": [
+            {
+                "prix": 495,
+                "magasin": 1
+            }
+        ],
+        "libelle": "Beignets fourrés chocolat x4"
+    },
+    {
+        "libelle": "Grant barre brut de choco 125g",
+        "id": 1693896691337,
+        "familleId": 1693900709581,
+        "createdOn": {
+            "seconds": 1693896691,
+            "nanoseconds": 368000000
+        },
+        "isFirebase": true,
+        "deletedOn": null,
+        "codeBarre": "3392460511200",
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 400
+            }
+        ],
+        "groupeId": [
+            0
+        ],
+        "modifiedOn": {
+            "seconds": 1693900816,
+            "nanoseconds": 139000000
+        }
+    },
+    {
+        "codeBarre": "8801062641260",
+        "id": 1693896769922,
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 165
+            }
+        ],
+        "libelle": "Pepero choco coockie 32g",
+        "modifiedOn": {
+            "seconds": 1693900830,
+            "nanoseconds": 868000000
+        },
+        "deletedOn": null,
+        "createdOn": {
+            "seconds": 1693896769,
+            "nanoseconds": 964000000
+        },
+        "groupeId": [
+            0
+        ],
+        "isFirebase": true,
+        "familleId": 1693900709581
+    },
+    {
+        "isFirebase": true,
+        "deletedOn": null,
+        "codeBarre": "3256228808585",
+        "familleId": 1693900745755,
+        "groupeId": [
+            0
+        ],
+        "prix": [
+            {
+                "prix": 470,
+                "magasin": 1
+            }
+        ],
+        "modifiedOn": {
+            "seconds": 1693900793,
+            "nanoseconds": 334000000
+        },
+        "createdOn": {
+            "seconds": 1693895584,
+            "nanoseconds": 264000000
+        },
+        "id": 1693895584242,
+        "libelle": "Sac poubelle U 50ml"
+    },
+    {
+        "codeBarre": "3700992605364",
+        "deletedOn": null,
+        "id": 1693895808511,
+        "libelle": "Lingette maison vert",
+        "isFirebase": true,
+        "modifiedOn": {
+            "seconds": 1693900764,
+            "nanoseconds": 627000000
+        },
+        "groupeId": [
+            0
+        ],
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 395
+            }
+        ],
+        "createdOn": {
+            "seconds": 1693895808,
+            "nanoseconds": 532000000
+        },
+        "familleId": 1693900745755
+    },
+    {
+        "id": 1693896620130,
+        "modifiedOn": {
+            "seconds": 1693900894,
+            "nanoseconds": 855000000
+        },
+        "familleId": 1693900745755,
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 395
+            }
+        ],
+        "isFirebase": true,
+        "groupeId": [
+            0
+        ],
+        "libelle": "Sopalin te honu x2",
+        "createdOn": {
+            "seconds": 1693896620,
+            "nanoseconds": 165000000
+        },
+        "codeBarre": "3342412101188",
+        "deletedOn": null
+    },
+    {
+        "codeBarre": "8712561548953",
+        "familleId": 1693900941707,
+        "prix": [
+            {
+                "magasin": 1,
+                "prix": 235
+            }
+        ],
+        "libelle": "Dove restoring",
+        "createdOn": {
+            "seconds": 1693897041,
+            "nanoseconds": 546000000
+        },
+        "id": 1693897041504,
+        "deletedOn": null,
+        "isFirebase": true,
+        "modifiedOn": {
+            "seconds": 1693900976,
+            "nanoseconds": 383000000
+        },
+        "groupeId": [
+            0
+        ]
+    },
+    {
+        "libelle": "Dove pink",
+        "prix": [
+            {
+                "prix": 175,
+                "magasin": 1
+            }
+        ],
+        "createdOn": {
+            "seconds": 1693897088,
+            "nanoseconds": 665000000
+        },
+        "id": 1693897088608,
+        "familleId": 1693900941707,
+        "isFirebase": true,
+        "modifiedOn": {
+            "seconds": 1693900958,
+            "nanoseconds": 260000000
+        },
+        "codeBarre": "8710447289327",
+        "deletedOn": null,
+        "groupeId": [
+            0
+        ]
+    }
+]

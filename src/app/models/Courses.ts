@@ -8,4 +8,5 @@ export interface Courses{
     date : Date;
     actif : boolean;
     isFirebase : false;
+    payeurId? : number;
 }

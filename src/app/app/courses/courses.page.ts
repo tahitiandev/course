@@ -7,6 +7,7 @@ import { Magasins } from '../../models/Magasins';
 import { UtilityService } from '../../services/utility.service';
 import { Storage } from '@ionic/storage';
 import { LocalName } from '../../enums/LocalName';
+import { Utilisateurs } from 'src/app/models/Utilisateurs';
 
 @Component({
   selector: 'app-courses',
@@ -18,6 +19,7 @@ export class CoursesPage implements OnInit {
   courses : Array<Courses> = [];
   magasins : Array<Magasins> = [];
   isActif : boolean = true;
+  payeurs : Array<Utilisateurs> = [];
 
   constructor(private coursesService : CoursesService,
               private magasinsService : MagasinsService,
@@ -31,6 +33,54 @@ export class CoursesPage implements OnInit {
     this.refresh();
   }
 
+  private async getPayeurs(){
+    return await this.storage.get(LocalName.Utilisateurs);
+  }
+
+  public async setPayeur(course : Courses){
+    const payeurs : Array<Utilisateurs> = await this.getPayeurs();
+    const inputs : Array<AlertInput> = [];
+
+    payeurs.map(data => inputs.push({
+      type : 'radio',
+      value : data.id,
+      label : data.libelle
+    }))
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Définir le payeur',
+      inputs: inputs,
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (payeurId : number) => {
+
+            course.payeurId = payeurId;
+            await this.coursesService.putCourse(course);
+            this.refresh();
+
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  public getLibellePayeur(payeurId : number){
+    return this.payeurs.find(utilisateurs => utilisateurs.id === payeurId)?.libelle;
+  }
+
   private async get(){
     return await this.coursesService.getCourse();
   }
@@ -41,6 +91,9 @@ export class CoursesPage implements OnInit {
     
     const magasins = await this.getMagasin();
     this.magasins = magasins;
+
+    const payeurs = await this.getPayeurs();
+    this.payeurs = payeurs;
   }
   
   public async getMagasin(){
@@ -116,7 +169,7 @@ export class CoursesPage implements OnInit {
 
             var course : Courses = {
               id : Date.now(),
-              ordre : 0,
+              ordre : this.generateOrdreCourse(),
               magasinId : magasinId,
               montantTheorique : 0,
               montantReel : 0,
@@ -136,6 +189,11 @@ export class CoursesPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  private generateOrdreCourse(){
+    const courses = this.coursesService.sortByOrdreDesc(this.courses).pop();
+    return Number(courses?.ordre) + 1;
   }
 
   public put(id : number){

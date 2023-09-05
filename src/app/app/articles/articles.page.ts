@@ -102,6 +102,8 @@ export class ArticlesPage implements OnInit {
 
     const magasins = await this.getMagasins();
     this.magasins = magasins;
+    console.log(this.articles)
+    console.log(this.familles)
   }
 
   private async getArticles(){

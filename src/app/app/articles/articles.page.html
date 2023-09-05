@@ -16,15 +16,17 @@
       <ion-label>
         <h3>{{ famille.libelle }}</h3>
 
-        <ion-list *ngFor="let article of articles">
-          <div *ngIf="article.familleId == famille.id">
+        <ion-list>
+          <div *ngFor="let article of articles">
+          <div *ngIf="article.familleId === famille.id">
           <ion-item button detail="true" (click)="put(article)">
             <ion-icon *ngIf="article.codeBarre != null || article.codeBarre != undefined" name="barcode-outline"></ion-icon> 
             <ion-label>
               <h3>{{ article.libelle }}</h3>
             </ion-label>
           </ion-item>
-          </div>
+        </div>
+        </div>
         </ion-list>
 
       </ion-label>

@@ -12,7 +12,21 @@ export class CoursesService {
   constructor(private storage : StorageService) { }
 
   public async getCourse(){
-    return await this.storage.get(LocalName.Courses);
+    const courses : Array<Courses> = await this.storage.get(LocalName.Courses)
+    return this.sortByOrdreDesc(courses);
+  }
+
+  sortByOrdreDesc(courses : Array<Courses>){
+    return courses.sort((a,b) => {
+      let x  = a.ordre;
+      let y  = b.ordre;
+      if(x > y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
   }
 
   public async postCourse(course : Courses){

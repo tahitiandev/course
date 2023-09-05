@@ -1,0 +1,111 @@
+[
+    {
+        "id": 0,
+        "createdOn": {
+            "seconds": 1693870339,
+            "nanoseconds": 227000000
+        },
+        "isFirebase": true,
+        "libelle": "Non classé"
+    },
+    {
+        "isFirebase": true,
+        "id": 1693870339227,
+        "libelle": "Boissons",
+        "createdOn": {
+            "seconds": 1693870339,
+            "nanoseconds": 227000000
+        }
+    },
+    {
+        "id": 1693870339228,
+        "libelle": "Bébé",
+        "isFirebase": true,
+        "createdOn": {
+            "seconds": 1693870339,
+            "nanoseconds": 227000000
+        }
+    },
+    {
+        "createdOn": {
+            "seconds": 1693870339,
+            "nanoseconds": 227000000
+        },
+        "id": 1693870339229,
+        "isFirebase": true,
+        "libelle": "Conserves"
+    },
+    {
+        "id": 1693870339230,
+        "isFirebase": true,
+        "createdOn": {
+            "seconds": 1693870339,
+            "nanoseconds": 227000000
+        },
+        "libelle": "Divers"
+    },
+    {
+        "isFirebase": true,
+        "createdOn": {
+            "seconds": 1693870339,
+            "nanoseconds": 227000000
+        },
+        "id": 1693870339231,
+        "libelle": "Frais"
+    },
+    {
+        "isFirebase": true,
+        "createdOn": {
+            "seconds": 1693870366,
+            "nanoseconds": 243000000
+        },
+        "modifiedOn": null,
+        "deletedOn": null,
+        "id": 1693870366241,
+        "libelle": "Fruits et légumes"
+    },
+    {
+        "libelle": "Congelés",
+        "createdOn": {
+            "seconds": 1693900450,
+            "nanoseconds": 875000000
+        },
+        "deletedOn": null,
+        "id": 1693900450849,
+        "isFirebase": true,
+        "modifiedOn": null
+    },
+    {
+        "libelle": "Goûter",
+        "modifiedOn": null,
+        "deletedOn": null,
+        "id": 1693900709581,
+        "createdOn": {
+            "seconds": 1693900709,
+            "nanoseconds": 613000000
+        },
+        "isFirebase": true
+    },
+    {
+        "libelle": "Produits ménagers",
+        "deletedOn": null,
+        "createdOn": {
+            "seconds": 1693900745,
+            "nanoseconds": 780000000
+        },
+        "id": 1693900745755,
+        "isFirebase": true,
+        "modifiedOn": null
+    },
+    {
+        "deletedOn": null,
+        "createdOn": {
+            "seconds": 1693900941,
+            "nanoseconds": 720000000
+        },
+        "id": 1693900941707,
+        "libelle": "Salle de bain",
+        "isFirebase": true,
+        "modifiedOn": null
+    }
+]

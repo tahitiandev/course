@@ -77,7 +77,9 @@ export class SettingsPage implements OnInit {
   }
 
   public async synchroniser(){
-    await this.storage.synchroniserAvecFirestore();
+    await this.storage.synchroniserAvecFirestore().then(async() => {
+      await this.utility.popUp('Synchronisation terminée');
+    });
   }
 
 }
