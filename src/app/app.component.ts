@@ -198,4 +198,5 @@ export class AppComponent {
   public actualiser(){
     location.reload();
   }
+
 }

@@ -8,6 +8,8 @@ import { FamillesService } from '../../services/familles.service';
 import { Familles } from '../../models/Familles';
 import { UtilityService } from '../../services/utility.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
+import { StorageService } from 'src/app/services/storage.service';
+import { LocalName } from 'src/app/enums/LocalName';
 
 @Component({
   selector: 'app-articles',
@@ -21,7 +23,8 @@ export class ArticlesPage implements OnInit {
   magasins : Array<Magasins> = [];
   content_visibility = '';
 
-  constructor(private articlesService : ArticlesService,
+  constructor(private storageService : StorageService,
+              private articlesService : ArticlesService,
               private magasinsService : MagasinsService,
               private famillesService : FamillesService,
               private utility : UtilityService,
@@ -30,6 +33,15 @@ export class ArticlesPage implements OnInit {
 
     ngOnInit() {
     this.refresh();
+  }
+
+  handleRefresh(event : any) {
+
+    this.storageService.synchroniser(LocalName.Articles).then(() => {
+      this.refresh();
+      event.target.complete();
+    })
+    
   }
 
   public async scanne(){

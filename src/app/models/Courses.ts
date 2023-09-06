@@ -9,4 +9,5 @@ export interface Courses{
     actif : boolean;
     isFirebase : false;
     payeurId? : number;
+    deletedOn? : Date;
 }

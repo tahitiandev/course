@@ -102,7 +102,7 @@ export class StorageService {
     }
   }
 
-  private async synchroniser(localName : string){
+  public async synchroniser(localName : string){
     const datas : Array<any> = await this.storage.get(localName);
     const elemNotSendToFirebase = await datas.filter(data =>  !data.isFirebase);
     if(elemNotSendToFirebase.length > 0){

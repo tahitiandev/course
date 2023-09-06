@@ -8,15 +8,18 @@
     <ion-title>Liste de course</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [fullscreen]="true">
+
+  <ion-refresher slot="fixed" [pullFactor]="0.5" [pullMin]="100" [pullMax]="200" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
   <ion-list>
     <ion-item-sliding *ngFor="let course of courses">
       <ion-item button detail="true" (click)="put(course.id)" [disabled]="!course.actif">
         <ion-label>
-          <h3>{{ getLibelleMagasin(course.magasinId) }} - {{ course.montantTheorique }} XPF</h3>
-          <ion-chip *ngIf="course.payeurId !== undefined">{{ getLibellePayeur(course.payeurId) }}</ion-chip>
+          <h3><ion-chip>{{ course.date }}</ion-chip>  {{ getLibelleMagasin(course.magasinId) }} - {{ course.montantTheorique }} XPF</h3>
+          <ion-chip color="success" *ngIf="course.payeurId !== undefined">{{ getLibellePayeur(course.payeurId) }}</ion-chip>
         </ion-label>
         <ion-icon *ngIf="!course.actif" name="lock-closed-outline"></ion-icon>
       </ion-item>
@@ -28,6 +31,9 @@
         <ion-item-option *ngIf="!course.actif" (click)="activer(course)" style="background: rgb(100, 42, 209);">
           Déclôturer    
         </ion-item-option>
+        <ion-item-option (click)="supprimer(course)" style="background: rgb(51, 14, 14);">
+          Supprimer    
+        </ion-item-option>
       </ion-item-options>
       <ion-item-options side="end">
         <ion-item-option (click)="setPayeur(course)" [disabled]="!course.actif">
@@ -36,12 +42,17 @@
       </ion-item-options>
     </ion-item-sliding>
 
-  </ion-list>
-  
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="post()">
-    <ion-fab-button size="small">
+  </ion-list>  
+
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" >
+    <ion-fab-button size="small" (click)="setIsAfficherCourseMasquer()">
+      <ion-icon name="filter-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button size="small" (click)="post()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+
 
 </ion-content>

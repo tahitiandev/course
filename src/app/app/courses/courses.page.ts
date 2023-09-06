@@ -8,6 +8,7 @@ import { UtilityService } from '../../services/utility.service';
 import { Storage } from '@ionic/storage';
 import { LocalName } from '../../enums/LocalName';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-courses',
@@ -20,9 +21,11 @@ export class CoursesPage implements OnInit {
   magasins : Array<Magasins> = [];
   isActif : boolean = true;
   payeurs : Array<Utilisateurs> = [];
+  isAfficherCourseCloturer : boolean =  true;
 
   constructor(private coursesService : CoursesService,
               private magasinsService : MagasinsService,
+              private storageService : StorageService,
               private storage : Storage,
               private utility : UtilityService,
               private alertController : AlertController) { 
@@ -31,6 +34,13 @@ export class CoursesPage implements OnInit {
 
   ngOnInit() {
     this.refresh();
+  }
+
+  public handleRefresh(event : any) {
+    this.storageService.synchroniser(LocalName.Courses).then(()=> {
+      this.refresh();
+      event.target.complete()
+    })
   }
 
   private async getPayeurs(){
@@ -82,12 +92,22 @@ export class CoursesPage implements OnInit {
   }
 
   private async get(){
-    return await this.coursesService.getCourse();
+    const courses : Array<Courses> = await this.coursesService.getCourse();
+    if(this.isAfficherCourseCloturer){
+      return courses;
+    }else{
+      return courses.filter(data => data.actif)
+    }
+  }
+
+  public setIsAfficherCourseMasquer(){
+    this.isAfficherCourseCloturer = !this.isAfficherCourseCloturer;
+    this.refresh();
   }
   
   public async refresh(){
     const courses : Array<Courses> = await this.get();
-    this.courses = courses;
+    this.courses = courses.filter(s => s.deletedOn === undefined || s.deletedOn === null);
     
     const magasins = await this.getMagasin();
     this.magasins = magasins;
@@ -205,5 +225,11 @@ export class CoursesPage implements OnInit {
     await this.coursesService.putCourse(course);
     await this.refresh();
   }
+
+  public async supprimer(course : Courses){
+    await this.coursesService.deleteCourse(course);
+    await this.refresh();
+  }
+
 
 }
