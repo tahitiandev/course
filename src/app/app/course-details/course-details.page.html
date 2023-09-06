@@ -36,6 +36,9 @@
         </ion-item-option>
       </ion-item-options>
       <ion-item-options side="end">
+        <ion-item-option (click)="deleteCourseDetail(coursedetail)">
+          Retirer    
+        </ion-item-option>
         <ion-item-option (click)="check(coursedetail)">
           Check    
           <ion-icon *ngIf="!coursedetail.checked" name="lock-closed-outline"></ion-icon>

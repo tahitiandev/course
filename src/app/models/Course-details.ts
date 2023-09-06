@@ -10,4 +10,5 @@ export interface CourseDetails{
     total : number;
     checked : boolean;
     isFirebase : false;
+    deletedOn? : Date;
 }

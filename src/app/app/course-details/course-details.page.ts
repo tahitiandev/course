@@ -175,8 +175,7 @@ export class CourseDetailsPage implements OnInit {
         {
           type : 'number',
           name : 'prix',
-          placeholder : 'PRIX',
-          value : dataSend.prix
+          placeholder : 'PRIX'
         }
       ],
       buttons: [
@@ -268,7 +267,7 @@ export class CourseDetailsPage implements OnInit {
 
   public async getCourseDetail(){
     const coursedetails : Array<CourseDetails> = await this.coursesService.getCourseDetails(this.courseid);
-    return coursedetails;
+    return coursedetails.filter(data => data.deletedOn === undefined || data.deletedOn === null);
   }
 
   private async getArticles(){
@@ -624,6 +623,11 @@ export class CourseDetailsPage implements OnInit {
 
     await alert.present();
     
+  }
+
+  public async deleteCourseDetail(coursedetail : CourseDetails){
+    await this.coursesService.deleteCourseDetails(coursedetail);
+    await this.refresh();
   }
 
 }

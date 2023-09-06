@@ -48,7 +48,7 @@ export class CoursesService {
 
   public async getCourseDetails(courseId : number){
     const courseDetails : Array<CourseDetails> = await this.storage.get(LocalName.CourseDetails);
-    return courseDetails.filter(coursedetail => coursedetail.courseId === courseId);
+    return courseDetails.filter(coursedetail => coursedetail.courseId === courseId && coursedetail.deletedOn !== undefined);
   }
 
   sortByOrdre(coursedetail : Array<CourseDetails>){
@@ -83,10 +83,8 @@ export class CoursesService {
   }
 
   public async deleteCourseDetails(courseDetail : CourseDetails){
-    const allcoursedetail : Array<any> = await this.storage.getAll(LocalName.CourseDetails);
-    const index = await allcoursedetail.findIndex(data => data.id === courseDetail.id);
-    allcoursedetail.splice(index,1)
-    await this.storage.postAll(LocalName.CourseDetails,allcoursedetail)
+    console.log(courseDetail)
+    // await this.storage.delete(LocalName.CourseDetails, courseDetail);
   }
 
 
