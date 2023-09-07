@@ -15,12 +15,10 @@
     <tr style="background: rgb(135, 71, 207);">
       <th>Utilisateurs</th>
       <th>Dépenses</th>
-      <th>Liste de course créé</th>
     </tr>
-    <tr style="text-align: center;">
-      <td>Gilles</td>
-      <td>1000 xpf</td>
-      <td>3</td>
+    <tr style="text-align: center;" *ngFor="let data of utilisateurByDepense">
+      <td>{{ data.utilisateur }}</td>
+      <td>{{ data.depense }}</td>
     </tr>
   </table>
 
