@@ -52,7 +52,6 @@ export class CourseDetailsPage implements OnInit {
     const barreCodeContent = await this.codeBarre.STEP2ScanneBarCodeAndReturnContent();
     const visibilityEnd = await this.codeBarre.STEP3disableCameraReturnVisility();
     this.content_visibility = visibilityEnd;
-    // alert(barreCodeContent)
     return barreCodeContent;
   }
 
@@ -211,7 +210,7 @@ export class CourseDetailsPage implements OnInit {
             await this.articlesService.post(article);
             
             // Ici on ajoute l'article au panier
-            await this.postPrix(article, true);
+            await this.postPrix(article);
 
           }
         }
@@ -408,21 +407,7 @@ export class CourseDetailsPage implements OnInit {
     await alert.present();
   }
 
-  public async postPrix(articles : Articles, addByBarCode? : boolean){
-
-    const inputs : Array<AlertInput> = [];
-    var goodPrix = 0;
-
-    articles.prix.map(prix => {
-      if(prix.magasin == this.course.magasinId){
-        goodPrix = prix.prix
-      }
-    })
-
-    // si on ajoute l'article en scannant par un codebarre, on prend le prix que l'on transmet
-    if(addByBarCode){
-      goodPrix = articles.prix[0].prix
-    }
+  public async addNewPrixArticle(article : Articles){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -430,15 +415,13 @@ export class CourseDetailsPage implements OnInit {
       inputs: [
         {
           type : 'number',
-          value : '1',
-          label : 'Quantité',
+          placeholder : 'Quantité : 1',
           name : 'quantite'
         },
         {
           type : 'number',
-          label : 'Prix',
-          name : 'prix',
-          value : goodPrix
+          placeholder : 'Prix ex: ' + article.prix[0].prix + ' xpf',
+          name : 'prix'
         }
       ],
         buttons: [
@@ -454,22 +437,33 @@ export class CourseDetailsPage implements OnInit {
           text: 'Valider',
           handler: async (data : any) => {
 
-              var coursedetails : CourseDetails = {
-                id : Date.now(),
-                ordre : 1,
-                courseId : this.courseid,
-                libelle : articles.libelle,
-                quantite : data.quantite,
-                articleId : articles.id,
-                prixArticle : articles.prix[0].prix,
-                prixReel : data.prix,
-                checked : false,
-                total : data.quantite * data.prix,
-                isFirebase : false
-              }
+            // Rajouter un nouveau prix à l'article
+            article.prix.push({
+              magasin : this.course.magasinId,
+              prix : data.prix === '' ? Number(article.prix[0].prix) : Number(data.prix)
+            })
+            await this.articlesService.put(article);
 
-              await this.coursesService.postCourseDetails(coursedetails);
-              await this.refresh();
+            // Rajoute l'article au panier
+
+            var prixSaisie = data.prix === '' ? Number(article.prix[0].prix) : Number(data.prix)
+            var quantiteSaisie = data.quantite === '' ? 1 : Number(data.quantite)
+            var coursedetails : CourseDetails = {
+              id : Date.now(),
+              ordre : 1,
+              courseId : this.courseid,
+              libelle : article.libelle,
+              quantite : quantiteSaisie,
+              articleId : article.id,
+              prixArticle : prixSaisie,
+              prixReel : prixSaisie,
+              checked : false,
+              total : quantiteSaisie * prixSaisie,
+              isFirebase : false
+            }
+
+            await this.coursesService.postCourseDetails(coursedetails);
+            await this.refresh();
 
           }
         }
@@ -478,6 +472,115 @@ export class CourseDetailsPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  public async postPrix(articles : Articles){
+
+    var prixArticle = await articles.prix.find(prix => prix.magasin == this.course.magasinId)?.prix;
+
+    if(prixArticle === undefined){
+      await this.addNewPrixArticle(articles);
+    }else{
+
+      const alert = await this.alertController.create({
+        cssClass: 'my-custom-class',
+        header: 'Renseigner le prix et la quantité souhaitée',
+        inputs: [
+          {
+            type : 'number',
+            placeholder : 'Qté : 1',
+            name : 'quantite'
+          },
+          {
+            type : 'number',
+            placeholder : 'Prix : ' + prixArticle + ' xpf',
+            name : 'prix'
+          }
+        ],
+          buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            cssClass: 'secondary',
+            handler: () => {
+              
+            }
+          }
+          ,{
+            text: 'Valider',
+            handler: async (data : any) => {
+
+              var prixSaisie = data.prix === '' ? prixArticle : Number(data.prix);
+              var quantiteSaisie = data.quantite === '' ? 1 : Number(data.quantite);
+  
+                var coursedetails : CourseDetails = {
+                  id : Date.now(),
+                  ordre : 1,
+                  courseId : this.courseid,
+                  libelle : articles.libelle,
+                  quantite : quantiteSaisie,
+                  articleId : articles.id,
+                  prixArticle : Number(prixArticle),
+                  prixReel : Number(prixSaisie),
+                  checked : false,
+                  total : quantiteSaisie * Number(prixSaisie),
+                  isFirebase : false
+                }
+  
+                await this.coursesService.postCourseDetails(coursedetails);
+
+                if(coursedetails.prixArticle !== coursedetails.prixReel){
+
+                  const index = articles.prix.findIndex(prix => prix.magasin === this.course.magasinId);
+                  articles.prix[index].prix = Number(coursedetails.prixReel);
+
+                  await this.putPrixFicheArticle(articles);
+                  await this.refresh();
+
+                }else{
+                  await this.refresh();
+                }  
+            }
+          }
+          
+        ]
+      });
+  
+      await alert.present();
+
+    }// else
+
+  }
+
+  private async putPrixFicheArticle(article : Articles){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Le prix renseigné est différé du prix de la fiche article. Souhaitez-vous la mettre à jour ?',
+      inputs: [],
+        buttons: [
+        {
+          text: 'Non',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            
+          }
+        }
+        ,{
+          text: 'Oui',
+          handler: async () => {
+            
+            await this.articlesService.put(article);
+            this.refresh();
+
+        }
+      }
+      ]
+    });
+
+    await alert.present();
+
   }
 
   public async check(coursedetail : CourseDetails){
@@ -533,6 +636,7 @@ export class CourseDetailsPage implements OnInit {
 
             await this.coursesService.putCourseDetails(coursedetail);
 
+            
             if(data.prix == coursedetail.prixArticle){
               await this.refresh();
             }else{
@@ -554,8 +658,6 @@ export class CourseDetailsPage implements OnInit {
   }
 
   private async putArticleOnDatabase(data : any){
-
-    const inputs : Array<AlertInput> = [];
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
