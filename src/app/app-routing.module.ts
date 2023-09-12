@@ -62,7 +62,11 @@ const routes: Routes = [
   {
     path: 'plat-details/:id',
     loadChildren: () => import('./app/plat-details/plat-details.module').then( m => m.PlatDetailsPageModule)
+  },  {
+    path: 'utilisateur-liste',
+    loadChildren: () => import('./securite/utilisateur-liste/utilisateur-liste.module').then( m => m.UtilisateurListePageModule)
   }
+
 
 ];
 

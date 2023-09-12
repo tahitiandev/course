@@ -22,6 +22,7 @@ export class AppComponent {
     { title: 'Familles', url: 'familles', icon: 'paper-plane' },
     { title: 'Magasins', url: 'magasins', icon: 'paper-plane' },
     { title: 'Paramétrages', url: 'settings', icon: 'paper-plane' },
+    { title: 'Utilisateurs', url: 'utilisateur-liste', icon: 'mail' },
     { title: 'Groupes', url: 'utilisateur-groupes', icon: 'mail' },
   ];
 

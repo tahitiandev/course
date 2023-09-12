@@ -5,22 +5,24 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
 
-    <ion-title>Gestion des groupes utilisateurs</ion-title>
+    <ion-title>Liste des utilisateurs</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
 
   
-  <ion-list *ngFor="let groupe of groupes">
+  
+  
+  <ion-list *ngFor="let utilisateur of utilisateurs">
     <ion-item button detail="true">
       <ion-label>
-        <h3>{{ groupe.libelle }}</h3>
+        <h3>{{ utilisateur.libelle }}</h3>
       </ion-label>
     </ion-item>
   </ion-list>
   
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="post()">
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" >
     <ion-fab-button size="small">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
