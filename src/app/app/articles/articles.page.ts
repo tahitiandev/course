@@ -59,7 +59,7 @@ export class ArticlesPage implements OnInit {
     const article : Array<Articles> = await this.articlesService.getArticleByCodeBarre(codeBarre);
 
     if(article.length > 0){
-      this.utility.popUp('Le code barre ' + codeBarre + 'a déjà été associé à un article')
+      await this.putPrix(article[0]);
     }else{
       await this.setArticleByCodeBarre(codeBarre);
     }
@@ -348,10 +348,25 @@ export class ArticlesPage implements OnInit {
           }
         },
         {
+          text: 'Renseigner le code barre',
+          cssClass: 'secondary',
+          handler: async () => {
+            await this.setCodeBarre(article);
+          }
+        },
+        {
           text: 'Modifier la famille',
           cssClass: 'secondary',
           handler: async () => {
             await this.putFamilleArticleOfArticle(article)
+          }
+        }
+        ,
+        {
+          text: 'Supprimer définitivement',
+          cssClass: 'secondary',
+          handler: async () => {
+            await this.supprimerDefinitivement(article);
           }
         }
         ,{
@@ -360,6 +375,41 @@ export class ArticlesPage implements OnInit {
 
             article.libelle = data.libelle;
             await this.articlesService.put(article);
+
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  public async setCodeBarre(article : Articles){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Renseigner le code barre',
+      inputs: [{
+        type : 'text',
+        value : article.codeBarre === undefined ? null : article.codeBarre,
+        name : 'codeBarre'
+      }],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (data) => {
+
+            article.codeBarre = data.codeBarre === '' ? null : data.codeBarre
+            await this.articlesService.put(article);
+            await this.refresh();
 
           }
         }
@@ -593,6 +643,10 @@ export class ArticlesPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  public async supprimerDefinitivement(article : Articles){
+    await this.articlesService.deleteDefinitivement(article);
   }
 
 }

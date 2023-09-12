@@ -29,6 +29,10 @@ export class ArticlesService {
       await this.storage.delete(LocalName.Articles, article);
     }
 
+    public async deleteDefinitivement(article : Articles){
+      await this.storage.deleteDefinitivement(LocalName.Articles, article);
+    }
+
     public async getArticleById(articleId : number){
       const articles : Array<Articles> = await this.get();
       return articles.filter(article => article.id == articleId);

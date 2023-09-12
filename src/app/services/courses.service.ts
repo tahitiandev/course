@@ -20,7 +20,7 @@ export class CoursesService {
     return courses.sort((a,b) => {
       let x  = a.ordre;
       let y  = b.ordre;
-      if(x > y){
+      if(x < y){
         return -1;
       }else{
         return 1;

@@ -85,6 +85,20 @@ export class StorageService {
 
   }
 
+  public async deleteDefinitivement(localName : string, data : any){
+    const datas : Array<any> =  await this.getAll(localName);
+    const index = await this.getIndex(localName, data.id);
+    await datas.splice(index,1);
+    await this.postAll(localName, datas);  
+    
+    await this.firestore.delete(
+      localName,
+      data.id.toString(),
+      data
+    )
+
+  }
+
   public async synchroniserAvecFirestore(){
     if(navigator.onLine){
       await this.synchroniser(LocalName.Articles);
@@ -94,7 +108,6 @@ export class StorageService {
       await this.synchroniser(LocalName.Magasins);
       await this.synchroniser(LocalName.Plats);
       await this.synchroniser(LocalName.PlatDetails);
-      await this.synchroniser(LocalName.Utilisateurs);
       await this.synchroniser(LocalName.Groupes);
       await this.synchroniser(LocalName.Menus);
     }else{

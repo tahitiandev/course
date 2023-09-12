@@ -82,4 +82,8 @@ export class SettingsPage implements OnInit {
     });
   }
 
+  public async synchroniserUtilisateurs(){
+    await this.storage.synchroniser(LocalName.Utilisateurs);
+  }
+
 }
