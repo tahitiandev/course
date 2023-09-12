@@ -188,7 +188,7 @@ export class CourseDetailsPage implements OnInit {
         }
         ,{
           text: 'Valider',
-          handler: async (prix : number) => {
+          handler: async (prix : any) => {
 
             var article : Articles = {
               id : Date.now(),
@@ -196,7 +196,7 @@ export class CourseDetailsPage implements OnInit {
               prix : [
                 {
                   magasin : this.course.magasinId,
-                  prix : prix
+                  prix : prix === undefined || prix === null ? 100 : prix.prix
                 }
               ],
               createdOn : new Date(),
