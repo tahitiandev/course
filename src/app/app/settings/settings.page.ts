@@ -17,18 +17,22 @@ import { StorageService } from 'src/app/services/storage.service';
 export class SettingsPage implements OnInit {
 
   magasinParDefaut? = "";
+  connexionInfo : ConnexionInfo;
+  isOnline : boolean = true;
 
   constructor(private alertController : AlertController,
               private utility : UtilityService,
               private storage : StorageService,
               private magasinService : MagasinsService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.refresth();
   }
 
-  async initData(){
+  async refresth(){
     const connexionInfo : ConnexionInfo = await this.utility.getConnexionInfo();
-    // this.magasinParDefaut = connexionInfo.magasinParDefaut.libelle;
+    this.connexionInfo = connexionInfo;
+    this.isOnline = connexionInfo.modeOnline;
   }
 
   public async SetmagasinParDefaut(){
@@ -84,6 +88,16 @@ export class SettingsPage implements OnInit {
 
   public async synchroniserUtilisateurs(){
     await this.storage.synchroniser(LocalName.Utilisateurs);
+  }
+
+  public async setModeOnline(e : any){
+
+    const modeResult = e.detail.checked;
+    const infoConnexion = await this.utility.getConnexionInfo();
+    infoConnexion.modeOnline = modeResult;
+    await this.utility.putConnexionInfo(infoConnexion);
+    await this.refresth();
+
   }
 
 }

@@ -22,6 +22,10 @@ export class UtilityService {
     return infoConnexion;
     }
 
+    public async putConnexionInfo(connexionInfo : ConnexionInfo){
+      await this.storage.set(LocalName.InfoConnexion, connexionInfo);
+    }
+
     public generateId(){
       return Date.now();
     }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { FirestoreService } from './firestore.service';
 import { LocalName } from '../enums/LocalName';
+import { ConnexionInfo } from '../models/ConnexionInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,9 @@ export class StorageService {
       datas
     )
 
-    if(navigator.onLine){
+    const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
+    
+    if(connexionInfo.modeOnline){
       await datas.map(async(data) => {
         if(!data.isFirebase){
   
@@ -100,7 +103,8 @@ export class StorageService {
   }
 
   public async synchroniserAvecFirestore(){
-    if(navigator.onLine){
+    const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
+    if(connexionInfo.modeOnline){
       await this.synchroniser(LocalName.Articles);
       await this.synchroniser(LocalName.Courses);
       await this.synchroniser(LocalName.CourseDetails);
@@ -111,26 +115,38 @@ export class StorageService {
       await this.synchroniser(LocalName.Groupes);
       await this.synchroniser(LocalName.Menus);
     }else{
-      alert('Pas de connexion internet')
+      alert('Le mode onLine est désactivé')
     }
   }
 
   public async synchroniser(localName : string){
-    const datas : Array<any> = await this.storage.get(localName);
-    const elemNotSendToFirebase = await datas.filter(data =>  !data.isFirebase);
-    if(elemNotSendToFirebase.length > 0){
-      elemNotSendToFirebase.map(async elem => {
-        await this.post(localName, elem);
+    const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
+
+    if(connexionInfo.modeOnline){
+
+      const datas : Array<any> = await this.storage.get(localName);
+      const elemNotSendToFirebase = await datas.filter(data =>  !data.isFirebase);
+      if(elemNotSendToFirebase.length > 0){
+        elemNotSendToFirebase.map(async elem => {
+          await this.post(localName, elem);
+        })
+      }
+      (await this.firestore.getAll(localName)).subscribe(datas => {
+        this.storage.set(localName, datas)
       })
+
+    }else{
+      alert('Le mode onLine est désactivé')
     }
-    (await this.firestore.getAll(localName)).subscribe(datas => {
-      this.storage.set(localName, datas)
-    })
   }
   
   // fonction à modifier plus tard
   public async set(localName : string, data:any){
     await this.storage.set(localName, data);
+  }
+
+  private async getConnexionInfo(){
+    return await this.storage.get(LocalName.InfoConnexion);
   }
 
 }

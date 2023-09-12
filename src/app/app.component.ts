@@ -163,7 +163,7 @@ export class AppComponent {
         isConnected : false,
         utilisateurId : 0,
         groupeId : 0,
-        // magasinParDefaut : magasins[0]
+        modeOnline :  true
       }
 
       await this.storage.set(LocalName.InfoConnexion, infoConnexion);
@@ -188,7 +188,8 @@ export class AppComponent {
     const infoConnexion : ConnexionInfo = {
       isConnected : false,
       utilisateurId : 0,
-      groupeId : 0
+      groupeId : 0,
+      modeOnline : true
     }
 
     await this.storage.set(LocalName.InfoConnexion, infoConnexion);

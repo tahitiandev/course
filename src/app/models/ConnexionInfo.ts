@@ -5,4 +5,5 @@ export interface ConnexionInfo{
     utilisateurId : number;
     groupeId : number;
     magasinParDefaut? : Magasins;
-  }
+    modeOnline : boolean;
+    }

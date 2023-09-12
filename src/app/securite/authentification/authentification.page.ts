@@ -47,7 +47,7 @@ export class AuthentificationPage implements OnInit {
           isConnected : true,
           utilisateurId : utilisateur[0].id,
           groupeId : utilisateur[0].groupeId,
-          // magasinParDefaut : connexionInfo.magasinParDefaut
+          modeOnline : true
         }
 
         await this.storage.set(LocalName.InfoConnexion, infoConnexion);
