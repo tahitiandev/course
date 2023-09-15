@@ -719,7 +719,7 @@ export class CourseDetailsPage implements OnInit {
         ,{
           text: 'Oui',
           handler: async () => {
-            await this.coursesService.deleteCourseDetails(courseDetail);
+            await this.coursesService.deleteDefinitivementCourseDetails(courseDetail);
             await this.refresh();
           }
         }

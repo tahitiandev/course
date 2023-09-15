@@ -88,8 +88,11 @@ export class CoursesService {
   }
 
   public async deleteCourseDetails(courseDetail : CourseDetails){
-    console.log(courseDetail)
-    // await this.storage.delete(LocalName.CourseDetails, courseDetail);
+    await this.storage.delete(LocalName.CourseDetails, courseDetail);
+  }
+
+  public async deleteDefinitivementCourseDetails(courseDetail : CourseDetails){
+    await this.storage.deleteDefinitivement(LocalName.CourseDetails, courseDetail);
   }
 
 
