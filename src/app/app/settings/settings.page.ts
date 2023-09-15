@@ -32,7 +32,7 @@ export class SettingsPage implements OnInit {
   async refresth(){
     const connexionInfo : ConnexionInfo = await this.utility.getConnexionInfo();
     this.connexionInfo = connexionInfo;
-    this.isOnline = connexionInfo.modeOnline;
+    this.isOnline = connexionInfo.isOnline;
   }
 
   public async SetmagasinParDefaut(){
@@ -86,15 +86,16 @@ export class SettingsPage implements OnInit {
     });
   }
 
-  public async synchroniserUtilisateurs(){
-    await this.storage.synchroniser(LocalName.Utilisateurs);
+
+  public async synchroniserManuel(localname : string){
+    await this.storage.synchroniser(localname);
   }
 
   public async setModeOnline(e : any){
 
     const modeResult = e.detail.checked;
     const infoConnexion = await this.utility.getConnexionInfo();
-    infoConnexion.modeOnline = modeResult;
+    infoConnexion.isOnline = modeResult;
     await this.utility.putConnexionInfo(infoConnexion);
     await this.refresth();
 

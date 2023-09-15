@@ -647,6 +647,7 @@ export class ArticlesPage implements OnInit {
 
   public async supprimerDefinitivement(article : Articles){
     await this.articlesService.deleteDefinitivement(article);
+    await this.refresh();
   }
 
 }

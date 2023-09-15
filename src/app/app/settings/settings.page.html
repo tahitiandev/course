@@ -22,9 +22,14 @@
       <h3>Synchroniser les données</h3>
     </ion-label>
   </ion-item>
-  <ion-item button detail="true" (click)="synchroniserUtilisateurs()">
+  <ion-item button detail="true" (click)="synchroniserManuel('Utilisateurs')">
     <ion-label>
       <h3>Synchroniser les utilisateurs</h3>
+    </ion-label>
+  </ion-item>
+  <ion-item button detail="true" (click)="synchroniserManuel('Familles')">
+    <ion-label>
+      <h3>Synchroniser les familles d'article</h3>
     </ion-label>
   </ion-item>
   <ion-item>

@@ -29,11 +29,10 @@ export class CoursesPage implements OnInit {
               private storage : Storage,
               private utility : UtilityService,
               private alertController : AlertController) { 
-                this.refresh();
               }
 
-  ngOnInit() {
-    this.refresh();
+  async ngOnInit() {
+    await this.refresh();
   }
 
   public handleRefresh(event : any) {
@@ -100,8 +99,11 @@ export class CoursesPage implements OnInit {
     }
   }
 
-  public setIsAfficherCourseMasquer(){
+  public async setIsAfficherCourseMasquer(){
     this.isAfficherCourseCloturer = !this.isAfficherCourseCloturer;
+    const infoConnexion = await this.utility.getConnexionInfo();
+    infoConnexion.isCourseAfficher = this.isAfficherCourseCloturer;
+    await this.utility.putConnexionInfo(infoConnexion);
     this.refresh();
   }
   
@@ -114,6 +116,10 @@ export class CoursesPage implements OnInit {
 
     const payeurs = await this.getPayeurs();
     this.payeurs = payeurs;
+
+    const infoConnexion = await this.utility.getConnexionInfo();
+    this.isAfficherCourseCloturer = infoConnexion.isCourseAfficher;
+
   }
   
   public async getMagasin(){
@@ -229,6 +235,16 @@ export class CoursesPage implements OnInit {
   public async supprimer(course : Courses){
     await this.coursesService.deleteCourse(course);
     await this.refresh();
+  }
+
+  public async setIsFocus(course : Courses){
+    const courses : Array<Courses> = await this.get();
+    courses.map(courses => courses.isFocus = false);
+    const index = await courses.findIndex(courses => course.id === courses.id);
+    courses[index].isFocus = true;
+    await this.storage.set(LocalName.Courses, courses);
+    console.log(courses)
+    this.refresh();
   }
 
 

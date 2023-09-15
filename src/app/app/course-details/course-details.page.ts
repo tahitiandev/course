@@ -8,6 +8,8 @@ import { ArticlesService } from '../../services/articles.service';
 import { Articles } from '../../models/Articles';
 import { UtilityService } from '../../services/utility.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
+import { MemoService } from 'src/app/services/memo.service';
+import { Memos } from 'src/app/models/Memos';
 
 @Component({
   selector: 'app-course-details',
@@ -33,6 +35,7 @@ export class CourseDetailsPage implements OnInit {
   articles : Array<Articles> = [];
   content_visibility = '';
   rechercheAvance : boolean = false;
+  isButtonActif : boolean = true;
 
   constructor(private coursesService : CoursesService,
               private alertController : AlertController,
@@ -40,6 +43,7 @@ export class CourseDetailsPage implements OnInit {
               private utility : UtilityService,
               private codeBarre : BarreCodeService,
               private articlesService : ArticlesService,
+              private memoservice : MemoService,
               private route : ActivatedRoute) { }
 
   ngOnInit() {
@@ -730,6 +734,63 @@ export class CourseDetailsPage implements OnInit {
   public async deleteCourseDetail(coursedetail : CourseDetails){
     await this.coursesService.deleteCourseDetails(coursedetail);
     await this.refresh();
+  }
+
+  public setIsButtonActif(){
+    this.isButtonActif = !this.isButtonActif;
+  }
+
+  public async dechargerMemo(){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Souhaitez-vous décharger vos notes de course ?',
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'Non',
+          cssClass: 'secondary',
+          handler: () => {
+            
+          }
+        }
+        ,{
+          text: 'Oui',
+          handler: async () => {
+            const memos : Array<Memos> = await this.memoservice.get();
+
+            for(let memo of memos){
+
+              const prix = memo.article.prix.find(prix => prix.magasin === this.course.magasinId);
+
+              var coursedetail : CourseDetails = {
+                id : Number(new Date()),
+                ordre : 0,
+                courseId : this.course.id.toString(),
+                libelle : memo.article.libelle,
+                quantite : memo.quantite,
+                articleId : memo.article.id,
+                prixArticle : prix === undefined ? memo.article.prix[0].prix : prix.prix,
+                prixReel : prix === undefined ? memo.article.prix[0].prix : prix.prix,
+                total : Number(memo.quantite * (prix === undefined ? memo.article.prix[0].prix : prix.prix)),
+                checked : false,
+                isFirebase : false
+              }
+
+              await this.coursesService.postCourseDetails(coursedetail);
+              await this.memoservice.delete(memo);
+
+            }
+            await this.refresh();
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+
+
   }
 
 }

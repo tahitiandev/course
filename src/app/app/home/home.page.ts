@@ -15,6 +15,7 @@ export class HomePage implements OnInit {
   utilisateurs : Array<Utilisateurs> = [];
   courses : Array<Courses> = [];
   utilisateurByDepense : Array<any> = [];
+  // today : any;
 
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
@@ -26,6 +27,7 @@ export class HomePage implements OnInit {
     await this.refresh();
     await this.redirection();
     await this.statsUtilisateursByDepense();
+    // this.today = await new Date().toISOString().split('T')[0] + 'T00:00:00';
   }
 
   private async redirection(){
@@ -67,8 +69,7 @@ export class HomePage implements OnInit {
     })
 
     this.utilisateurByDepense = result;
-
-    
+  
   }
   
 

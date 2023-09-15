@@ -51,6 +51,11 @@ export class CoursesService {
     return courseDetails.filter(coursedetail => coursedetail.courseId === courseId && coursedetail.deletedOn !== undefined);
   }
 
+  public async getCourseIsFocus(){
+    const courses : Array<Courses> = await this.getCourse();
+    return await courses.filter(course => course.isFocus);
+  }
+
   sortByOrdre(coursedetail : Array<CourseDetails>){
     return coursedetail.sort((a,b) => {
       let x  = a.ordre;

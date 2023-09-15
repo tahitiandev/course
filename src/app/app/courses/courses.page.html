@@ -17,6 +17,7 @@
   <ion-list>
     <ion-item-sliding *ngFor="let course of courses">
       <ion-item button detail="true" (click)="put(course.id)" [disabled]="!course.actif">
+        <ion-icon *ngIf="course.isFocus" name="pencil-outline"></ion-icon>
         <ion-label>
           <h3><ion-chip>{{ course.date }}</ion-chip>  {{ getLibelleMagasin(course.magasinId) }} - {{ course.montantTheorique }} XPF</h3>
           <ion-chip color="success" *ngIf="course.payeurId !== undefined">{{ getLibellePayeur(course.payeurId) }}</ion-chip>
@@ -36,6 +37,9 @@
         </ion-item-option>
       </ion-item-options>
       <ion-item-options side="end">
+        <ion-item-option (click)="setIsFocus(course)">
+          Focus   
+        </ion-item-option>
         <ion-item-option (click)="setPayeur(course)">
           Payeur   
         </ion-item-option>
@@ -45,6 +49,9 @@
   </ion-list>  
 
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" >
+    <ion-fab-button size="small" routerLink="../memo">
+      <ion-icon name="book-outline"></ion-icon>
+    </ion-fab-button>
     <ion-fab-button size="small" (click)="setIsAfficherCourseMasquer()">
       <ion-icon name="filter-outline"></ion-icon>
     </ion-fab-button>

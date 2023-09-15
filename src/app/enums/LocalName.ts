@@ -11,4 +11,5 @@ export enum LocalName {
     Plats = "Plats",
     PlatDetails = "PlatDetails",
     Utilisateurs = "Utilisateurs",
+    Memos = "Memos",
 }

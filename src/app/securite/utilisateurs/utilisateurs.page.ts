@@ -50,7 +50,7 @@ export class UtilisateursPage implements OnInit {
     
     await this.utilisateurService.post(utilisateur);
     this.createUserForm.patchValue({
-      id : 0,
+      id : new Date(),
       libelle : '',
       username : '',
       password : '',

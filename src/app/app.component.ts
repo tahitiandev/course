@@ -164,10 +164,16 @@ export class AppComponent {
         isConnected : false,
         utilisateurId : 0,
         groupeId : 0,
-        modeOnline :  true
+        isOnline :  true,
+        isCourseAfficher : true
       }
 
       await this.storage.set(LocalName.InfoConnexion, infoConnexion);
+    }
+
+    const memos = await this.storage.get(LocalName.Memos);
+    if(memos === null){
+      await this.storage.set(LocalName.Memos, []);
     }
 
   } //setLocalStorage
@@ -190,7 +196,8 @@ export class AppComponent {
       isConnected : false,
       utilisateurId : 0,
       groupeId : 0,
-      modeOnline : true
+      isOnline : true,
+      isCourseAfficher : true
     }
 
     await this.storage.set(LocalName.InfoConnexion, infoConnexion);

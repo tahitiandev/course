@@ -5,7 +5,12 @@
       <ion-back-button defaultHref="/courses"></ion-back-button>
     </ion-buttons>
 
-    <ion-title>Votre liste de course</ion-title>
+    <ion-title>
+      Votre liste de course 
+      <ion-icon style="margin-left: 50px;" (click)="setIsButtonActif()" name="apps-outline"></ion-icon>
+    </ion-title>
+
+
   </ion-toolbar>
 </ion-header>
 
@@ -48,7 +53,10 @@
 
   </ion-list>
   
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="isButtonActif">
+    <ion-fab-button size="small" (click)="dechargerMemo()">
+      <ion-icon name="book-outline"></ion-icon>
+    </ion-fab-button>
     <ion-fab-button size="small" (click)="postArticleWithCalculator()">
       <ion-icon name="calculator-outline"></ion-icon>
     </ion-fab-button>

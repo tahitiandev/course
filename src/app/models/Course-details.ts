@@ -1,7 +1,7 @@
 export interface CourseDetails{
     id : number;
     ordre : number;
-    courseId : number;
+    courseId : any;
     libelle : string;
     quantite : number;
     articleId : number;

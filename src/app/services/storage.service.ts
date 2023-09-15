@@ -20,7 +20,7 @@ export class StorageService {
 
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
     
-    if(connexionInfo.modeOnline){
+    if(connexionInfo.isOnline){
       await datas.map(async(data) => {
         if(!data.isFirebase){
   
@@ -104,11 +104,11 @@ export class StorageService {
 
   public async synchroniserAvecFirestore(){
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
-    if(connexionInfo.modeOnline){
+    if(connexionInfo.isOnline){
       await this.synchroniser(LocalName.Articles);
       await this.synchroniser(LocalName.Courses);
       await this.synchroniser(LocalName.CourseDetails);
-      await this.synchroniser(LocalName.Familles);
+      await this.synchroniser(LocalName.Memos);
       await this.synchroniser(LocalName.Magasins);
       await this.synchroniser(LocalName.Plats);
       await this.synchroniser(LocalName.PlatDetails);
@@ -122,7 +122,7 @@ export class StorageService {
   public async synchroniser(localName : string){
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
 
-    if(connexionInfo.modeOnline){
+    if(connexionInfo.isOnline){
 
       const datas : Array<any> = await this.storage.get(localName);
       const elemNotSendToFirebase = await datas.filter(data =>  !data.isFirebase);
