@@ -13,9 +13,21 @@ export class CoursesService {
 
   public async getCourse(){
     const courses : Array<Courses> = await this.storage.get(LocalName.Courses);
-    return this.sortByOrdreDesc(courses);
+    return this.sortByOrdreAsc(courses);
   }
 
+  sortByOrdreAsc(courses : Array<Courses>){
+    return courses.sort((a,b) => {
+      let x  = a.ordre;
+      let y  = b.ordre;
+      if(x > y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
+  }
   sortByOrdreDesc(courses : Array<Courses>){
     return courses.sort((a,b) => {
       let x  = a.ordre;

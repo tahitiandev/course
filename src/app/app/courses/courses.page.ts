@@ -104,10 +104,13 @@ export class CoursesPage implements OnInit {
     const infoConnexion = await this.utility.getConnexionInfo();
     infoConnexion.isCourseAfficher = this.isAfficherCourseCloturer;
     await this.utility.putConnexionInfo(infoConnexion);
-    this.refresh();
+    await this.refresh();
   }
   
   public async refresh(){
+    const infoConnexion = await this.utility.getConnexionInfo();
+    this.isAfficherCourseCloturer = infoConnexion.isCourseAfficher;
+
     const courses : Array<Courses> = await this.get();
     this.courses = courses.filter(s => s.deletedOn === undefined || s.deletedOn === null);
     
@@ -117,8 +120,6 @@ export class CoursesPage implements OnInit {
     const payeurs = await this.getPayeurs();
     this.payeurs = payeurs;
 
-    const infoConnexion = await this.utility.getConnexionInfo();
-    this.isAfficherCourseCloturer = infoConnexion.isCourseAfficher;
 
   }
   
@@ -228,6 +229,7 @@ export class CoursesPage implements OnInit {
 
   public async activer(course : Courses){
     course.actif = !course.actif
+    course.isFocus = false;
     await this.coursesService.putCourse(course);
     await this.refresh();
   }
