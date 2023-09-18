@@ -196,7 +196,7 @@ export class CoursesPage implements OnInit {
 
             var course : Courses = {
               id : Date.now(),
-              ordre : this.generateOrdreCourse(),
+              ordre : await this.generateOrdreCourse(),
               magasinId : magasinId,
               montantTheorique : 0,
               montantReel : 0,
@@ -205,11 +205,9 @@ export class CoursesPage implements OnInit {
               actif : true,
               isFirebase : false
             }
-
-            console.log(course.ordre)
             
-            // await this.coursesService.postCourse(course);
-            // await this.refresh();
+            await this.coursesService.postCourse(course);
+            await this.refresh();
 
           }
         }
@@ -220,8 +218,8 @@ export class CoursesPage implements OnInit {
     await alert.present();
   }
 
-  private generateOrdreCourse(){
-    const courses = this.coursesService.sortByOrdreDesc(this.courses).pop();
+  private async generateOrdreCourse(){
+    const courses = await this.coursesService.sortByOrdreDesc(this.courses).pop();
     return Number(courses?.ordre) + 1;
   }
 
