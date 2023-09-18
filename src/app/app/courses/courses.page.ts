@@ -205,9 +205,11 @@ export class CoursesPage implements OnInit {
               actif : true,
               isFirebase : false
             }
+
+            console.log(course.ordre)
             
-            await this.coursesService.postCourse(course);
-            await this.refresh();
+            // await this.coursesService.postCourse(course);
+            // await this.refresh();
 
           }
         }
@@ -245,7 +247,6 @@ export class CoursesPage implements OnInit {
     const index = await courses.findIndex(courses => course.id === courses.id);
     courses[index].isFocus = true;
     await this.storage.set(LocalName.Courses, courses);
-    console.log(courses)
     this.refresh();
   }
 

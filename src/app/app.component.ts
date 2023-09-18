@@ -54,10 +54,6 @@ export class AppComponent {
         {
           id : 0,
           libelle : 'Administrateurs'
-        },
-        {
-          id : Date.now(),
-          libelle : 'Utilisateur divers'
         }
     ]);
     }
@@ -104,38 +100,7 @@ export class AppComponent {
     
     const familles = await this.storage.get(LocalName.Familles);
     if(familles === null){
-      await this.storage.set(LocalName.Familles, [
-        {
-          id : 0,
-          libelle : 'Non classé',
-          createdOn : new Date()
-        },
-        {
-          id : Date.now(),
-          libelle : 'Boissons',
-          createdOn : new Date()
-        },
-        {
-          id : Date.now() + 1,
-          libelle : 'Bébé',
-          createdOn : new Date()
-        },
-        {
-          id : Date.now() + 2,
-          libelle : 'Conserves',
-          createdOn : new Date()
-        },
-        {
-          id : Date.now() + 3,
-          libelle : 'Divers',
-          createdOn : new Date()
-        },
-        {
-          id : Date.now() + 4,
-          libelle : 'Frais',
-          createdOn : new Date()
-        },
-      ]);
+      await this.storage.set(LocalName.Familles, []);
     }
     
     const magasins = await this.storage.get(LocalName.Magasins);
