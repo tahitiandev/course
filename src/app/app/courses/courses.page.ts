@@ -37,8 +37,10 @@ export class CoursesPage implements OnInit {
 
   public handleRefresh(event : any) {
     this.storageService.synchroniser(LocalName.Courses).then(()=> {
-      this.refresh();
-      event.target.complete()
+      this.storageService.synchroniser(LocalName.CourseDetails).then(()=> {
+        event.target.complete()
+        this.refresh();
+      })
     })
   }
 
