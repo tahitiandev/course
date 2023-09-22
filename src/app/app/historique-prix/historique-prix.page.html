@@ -8,7 +8,22 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ul *ngFor="let histo of historiqueprix">
-    <li>{{ histo.libelle }} {{ histo.prixAncien }} {{ histo.prixNouveau }} {{ histo.magasinid }}</li>
-  </ul>
+  
+  <ion-list style="margin-top: 10px;">
+    <ion-item-sliding *ngFor="let histo of historiqueprix">
+      <ion-item button>
+          <ion-icon style="margin-right: 10px;" name="trending-up-outline" *ngIf="histo.prixAncien < histo.prixNouveau"></ion-icon>
+          <ion-icon style="margin-right: 10px;" name="trending-down-outline" *ngIf="histo.prixAncien > histo.prixNouveau"></ion-icon>
+            {{ histo.libelle }} - {{ histo.prixAncien }} XPF > {{ histo.prixNouveau }} XPF {{ getLibelleMagasin(histo.magasinid) }}
+       </ion-item>
+
+       <ion-item-options side="start">
+        <ion-item-option style="background: red;" (click)="deleteDefinitivement(histo)">
+          Supprimer   
+        </ion-item-option>
+        </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+
 </ion-content>
