@@ -53,6 +53,10 @@ export class CoursesService {
     await this.storage.delete(LocalName.Courses, course);
   }
 
+  public async deleteCourseDefinitivement(course : Courses){
+    await this.storage.deleteDefinitivement(LocalName.Courses, course);
+  }
+
   public async getCourseById(id : number){
     const courses : Array<Courses> = await this.getCourse();
     return await courses.find(course => course.id == id);

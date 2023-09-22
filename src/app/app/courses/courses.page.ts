@@ -237,7 +237,7 @@ export class CoursesPage implements OnInit {
   }
 
   public async supprimer(course : Courses){
-    await this.coursesService.deleteCourse(course);
+    await this.coursesService.deleteCourseDefinitivement(course);
     await this.refresh();
   }
 
