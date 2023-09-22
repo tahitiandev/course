@@ -198,21 +198,14 @@ export class CourseDetailsPage implements OnInit {
 
             var articleSave : Array<Articles> = await this.articlesService.getArticleByCodeBarre(codeBarre);
 
-            var coursedetails : CourseDetails = {
-              id : Date.now(),
-              ordre : 1,
-              courseId : this.courseid,
-              libelle : libelleRenseigne,
-              quantite : quantiteRenseigne,
-              articleId : articleSave[0].id == undefined || articleSave[0].id == null ? 0 : articleSave[0].id,
-              prixArticle : prixRenseigne,
-              prixReel : prixRenseigne,
-              checked : false,
-              total : prixRenseigne * quantiteRenseigne,
-              isFirebase : false
-            }
+            // Mise à jour des données du panier
+            coursedetail.libelle = libelleRenseigne;
+            coursedetail.quantite = quantiteRenseigne;
+            coursedetail.prixReel = prixRenseigne;
+            coursedetail.articleId = articleSave[0].id == undefined || articleSave[0].id == null ? 0 : articleSave[0].id;
+            coursedetail.total = prixRenseigne * quantiteRenseigne
 
-            await this.coursesService.postCourseDetails(coursedetails);
+            await this.coursesService.putCourseDetails(coursedetail);
             await this.refresh();
           }
         }
@@ -231,7 +224,7 @@ export class CourseDetailsPage implements OnInit {
   private async setArticleOnLocalStorageWithCodeBarre(codeBarre : any){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'L\'article n\'existe pas, veuillez la créé',
+      header: 'L\'article n\'existe pas, veuillez le créé',
       inputs: [
         {
           type : 'text',
@@ -350,11 +343,16 @@ export class CourseDetailsPage implements OnInit {
     if(coursedetail.length > 0){
       coursedetail.map(coursedetail => totalCourse += coursedetail.total)
       this.totalCourse = totalCourse;
-
       this.course.montantReel = totalCourse;
       this.course.montantTheorique = totalCourse;
-      this.coursesService.putCourse(this.course);
     }
+    else{
+      this.totalCourse = 0;
+      this.course.montantReel = 0;
+      this.course.montantTheorique = 0;
+    }
+
+    this.coursesService.putCourse(this.course);
   }
 
   public getId(){
@@ -639,24 +637,6 @@ export class CourseDetailsPage implements OnInit {
 
                   await this.putPrixFicheArticle(articles,Number(prixArticle));
 
-                  // historique prix
-                  const indexMagasinPrix = articles.prix.findIndex(prix => prix.magasin === this.course.magasinId);
-
-                  const historique : HistoriquePrix = {
-                    id : Number(new Date()),
-                    articleId : articles.id,
-                    libelle : articles.libelle,
-                    prixAncien : articles.prix[indexMagasinPrix].prix,
-                    prixNouveau : coursedetails.prixReel,
-                    magasinid : this.course.magasinId,
-                    date : new Date(),
-                    isFirebase : false
-                  }
-
-                  await this.historiqueprixservice.post(historique);
-
-                  await this.refresh();
-
                 }else{
                   await this.refresh();
                 }  
@@ -676,7 +656,7 @@ export class CourseDetailsPage implements OnInit {
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Le prix renseigné est différé du prix de la fiche article. Souhaitez-vous la mettre à jour ?',
+      header: 'Le prix renseigné est différé du prix de la fiche article. Souhaitez-vous le mettre à jour ?',
       inputs: [],
         buttons: [
         {
@@ -728,8 +708,6 @@ export class CourseDetailsPage implements OnInit {
 
   public async put(coursedetail : CourseDetails){
 
-    const inputs : Array<AlertInput> = [];
-
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Renseigner le prix et la quantité souhaitée',
@@ -780,11 +758,15 @@ export class CourseDetailsPage implements OnInit {
               // fix à changer au plus vite car il ne marche pas si on modifie une deuxième fois
               if(coursedetail.libelle !== 'Sans titre'){
 
+                const article = await this.articlesService.getArticleById(coursedetail.articleId);
+                const indexPrixMagasin = await article[0].prix.findIndex(prixmagasin => prixmagasin.magasin === this.course.magasinId);
+
                 this.putArticleOnDatabase({
                   articleId : coursedetail.articleId,
-                  prix : Number(data.prix),
+                  prixNouveau : Number(data.prix),
+                  prixAncien : Number(article[0].prix[indexPrixMagasin].prix),
                   magasinId : this.course.magasinId,
-                  coursedetail : coursedetail
+                  coursedetail : coursedetail,
                 })
               }
             }
@@ -815,14 +797,15 @@ export class CourseDetailsPage implements OnInit {
         ,{
           text: 'Oui',
           handler: async () => {
+
             var article : Array<Articles> = await this.articleservice.getArticleById(Number(data.articleId));
             var indexPrix = await article[0].prix.findIndex(prix => prix.magasin == data.magasinId);
             var ancienprixmagasin = article[0].prix[indexPrix];
 
-            article[0].prix[indexPrix].prix = data.prix
+            article[0].prix[indexPrix].prix = data.prixNouveau
             await this.articleservice.put(article[0]);
             
-            data.coursedetail.prixArticle = data.prix;
+            data.coursedetail.prixArticle = data.prixNouveau;
             await this.coursesService.putCourseDetails(data.coursedetail);
             
 
@@ -831,9 +814,9 @@ export class CourseDetailsPage implements OnInit {
               id : Number(new Date()),
               articleId : article[0].id,
               libelle : article[0].libelle,
-              prixAncien : ancienprixmagasin.prix,
-              prixNouveau : data.prix,
-              magasinid : ancienprixmagasin.magasin,
+              prixAncien : data.prixAncien,
+              prixNouveau : data.prixNouveau,
+              magasinid : this.course.magasinId,
               date : new Date(),
               isFirebase : false
             }
