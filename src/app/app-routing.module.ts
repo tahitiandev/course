@@ -69,6 +69,10 @@ const routes: Routes = [
   {
     path: 'memo',
     loadChildren: () => import('./app/memo/memo.module').then( m => m.MemoPageModule)
+  },
+  {
+    path: 'historique-prix',
+    loadChildren: () => import('./app/historique-prix/historique-prix.module').then( m => m.HistoriquePrixPageModule)
   }
 
 

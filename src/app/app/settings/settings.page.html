@@ -35,7 +35,12 @@
   <ion-item>
     <ion-toggle [checked]="isOnline" (ionChange)="setModeOnline($event)">Mode Online</ion-toggle>
   </ion-item>
-
+  
+  <ion-item button detail="true" routerLink="/historique-prix">
+    <ion-label>
+      <h3>Historique des prix</h3>
+    </ion-label>
+  </ion-item>
 
 
 </ion-content>

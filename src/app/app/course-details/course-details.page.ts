@@ -10,6 +10,8 @@ import { UtilityService } from '../../services/utility.service';
 import { BarreCodeService } from 'src/app/services/barre-code.service';
 import { MemoService } from 'src/app/services/memo.service';
 import { Memos } from 'src/app/models/Memos';
+import { HistoriquePrixService } from 'src/app/services/historique-prix.service';
+import { HistoriquePrix } from 'src/app/models/HistoriquePrix';
 
 @Component({
   selector: 'app-course-details',
@@ -43,6 +45,7 @@ export class CourseDetailsPage implements OnInit {
               private utility : UtilityService,
               private codeBarre : BarreCodeService,
               private articlesService : ArticlesService,
+              private historiqueprixservice : HistoriquePrixService,
               private memoservice : MemoService,
               private route : ActivatedRoute) { }
 
@@ -74,19 +77,17 @@ export class CourseDetailsPage implements OnInit {
   public async postArticleWithCalculator(){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'L\'article n\'existe pas, veuillez la créé',
+      header: 'Ajouter un élement au panier',
       inputs: [
         {
           type : 'number',
           name : 'prix',
-          label : 'PRIX',
-          placeholder : 'PRIX'
+          placeholder : 'Prix'
         },
         {
           type : 'number',
           name : 'quantite',
-          label : 'QUANTITE',
-          placeholder : 'QUANTITE'
+          placeholder : 'Quantité'
         },
       ],
         buttons: [
@@ -101,17 +102,21 @@ export class CourseDetailsPage implements OnInit {
         ,{
           text: 'Valider',
           handler: async (data) => {
+
+            var quantiteRenseigne = data.quantite == '' ? 1 : Number(data.quantite);
+            var prixRenseigne = data.prix == '' ? 100 : Number(data.prix);
+
             var coursedetails : CourseDetails = {
               id : Date.now(),
               ordre : 1,
               courseId : this.courseid,
               libelle : 'Sans titre',
-              quantite : data.quantite,
+              quantite : quantiteRenseigne,
               articleId : 0,
-              prixArticle : data.prix,
-              prixReel : data.prix,
-              checked : true,
-              total : data.quantite * data.prix,
+              prixArticle : prixRenseigne,
+              prixReel : prixRenseigne,
+              checked : false,
+              total : prixRenseigne * quantiteRenseigne,
               isFirebase : false
             }
 
@@ -129,6 +134,99 @@ export class CourseDetailsPage implements OnInit {
       return;
     });
   }
+
+  public async associerUnCodeBarreAArticleSansTitre(coursedetail : CourseDetails){
+    const codeBarre = await this.scanne();
+    await this.setArticleArticleSanstitre(coursedetail, codeBarre)
+  }
+
+  private async setArticleArticleSanstitre(coursedetail : CourseDetails, codeBarre : any){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Ajouter un élement au panier',
+      inputs: [
+        {
+          type : 'text',
+          name : 'libelle',
+          placeholder : 'Libelle'
+        },
+        {
+          type : 'number',
+          name : 'prix',
+          placeholder : coursedetail.prixReel.toString() + ' xpf'
+        },
+        {
+          type : 'number',
+          name : 'quantite',
+          placeholder : 'Qté: ' + coursedetail.quantite.toString()
+        },
+      ],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (data) => {
+
+            var quantiteRenseigne = data.quantite == '' ? 1 : Number(data.quantite);
+            var prixRenseigne = data.prix == '' ? 100 : Number(data.prix);
+            var libelleRenseigne = data.libelle == '' ? 'Prix' : data.libelle;
+
+            var article : Articles = {
+              id : 0,
+              libelle : libelleRenseigne,
+              createdOn : new Date(),
+              groupeId : [0],
+              familleId : 0,
+              codeBarre : codeBarre,
+              isFirebase : false,
+              prix : [
+                {
+                  magasin : this.course.magasinId,
+                  prix : prixRenseigne
+                }
+              ]
+            }
+
+            await this.articlesService.post(article);
+
+            var articleSave : Array<Articles> = await this.articlesService.getArticleByCodeBarre(codeBarre);
+
+            var coursedetails : CourseDetails = {
+              id : Date.now(),
+              ordre : 1,
+              courseId : this.courseid,
+              libelle : libelleRenseigne,
+              quantite : quantiteRenseigne,
+              articleId : articleSave[0].id == undefined || articleSave[0].id == null ? 0 : articleSave[0].id,
+              prixArticle : prixRenseigne,
+              prixReel : prixRenseigne,
+              checked : false,
+              total : prixRenseigne * quantiteRenseigne,
+              isFirebase : false
+            }
+
+            await this.coursesService.postCourseDetails(coursedetails);
+            await this.refresh();
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
+  }
+
 
   private async setArticleOnLocalStorageWithCodeBarre(codeBarre : any){
     const alert = await this.alertController.create({
@@ -289,7 +387,7 @@ export class CourseDetailsPage implements OnInit {
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Ou souhaitez-vous faire vos courses ?',
+      header: 'Ajouter un élément à votre panier ?',
       inputs: inputs,
         buttons: [
         {
@@ -342,15 +440,13 @@ export class CourseDetailsPage implements OnInit {
         },
         {
           type : 'number',
-          value : 1,
-          label : 'Quantité',
+          placeholder : 'Qté : 1',
           name : 'quantite'
         },
         {
           type : 'number',
-          label : 'Prix',
-          name : 'prix',
-          value : 1000
+          placeholder : 'Prix : 1000 xpf',
+          name : 'prix'
         }
       ],
         buttons: [
@@ -366,13 +462,16 @@ export class CourseDetailsPage implements OnInit {
           text: 'Valider',
           handler: async (data : any) => {
 
+            var prixGood = data.prix === '' ? 1000 : Number(data.prix);
+            var quantiteGood = data.quantite === '' ? 1 : Number(data.quantite);
+
               var article : Articles = {
                 id : this.utility.generateId(),
                 libelle : data.libelle,
                 prix : [
                   {
                     magasin : this.course.magasinId,
-                    prix : Number(data.prix)
+                    prix : prixGood
                   }
                 ],
                 createdOn : new Date(),
@@ -389,12 +488,12 @@ export class CourseDetailsPage implements OnInit {
                 ordre : 1,
                 courseId : this.courseid,
                 libelle : article.libelle,
-                quantite : data.quantite,
+                quantite : quantiteGood,
                 articleId : article.id,
                 prixArticle : article.prix[0].prix,
-                prixReel : data.prix,
+                prixReel : prixGood,
                 checked : false,
-                total : data.quantite * data.prix,
+                total : quantiteGood * prixGood,
                 isFirebase : false
               }
 
@@ -533,12 +632,29 @@ export class CourseDetailsPage implements OnInit {
   
                 await this.coursesService.postCourseDetails(coursedetails);
 
-                if(coursedetails.prixArticle !== coursedetails.prixReel){
+                if(coursedetails.prixReel !== coursedetails.prixArticle){
 
                   const index = articles.prix.findIndex(prix => prix.magasin === this.course.magasinId);
                   articles.prix[index].prix = Number(coursedetails.prixReel);
 
-                  await this.putPrixFicheArticle(articles);
+                  await this.putPrixFicheArticle(articles,Number(prixArticle));
+
+                  // historique prix
+                  const indexMagasinPrix = articles.prix.findIndex(prix => prix.magasin === this.course.magasinId);
+
+                  const historique : HistoriquePrix = {
+                    id : Number(new Date()),
+                    articleId : articles.id,
+                    libelle : articles.libelle,
+                    prixAncien : articles.prix[indexMagasinPrix].prix,
+                    prixNouveau : coursedetails.prixReel,
+                    magasinid : this.course.magasinId,
+                    date : new Date(),
+                    isFirebase : false
+                  }
+
+                  await this.historiqueprixservice.post(historique);
+
                   await this.refresh();
 
                 }else{
@@ -556,7 +672,7 @@ export class CourseDetailsPage implements OnInit {
 
   }
 
-  private async putPrixFicheArticle(article : Articles){
+  private async putPrixFicheArticle(article : Articles, ancienPrix : number){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -576,6 +692,23 @@ export class CourseDetailsPage implements OnInit {
           handler: async () => {
             
             await this.articlesService.put(article);
+
+            // historique prix
+            const indexMagasinPrix = article.prix.findIndex(prix => prix.magasin === this.course.magasinId);
+
+            const historique : HistoriquePrix = {
+              id : Number(new Date()),
+              articleId : article.id,
+              libelle : article.libelle,
+              prixAncien : ancienPrix,
+              prixNouveau : article.prix[indexMagasinPrix].prix,
+              magasinid : article.prix[indexMagasinPrix].magasin,
+              date : new Date(),
+              isFirebase : false
+            }
+
+            await this.historiqueprixservice.post(historique);
+
             this.refresh();
 
         }
@@ -644,12 +777,16 @@ export class CourseDetailsPage implements OnInit {
             if(data.prix == coursedetail.prixArticle){
               await this.refresh();
             }else{
-              this.putArticleOnDatabase({
-                articleId : coursedetail.articleId,
-                prix : Number(data.prix),
-                magasinId : this.course.magasinId,
-                coursedetail : coursedetail
-              })
+              // fix à changer au plus vite car il ne marche pas si on modifie une deuxième fois
+              if(coursedetail.libelle !== 'Sans titre'){
+
+                this.putArticleOnDatabase({
+                  articleId : coursedetail.articleId,
+                  prix : Number(data.prix),
+                  magasinId : this.course.magasinId,
+                  coursedetail : coursedetail
+                })
+              }
             }
 
           }
@@ -678,16 +815,31 @@ export class CourseDetailsPage implements OnInit {
         ,{
           text: 'Oui',
           handler: async () => {
-            var article : Array<Articles> = await this.articleservice.getArticleById(data.articleId);
+            var article : Array<Articles> = await this.articleservice.getArticleById(Number(data.articleId));
             var indexPrix = await article[0].prix.findIndex(prix => prix.magasin == data.magasinId);
+            var ancienprixmagasin = article[0].prix[indexPrix];
+
             article[0].prix[indexPrix].prix = data.prix
             await this.articleservice.put(article[0]);
-
+            
             data.coursedetail.prixArticle = data.prix;
-            await this.coursesService.putCourse(data.coursedetail);
-            await this.refresh();
+            await this.coursesService.putCourseDetails(data.coursedetail);
             
 
+            // historique prix
+            const historique : HistoriquePrix = {
+              id : Number(new Date()),
+              articleId : article[0].id,
+              libelle : article[0].libelle,
+              prixAncien : ancienprixmagasin.prix,
+              prixNouveau : data.prix,
+              magasinid : ancienprixmagasin.magasin,
+              date : new Date(),
+              isFirebase : false
+            }
+
+            await this.historiqueprixservice.post(historique);            
+            await this.refresh();
           }
         }
         

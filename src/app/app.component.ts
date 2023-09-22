@@ -105,21 +105,14 @@ export class AppComponent {
     
     const magasins = await this.storage.get(LocalName.Magasins);
     if(magasins === null){
-      await this.storage.set(LocalName.Magasins, [
-        {
-          id : 0,
-          libelle : 'Carrefour Arue',
-          createdOn : new Date()
-        },
-        {
-          id : 1,
-          libelle : 'Hyper U Pirae',
-          createdOn : new Date()
-        },
-      ]);
+      await this.storage.set(LocalName.Magasins, []);
+    }
+
+    const historiquePrix = await this.storage.get(LocalName.HistoriquePrix);
+    if(historiquePrix === null){
+      await this.storage.set(LocalName.HistoriquePrix, []);
     }
     
-
     const infoConnexion = await this.storage.get(LocalName.InfoConnexion);
     if(infoConnexion === null){
 

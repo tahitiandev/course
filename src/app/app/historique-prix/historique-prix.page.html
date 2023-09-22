@@ -1,0 +1,14 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/settings"></ion-back-button>
+    </ion-buttons>
+    <ion-title>historiquePrix</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ul *ngFor="let histo of historiqueprix">
+    <li>{{ histo.libelle }} {{ histo.prixAncien }} {{ histo.prixNouveau }} {{ histo.magasinid }}</li>
+  </ul>
+</ion-content>
