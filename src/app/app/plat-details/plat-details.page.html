@@ -1,6 +1,9 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>plat-details</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/plats"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="text-align: center;">{{ plat.libelle }} - Total : {{ plat.total }} XPF</ion-title>
   </ion-toolbar>
 </ion-header>
 

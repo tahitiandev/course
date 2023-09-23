@@ -39,6 +39,7 @@ export class StorageService {
 
   public async post(localName : string, data : any){
     var datas : Array<any> = await this.getAll(localName);
+    data.id = Number(new Date());
     data.createdOn = new Date();
     data.modifiedOn = null;
     data.deletedOn = null;
