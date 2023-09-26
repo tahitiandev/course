@@ -3,8 +3,7 @@ import { Articles } from "./Articles";
 export interface PlatDetails{
     id : number;
     ordre : number;
-    courseId : number;
-    libelle : string;
+    platId : number;
     quantite : number;
     article : Articles;
     total : number;

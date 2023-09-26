@@ -66,5 +66,9 @@ export class PlatsPage implements OnInit {
 
     await alert.present();
   }
-
+  
+  public async delete(plat : Plats){
+    await this.platservice.deleteDefinitivement(plat);
+    await this.refresh();
+  }
 }

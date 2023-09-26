@@ -27,6 +27,14 @@ export class PlatsService {
     await this.storage.delete(LocalName.Plats, plat);
   }
 
+  public async deleteDefinitivement(plat : Plats){
+    await this.storage.deleteDefinitivement(LocalName.Plats, plat);
+    var platdetails : Array<PlatDetails> = await this.getPlatDetails(plat.id);
+    await platdetails.map(async (platdetail) => {
+      await this.deleteDefinitivementPlatDetail(platdetail);
+    })
+  }
+
   public async getPlatById(id : number){
     const plats = await this.get();
     return await plats.find(plats => plats.id === id);
@@ -45,15 +53,15 @@ export class PlatsService {
     })
   }
 
-  public async getPlatDetails(courseId : number){
+  public async getPlatDetails(platId : number){
     const platDetails = await this.storage.get(LocalName.PlatDetails);
-    return await platDetails.filter((platdetails : PlatDetails) => platdetails.courseId === courseId);
+    return await platDetails.filter((platdetails : PlatDetails) => platdetails.platId === platId);
   }
 
   public async postPlatDetail(platDetail : PlatDetails){
 
 
-    var platdetails : Array<PlatDetails> = await this.getPlatDetails(platDetail.courseId);
+    var platdetails : Array<PlatDetails> = await this.getPlatDetails(platDetail.platId);
     var platDetailOrderByOrdre : Array<PlatDetails> = this.sortByOrdre(platdetails);
 
     if(platDetailOrderByOrdre.length > 0){
@@ -70,6 +78,10 @@ export class PlatsService {
 
   public async deletePlatDetail(platDetail : PlatDetails){
     await this.storage.delete(LocalName.PlatDetails, platDetail);
+  }
+
+  public async deleteDefinitivementPlatDetail(platDetail : PlatDetails){
+    await this.storage.deleteDefinitivement(LocalName.PlatDetails, platDetail);
   }
 
 }

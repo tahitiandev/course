@@ -112,6 +112,11 @@ export class AppComponent {
     if(historiquePrix === null){
       await this.storage.set(LocalName.HistoriquePrix, []);
     }
+
+    const platdetails = await this.storage.get(LocalName.PlatDetails);
+    if(platdetails === null){
+      await this.storage.set(LocalName.PlatDetails, []);
+    }
     
     const infoConnexion = await this.storage.get(LocalName.InfoConnexion);
     if(infoConnexion === null){
