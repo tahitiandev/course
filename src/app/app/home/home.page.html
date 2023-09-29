@@ -11,9 +11,16 @@
 
 <ion-content [fullscreen]="true">
 
-  <!-- <ion-datetime value="today" min="today" max="today"></ion-datetime> -->
+  <ion-button style="display: block; margin: auto; width: 60%; margin-top: 10px;" 
+  (click)="changeDate()" shape="round">Modifier la date</ion-button>
 
-  <table>
+  <div style="margin: 50px;" *ngIf="isInputDateActif">
+    <ion-datetime presentation="month-year" (ionChange)="selectDateTime($event)"></ion-datetime>
+  </div>
+
+  
+  <table *ngIf="!isInputDateActif">
+    <h5 style="margin-right: 10px;">Dépense de {{ month }}</h5>
     <tr style="background: rgb(135, 71, 207);">
       <th>Utilisateurs</th>
       <th>Dépenses</th>

@@ -15,7 +15,10 @@ export class HomePage implements OnInit {
   utilisateurs : Array<Utilisateurs> = [];
   courses : Array<Courses> = [];
   utilisateurByDepense : Array<any> = [];
-  // today : any;
+  year : any;
+  day : any;
+  month : any;
+  isInputDateActif = false;
 
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
@@ -26,8 +29,15 @@ export class HomePage implements OnInit {
   async ngOnInit() {
     await this.refresh();
     await this.redirection();
+    var today = this.getToday();
+    this.year = today.year;
+    this.day = today.day;
+    this.month = today.month;
     await this.statsUtilisateursByDepense();
-    // this.today = await new Date().toISOString().split('T')[0] + 'T00:00:00';
+  }
+
+  public changeDate(){
+    this.isInputDateActif = !this.isInputDateActif;
   }
 
   private async redirection(){
@@ -37,13 +47,28 @@ export class HomePage implements OnInit {
     }
   }
 
+  private getToday(){
+    const today = new Date();
+
+    const day = today.getUTCDate();
+    const month = today.getUTCMonth() + 1
+    const year = today.getUTCFullYear();
+
+    return {
+      day : day,
+      month : month,
+      year : year,
+      full : today.toLocaleDateString('en-GB')
+    }
+  }
+
   private async refresh(){
     this.courses = await this.getCourses();
     this.utilisateurs = await this.getUtilisateurs();
   }
 
   private async getUtilisateurs(){
-    return await this.utilisateursService.get();
+    return (await this.utilisateursService.get()).filter(utilisateur => utilisateur.id !== 0);
   
   }
   private async getCourses(){
@@ -56,9 +81,14 @@ export class HomePage implements OnInit {
     var depenses = 0
     this.utilisateurs.map(utiliateur => {
       this.courses.map(course => {
-        if(course.payeurId === utiliateur.id){
-            depenses += course.montantReel
-        }
+        if(new Date(course.date).getUTCFullYear() == this.year){
+          if((new Date(course.date).getUTCMonth() + 1) == this.month){
+            if(course.payeurId === utiliateur.id){
+              depenses += course.montantReel
+            }
+          } // month
+        } // year
+
       })
       result.push({
         utilisateur : utiliateur.libelle,
@@ -70,6 +100,16 @@ export class HomePage implements OnInit {
 
     this.utilisateurByDepense = result;
   
+  }
+
+  public async selectDateTime(datetime : any){
+    this.utilisateurByDepense = [];
+
+    var data = datetime.detail.value
+    this.month = await new Date(data).getUTCMonth() + 1;
+    this.year = await new Date(data).getUTCFullYear();
+
+    await this.statsUtilisateursByDepense();
   }
   
 
