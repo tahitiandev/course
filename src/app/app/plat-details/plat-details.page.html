@@ -7,7 +7,17 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content *ngIf="isRechercheAvancee">
+  <app-search-article-plat
+    (articlesOutput)="selectArticle($event)"></app-search-article-plat>
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom" >
+      <ion-fab-button size="small" (click)="setIsRechercheAvance()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+</ion-content>
+
+<ion-content [fullscreen]="true" *ngIf="!isRechercheAvancee">
   <br>
   <ion-list>
     <ion-item-sliding *ngFor="let platdetail of platdetails">
@@ -20,6 +30,11 @@
       <ion-item-options side="start">
         <ion-item-option style="background: red;" (click)="retirer(platdetail)">
           Retirer    
+        </ion-item-option>
+      </ion-item-options>
+      <ion-item-options side="end">
+        <ion-item-option style="background: rgb(0, 183, 255);" (click)="sendToCourse(platdetail)">
+          Ajouter au panier    
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>

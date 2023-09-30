@@ -2,10 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController, AlertInput } from '@ionic/angular';
 import { Articles } from 'src/app/models/Articles';
+import { CourseDetails } from 'src/app/models/Course-details';
+import { Courses } from 'src/app/models/Courses';
 import { PlatDetails } from 'src/app/models/Plat-details';
 import { Plats } from 'src/app/models/Plats';
 import { ArticlesService } from 'src/app/services/articles.service';
+import { CoursesService } from 'src/app/services/courses.service';
 import { PlatsService } from 'src/app/services/plats.service';
+import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-plat-details',
@@ -24,14 +28,22 @@ export class PlatDetailsPage implements OnInit {
   }
   platdetails : Array<PlatDetails> = [];
   totalPlat = 0;
+  isRechercheAvancee = false;
 
   constructor(private route : ActivatedRoute,
               private alertController : AlertController,
               private articleservice : ArticlesService,
+              private courseservice : CoursesService,
+              private utility : UtilityService,
               private platservice : PlatsService) { }
 
   async ngOnInit() {
     await this.refresh();
+  }
+
+  public async selectArticle(article : Articles){
+    await this.postQuantite(article);
+    this.setIsRechercheAvance();
   }
 
   public async refresh(){
@@ -42,6 +54,10 @@ export class PlatDetailsPage implements OnInit {
     var platdetail : Array<PlatDetails> = await this.platservice.getPlatDetails(+id);
     this.platdetails = platdetail;
     this.calculeTotal();
+  }
+
+  setIsRechercheAvance(){
+    this.isRechercheAvancee = !this.isRechercheAvancee;
   }
 
   public async post(){
@@ -67,6 +83,13 @@ export class PlatDetailsPage implements OnInit {
           cssClass: 'secondary',
           handler: () => {
 
+          }
+        },
+        {
+          text: 'Recherche avancée',
+          cssClass: 'secondary',
+          handler: () => {
+            this.setIsRechercheAvance();
           }
         }
         ,{
@@ -190,6 +213,27 @@ private async put(platdetail : PlatDetails){
   public async retirer(platdetail : PlatDetails){
     await this.platservice.deleteDefinitivementPlatDetail(platdetail);
     await this.refresh();
+  }
+
+  public async sendToCourse(platdetail : PlatDetails){
+    const course : Array<Courses> = await this.courseservice.getCourseIsFocus();
+    const prix = platdetail.article.prix.find(prix => prix.magasin === course[0].magasinId);
+    const coursedetail : CourseDetails = {
+      id : Number(new Date()),
+      ordre : 0,
+      courseId : course[0].id.toString(),
+      libelle : platdetail.article.libelle,
+      quantite : platdetail.quantite,
+      articleId : platdetail.article.id,
+      prixArticle : prix === undefined ? platdetail.article.prix[0].prix : prix.prix,
+      prixReel : prix === undefined ? platdetail.article.prix[0].prix : prix.prix,
+      total : Number(platdetail.quantite * (prix === undefined ? platdetail.article.prix[0].prix : prix.prix)),
+      checked : false,
+      isFirebase : false
+    }
+    await this.courseservice.postCourseDetails(coursedetail);
+    this.utility.popUp('Article ajouté au panier')
+    this.refresh();
   }
 
 

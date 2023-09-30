@@ -67,9 +67,35 @@ export class CoursesService {
     return courseDetails.filter(coursedetail => coursedetail.courseId === courseId && coursedetail.deletedOn !== undefined);
   }
 
+  private async generateOrdreCourse(){
+    const courses = await this.getCourse();
+    const coursesLast = await this.sortByOrdreDesc(courses).pop();
+    return Number(coursesLast?.ordre) + 1;
+  }
+
   public async getCourseIsFocus(){
     const courses : Array<Courses> = await this.getCourse();
-    return await courses.filter(course => course.isFocus);
+    const result = await courses.filter(course => course.isFocus);
+    if(result.length > 0){
+
+      return result;
+
+    }else{
+      await this.postCourse({
+        id : 0,
+        ordre : await this.generateOrdreCourse(),
+        magasinId : 0,
+        montantTheorique : 0,
+        montantReel : 0,
+        ecart : 0,
+        date : new Date(),
+        actif : true,
+        isFirebase : false,
+        isFocus : true
+      })
+
+      return await courses.filter(course => course.isFocus);
+    }
   }
 
   sortByOrdre(coursedetail : Array<CourseDetails>){
