@@ -106,8 +106,10 @@ export class StorageService {
   public async synchroniserAvecFirestore(){
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
     if(connexionInfo.isOnline){
+      await this.synchroniser(LocalName.Utilisateurs);
       await this.synchroniser(LocalName.Articles);
       await this.synchroniser(LocalName.Courses);
+      await this.synchroniser(LocalName.Familles);
       await this.synchroniser(LocalName.CourseDetails);
       await this.synchroniser(LocalName.Memos);
       await this.synchroniser(LocalName.HistoriquePrix);

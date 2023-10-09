@@ -6,6 +6,7 @@ import { LocalName } from '../../enums/LocalName';
 import { ConnexionInfo } from '../../models/ConnexionInfo';
 import { Utilisateurs } from '../../models/Utilisateurs';
 import { Storage } from '@ionic/storage';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-authentification',
@@ -18,7 +19,7 @@ export class AuthentificationPage implements OnInit {
 
   constructor(private formbuilder : FormBuilder,
               private utility : UtilityService,
-              private storage : Storage,
+              private storage : StorageService,
               private utilisateursService : UtilisateursService) { }
 
   ngOnInit() {
@@ -38,8 +39,6 @@ export class AuthentificationPage implements OnInit {
     const utilisateurs : Array<Utilisateurs> = await this.utilisateursService.get();
     const utilisateur = await utilisateurs.filter(utilisateur => utilisateur.username === data.username);
 
-    // const connexionInfo : ConnexionInfo = await this.utility.getConnexionInfo();
-
     if(utilisateur.length > 0){
       if(utilisateur[0].password === data.password){
 
@@ -52,6 +51,7 @@ export class AuthentificationPage implements OnInit {
         }
 
         await this.storage.set(LocalName.InfoConnexion, infoConnexion);
+        await this.storage.synchroniserAvecFirestore();
         this.utility.navigateTo('home');
       }else{
         console.log('Le mot de passe est incorrecte');

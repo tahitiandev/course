@@ -10,37 +10,65 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  
-  <ion-item button detail="true" (click)="SetmagasinParDefaut()">
-    <ion-label>
-      <h3>Magasin par défaut</h3>
-      <p *ngIf="magasinParDefaut !== ''">{{magasinParDefaut}} est actuellement le magasin par défaut</p>
-    </ion-label>
-  </ion-item>
-  <ion-item button detail="true" (click)="synchroniser()">
-    <ion-label>
-      <h3>Synchroniser les données</h3>
-    </ion-label>
-  </ion-item>
-  <ion-item button detail="true" (click)="synchroniserManuel('Utilisateurs')">
-    <ion-label>
-      <h3>Synchroniser les utilisateurs</h3>
-    </ion-label>
-  </ion-item>
-  <ion-item button detail="true" (click)="synchroniserManuel('Familles')">
-    <ion-label>
-      <h3>Synchroniser les familles d'article</h3>
-    </ion-label>
-  </ion-item>
-  <ion-item>
-    <ion-toggle [checked]="isOnline" (ionChange)="setModeOnline($event)">Mode Online</ion-toggle>
-  </ion-item>
-  
-  <ion-item button detail="true" routerLink="/historique-prix">
-    <ion-label>
-      <h3>Historique des prix</h3>
-    </ion-label>
-  </ion-item>
 
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Synchronisation</ion-label>
+    </ion-item-divider>
+    <ion-item button detail="true" (click)="synchroniser()">
+      <ion-label>
+        <h3>Synchroniser avec firebase</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-toggle [checked]="isOnline" (ionChange)="setModeOnline($event)">Mode Online</ion-toggle>
+    </ion-item>
+    <!-- <ion-item button detail="true" (click)="synchroniserManuel('Utilisateurs')">
+      <ion-label>
+        <h3>Synchroniser les utilisateurs</h3>
+      </ion-label>
+    </ion-item> -->
+    <!-- <ion-item button detail="true" (click)="synchroniserManuel('Familles')">
+      <ion-label>
+        <h3>Synchroniser les familles d'article</h3>
+      </ion-label>
+    </ion-item> -->
+  </ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Général</ion-label>
+    </ion-item-divider>
+    <ion-item button detail="true" (click)="SetmagasinParDefaut()">
+      <ion-label>
+        <h3>Magasin par défaut</h3>
+        <p *ngIf="magasinParDefaut !== ''">{{magasinParDefaut}} est actuellement le magasin par défaut</p>
+      </ion-label>
+    </ion-item>
+  </ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Statistiques</ion-label>
+    </ion-item-divider>
+    <ion-item button detail="true" routerLink="/historique-prix">
+      <ion-label>
+        <h3>Historique des prix</h3>
+      </ion-label>
+    </ion-item>
+  </ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Sécurité</ion-label>
+    </ion-item-divider>
+
+    <ion-item button detail="true" routerLink="/utilisateur-liste">
+      <ion-label>
+        <h3>Utilisateurs</h3>
+      </ion-label>
+    </ion-item>
+
+  </ion-item-group> 
 
 </ion-content>

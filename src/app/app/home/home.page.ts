@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
+import { LocalName } from 'src/app/enums/LocalName';
 import { Courses } from 'src/app/models/Courses';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
 import { CoursesService } from 'src/app/services/courses.service';
+import { StorageService } from 'src/app/services/storage.service';
 import { UtilisateursService } from 'src/app/services/utilisateurs.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
@@ -22,9 +25,9 @@ export class HomePage implements OnInit {
 
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
-              private coursesService : CoursesService) { 
-    this.redirection();
-  }
+              private storageService : StorageService,
+              private navigate : NavController,
+              private coursesService : CoursesService) {   }
 
   async ngOnInit() {
     await this.refresh();
@@ -36,6 +39,13 @@ export class HomePage implements OnInit {
     await this.statsUtilisateursByDepense();
   }
 
+  public handleRefresh(event : any) {
+    this.storageService.synchroniserAvecFirestore().then(()=> {
+      event.target.complete()
+      location.reload();
+    })
+  }
+
   public changeDate(){
     this.isInputDateActif = !this.isInputDateActif;
   }
@@ -43,7 +53,7 @@ export class HomePage implements OnInit {
   private async redirection(){
     const infoConnexion = await this.utility.getConnexionInfo();
     if(!infoConnexion.isConnected){
-      this.utility.navigateTo('authentification');
+      this.navigate.navigateRoot('authentification')
     }
   }
 

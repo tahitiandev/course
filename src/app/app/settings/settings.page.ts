@@ -87,9 +87,9 @@ export class SettingsPage implements OnInit {
   }
 
 
-  public async synchroniserManuel(localname : string){
-    await this.storage.synchroniser(localname);
-  }
+  // public async synchroniserManuel(localname : string){
+  //   await this.storage.synchroniser(localname);
+  // }
 
   public async setModeOnline(e : any){
 

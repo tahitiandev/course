@@ -68,7 +68,8 @@ export class AppComponent {
           password : 'toto',
           email : 'heitaa.gilles1@gmail.com',
           groupeId : 0,
-          actif : 1
+          actif : 1,
+          isFirebase : true
         }
       ]);
     }

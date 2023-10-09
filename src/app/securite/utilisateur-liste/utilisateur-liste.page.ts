@@ -27,7 +27,7 @@ export class UtilisateurListePage implements OnInit {
     return await this.utilisteursService.get();
   }
 
-  private async post(utilisateur : Utilisateurs){
+  public async post(){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Nouveau Magasin',
@@ -35,22 +35,22 @@ export class UtilisateurListePage implements OnInit {
         {
           type : 'text',
           name : 'libelle',
-          label : 'Libellé'
+          placeholder : 'Libellé'
         },
         {
           type : 'text',
           name : 'username',
-          label : 'username'
+          placeholder : 'login'
         },
         {
-          type : 'text',
+          type : 'password',
           name : 'password',
-          label : 'password'
+          placeholder : 'Mot de passe'
         },
         {
-          type : 'text',
+          type : 'email',
           name : 'email',
-          label : 'email'
+          placeholder : 'Email'
         }
       ],
       buttons: [
