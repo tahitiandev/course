@@ -65,4 +65,9 @@ export class UtilisateurGroupesPage implements OnInit {
     this.groupes = groupes;
   }
 
+  public async deleteDefinitivement(groupe : UtilisateurGroupes){
+    await this.groupeService.deleteDefinitivement(groupe);
+    await this.refresh();
+  }
+
 }

@@ -24,13 +24,13 @@ export class UtilisateurListePage implements OnInit {
   }
 
   private async getUtilisateurs(){
-    return await this.utilisteursService.get();
+    return (await this.utilisteursService.get()).filter((user : Utilisateurs) => user.id !== 0);
   }
 
   public async post(){
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Nouveau Magasin',
+      header: 'Créer un utilisateur',
       inputs: [
         {
           type : 'text',
@@ -84,6 +84,66 @@ export class UtilisateurListePage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  public async put(utilisateur : Utilisateurs){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Mise à jour de données utilisateur',
+      inputs: [
+        {
+          type : 'text',
+          name : 'libelle',
+          placeholder : utilisateur.libelle
+        },
+        {
+          type : 'text',
+          name : 'username',
+          placeholder : utilisateur.username
+        },
+        {
+          type : 'password',
+          name : 'password',
+          placeholder : utilisateur.password
+        },
+        {
+          type : 'email',
+          name : 'email',
+          placeholder : utilisateur.email
+        }
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (data) => {
+            
+            utilisateur.libelle = data.libelle === '' ? utilisateur.libelle : data.libelle
+            utilisateur.username = data.username === '' ? utilisateur.username : data.username
+            utilisateur.password = data.password === '' ? utilisateur.password : data.password
+            utilisateur.email = data.email === '' ? utilisateur.email : data.email
+
+            await this.utilisteursService.put(utilisateur);
+            this.refresh();            
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  public async deleteDefinitivement(utilisateur : Utilisateurs){
+    await this.utilisteursService.deleteDefinitivement(utilisateur);
+    await this.refresh();
   }
 
 }

@@ -22,8 +22,6 @@ export class AppComponent {
     { title: 'Familles', url: 'familles', icon: 'paper-plane' },
     { title: 'Magasins', url: 'magasins', icon: 'paper-plane' },
     { title: 'Paramétrages', url: 'settings', icon: 'paper-plane' },
-    { title: 'Utilisateurs', url: 'utilisateur-liste', icon: 'mail' },
-    { title: 'Groupes', url: 'utilisateur-groupes', icon: 'mail' },
   ];
 
   public pagesNotConnected : Array<any> = [
@@ -53,7 +51,8 @@ export class AppComponent {
       await this.storage.set(LocalName.Groupes, [
         {
           id : 0,
-          libelle : 'Administrateurs'
+          libelle : 'Administrateurs',
+          isFirebase : true
         }
     ]);
     }

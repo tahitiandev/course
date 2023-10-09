@@ -18,4 +18,16 @@ export class UtilisateursService {
   public async get(){
     return await this.storage.get(LocalName.Utilisateurs);
   }
+
+  public async put(utilisateur : Utilisateurs){
+    return await this.storage.put(LocalName.Utilisateurs, utilisateur);
+  }
+
+  public async delete(utilisateur : Utilisateurs){
+    return await this.storage.delete(LocalName.Utilisateurs, utilisateur);
+  }
+
+  public async deleteDefinitivement(utilisateur : Utilisateurs){
+    return await this.storage.deleteDefinitivement(LocalName.Utilisateurs, utilisateur);
+  }
 }
