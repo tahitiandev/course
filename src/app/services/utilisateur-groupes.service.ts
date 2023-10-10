@@ -22,15 +22,15 @@ export class UtilisateurGroupesService {
     }
 
     public async put(groupe : UtilisateurGroupes){
-      return await this.storage.put(LocalName.Utilisateurs, groupe);
+      return await this.storage.put(LocalName.Groupes, groupe);
     }
   
     public async delete(groupe : UtilisateurGroupes){
-      return await this.storage.delete(LocalName.Utilisateurs, groupe);
+      return await this.storage.delete(LocalName.Groupes, groupe);
     }
   
     public async deleteDefinitivement(groupe : UtilisateurGroupes){
-      return await this.storage.deleteDefinitivement(LocalName.Utilisateurs, groupe);
+      return await this.storage.deleteDefinitivement(LocalName.Groupes, groupe);
     }
     
 }

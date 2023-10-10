@@ -28,7 +28,7 @@ export class UtilisateurGroupesPage implements OnInit {
         {
           type : 'text',
           name : 'libelle',
-          label : 'Libellé'
+          placeholder : 'Libellé'
         }
       ],
       buttons: [
@@ -49,6 +49,44 @@ export class UtilisateurGroupesPage implements OnInit {
               libelle : data.libelle
             })
 
+            await this.refresh();
+              
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  public async put(groupe : UtilisateurGroupes){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Nouveau Magasin',
+      inputs: [
+        {
+          type : 'text',
+          name : 'libelle',
+          placeholder : groupe.libelle
+        }
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (data) => {
+
+            groupe.libelle = data.libelle === '' ? groupe.libelle : data.libelle;
+            await this.groupeService.put(groupe);
             await this.refresh();
               
           }

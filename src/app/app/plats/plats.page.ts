@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, AlertInput } from '@ionic/angular';
+import { CourseDetails } from 'src/app/models/Course-details';
+import { Courses } from 'src/app/models/Courses';
+import { PlatDetails } from 'src/app/models/Plat-details';
 import { Plats } from 'src/app/models/Plats';
+import { CoursesService } from 'src/app/services/courses.service';
 import { PlatsService } from 'src/app/services/plats.service';
 
 @Component({
@@ -13,6 +17,7 @@ export class PlatsPage implements OnInit {
   plats : Array<Plats> = [];
 
   constructor(private platservice : PlatsService,
+              private courseservice : CoursesService,
               private alertController : AlertController) { }
 
   async ngOnInit() {
@@ -70,5 +75,70 @@ export class PlatsPage implements OnInit {
   public async delete(plat : Plats){
     await this.platservice.deleteDefinitivement(plat);
     await this.refresh();
+  }
+
+  public async postToPanier(plat : Plats){
+    const inputs : Array<AlertInput> = [];
+    const platdetails : Array<PlatDetails> = await this.platservice.getPlatDetails(plat.id);
+
+    platdetails.map(platdetail => {
+      inputs.push({
+        type : 'checkbox',
+        label : platdetail.article.libelle,
+        value : platdetail,
+        checked : true
+      })
+    })
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Créer un plat',
+      inputs: inputs,
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (result : Array<PlatDetails>) => {
+
+            if(result.length > 0){
+              const course : Array<Courses> = await this.courseservice.getCourseIsFocus();
+              await result.map(async (res) => {
+
+                var prix = await res.article.prix.find(prix => prix.magasin === course[0].magasinId);
+                var prixOk = prix === undefined ? res.article.prix[0].prix : prix;
+
+                var coursedetail : CourseDetails = {
+                  id : 0,
+                  ordre : 0,
+                  courseId : course[0].id.toString(),
+                  libelle : res.article.libelle,
+                  quantite : res.quantite,
+                  articleId : res.article.id,
+                  prixArticle : Number(prixOk),
+                  prixReel : Number(prixOk),
+                  total : Number(prixOk) * res.quantite,
+                  isFirebase : false,
+                  checked : false
+                }
+
+                await this.courseservice.postCourseDetails(coursedetail);
+              })
+              await this.refresh();
+            }
+
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
   }
 }
