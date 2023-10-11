@@ -180,7 +180,8 @@ export class CoursesPage implements OnInit {
       header: 'A quelle date ?',
       inputs: [
         {
-          type : 'date'
+          type : 'date',
+          value : new Date().toISOString().slice(0, 10)
         }
       ],
         buttons: [
@@ -196,6 +197,8 @@ export class CoursesPage implements OnInit {
           text: 'Valider',
           handler: async (date : any) => {
 
+            await this.coursesService.setAllCoursesIsFocusFalse();
+
             var course : Courses = {
               id : Date.now(),
               ordre : await this.generateOrdreCourse(),
@@ -205,7 +208,8 @@ export class CoursesPage implements OnInit {
               ecart : 0,
               date : date[0],
               actif : true,
-              isFirebase : false
+              isFirebase : false,
+              isFocus : true
             }
             
             await this.coursesService.postCourse(course);

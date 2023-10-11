@@ -21,18 +21,19 @@ export class StorageService {
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
     
     if(connexionInfo.isOnline){
-      await datas.map(async(data) => {
-        if(!data.isFirebase){
+
+      const dataIsFirebaseFalse = await datas.filter(data => !data.isFirebase);
+
+      await dataIsFirebaseFalse.map(async(data) => {
+        data.isFirebase = true;
   
-          data.isFirebase = true;
-  
-          await this.firestore.post(
-            localName,
-            data,
-            data.id.toString()
-          )
-        }
+        await this.firestore.post(
+          localName,
+          data,
+          data.id.toString()
+        )
       })
+
     }
 
   }
@@ -68,11 +69,14 @@ export class StorageService {
     datas[index].modifiedOn = new Date();
     await this.postAll(localName, datas);
 
-    await this.firestore.put(
-      localName,
-      data.id.toString(),
-      data
-    )
+    const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
+    if(connexionInfo.isOnline){
+      await this.firestore.put(
+        localName,
+        data.id.toString(),
+        data
+      )
+    }
   
   }
   public async delete(localName : string, data : any){
@@ -80,12 +84,15 @@ export class StorageService {
     const index = await this.getIndex(localName, data.id);
     datas[index].deletedOn = new Date();
     await this.postAll(localName, datas);  
-    
-    await this.firestore.put(
-      localName,
-      data.id.toString(),
-      data
-    )
+
+    const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
+    if(connexionInfo.isOnline){
+      await this.firestore.put(
+        localName,
+        data.id.toString(),
+        data
+      )
+    }
 
   }
 
@@ -95,11 +102,14 @@ export class StorageService {
     await datas.splice(index,1);
     await this.postAll(localName, datas);  
     
-    await this.firestore.delete(
-      localName,
-      data.id.toString(),
-      data
-    )
+    const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
+    if(connexionInfo.isConnected){
+      await this.firestore.delete(
+        localName,
+        data.id.toString(),
+        data
+      )
+    }
 
   }
 

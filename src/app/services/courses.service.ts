@@ -73,6 +73,14 @@ export class CoursesService {
     return Number(coursesLast?.ordre) + 1;
   }
 
+  public async setAllCoursesIsFocusFalse(){
+    const courses : Array<Courses> = await this.getCourse();
+    await courses.map(async (course) => {
+      course.isFocus = false
+      await this.putCourse(course);
+    });
+  }
+
   public async getCourseIsFocus(){
     const courses : Array<Courses> = await this.getCourse();
     const result = await courses.filter(course => course.isFocus);
