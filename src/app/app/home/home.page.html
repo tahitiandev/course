@@ -24,7 +24,7 @@
 
   
   <table *ngIf="!isInputDateActif">
-    <h5 style="margin-right: 10px;">Dépense de {{ month }}</h5>
+    <h5 style="margin-right: 10px;">Dépense de <u>{{ getLibelleMois(month-1) }}</u></h5>
     <tr style="background: rgb(135, 71, 207);">
       <th>Utilisateurs</th>
       <th>Dépenses</th>

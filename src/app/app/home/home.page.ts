@@ -50,6 +50,12 @@ export class HomePage implements OnInit {
     this.isInputDateActif = !this.isInputDateActif;
   }
 
+  public getLibelleMois(index : number){
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+    return monthNames[index];
+  }
+
   private async redirection(){
     const infoConnexion = await this.utility.getConnexionInfo();
     if(!infoConnexion.isConnected){
