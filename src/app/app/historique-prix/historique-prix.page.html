@@ -9,22 +9,35 @@
 
 <ion-content [fullscreen]="true">
   
-  <ion-list style="margin-top: 10px;">
-    <ion-item-sliding *ngFor="let histo of historiqueprix">
-      <ion-item button>
-          <ion-icon style="margin-right: 10px;" name="trending-up-outline" *ngIf="histo.prixAncien < histo.prixNouveau"></ion-icon>
-          <ion-icon style="margin-right: 10px;" name="trending-down-outline" *ngIf="histo.prixAncien > histo.prixNouveau"></ion-icon>
-            {{ histo.libelle }} - {{ histo.prixAncien }} XPF > {{ histo.prixNouveau }} XPF {{ getLibelleMagasin(histo.magasinid) }}
-       </ion-item>
+  <ion-list *ngFor="let magasin of magasins">
+    <ion-item>
+      <ion-label>{{ magasin.libelle }}</ion-label>
+    </ion-item>
 
-       <ion-item-options side="start">
-        <ion-item-option style="background: red;" (click)="deleteDefinitivement(histo)">
-          Supprimer   
-        </ion-item-option>
-        </ion-item-options>
-    </ion-item-sliding>
+      <ion-list>
+
+        <ion-item-sliding *ngFor="let historique of historiqueprix">
+          <div *ngIf="historique.magasinid === magasin.id">
+          <ion-item button>
+              <ion-icon style="margin-right: 10px;" name="trending-up-outline" *ngIf="historique.prixAncien < historique.prixNouveau"></ion-icon>
+              <ion-icon style="margin-right: 10px;" name="trending-down-outline" *ngIf="historique.prixAncien > historique.prixNouveau"></ion-icon>
+                {{ historique.libelle }}<br> {{ historique.prixAncien }} XPF > {{ historique.prixNouveau }} XPF
+           </ion-item>
+    
+           <ion-item-options side="start">
+            <ion-item-option style="background: red;" (click)="deleteDefinitivement(historique)">
+              Supprimer   
+            </ion-item-option>
+            </ion-item-options>
+          </div>
+        </ion-item-sliding>
+        
+      </ion-list>
+
     
   </ion-list>
+
+
 
 
 </ion-content>
