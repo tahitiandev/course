@@ -1,3 +1,5 @@
+import { Methods } from "../enums/Methods";
+
 export interface Courses{
     id : number;
     ordre : number;
@@ -11,4 +13,5 @@ export interface Courses{
     payeurId? : number;
     deletedOn? : Date;
     isFocus? : boolean;
+    firebaseMethod? : Methods;
 }

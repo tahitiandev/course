@@ -61,7 +61,7 @@ export class MagasinsPage implements OnInit {
             }
 
             await this.magasinsService.post(magasin);
-            this.refresh();
+            await this.refresh();
 
           }
         }
@@ -71,5 +71,51 @@ export class MagasinsPage implements OnInit {
 
     await alert.present();
   }
+
+  public async put(magasin : Magasins){
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Nouveau Magasin',
+      inputs: [
+        {
+          type : 'text',
+          name : 'libelle',
+          placeholder : magasin.libelle
+        }
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (libelleMagasin : any) => {
+
+            magasin.libelle = libelleMagasin === '' ? magasin.libelle : libelleMagasin.libelle;
+
+            await this.magasinsService.put(magasin);
+            await this.refresh();
+
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  public async delete(magasin : Magasins){
+    await this.magasinsService.delete(magasin);
+    await this.refresh();
+  }
+
+
+
 
 }

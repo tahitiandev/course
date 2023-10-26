@@ -13,6 +13,14 @@ export class MagasinsService {
     await this.storage.post(LocalName.Magasins, magasin)
   }
 
+  public async put(magasin : Magasins){
+    await this.storage.put(LocalName.Magasins, magasin)
+  }
+
+  public async delete(magasin : Magasins){
+    await this.storage.deleteDefinitivement(LocalName.Magasins, magasin)
+  }
+
   public async get(){
     return await this.storage.get(LocalName.Magasins);
   }

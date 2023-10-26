@@ -1,3 +1,4 @@
+import { Methods } from "../enums/Methods";
 import { Articles } from "./Articles";
 
 export interface Memos{
@@ -8,4 +9,5 @@ export interface Memos{
     modifiedOn? :  Date;
     deletedOn? : Date;
     isFirebase : false;
+    firebaseMethod? : Methods;
 }

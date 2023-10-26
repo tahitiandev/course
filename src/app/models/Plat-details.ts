@@ -1,3 +1,4 @@
+import { Methods } from "../enums/Methods";
 import { Articles } from "./Articles";
 
 export interface PlatDetails{
@@ -8,4 +9,5 @@ export interface PlatDetails{
     article : Articles;
     total : number;
     isFirebase : false;
+    firebaseMethod? : Methods;
 }

@@ -1,3 +1,5 @@
+import { Methods } from "../enums/Methods";
+
 export interface Magasins{
     id : number;
     libelle : string;
@@ -5,4 +7,5 @@ export interface Magasins{
     modifiedOn : Date;
     deletedOn : Date;
     isFirebase : false;
+    firebaseMethod? : Methods;
 }

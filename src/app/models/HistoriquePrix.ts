@@ -1,3 +1,5 @@
+import { Methods } from "../enums/Methods";
+
 export interface HistoriquePrix{
     id : number;
     articleId : number;
@@ -7,4 +9,5 @@ export interface HistoriquePrix{
     magasinid : number;
     date : Date;
     isFirebase : boolean;
+    firebaseMethod? : Methods;
 }

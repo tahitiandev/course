@@ -1,3 +1,5 @@
+import { Methods } from "../enums/Methods";
+
 export interface Plats{
     id : number;
     libelle : string;
@@ -6,4 +8,5 @@ export interface Plats{
     modifiedOn? : Date;
     deletedOn? : Date;
     isFirebase : false;
+    firebaseMethod? : Methods;
 }

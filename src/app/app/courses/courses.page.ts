@@ -122,7 +122,6 @@ export class CoursesPage implements OnInit {
     const payeurs = await this.getPayeurs();
     this.payeurs = payeurs;
 
-
   }
   
   public async getMagasin(){
@@ -197,7 +196,7 @@ export class CoursesPage implements OnInit {
           text: 'Valider',
           handler: async (date : any) => {
 
-            await this.coursesService.setAllCoursesIsFocusFalse();
+            // await this.coursesService.setAllCoursesIsFocusFalse();
 
             var course : Courses = {
               id : Date.now(),
@@ -225,7 +224,8 @@ export class CoursesPage implements OnInit {
   }
 
   private async generateOrdreCourse(){
-    const courses = await this.coursesService.sortByOrdreDesc(this.courses).pop();
+    const allcourse = await this.coursesService.getCourse();
+    const courses = await this.coursesService.sortByOrdreDesc(allcourse).pop();
     return Number(courses?.ordre) + 1;
   }
 

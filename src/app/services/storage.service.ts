@@ -3,6 +3,7 @@ import { Storage } from '@ionic/storage';
 import { FirestoreService } from './firestore.service';
 import { LocalName } from '../enums/LocalName';
 import { ConnexionInfo } from '../models/ConnexionInfo';
+import { Methods } from '../enums/Methods';
 
 @Injectable({
   providedIn: 'root'
@@ -13,18 +14,13 @@ export class StorageService {
               private firestore : FirestoreService) { }
 
   public async postAll(localName : string, datas : Array<any>){
-    this.storage.set(
-      localName,
-      datas
-    )
 
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
-    
     if(connexionInfo.isOnline){
 
-      const dataIsFirebaseFalse = await datas.filter(data => !data.isFirebase);
+      const datasend = await datas.filter(data => !data.isFirebase);
 
-      await dataIsFirebaseFalse.map(async(data) => {
+      await datasend.map(async(data) => {
         data.isFirebase = true;
   
         await this.firestore.post(
@@ -36,21 +32,29 @@ export class StorageService {
 
     }
 
+    await this.storage.set(
+      localName,
+      datas
+    )
+
   }
 
   public async post(localName : string, data : any){
+
     var datas : Array<any> = await this.getAll(localName);
     data.id = Number(new Date());
     data.createdOn = new Date();
     data.modifiedOn = null;
     data.deletedOn = null;
+    data.isFirebase = false;
     datas.push(data);
     await this.postAll(localName, datas);
+
   }
 
   public async get(localName : string){
     const datas : Array<any> = await this.storage.get(localName);
-    return await datas.filter(data => data.deletedOn === '' || data.deletedOn === null || typeof(data.createdOn) !== undefined);
+    return await datas.filter(data => data.deletedOn === '' || data.deletedOn === null || data.deletedOn !== undefined);
   }
 
   public async getAll(localName : string){
@@ -58,7 +62,7 @@ export class StorageService {
   }
 
   private async getIndex(localName : string, id : number){
-    const datas : any[] = await this.get(localName);
+    const datas : any[] = await this.getAll(localName);
     return await datas.findIndex(data => data.id === id);
   }
 
@@ -67,22 +71,34 @@ export class StorageService {
     const index = await this.getIndex(localName, data.id);
     datas[index] = data;
     datas[index].modifiedOn = new Date();
-    await this.postAll(localName, datas);
-
+    
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
     if(connexionInfo.isOnline){
+      
       await this.firestore.put(
         localName,
         data.id.toString(),
         data
-      )
-    }
+        )
+        
+      }
+      else{
+        
+        if(datas[index].isFirebase){
+          datas[index].firebaseMethod = Methods.PUT;
+        }
+        
+      }
+        
+      await this.postAll(localName, datas);
   
   }
+
   public async delete(localName : string, data : any){
     const datas : Array<any> =  await this.getAll(localName);
     const index = await this.getIndex(localName, data.id);
     datas[index].deletedOn = new Date();
+    datas[index].firebaseMethod = Methods.DELETE;
     await this.postAll(localName, datas);  
 
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
@@ -97,19 +113,34 @@ export class StorageService {
   }
 
   public async deleteDefinitivement(localName : string, data : any){
+    
     const datas : Array<any> =  await this.getAll(localName);
     const index = await this.getIndex(localName, data.id);
-    await datas.splice(index,1);
-    await this.postAll(localName, datas);  
-    
+
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
-    if(connexionInfo.isConnected){
+
+    if(connexionInfo.isOnline){
+
+      await datas.splice(index,1);
       await this.firestore.delete(
         localName,
         data.id.toString(),
         data
       )
+
     }
+    else{
+      if(datas[index].isFirebase){
+        datas[index].firebaseMethod = Methods.DELETE;
+        datas[index].deletedOn = new Date();
+      }
+
+    }
+
+    await this.postAll(
+      localName,
+      datas
+    )
 
   }
 
@@ -142,13 +173,40 @@ export class StorageService {
       const elemNotSendToFirebase = await datas.filter(data =>  !data.isFirebase);
       if(elemNotSendToFirebase.length > 0){
         elemNotSendToFirebase.map(async elem => {
-          await this.post(localName, elem);
+
+          elem.isFirebase = true;
+          await this.firestore.post(
+            localName,
+            elem,
+            elem.id.toString()
+          )
+
+        })
+      } // if
+
+      const elemPutorDelete : Array<any> = await datas.filter(data => {
+        return data.firebaseMethod === Methods.DELETE || data.firebaseMethod === Methods.PUT;
+      })
+
+      if(elemPutorDelete.length > 0){
+
+        elemPutorDelete.map(async(elem) => {
+
+          if(elem.firebaseMethod === Methods.PUT){
+            await this.put(localName, elem);
+          }
+
+          if(elem.firebaseMethod === Methods.DELETE){
+            await this.deleteDefinitivement(localName, elem);
+          }
+
         })
       }
+
       (await this.firestore.getAll(localName)).subscribe(datas => {
         this.storage.set(localName, datas)
       })
-
+      
     }else{
       alert('Le mode onLine est désactivé')
     }

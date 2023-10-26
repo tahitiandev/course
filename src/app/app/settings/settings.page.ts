@@ -101,4 +101,9 @@ export class SettingsPage implements OnInit {
 
   }
 
+  public async consoleLog(localname : string){
+    const data = await this.storage.get(localname);
+    console.log(data)
+  }
+
 }

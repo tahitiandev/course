@@ -1,3 +1,4 @@
+import { Methods } from "../enums/Methods";
 import { Familles } from "./Familles";
 import { Magasins } from "./Magasins";
 import { UtilisateurGroupes } from "./UtilisateurGroupes";
@@ -18,4 +19,5 @@ export interface Articles{
     familleId : number;
     codeBarre : string;
     isFirebase : false;
+    firebaseMethod? : Methods;
 }
