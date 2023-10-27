@@ -14,7 +14,7 @@
   
   <ion-list>
     <ion-item-sliding *ngFor="let groupe of groupes">
-    <ion-item button detail="true" (click)="put(groupe)">
+    <ion-item button detail="true" (click)="put(groupe)" [disabled]="groupe.firebaseMethod === 'DELETE'">
       <ion-label>
         <h3>{{ groupe.libelle }}</h3>
       </ion-label>

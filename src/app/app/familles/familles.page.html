@@ -11,10 +11,10 @@
 
 <ion-content [fullscreen]="true">
   
-  <ion-list *ngFor="let magasin of familles">
-    <ion-item button detail="true">
+  <ion-list *ngFor="let famille of familles">
+    <ion-item button detail="true" [disabled]="famille.firebaseMethod === 'DELETE'">
       <ion-label>
-        <h3>{{ magasin.libelle }}</h3>
+        <h3>{{ famille.libelle }}</h3>
       </ion-label>
     </ion-item>
   </ion-list>

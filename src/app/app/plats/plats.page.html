@@ -13,7 +13,7 @@
   <br>
   <ion-list>
     <ion-item-sliding *ngFor="let plat of plats">
-      <ion-item button detail="true" routerLink="../plat-details/{{ plat.id }}">
+      <ion-item button detail="true" routerLink="../plat-details/{{ plat.id }}" [disabled]="plat.firebaseMethod === 'DELETE'">
         <ion-label>
           <h3>{{ plat.libelle }} - {{ plat.total }} XPF</h3>
         </ion-label>

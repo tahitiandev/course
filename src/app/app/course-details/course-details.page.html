@@ -28,7 +28,7 @@
   
   <ion-list>
     <ion-item-sliding *ngFor="let coursedetail of coursedetails">
-      <ion-item button (click)="put(coursedetail)" [disabled]="coursedetail.checked">
+      <ion-item button (click)="put(coursedetail)" [disabled]="coursedetail.checked || coursedetail.firebaseMethod === 'DELETE'">
         <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">{{ coursedetail.libelle }}</ion-label>
         <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">x {{ coursedetail.quantite }}</ion-label>
         <ion-label  [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">{{ coursedetail.total }} xpf</ion-label>

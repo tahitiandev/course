@@ -19,7 +19,7 @@
 
         <ion-item-sliding *ngFor="let historique of historiqueprix">
           <div *ngIf="historique.magasinid === magasin.id">
-          <ion-item button>
+          <ion-item button [disabled]="historique.firebaseMethod === 'DELETE'">
               <ion-icon style="margin-right: 10px;" name="trending-up-outline" *ngIf="historique.prixAncien < historique.prixNouveau"></ion-icon>
               <ion-icon style="margin-right: 10px;" name="trending-down-outline" *ngIf="historique.prixAncien > historique.prixNouveau"></ion-icon>
                 {{ historique.libelle }}<br> {{ historique.prixAncien }} XPF > {{ historique.prixNouveau }} XPF

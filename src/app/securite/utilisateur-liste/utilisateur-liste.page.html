@@ -14,7 +14,7 @@
   <ion-list >
   
     <ion-item-sliding *ngFor="let utilisateur of utilisateurs">
-      <ion-item button detail="true" (click)="put(utilisateur)">
+      <ion-item button detail="true" (click)="put(utilisateur)" [disabled]="utilisateur.firebaseMethod === 'DELETE'">
         <ion-label>
           <h3>{{ utilisateur.libelle }}</h3>
         </ion-label>

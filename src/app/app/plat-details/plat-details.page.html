@@ -21,7 +21,7 @@
   <br>
   <ion-list>
     <ion-item-sliding *ngFor="let platdetail of platdetails">
-      <ion-item button detail="true" (click)="put(platdetail)">
+      <ion-item button detail="true" (click)="put(platdetail)" [disabled]="platdetail.firebaseMethod === 'DELETE'">
         <ion-label>
           <h3>{{ platdetail.article.libelle }} - {{ platdetail.total }} XPF</h3>
         </ion-label>

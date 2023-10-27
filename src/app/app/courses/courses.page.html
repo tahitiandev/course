@@ -16,7 +16,7 @@
 
   <ion-list>
     <ion-item-sliding *ngFor="let course of courses">
-      <ion-item button detail="true" (click)="put(course.id)" [disabled]="!course.actif">
+      <ion-item button detail="true" (click)="put(course.id)" [disabled]="!course.actif || course.firebaseMethod === 'DELETE'">
         <ion-icon *ngIf="course.isFocus" name="pencil-outline"></ion-icon>
         <ion-label>
           <h3><ion-chip>{{ course.date }}</ion-chip>  {{ getLibelleMagasin(course.magasinId) }} - {{ course.montantTheorique }} XPF</h3>
