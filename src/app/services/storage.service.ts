@@ -121,7 +121,7 @@ export class StorageService {
 
     if(connexionInfo.isOnline){
 
-      await datas.splice(index,1);
+      datas.splice(index,1);
       await this.firestore.delete(
         localName,
         data.id.toString(),
@@ -134,7 +134,9 @@ export class StorageService {
         datas[index].firebaseMethod = Methods.DELETE;
         datas[index].deletedOn = new Date();
       }
-
+      else{
+        datas.splice(index,1);
+      }
     }
 
     await this.postAll(

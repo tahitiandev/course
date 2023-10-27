@@ -4,6 +4,7 @@ import { LocalName } from 'src/app/enums/LocalName';
 import { Courses } from 'src/app/models/Courses';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
 import { CoursesService } from 'src/app/services/courses.service';
+import { MagasinsService } from 'src/app/services/magasins.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UtilisateursService } from 'src/app/services/utilisateurs.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -26,6 +27,7 @@ export class HomePage implements OnInit {
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
               private storageService : StorageService,
+              private magasinservice : MagasinsService,
               private navigate : NavController,
               private coursesService : CoursesService) {   }
 
@@ -95,11 +97,11 @@ export class HomePage implements OnInit {
 
     var result : Array<any> = [];
     var depenses = 0
-    this.utilisateurs.map(utiliateur => {
+    this.utilisateurs.map(utilisateur => {
       this.courses.map(course => {
         if(new Date(course.date).getUTCFullYear() == this.year){
           if((new Date(course.date).getUTCMonth() + 1) == this.month){
-            if(course.payeurId === utiliateur.id){
+            if(course.payeurId === utilisateur.id){
               depenses += course.montantReel
             }
           } // month
@@ -107,7 +109,7 @@ export class HomePage implements OnInit {
 
       })
       result.push({
-        utilisateur : utiliateur.libelle,
+        utilisateur : utilisateur.libelle,
         depense : depenses
       })
 
@@ -126,6 +128,29 @@ export class HomePage implements OnInit {
     this.year = await new Date(data).getUTCFullYear();
 
     await this.statsUtilisateursByDepense();
+  }
+
+  public async statistiquePayeurByMagasin(){
+    const utilisateurs = this.utilisateurs;
+    const magasins = await this.magasinservice.get();
+    const courses = this.courses;
+    var depense = 0;
+    var result = []
+
+    courses.map(course => {
+      utilisateurs.map(utilisateur => {
+        if(course.payeurId === utilisateur.id){
+          magasins.map(magasin => {
+            if(magasin.id === course.magasinId){
+              depense += course.montantReel;
+            }
+          })//magasin
+        }
+      })//utilisateur
+    })//course
+
+
+
   }
   
 
