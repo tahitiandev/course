@@ -16,7 +16,7 @@ import { StorageService } from 'src/app/services/storage.service';
 })
 export class SettingsPage implements OnInit {
 
-  magasinParDefaut? = "";
+  magasinParDefaut : string = "";
   connexionInfo : ConnexionInfo;
   isOnline : boolean = true;
 
@@ -26,16 +26,17 @@ export class SettingsPage implements OnInit {
               private magasinService : MagasinsService) { }
 
   async ngOnInit() {
-    await this.refresth();
+    await this.refresh();
   }
 
-  async refresth(){
+  async refresh(){
     const connexionInfo : ConnexionInfo = await this.utility.getConnexionInfo();
     this.connexionInfo = connexionInfo;
     this.isOnline = connexionInfo.isOnline;
+    this.magasinParDefaut = connexionInfo.magasinParDefaut?.libelle === undefined ? "1" : connexionInfo.magasinParDefaut.libelle
   }
 
-  public async SetmagasinParDefaut(){
+  public async setmagasinParDefaut(){
 
     const magasins : Array<Magasins> = await this.magasinService.get();
     const inputs : Array<AlertInput> = [];
@@ -43,7 +44,8 @@ export class SettingsPage implements OnInit {
       inputs.push({
         type : 'radio',
         label : magasin.libelle,
-        value : magasin
+        value : magasin,
+        checked : this.magasinParDefaut === magasin.libelle
       })
     })
 
@@ -97,7 +99,7 @@ export class SettingsPage implements OnInit {
     const infoConnexion = await this.utility.getConnexionInfo();
     infoConnexion.isOnline = modeResult;
     await this.utility.putConnexionInfo(infoConnexion);
-    await this.refresth();
+    await this.refresh();
 
   }
 
