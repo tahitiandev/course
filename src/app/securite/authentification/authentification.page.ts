@@ -33,6 +33,13 @@ export class AuthentificationPage implements OnInit {
     })
   }
 
+  async handleRefresh(event : any) {
+
+    await this.storage.synchroniserAvecFirestore();
+    event.target.complete();
+    
+  }
+
   public async onValide(){
     const data = this.authentificationForm.value;
     
@@ -49,6 +56,7 @@ export class AuthentificationPage implements OnInit {
           isOnline : true,
           isCourseAfficher : true
         }
+        console.log(infoConnexion)
 
         await this.storage.set(LocalName.InfoConnexion, infoConnexion);
         await this.storage.synchroniserAvecFirestore();
