@@ -15,6 +15,7 @@ import { UtilityService } from 'src/app/services/utility.service';
 export class DepensesPage implements OnInit {
 
   depenses : Array<Depenses> = [];
+  listeOn : boolean = false;
 
   constructor(private depensesservice : DepensesService,
               private utility : UtilityService,
@@ -42,12 +43,12 @@ export class DepensesPage implements OnInit {
         {
           type : 'number',
           name : 'depense',
-          label : 'Montant'
+          placeholder : 'Montant'
         },
         {
           type : 'textarea',
           name : 'commentaire',
-          label : 'Nom de l\'article'
+          placeholder : 'Nom de l\'article'
         }
       ],
       buttons: [
@@ -73,97 +74,7 @@ export class DepensesPage implements OnInit {
 
             await this.depensesservice.post(depenses);
             await this.refresh();
-
-          }
-        }
-        
-      ]
-    });
-    await alert.present();
-  }
-
-  public async put(depense : Depenses){
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Nouvelle article',
-      inputs: [
-        {
-          type : 'number',
-          name : 'depense',
-          value : depense.depense
-        },
-        {
-          type : 'textarea',
-          name : 'commentaire',
-          value : depense.commentaire
-        }
-      ],
-      buttons: [
-        {
-          text: 'Modifier la date',
-          handler: async() => {
-            await this.modifierDate(depense);
-          }
-        },
-        {
-          text: 'Annuler',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-
-          }
-        }
-        ,{
-          text: 'Valider',
-          handler: async (result : Depenses) => {
-
-            depense.modifiedOn = new Date();
-            depense.userid = (await this.utility.getConnexionInfo()).utilisateurId;
-            depense.depense = result.depense;
-            depense.commentaire = result.commentaire;
-
-            await this.depensesservice.put(depense);
-            await this.refresh();
-
-          }
-        }
-        
-      ]
-    });
-    await alert.present();
-  }
-
-  public async delete(depense : Depenses){
-    await this.depensesservice.delete(depense);
-    this.refresh();
-  }
-
-  private async modifierDate(depense : Depenses){
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Nouvelle article',
-      inputs: [
-        {
-          type : 'date',
-          name : 'date'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Annuler',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-
-          }
-        }
-        ,{
-          text: 'Valider',
-          handler: async (date) => {
-
-            depense.createdOn = date.date
-            await this.depensesservice.put(depense);
-            await this.refresh();
+            this.setListeOn();
 
           }
         }
@@ -176,17 +87,14 @@ export class DepensesPage implements OnInit {
   handleRefresh(event : any) {
 
     this.storageService.synchroniser(LocalName.Depenses).then(() => {
-      this.refresh();
       event.target.complete();
       this.utility.popUp('Synchronisation des dépenses terminées')
     })
     
   }
 
-  public async closeDepense(depense : Depenses){
-    depense.check = !depense.check ;
-    await this.depensesservice.put(depense);
-    await this.refresh();
+  public setListeOn(){
+    this.listeOn = !this.listeOn;
   }
 
 }

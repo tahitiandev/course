@@ -1,0 +1,28 @@
+<ion-list>
+  <ion-item-sliding *ngFor="let depense of depenses">
+  <ion-item button detail="true" (click)="put(depense)"
+            [disabled]="depense.firebaseMethod === 'DELETE'"
+            [ngStyle]="{'text-decoration': depense.check === true ? 'line-through' : 'none'}">
+    <ion-label>
+      <h3>
+        {{ depense.createdOn | date : 'dd/MM/yyyy'}} : 
+        {{ depense.commentaire }}
+        <ion-chip color="success" 
+                  slot="end"
+                  [ngStyle]="{'text-decoration': depense.check === true ? 'line-through' : 'none'}">{{ depense.depense }} xpf</ion-chip>
+      </h3>
+    </ion-label>
+  </ion-item>
+  <ion-item-options side="start">
+    <ion-item-option (click)="this.delete(depense)" style="background: rgb(156, 46, 46);">
+      Supprimer    
+    </ion-item-option>
+  </ion-item-options>
+  <ion-item-options side="end">
+    <ion-item-option (click)="this.closeDepense(depense)" style="background: rgb(65, 77, 255);">
+      Check    
+    </ion-item-option>
+  </ion-item-options>
+
+</ion-item-sliding>
+</ion-list>
