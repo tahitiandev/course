@@ -2,6 +2,7 @@ export enum LocalName {
     Articles = "Articles",
     Courses = "Courses",
     CourseDetails = "CourseDetails",
+    Depenses = "Depenses",
     InfoConnexion = "InfoConnexion",
     Familles = "Familles",
     Groupes = "Groupes",

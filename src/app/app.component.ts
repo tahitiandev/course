@@ -21,6 +21,7 @@ export class AppComponent {
     { title: 'Plats', url: 'plats', icon: 'paper-plane' },
     { title: 'Familles', url: 'familles', icon: 'paper-plane' },
     { title: 'Magasins', url: 'magasins', icon: 'paper-plane' },
+    { title: 'Dépenses', url: 'depenses', icon: 'paper-plane' },
     { title: 'Paramétrages', url: 'settings', icon: 'paper-plane' },
   ];
 
@@ -137,6 +138,11 @@ export class AppComponent {
     const memos = await this.storage.get(LocalName.Memos);
     if(memos === null){
       await this.storage.set(LocalName.Memos, []);
+    }
+
+    const depenses = await this.storage.get(LocalName.Depenses);
+    if(depenses === null){
+      await this.storage.set(LocalName.Depenses, []);
     }
 
   } //setLocalStorage
