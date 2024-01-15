@@ -19,6 +19,7 @@ export class SettingsPage implements OnInit {
   magasinParDefaut : string = "";
   connexionInfo : ConnexionInfo;
   isOnline : boolean = true;
+  isCourseRapide : boolean = true;
 
   constructor(private alertController : AlertController,
               private utility : UtilityService,
@@ -33,6 +34,7 @@ export class SettingsPage implements OnInit {
     const connexionInfo : ConnexionInfo = await this.utility.getConnexionInfo();
     this.connexionInfo = connexionInfo;
     this.isOnline = connexionInfo.isOnline;
+    this.isCourseRapide = connexionInfo.isCourseRapide;
     this.magasinParDefaut = connexionInfo.magasinParDefaut?.libelle === undefined ? "1" : connexionInfo.magasinParDefaut.libelle
   }
 
@@ -95,12 +97,20 @@ export class SettingsPage implements OnInit {
 
   public async setModeOnline(e : any){
 
-    const modeResult = e.detail.checked;
+    const result = e.detail.checked;
     const infoConnexion = await this.utility.getConnexionInfo();
-    infoConnexion.isOnline = modeResult;
+    infoConnexion.isOnline = result;
     await this.utility.putConnexionInfo(infoConnexion);
     await this.refresh();
 
+  }
+
+  public async setModeCourseRapide(e : any){
+    const result = e.detail.checked;
+    const infoConnexion = await this.utility.getConnexionInfo();
+    infoConnexion.isCourseRapide = result;
+    await this.utility.putConnexionInfo(infoConnexion);
+    await this.refresh();
   }
 
   public async consoleLog(localname : string){

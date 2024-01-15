@@ -7,7 +7,7 @@
 
     <ion-title>
       Votre liste de course 
-      <ion-icon style="margin-left: 50px;" (click)="setIsButtonActif()" name="apps-outline"></ion-icon>
+      <ion-icon style="margin-left: 50px;" (click)="setIsButtonActif()" name="apps-outline" *ngIf="!isModeCourseRapide"></ion-icon>
     </ion-title>
 
 
@@ -26,7 +26,7 @@
     <ion-chip style="font-weight: bold; font-size: x-large;" color="white">{{ totalCourse }} XPF</ion-chip>
   </div>
   
-  <ion-list>
+  <ion-list *ngIf="!isModeCourseRapide">
     <ion-item-sliding *ngFor="let coursedetail of coursedetails">
       <ion-item button (click)="put(coursedetail)" [disabled]="coursedetail.checked || coursedetail.firebaseMethod === 'DELETE'">
         <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">{{ coursedetail.libelle }}</ion-label>
@@ -35,7 +35,7 @@
         <ion-icon *ngIf="coursedetail.checked" name="lock-closed-outline"></ion-icon>
       </ion-item>
 
-      <ion-item-options side="start">
+      <ion-item-options side="start" >
         <ion-item-option *ngIf="coursedetail.libelle === 'Sans titre'" style="color: rgb(255, 196, 216); background: rgb(39, 24, 102);" (click)="associerUnCodeBarreAArticleSansTitre(coursedetail)">
           BarreCode    
         </ion-item-option>
@@ -53,18 +53,77 @@
 
   </ion-list>
   
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="isButtonActif">
-    <ion-fab-button size="small" (click)="dechargerMemo()">
-      <ion-icon name="book-outline"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button size="small" (click)="postArticleWithCalculator()">
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="isButtonActif && !isModeCourseRapide">
+    <ion-fab-button size="large" (click)="postArticleWithCalculator()" color="success">
       <ion-icon name="calculator-outline"></ion-icon>
     </ion-fab-button>
     <ion-fab-button size="small" (click)="postArticleWithBarCode()">
       <ion-icon name="barcode"></ion-icon>
     </ion-fab-button>
+    <ion-fab-button size="small" (click)="dechargerMemo()">
+      <ion-icon name="book-outline"></ion-icon>
+    </ion-fab-button>
     <ion-fab-button size="small" (click)="postArticle()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+  <!-- MODE isModeCourseRapide -->
+
+  <ion-fab slot="fixed" horizontal="center" vertical="center" (click)="postArticleWithCalculator()" *ngIf="isModeCourseRapide && !isAfficherListe">
+    <ion-fab-button size="large">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="setAfficherListe()" *ngIf="isModeCourseRapide">
+    <ion-fab-button size="small">
+      <ion-icon name="list-circle-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+
+
+  <ion-list *ngIf="isModeCourseRapide && isAfficherListe">
+    <ion-item-sliding *ngFor="let coursedetail of coursedetails">
+      <ion-item button (click)="put(coursedetail)" [disabled]="coursedetail.checked || coursedetail.firebaseMethod === 'DELETE'">
+        <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">{{ coursedetail.libelle }}</ion-label>
+        <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">x {{ coursedetail.quantite }}</ion-label>
+        <ion-label  [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">{{ coursedetail.total }} xpf</ion-label>
+        <ion-icon *ngIf="coursedetail.checked" name="lock-closed-outline"></ion-icon>
+      </ion-item>
+
+      <ion-item-options side="start" >
+        <ion-item-option *ngIf="coursedetail.libelle === 'Sans titre'" style="color: rgb(255, 196, 216); background: rgb(39, 24, 102);" (click)="associerUnCodeBarreAArticleSansTitre(coursedetail)">
+          BarreCode    
+        </ion-item-option>
+        <ion-item-option style="background: red;" (click)="delete(coursedetail)">
+          Supprimer    
+        </ion-item-option>
+      </ion-item-options>
+      <ion-item-options side="end">
+        <ion-item-option (click)="check(coursedetail)">
+          Check    
+          <ion-icon *ngIf="!coursedetail.checked" name="lock-closed-outline"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+  </ion-list>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </ion-content>

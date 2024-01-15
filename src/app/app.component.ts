@@ -129,7 +129,8 @@ export class AppComponent {
         utilisateurId : 0,
         groupeId : 0,
         isOnline :  true,
-        isCourseAfficher : true
+        isCourseAfficher : true,
+        isCourseRapide : true
       }
 
       await this.storage.set(LocalName.InfoConnexion, infoConnexion);
@@ -166,7 +167,8 @@ export class AppComponent {
       utilisateurId : 0,
       groupeId : 0,
       isOnline : true,
-      isCourseAfficher : true
+      isCourseAfficher : true,
+      isCourseRapide : true
     }
 
     await this.storage.set(LocalName.InfoConnexion, infoConnexion);

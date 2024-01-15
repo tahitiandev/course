@@ -38,6 +38,8 @@ export class CourseDetailsPage implements OnInit {
   content_visibility = '';
   rechercheAvance : boolean = false;
   isButtonActif : boolean = true;
+  isModeCourseRapide : boolean = true;
+  isAfficherListe : boolean = false;
 
   constructor(private coursesService : CoursesService,
               private alertController : AlertController,
@@ -122,6 +124,10 @@ export class CourseDetailsPage implements OnInit {
 
             await this.coursesService.postCourseDetails(coursedetails);
             await this.refresh();
+
+            if(this.isModeCourseRapide){
+              this.isAfficherListe = !this.isAfficherListe;
+            }
           }
         }
         
@@ -926,6 +932,10 @@ export class CourseDetailsPage implements OnInit {
     await alert.present();
 
 
+  }
+
+  public setAfficherListe(){
+    this.isAfficherListe = !this.isAfficherListe
   }
 
 }

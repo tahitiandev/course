@@ -35,6 +35,9 @@
         <p *ngIf="magasinParDefaut !== ''">{{magasinParDefaut}} est actuellement le magasin par défaut</p>
       </ion-label>
     </ion-item>
+    <ion-item>
+      <ion-toggle [checked]="isCourseRapide" (ionChange)="setModeCourseRapide($event)">Mode course rapide</ion-toggle>
+    </ion-item>
   </ion-item-group>
 
   <ion-item-group>

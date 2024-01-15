@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { LocalName } from 'src/app/enums/LocalName';
 import { Courses } from 'src/app/models/Courses';
+import { Depenses } from 'src/app/models/Depenses';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
 import { CoursesService } from 'src/app/services/courses.service';
+import { DepensesService } from 'src/app/services/depenses.service';
 import { MagasinsService } from 'src/app/services/magasins.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UtilisateursService } from 'src/app/services/utilisateurs.service';
@@ -18,6 +20,7 @@ export class HomePage implements OnInit {
 
   utilisateurs : Array<Utilisateurs> = [];
   courses : Array<Courses> = [];
+  depenses : Array<Depenses> = [];
   utilisateurByDepense : Array<any> = [];
   year : any;
   day : any;
@@ -29,6 +32,7 @@ export class HomePage implements OnInit {
               private storageService : StorageService,
               private magasinservice : MagasinsService,
               private navigate : NavController,
+              private depensesservice : DepensesService,
               private coursesService : CoursesService) {   }
 
   async ngOnInit() {
@@ -83,6 +87,7 @@ export class HomePage implements OnInit {
   private async refresh(){
     this.courses = await this.getCourses();
     this.utilisateurs = await this.getUtilisateurs();
+    this.depenses = await this.getDepenses();
   }
 
   private async getUtilisateurs(){
@@ -91,6 +96,10 @@ export class HomePage implements OnInit {
   }
   private async getCourses(){
     return await this.coursesService.getCourse();
+  
+  }
+  private async getDepenses(){
+    return await this.depensesservice.get();
   }
 
   public statsUtilisateursByDepense(){
@@ -98,6 +107,7 @@ export class HomePage implements OnInit {
     var result : Array<any> = [];
     var depenses = 0
     this.utilisateurs.map(utilisateur => {
+
       this.courses.map(course => {
         if(new Date(course.date).getUTCFullYear() == this.year){
           if((new Date(course.date).getUTCMonth() + 1) == this.month){
@@ -108,6 +118,18 @@ export class HomePage implements OnInit {
         } // year
 
       })
+
+      this.depenses.map(depense => {
+        if(new Date(depense.createdOn).getUTCFullYear() == this.year){
+          if((new Date(depense.createdOn).getUTCMonth() + 1) == this.month){
+            if(depense.userid === utilisateur.id){
+              depenses += Number(depense.depense)
+            }
+          } // month
+        } // year
+
+      })
+
       result.push({
         utilisateur : utilisateur.libelle,
         depense : depenses

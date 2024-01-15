@@ -7,4 +7,5 @@ export interface ConnexionInfo{
     magasinParDefaut? : Magasins;
     isOnline : boolean;
     isCourseAfficher : boolean;
+    isCourseRapide : boolean;
     }
