@@ -35,8 +35,9 @@ export class AuthentificationPage implements OnInit {
 
   async handleRefresh(event : any) {
 
-    await this.storage.synchroniserAvecFirestore();
+    await this.storage.synchroniser(LocalName.Utilisateurs);
     event.target.complete();
+    await this.utility.popUp('Synchronisation des utilisateurs terminée')
     
   }
 

@@ -37,9 +37,10 @@ export class ArticlesPage implements OnInit {
 
   handleRefresh(event : any) {
 
-    this.storageService.synchroniser(LocalName.Articles).then(() => {
+    this.storageService.synchroniser(LocalName.Articles).then(async() => {
       this.refresh();
       event.target.complete();
+      await this.utility.popUp('Synchronisation des articles terminée')
     })
     
   }

@@ -46,9 +46,10 @@ export class HomePage implements OnInit {
   }
 
   public handleRefresh(event : any) {
-    this.storageService.synchroniserAvecFirestore().then(()=> {
+    this.storageService.synchroniserAvecFirestore().then(async()=> {
       event.target.complete()
       location.reload();
+      await this.utility.popUp('Synchronisation complète terminée')
     })
   }
 
