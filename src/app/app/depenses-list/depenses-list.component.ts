@@ -21,7 +21,7 @@ export class DepensesListComponent  implements OnInit {
               private storageService : StorageService) { }
 
   async ngOnInit() {
-    await this.refresh();
+    // await this.refresh();
   }
 
 

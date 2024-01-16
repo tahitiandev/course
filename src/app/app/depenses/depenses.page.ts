@@ -20,7 +20,9 @@ export class DepensesPage implements OnInit {
   constructor(private depensesservice : DepensesService,
               private utility : UtilityService,
               private storageService : StorageService,
-              private alertController : AlertController) { }
+              private alertController : AlertController) { 
+                this.refresh();
+              }
 
   async ngOnInit() {
     await this.refresh();
