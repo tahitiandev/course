@@ -27,6 +27,9 @@ export class HomePage implements OnInit {
   month : any;
   isInputDateActif = false;
   budgetRestant = 0;
+  budget = 0;
+  totalDepense = 0;
+  utilisateurConnecteLibelle = "";
 
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
@@ -90,7 +93,8 @@ export class HomePage implements OnInit {
     this.courses = await this.getCourses();
     this.utilisateurs = await this.getUtilisateurs();
     this.depenses = await this.getDepenses();
-    // this.budgetRestant = await this.getBudgetRestant();
+
+    this.setBudget();
   }
 
   private async getUtilisateurs(){
@@ -179,14 +183,30 @@ export class HomePage implements OnInit {
 
   }
 
-  // private async getBudgetRestant(){
-  //   const infoConnexion = await this.utility.getConnexionInfo();
-  //   const utilisateurByDepense = this.utilisateurByDepense;
-  //   const depenses = await utilisateurByDepense.find(result => result.utilisateur === 'Gilles');
-  //   const totalDepense = depenses.montantCourse + depenses.montantdepense;
-  //   const budgetRestant = infoConnexion.budget - totalDepense;
-  //   return budgetRestant;
-  // }
+  private async setBudget(){
+    const infoConnexion = await this.utility.getConnexionInfo();
+    const budget = infoConnexion.budget;
+
+    const libelleUtilisateurConnecte = await this.utilisateursService.getLibelleUtilisateurById(infoConnexion.utilisateurId); 
+
+    const utilisateurByDepense = this.utilisateurByDepense;
+    const depenses = await utilisateurByDepense.find(result => result.utilisateur === libelleUtilisateurConnecte);
+
+    const totalDepense = depenses.montantCourse + depenses.montantdepense;
+    const budgetRestant = infoConnexion.budget - totalDepense;
+
+    this.budgetRestant = budgetRestant;
+    this.budget = budget;
+    this.totalDepense = totalDepense;
+    this.utilisateurConnecteLibelle =libelleUtilisateurConnecte;
+
+
+    // return {
+    //   budget : budget,
+    //   totalDepense : totalDepense,
+    //   budgetRestant : budgetRestant
+    // };
+  }
   
 
 }

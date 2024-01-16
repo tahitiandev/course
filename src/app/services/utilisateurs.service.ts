@@ -30,4 +30,13 @@ export class UtilisateursService {
   public async deleteDefinitivement(utilisateur : Utilisateurs){
     return await this.storage.deleteDefinitivement(LocalName.Utilisateurs, utilisateur);
   }
+
+  public async getLibelleUtilisateurById(id : number){
+    return (await this.get()).find(utilisateur => utilisateur.id === id).libelle;
+  }
+
+  public async getIdUtilisateurByLibelle(libelle : string){
+    return (await this.get()).find(utilisateur => utilisateur.libelle == libelle).id;
+  }
+
 }
