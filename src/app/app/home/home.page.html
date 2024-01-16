@@ -27,11 +27,13 @@
     <h5 style="margin-right: 10px;">Dépense de <u>{{ getLibelleMois(month-1) }}</u></h5>
     <tr style="background: rgb(135, 71, 207);">
       <th>Utilisateurs</th>
-      <th>Dépenses</th>
+      <th>Montant course</th>
+      <th>Montant dépense</th>
     </tr>
     <tr style="text-align: center;" *ngFor="let data of utilisateurByDepense">
       <td>{{ data.utilisateur }}</td>
-      <td>{{ data.depense }}</td>
+      <td>{{ data.montantCourse }}</td>
+      <td>{{ data.montantdepense }}</td>
     </tr>
   </table>
 

@@ -105,14 +105,15 @@ export class HomePage implements OnInit {
   public statsUtilisateursByDepense(){
 
     var result : Array<any> = [];
-    var depenses = 0
+    var montantCourse = 0
+    var montantDepense = 0
     this.utilisateurs.map(utilisateur => {
 
       this.courses.map(course => {
         if(new Date(course.date).getUTCFullYear() == this.year){
           if((new Date(course.date).getUTCMonth() + 1) == this.month){
             if(course.payeurId === utilisateur.id){
-              depenses += course.montantReel
+              montantCourse += course.montantReel
             }
           } // month
         } // year
@@ -123,7 +124,7 @@ export class HomePage implements OnInit {
         if(new Date(depense.createdOn).getUTCFullYear() == this.year){
           if((new Date(depense.createdOn).getUTCMonth() + 1) == this.month){
             if(depense.userid === utilisateur.id){
-              depenses += Number(depense.depense)
+              montantDepense += Number(depense.depense)
             }
           } // month
         } // year
@@ -132,10 +133,12 @@ export class HomePage implements OnInit {
 
       result.push({
         utilisateur : utilisateur.libelle,
-        depense : depenses
+        montantCourse : montantCourse,
+        montantdepense : montantDepense
       })
 
-      depenses = 0
+      montantCourse = 0
+      montantDepense = 0
     })
 
     this.utilisateurByDepense = result;
