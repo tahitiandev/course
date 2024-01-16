@@ -336,6 +336,9 @@ export class CourseDetailsPage implements OnInit {
     const articles = await this.getArticles();
     this.articles = articles;
 
+    const connexionInfo = await this.utility.getConnexionInfo();
+    this.isModeCourseRapide = connexionInfo.isCourseRapide;
+
     this.calculeTotalCourse();
   }
 
