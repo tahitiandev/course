@@ -26,6 +26,7 @@ export class HomePage implements OnInit {
   day : any;
   month : any;
   isInputDateActif = false;
+  budgetRestant = 0;
 
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
@@ -89,6 +90,7 @@ export class HomePage implements OnInit {
     this.courses = await this.getCourses();
     this.utilisateurs = await this.getUtilisateurs();
     this.depenses = await this.getDepenses();
+    // this.budgetRestant = await this.getBudgetRestant();
   }
 
   private async getUtilisateurs(){
@@ -175,9 +177,16 @@ export class HomePage implements OnInit {
       })//utilisateur
     })//course
 
-
-
   }
+
+  // private async getBudgetRestant(){
+  //   const infoConnexion = await this.utility.getConnexionInfo();
+  //   const utilisateurByDepense = this.utilisateurByDepense;
+  //   const depenses = await utilisateurByDepense.find(result => result.utilisateur === 'Gilles');
+  //   const totalDepense = depenses.montantCourse + depenses.montantdepense;
+  //   const budgetRestant = infoConnexion.budget - totalDepense;
+  //   return budgetRestant;
+  // }
   
 
 }

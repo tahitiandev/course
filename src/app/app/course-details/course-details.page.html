@@ -77,8 +77,11 @@
   </ion-fab>
 
 
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="setAfficherListe()" *ngIf="isModeCourseRapide">
-    <ion-fab-button size="small">
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="isModeCourseRapide">
+    <ion-fab-button size="small" *ngIf="isAfficherListe" color="danger" (click)="regler()">
+      <ion-icon name="journal-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button size="small" (click)="setAfficherListe()">
       <ion-icon name="list-circle-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>

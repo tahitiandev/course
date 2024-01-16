@@ -56,7 +56,8 @@ export class AuthentificationPage implements OnInit {
           groupeId : utilisateur[0].groupeId,
           isOnline : true,
           isCourseAfficher : true,
-          isCourseRapide : true
+          isCourseRapide : true,
+          budget : 10000
         }
         console.log(infoConnexion)
 

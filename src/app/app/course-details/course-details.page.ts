@@ -124,10 +124,6 @@ export class CourseDetailsPage implements OnInit {
 
             await this.coursesService.postCourseDetails(coursedetails);
             await this.refresh();
-
-            if(this.isModeCourseRapide){
-              this.isAfficherListe = !this.isAfficherListe;
-            }
           }
         }
         
@@ -936,6 +932,85 @@ export class CourseDetailsPage implements OnInit {
 
   public setAfficherListe(){
     this.isAfficherListe = !this.isAfficherListe
+  }
+
+  public async regler(){
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Régler vos courses',
+      inputs : [
+        {
+          type : 'number',
+          name : 'reglement'
+        }
+      ],
+        buttons: [
+        {
+          text: 'Annuler',
+          role: 'Non',
+          cssClass: 'secondary',
+          handler: () => {
+            
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (result : any) => {
+
+            this.course.montantReel = result.reglement;
+            await this.coursesService.putCourse(this.course);
+
+            const totalTheorique = this.course.montantTheorique;
+
+            if(totalTheorique < result.reglement){
+
+              var ecart = result.reglement - totalTheorique
+
+              var coursedetails : CourseDetails = {
+                id : Date.now(),
+                ordre : 1,
+                courseId : this.courseid,
+                libelle : 'REGLT +',
+                quantite : 1,
+                articleId : 0,
+                prixArticle : ecart,
+                prixReel : ecart,
+                checked : false,
+                total : ecart,
+                isFirebase : false
+              }
+
+              await this.coursesService.postCourseDetails(coursedetails);
+            }
+            else{
+              var ecart = totalTheorique - result.reglement
+              var coursedetails : CourseDetails = {
+                id : Date.now(),
+                ordre : 1,
+                courseId : this.courseid,
+                libelle : 'REGLT -',
+                quantite : 1,
+                articleId : 0,
+                prixArticle : ecart,
+                prixReel : ecart,
+                checked : false,
+                total : ecart * -1,
+                isFirebase : false
+              }
+
+              await this.coursesService.postCourseDetails(coursedetails);
+            }
+
+            await this.refresh();
+
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
   }
 
 }
