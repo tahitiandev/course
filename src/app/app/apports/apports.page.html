@@ -5,7 +5,7 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
 
-    <ion-title>Dépenses</ion-title>
+    <ion-title>Apports</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -17,7 +17,7 @@
 
   <!-- MODE TELEPHONE -->
   
-  <app-depenses-list [depenses]="depenses" class="masquer-mode-mobile"></app-depenses-list>
+  <app-apports-list [apports]="apports" class="masquer-mode-mobile"></app-apports-list>
   
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="post()"  class="masquer-mode-mobile">
     <ion-fab-button size="small">
@@ -39,6 +39,6 @@
     </ion-fab-button>
   </ion-fab>
 
-  <app-depenses-list [depenses]="depenses" *ngIf="listeOn" class="masquer-mode-web"></app-depenses-list>
+  <app-apports-list [apports]="apports" *ngIf="listeOn" class="masquer-mode-web"></app-apports-list>
 
 </ion-content>

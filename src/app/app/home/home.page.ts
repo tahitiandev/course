@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { LocalName } from 'src/app/enums/LocalName';
+import { Apports } from 'src/app/models/Apports';
 import { Courses } from 'src/app/models/Courses';
 import { Depenses } from 'src/app/models/Depenses';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
+import { ApportsService } from 'src/app/services/apports.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { DepensesService } from 'src/app/services/depenses.service';
 import { MagasinsService } from 'src/app/services/magasins.service';
@@ -21,6 +23,7 @@ export class HomePage implements OnInit {
   utilisateurs : Array<Utilisateurs> = [];
   courses : Array<Courses> = [];
   depenses : Array<Depenses> = [];
+  apports : Array<Apports> = [];
   utilisateurByDepense : Array<any> = [];
   year : any;
   day : any;
@@ -30,22 +33,24 @@ export class HomePage implements OnInit {
   budget = 0;
   totalDepense = 0;
   utilisateurConnecteLibelle = "";
+  montantApportUtilisateurConnecte = 0
 
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
               private storageService : StorageService,
               private magasinservice : MagasinsService,
               private navigate : NavController,
+              private apportsservice : ApportsService,
               private depensesservice : DepensesService,
               private coursesService : CoursesService) {   }
 
   async ngOnInit() {
-    await this.refresh();
     await this.redirection();
     var today = this.getToday();
     this.year = today.year;
     this.day = today.day;
     this.month = today.month;
+    await this.refresh();
     await this.statsUtilisateursByDepense();
   }
 
@@ -93,7 +98,9 @@ export class HomePage implements OnInit {
     this.courses = await this.getCourses();
     this.utilisateurs = await this.getUtilisateurs();
     this.depenses = await this.getDepenses();
+    this.apports = await this.getApports();
 
+    this.getApportUtilisateurConnecte();
     this.setBudget();
   }
 
@@ -183,6 +190,30 @@ export class HomePage implements OnInit {
 
   }
 
+  private async getApports(){
+    return await this.apportsservice.get();
+  }
+
+  private async getApportUtilisateurConnecte(){
+
+    const infoConnexion = await this.utility.getConnexionInfo();
+    var montantApport = 0;
+
+    this.apports.map(apport => {
+      if(apport.createdOn.getUTCFullYear() == this.year){
+        if((new Date(apport.createdOn).getUTCMonth() + 1) == this.month){
+          if(apport.userid == infoConnexion.utilisateurId){
+            montantApport += Number(apport.apport)
+          }
+        } // month
+      } // year
+
+    })
+
+    this.montantApportUtilisateurConnecte = montantApport;
+
+  }
+
   private async setBudget(){
     const infoConnexion = await this.utility.getConnexionInfo();
     const budget = infoConnexion.budget;
@@ -193,7 +224,7 @@ export class HomePage implements OnInit {
     const depenses = await utilisateurByDepense.find(result => result.utilisateur === libelleUtilisateurConnecte);
 
     const totalDepense = depenses.montantCourse + depenses.montantdepense;
-    const budgetRestant = infoConnexion.budget - totalDepense;
+    const budgetRestant = infoConnexion.budget - totalDepense + this.montantApportUtilisateurConnecte;
 
     this.budgetRestant = budgetRestant;
     this.budget = budget;

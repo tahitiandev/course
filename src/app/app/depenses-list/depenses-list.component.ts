@@ -113,7 +113,7 @@ export class DepensesListComponent  implements OnInit {
           text: 'Valider',
           handler: async (date) => {
 
-            depense.createdOn = date.date
+            depense.createdOn = new Date(date.date);
             await this.depensesservice.put(depense);
             await this.refresh();
 

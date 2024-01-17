@@ -157,6 +157,7 @@ export class StorageService {
       await this.synchroniser(LocalName.Memos);
       await this.synchroniser(LocalName.HistoriquePrix);
       await this.synchroniser(LocalName.Depenses);
+      await this.synchroniser(LocalName.Apports);
       await this.synchroniser(LocalName.Magasins);
       await this.synchroniser(LocalName.Plats);
       await this.synchroniser(LocalName.PlatDetails);
