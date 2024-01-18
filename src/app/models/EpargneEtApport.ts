@@ -3,4 +3,5 @@ export interface EpargneEtApport{
     type : string;
     montant : number;
     description? : string;
+    EpargneApportid : number;
 }

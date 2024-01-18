@@ -14,6 +14,11 @@ export class EpargnesService {
     return await this.storage.get(LocalName.Epargnes);
   }
 
+  public async getById(id : number){
+    const epargne = await this.get();
+    return await epargne.find(epargne => epargne.id === id);
+  }
+
   public async post(epargnes : Epargnes){
     await this.storage.post(LocalName.Epargnes, epargnes)
   

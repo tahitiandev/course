@@ -9,4 +9,5 @@ export interface ConnexionInfo{
     isCourseAfficher : boolean;
     isCourseRapide : boolean;
     budget : number;
+    epargne : number;
     }

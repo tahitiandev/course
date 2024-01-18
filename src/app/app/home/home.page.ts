@@ -34,6 +34,7 @@ export class HomePage implements OnInit {
   totalDepense = 0;
   utilisateurConnecteLibelle = "";
   montantApportUtilisateurConnecte = 0
+  epargne = 0;
 
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
@@ -102,6 +103,12 @@ export class HomePage implements OnInit {
 
     this.getApportUtilisateurConnecte();
     this.setBudget();
+
+    this.epargne = (await this.getInfoConnexion()).epargne;
+  }
+
+  private async getInfoConnexion(){
+    return await this.utility.getConnexionInfo();
   }
 
   private async getUtilisateurs(){

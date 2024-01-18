@@ -5,7 +5,7 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
 
-    <ion-title>Epargnes</ion-title>
+    <ion-title>Gestion de l'épargne</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -16,8 +16,10 @@
   </ion-refresher>
 
   <!-- MODE TELEPHONE -->
+
+  <h1 style="text-align: center;">restant : {{ this.calculeEpargneRestant().toLocaleString()}} XPF</h1>
   
-  <app-epargnes-list [epargneEtApport]="epargnes" class="masquer-mode-mobile"></app-epargnes-list>
+  <app-epargnes-list [epargneEtApport]="epargneEtApport" class="masquer-mode-mobile"></app-epargnes-list>
   
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="post()"  class="masquer-mode-mobile">
     <ion-fab-button size="small">
@@ -39,6 +41,6 @@
     </ion-fab-button>
   </ion-fab>
 
-  <app-epargnes-list [epargneEtApport]="epargnes" *ngIf="listeOn" class="masquer-mode-web"></app-epargnes-list>
+  <app-epargnes-list [epargneEtApport]="epargneEtApport" *ngIf="listeOn" class="masquer-mode-web"></app-epargnes-list>
 
 </ion-content>

@@ -27,7 +27,6 @@ export class EpargnesPage implements OnInit {
               private apportsservice : ApportsService,
               private storageService : StorageService,
               private alertController : AlertController) { 
-                this.refresh();
               }
 
   async ngOnInit() {
@@ -50,25 +49,46 @@ export class EpargnesPage implements OnInit {
     this.apports = apports;
 
     await this.cumuleEpargneApport();
+    this.setMontantEpargneSurInfoConnexion();
   }
 
   private async cumuleEpargneApport(){
+
     this.epargnes.map(epargne => {
       this.epargneEtApport.push({
         date : epargne.createdOn,
         type : 'Epargne',
         montant : epargne.epargne,
-        description : epargne.commentaire
+        description : epargne.commentaire,
+        EpargneApportid : epargne.id
       })
     })
+
     this.apports.map(apport => {
       this.epargneEtApport.push({
         date : apport.createdOn,
         type : 'Retrait',
         montant : apport.apport * -1,
-        description : apport.commentaire
+        description : apport.commentaire,
+        EpargneApportid : apport.id
       })
     })
+
+  }
+
+  public calculeEpargneRestant(){
+    var total = 0;
+
+    this.epargneEtApport.map(s => {
+      total += Number(s.montant)
+    })
+    return total;
+  }
+
+  private async setMontantEpargneSurInfoConnexion(){
+    const infoConnexion = await this.utility.getConnexionInfo();
+    infoConnexion.epargne = this.calculeEpargneRestant();
+    this.utility.putConnexionInfo(infoConnexion);
   }
 
   public async post(){

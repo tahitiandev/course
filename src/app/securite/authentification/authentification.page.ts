@@ -57,7 +57,8 @@ export class AuthentificationPage implements OnInit {
           isOnline : true,
           isCourseAfficher : true,
           isCourseRapide : true,
-          budget : 10000
+          budget : 10000,
+          epargne : 0
         }
         console.log(infoConnexion)
 

@@ -51,7 +51,8 @@ export class EpargnesListComponent  implements OnInit {
         date : epargne.createdOn,
         type : 'Epargne',
         montant : epargne.epargne,
-        description : epargne.commentaire
+        description : epargne.commentaire,
+        EpargneApportid : epargne.id
       })
     })
     this.apports.map(apport => {
@@ -59,34 +60,36 @@ export class EpargnesListComponent  implements OnInit {
         date : apport.createdOn,
         type : 'Retrait',
         montant : apport.apport * -1,
-        description : apport.commentaire
+        description : apport.commentaire,
+        EpargneApportid : apport.id
       })
     })
   }
 
-  public async put(epargnes : Epargnes){
+  public async put(epargneEtApport : EpargneEtApport){
+
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Modifier l\'épargne',
       inputs: [
         {
           type : 'number',
-          name : 'apport',
-          value : epargnes.epargne
+          name : 'montant',
+          value : epargneEtApport.montant
         },
         {
           type : 'textarea',
           name : 'commentaire',
-          value : epargnes.commentaire
+          value : epargneEtApport.description
         }
       ],
       buttons: [
-        {
-          text: 'Modifier la date',
-          handler: async() => {
-            await this.modifierDate(epargnes);
-          }
-        },
+        // {
+        //   text: 'Modifier la date',
+        //   handler: async() => {
+        //     await this.modifierDate(epargneEtApport);
+        //   }
+        // },
         {
           text: 'Annuler',
           role: 'cancel',
@@ -97,14 +100,17 @@ export class EpargnesListComponent  implements OnInit {
         }
         ,{
           text: 'Valider',
-          handler: async (result : Epargnes) => {
+          handler: async (result : EpargneEtApport) => {
 
-            epargnes.modifiedOn = new Date();
-            epargnes.userid = (await this.utility.getConnexionInfo()).utilisateurId;
-            epargnes.epargne = result.epargne;
-            epargnes.commentaire = result.commentaire;
+            const epargne = await this.epargnesservice.getById(epargneEtApport.EpargneApportid);
+            console.log(epargne)
 
-            await this.epargnesservice.put(epargnes);
+            epargne.modifiedOn = new Date();
+            epargne.userid = (await this.utility.getConnexionInfo()).utilisateurId;
+            epargne.epargne = result.montant;
+            epargne.commentaire = result.description;
+
+            await this.epargnesservice.put(epargne);
             await this.refresh();
 
           }
@@ -115,7 +121,8 @@ export class EpargnesListComponent  implements OnInit {
     await alert.present();
   }
 
-  public async delete(epargne : Epargnes){
+  public async delete(epargneEtApport : EpargneEtApport){
+    const epargne = await this.epargnesservice.getById(epargneEtApport.EpargneApportid);
     await this.epargnesservice.delete(epargne);
     this.refresh();
   }
