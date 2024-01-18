@@ -21,10 +21,15 @@ export class AppComponent {
     { title: 'Plats', url: 'plats', icon: 'paper-plane' },
     { title: 'Familles', url: 'familles', icon: 'paper-plane' },
     { title: 'Magasins', url: 'magasins', icon: 'paper-plane' },
-    { title: 'Dépenses', url: 'depenses', icon: 'paper-plane' },
-    { title: 'Apports', url: 'apports', icon: 'paper-plane' },
     { title: 'Paramétrages', url: 'settings', icon: 'paper-plane' },
   ];
+
+  public pagesfinancier : Array<any> = [
+    { title: 'Dépenses', url: 'depenses', icon: 'paper-plane' },
+    { title: 'Apports', url: 'apports', icon: 'paper-plane' },
+  ];
+
+  
 
   public pagesNotConnected : Array<any> = [
     { title: 'Créer un utilisateur', url: 'creation-utilisateur', icon: 'mail' },
@@ -186,5 +191,6 @@ export class AppComponent {
   public actualiser(){
     location.reload();
   }
+
 
 }

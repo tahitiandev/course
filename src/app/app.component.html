@@ -2,12 +2,27 @@
   <ion-split-pane contentId="main-content">
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
+
+
         <ion-list id="inbox-list">
           <ion-list-header>Vos courses</ion-list-header>
 
           <ion-note>Menu principal</ion-note>
 
           <ion-menu-toggle auto-hide="false" *ngFor="let page of pages; let i = index">
+            <ion-item routerDirection="root" [routerLink]="[page.url]" lines="none" detail="false" routerLinkActive="selected">
+              <ion-icon aria-hidden="true" slot="start" [ios]="page.icon + '-outline'" [md]="page.icon + '-sharp'"></ion-icon>
+              <ion-label>{{ page.title }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+
+
+        <ion-list id="labels-list">
+          
+          <ion-list-header>Mouvement financier</ion-list-header>
+
+          <ion-menu-toggle auto-hide="false" *ngFor="let page of pagesfinancier; let i = index">
             <ion-item routerDirection="root" [routerLink]="[page.url]" lines="none" detail="false" routerLinkActive="selected">
               <ion-icon aria-hidden="true" slot="start" [ios]="page.icon + '-outline'" [md]="page.icon + '-sharp'"></ion-icon>
               <ion-label>{{ page.title }}</ion-label>
