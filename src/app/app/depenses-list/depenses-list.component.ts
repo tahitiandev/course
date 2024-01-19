@@ -76,7 +76,7 @@ export class DepensesListComponent  implements OnInit {
             depense.modifiedOn = new Date();
             depense.userid = (await this.utility.getConnexionInfo()).utilisateurId;
             depense.depense = result.depense;
-            depense.commentaire = result.commentaire;
+            depense.commentaire = result.commentaire === undefined ? "" : result.commentaire;
 
             await this.depensesservice.put(depense);
             await this.refresh();

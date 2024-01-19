@@ -69,7 +69,7 @@ export class ApportsListComponent  implements OnInit {
             apports.modifiedOn = new Date();
             apports.userid = (await this.utility.getConnexionInfo()).utilisateurId;
             apports.apport = result.apport;
-            apports.commentaire = result.commentaire;
+            apports.commentaire = result.commentaire === undefined ? "" : result.commentaire;
 
             await this.apportsservice.put(apports);
             await this.refresh();
