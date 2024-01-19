@@ -121,6 +121,10 @@ export class EpargnesListComponent  implements OnInit {
     await alert.present();
   }
 
+  public formatDate(date : any){
+    return this.utility.detecteDate(date)
+  }
+
   public async delete(epargneEtApport : EpargneEtApport){
     const epargne = await this.epargnesservice.getById(epargneEtApport.EpargneApportid);
     await this.epargnesservice.delete(epargne);

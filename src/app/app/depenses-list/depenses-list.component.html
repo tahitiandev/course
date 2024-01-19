@@ -5,7 +5,7 @@
             [ngStyle]="{'text-decoration': depense.check === true ? 'line-through' : 'none'}">
     <ion-label>
       <h3>
-        {{ depense.createdOn }} : 
+        {{ formatDate(depense.createdOn).toLocaleDateString() }} : 
         {{ depense.commentaire }}
         <ion-chip color="success" 
                   slot="end"

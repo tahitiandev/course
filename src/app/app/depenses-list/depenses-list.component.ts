@@ -29,6 +29,10 @@ export class DepensesListComponent  implements OnInit {
     return await this.depensesservice.get();
   }
 
+  public formatDate(date : any){
+    return this.utility.detecteDate(date)
+  }
+
   private async refresh(){
     const depenses = await this.get();
     this.depenses = depenses;

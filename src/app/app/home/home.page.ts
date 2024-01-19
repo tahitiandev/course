@@ -131,8 +131,11 @@ export class HomePage implements OnInit {
     this.utilisateurs.map(utilisateur => {
 
       this.courses.map(course => {
-        if(new Date(course.date).getUTCFullYear() == this.year){
-          if((new Date(course.date).getUTCMonth() + 1) == this.month){
+
+        var createdOn = this.utility.detecteDate(course.date);
+
+        if(new Date(createdOn).getUTCFullYear() == this.year){
+          if((new Date(createdOn).getUTCMonth() + 1) == this.month){
             if(course.payeurId === utilisateur.id){
               montantCourse += course.montantReel
             }
@@ -142,8 +145,11 @@ export class HomePage implements OnInit {
       })
 
       this.depenses.map(depense => {
-        if(new Date(depense.createdOn).getUTCFullYear() == this.year){
-          if((new Date(depense.createdOn).getUTCMonth() + 1) == this.month){
+
+        var createdOn = this.utility.detecteDate(depense.createdOn);
+
+        if(new Date(createdOn).getUTCFullYear() == this.year){
+          if((new Date(createdOn).getUTCMonth() + 1) == this.month){
             if(depense.userid === utilisateur.id){
               montantDepense += Number(depense.depense)
             }
@@ -207,8 +213,11 @@ export class HomePage implements OnInit {
     var montantApport = 0;
 
     this.apports.map(apport => {
-      if(apport.createdOn.getUTCFullYear() == this.year){
-        if((new Date(apport.createdOn).getUTCMonth() + 1) == this.month){
+
+      var createdOn = this.utility.detecteDate(apport.createdOn);
+
+      if(createdOn.getUTCFullYear() == this.year){
+        if((new Date(createdOn).getUTCMonth() + 1) == this.month){
           if(apport.userid == infoConnexion.utilisateurId){
             montantApport += Number(apport.apport)
           }

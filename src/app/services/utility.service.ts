@@ -48,4 +48,14 @@ export class UtilityService {
       await alert.present();
     }
 
+    public detecteDate(date : any){
+      
+      if (typeof date === 'object' && date !== null) {
+        return new Date(date.seconds * 1000 + date.nanoseconds / 1e6);
+      } else {
+          return date
+      }
+
+    }
+
 }

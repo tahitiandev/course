@@ -128,4 +128,8 @@ export class ApportsListComponent  implements OnInit {
     await this.refresh();
   }
 
+  public formatDate(date : any){
+    return this.utility.detecteDate(date)
+  }
+
 }
