@@ -39,11 +39,28 @@ export class StorageService {
 
   }
 
+  private parseDate(date : any) {
+    const dateObject = new Date(date);
+
+    // Obtenir le temps en millisecondes depuis l'époque
+    const milliseconds = dateObject.getTime();
+
+    // Convertir les millisecondes en secondes et nanosecondes
+    const seconds = Math.floor(milliseconds / 1000);
+    const nanoseconds = (milliseconds % 1000) * 1e6;
+
+    // Retourner l'objet avec nanoseconds et seconds
+    return { 
+            nanoseconds : nanoseconds,
+            seconds : seconds 
+          };
+  }
+
   public async post(localName : string, data : any){
 
     var datas : Array<any> = await this.getAll(localName);
     data.id = Number(new Date());
-    data.createdOn = new Date();
+    data.createdOn = this.parseDate(new Date());
     data.modifiedOn = null;
     data.deletedOn = null;
     data.isFirebase = false;

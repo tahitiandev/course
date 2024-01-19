@@ -46,6 +46,9 @@ export class EpargnesListComponent  implements OnInit {
   }
 
   private async cumuleEpargneApport(){
+    
+    this.epargneEtApport = [];
+
     this.epargnes.map(epargne => {
       this.epargneEtApport.push({
         date : epargne.createdOn,
