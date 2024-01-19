@@ -5,7 +5,7 @@
             [ngStyle]="{'text-decoration': apport.check === true ? 'line-through' : 'none'}">
     <ion-label>
       <h3>
-        {{ apport.createdOn | date : 'dd/MM/yyyy'}} : 
+        {{ apport.createdOn }} : 
         {{ apport.commentaire }}
         <ion-chip color="success" 
                   slot="end"

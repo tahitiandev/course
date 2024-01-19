@@ -22,6 +22,7 @@ export class ApportsPage implements OnInit {
               private storageService : StorageService,
               private alertController : AlertController) { 
                 this.refresh();
+                this.test()
               }
 
   async ngOnInit() {
@@ -30,6 +31,15 @@ export class ApportsPage implements OnInit {
 
   private async get(){
     return await this.apportsservice.get();
+  }
+
+  async test(){
+    var t = await this.apportsservice.get();
+    t.map(async(s) => {
+      s.createdOn = new Date()
+      await this.apportsservice.put(s);
+      console.log(s.createdOn)
+    })
   }
 
   private async refresh(){

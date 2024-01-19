@@ -3,7 +3,7 @@
   <ion-item button detail="true" (click)="put(epargne)" [disabled]="epargne.type == 'Retrait'">
     <ion-label>
       <h3>
-        {{ epargne.date | date : 'dd/MM/yyyy'}} : 
+        {{ epargne.date }} : 
         {{ epargne.type }}
         <span class="masquer-mode-mobile">{{ epargne.description }}</span>
         <ion-chip color="success" 
