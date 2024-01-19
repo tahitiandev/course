@@ -165,6 +165,11 @@ export class AppComponent {
       await this.storage.set(LocalName.Epargnes, []);
     }
 
+    const budget = await this.storage.get(LocalName.Budget);
+    if(budget === null){
+      await this.storage.set(LocalName.Budget, []);
+    }
+
   } //setLocalStorage
 
   private async IsConnected(){

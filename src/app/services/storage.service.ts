@@ -181,6 +181,7 @@ export class StorageService {
       await this.synchroniser(LocalName.PlatDetails);
       await this.synchroniser(LocalName.Groupes);
       await this.synchroniser(LocalName.Menus);
+      await this.synchroniser(LocalName.Budget);
     }else{
       alert('Le mode onLine est désactivé')
     }

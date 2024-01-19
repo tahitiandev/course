@@ -126,7 +126,7 @@ export class SettingsPage implements OnInit {
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Magasin par défaut',
+      header: 'Définir un budget',
       inputs: [
         {
           type : 'number',
