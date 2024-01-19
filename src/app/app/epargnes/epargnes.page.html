@@ -19,7 +19,7 @@
 
   <h1 style="text-align: center;">restant : {{ this.calculeEpargneRestant().toLocaleString()}} XPF</h1>
   
-  <app-epargnes-list [epargneEtApport]="epargneEtApport" class="masquer-mode-mobile"></app-epargnes-list>
+  <app-epargnes-list [epargneEtApport]="orderByDate(epargneEtApport)" class="masquer-mode-mobile"></app-epargnes-list>
   
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="post()"  class="masquer-mode-mobile">
     <ion-fab-button size="small">
@@ -41,6 +41,6 @@
     </ion-fab-button>
   </ion-fab>
 
-  <app-epargnes-list [epargneEtApport]="epargneEtApport" *ngIf="listeOn" class="masquer-mode-web"></app-epargnes-list>
+  <app-epargnes-list [epargneEtApport]="orderByDate(epargneEtApport)" *ngIf="listeOn" class="masquer-mode-web"></app-epargnes-list>
 
 </ion-content>

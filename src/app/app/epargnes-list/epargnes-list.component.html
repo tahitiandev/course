@@ -1,5 +1,5 @@
 <ion-list>
-  <ion-item-sliding *ngFor="let epargne of epargneEtApport">
+  <ion-item-sliding *ngFor="let epargne of orderByDate(epargneEtApport)">
   <ion-item button detail="true" (click)="put(epargne)" [disabled]="epargne.type == 'Retrait'">
     <ion-label>
       <h3>

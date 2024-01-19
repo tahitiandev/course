@@ -142,6 +142,19 @@ export class EpargnesPage implements OnInit {
     await alert.present();
   }
 
+  orderByDate(epargneapport : Array<any>){
+    return epargneapport.sort((a,b) => {
+    let x  = a.date.nanoseconds;
+    let y  = b.date.nanoseconds;
+    if(x < y){
+    return -1;
+    }else{
+    return 1;
+    }
+    return 0;
+    })
+  }
+
   handleRefresh(event : any) {
 
     this.storageService.synchroniser(LocalName.Epargnes).then(() => {

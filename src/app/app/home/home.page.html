@@ -23,8 +23,9 @@
   </div>
 
   
+  <h4 style="margin-top: 30px; margin-left: 20px;">Dépense de <u>{{ getLibelleMois(month-1) }}</u></h4>
+
   <table *ngIf="!isInputDateActif" style="margin: 15px;">
-    <h5 style="margin-right: 10px;">Dépense de <u>{{ getLibelleMois(month-1) }}</u></h5>
     <tr style="background: rgb(135, 71, 207);">
       <th>Utilisateurs</th>
       <th>Montant course</th>
@@ -38,27 +39,27 @@
   </table>
 
 
-  <h4>Récapitulatif de : {{ utilisateurConnecteLibelle }}</h4>
+  <h4 style="margin-left: 20px;">Récapitulatif de {{ utilisateurConnecteLibelle }}</h4>
 
   <ion-list style="margin: 15px;">
     <ion-item>
-      <ion-icon aria-hidden="true" name="bluetooth" slot="start"></ion-icon>
+      <ion-icon aria-hidden="true" name="thumbs-down" slot="start"></ion-icon>
       <ion-label>Dépense du mois : {{ totalDepense.toLocaleString() }} XPF</ion-label>
     </ion-item>
     <ion-item>
-      <ion-icon aria-hidden="true" name="call" slot="start"></ion-icon>
+      <ion-icon aria-hidden="true" name="thumbs-up" slot="start"></ion-icon>
       <ion-label>Apport du mois : {{ montantApportUtilisateurConnecte.toLocaleString() }} XPF</ion-label>
     </ion-item>
     <ion-item>
-      <ion-icon aria-hidden="true" name="wifi" slot="start"></ion-icon>
+      <ion-icon aria-hidden="true" name="cash" slot="start"></ion-icon>
       <ion-label>Budget du mois fixé à : {{ budget.toLocaleString() }} XPF</ion-label>
     </ion-item>
     <ion-item>
-      <ion-icon aria-hidden="true" name="airplane" slot="start"></ion-icon>
+      <ion-icon aria-hidden="true" name="card" slot="start"></ion-icon>
       <ion-label>Budget restant : {{ budgetRestant.toLocaleString() }} XPF</ion-label>
     </ion-item>
     <ion-item>
-      <ion-icon aria-hidden="true" name="airplane" slot="start"></ion-icon>
+      <ion-icon aria-hidden="true" name="lock-closed" slot="start"></ion-icon>
       <ion-label>Epargne : {{ epargne.toLocaleString() }} XPF</ion-label>
     </ion-item>
   </ion-list>

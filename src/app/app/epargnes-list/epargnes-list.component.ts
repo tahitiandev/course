@@ -45,6 +45,19 @@ export class EpargnesListComponent  implements OnInit {
     return await this.apportsservice.get();
   }
 
+  orderByDate(epargneapport : Array<any>){
+    return epargneapport.sort((a,b) => {
+    let x  = a.date.nanoseconds;
+    let y  = b.date.nanoseconds;
+    if(x < y){
+    return -1;
+    }else{
+    return 1;
+    }
+    return 0;
+    })
+  }
+
   private async cumuleEpargneApport(){
     
     this.epargneEtApport = [];
@@ -106,12 +119,11 @@ export class EpargnesListComponent  implements OnInit {
           handler: async (result : EpargneEtApport) => {
 
             const epargne = await this.epargnesservice.getById(epargneEtApport.EpargneApportid);
-            console.log(epargne)
 
             epargne.modifiedOn = new Date();
             epargne.userid = (await this.utility.getConnexionInfo()).utilisateurId;
             epargne.epargne = result.montant;
-            epargne.commentaire = result.description;
+            epargne.commentaire = result.description === undefined ? "" : result.description;
 
             await this.epargnesservice.put(epargne);
             await this.refresh();
