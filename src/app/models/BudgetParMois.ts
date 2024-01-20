@@ -2,7 +2,7 @@ import { Methods } from "../enums/Methods";
 
 export interface BudgetParMois{
     id : number;
-    mois : number;
+    mois : string;
     budget : number;
     isFirebase : false;
     deletedOn? : Date;

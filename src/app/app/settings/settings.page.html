@@ -49,9 +49,14 @@
         <h3>Historique des prix</h3>
       </ion-label>
     </ion-item>
-    <ion-item button detail="true" (click)="updateBudget()">
+    <!-- <ion-item button detail="true" (click)="updateBudget()">
       <ion-label>
         <h3>Budget du mois : {{ montantBudget.toLocaleString() }} XPF</h3>
+      </ion-label>
+    </ion-item> -->
+    <ion-item button detail="true" routerLink="/budgets">
+      <ion-label>
+        <h3>Gestion du budget</h3>
       </ion-label>
     </ion-item>
   </ion-item-group>
@@ -75,7 +80,7 @@
 
   </ion-item-group> 
   
-  <ion-item-group> 
+  <!-- <ion-item-group> 
     <ion-item-divider>
       <ion-label>Console.log</ion-label>
     </ion-item-divider>
@@ -114,5 +119,5 @@
         <h3>Console.log : Plats</h3>
       </ion-label>
     </ion-item>
-  </ion-item-group> 
+  </ion-item-group>  -->
 </ion-content>

@@ -1,0 +1,20 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/settings"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Budget fixé par mois</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list style="margin: 15px;">
+    <ion-item *ngFor="let budget of budgets">
+      <ion-icon aria-hidden="true" name="calendar" slot="start"></ion-icon>
+      <ion-label style="cursor: pointer;" (click)="put(budget.mois)">{{ budget.mois }} : {{ budget.budget }} XPF</ion-label>
+    </ion-item>
+  </ion-list>
+
+</ion-content>
+
+

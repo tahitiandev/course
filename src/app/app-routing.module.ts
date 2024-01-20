@@ -85,6 +85,10 @@ const routes: Routes = [
   {
     path: 'epargnes',
     loadChildren: () => import('./app/epargnes/epargnes.module').then( m => m.EpargnesPageModule)
+  },
+  {
+    path: 'budgets',
+    loadChildren: () => import('./app/budgets/budgets.module').then( m => m.BudgetsPageModule)
   }
 
 
