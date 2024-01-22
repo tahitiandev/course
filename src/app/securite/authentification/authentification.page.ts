@@ -62,6 +62,9 @@ export class AuthentificationPage implements OnInit {
         await this.storage.set(LocalName.InfoConnexion, infoConnexion);
         await this.storage.synchroniserAvecFirestore();
         this.utility.navigateTo('home');
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
       }else{
         console.log('Le mot de passe est incorrecte');
       }

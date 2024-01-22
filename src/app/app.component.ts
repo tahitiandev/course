@@ -39,6 +39,8 @@ export class AppComponent {
   
   public labels = ['Test'];
 
+  isConnected : boolean =  false;
+
   constructor(private storage : Storage,
               private utility : UtilityService
     ) {
@@ -175,15 +177,18 @@ export class AppComponent {
     
     if(connexion.isConnected){
       this.pages = this.pagesConnected;
+      this.isConnected = true;
     }
     if(!connexion.isConnected){
       this.pages = this.pagesNotConnected;
+      this.isConnected = false;
     }
 
   }
 
   public async seDeconnecter(){
     this.pages = this.pagesNotConnected;
+    this.isConnected = false;
     const infoConnexion : ConnexionInfo = {
       isConnected : false,
       utilisateurId : 0,
@@ -195,6 +200,9 @@ export class AppComponent {
 
     await this.storage.set(LocalName.InfoConnexion, infoConnexion);
     this.utility.navigateTo('authentification');
+    setTimeout(() => {
+      this.actualiser();
+    }, 2000);
   }
 
   public actualiser(){
