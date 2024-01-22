@@ -36,7 +36,6 @@ export class SettingsPage implements OnInit {
     this.connexionInfo = connexionInfo;
     this.isOnline = connexionInfo.isOnline;
     this.isCourseRapide = connexionInfo.isCourseRapide;
-    this.montantBudget = connexionInfo.budget;
     this.magasinParDefaut = connexionInfo.magasinParDefaut?.libelle === undefined ? "1" : connexionInfo.magasinParDefaut.libelle
   }
 
@@ -119,49 +118,4 @@ export class SettingsPage implements OnInit {
     const data = await this.storage.get(localname);
     console.log(data)
   }
-
-  public async updateBudget(){
-
-    const connexionInfo = await this.utility.getConnexionInfo();
-
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Définir un budget',
-      inputs: [
-        {
-          type : 'number',
-          name : 'budget',
-          placeholder : connexionInfo.budget.toString()
-        }
-      ],
-        buttons: [
-        {
-          text: 'Annuler',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-
-          }
-        }
-        ,{
-          text: 'Valider',
-          handler: async (result : any) => {
-            
-            const budget = result.budget === '' ? connexionInfo.budget : result.budget;
-            connexionInfo.budget = budget;
-            await this.storage.set(LocalName.InfoConnexion, connexionInfo);
-            await this.refresh()
-          }
-        }
-        
-      ]
-    });
-
-    await alert.present().then(() => {
-      const firstInput: any = document.querySelector('ion-alert input');
-      firstInput.focus();
-      return;
-    });
-  }
-
 }

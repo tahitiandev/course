@@ -57,10 +57,7 @@ export class AuthentificationPage implements OnInit {
           isOnline : true,
           isCourseAfficher : true,
           isCourseRapide : true,
-          budget : 10000,
-          epargne : 0
         }
-        console.log(infoConnexion)
 
         await this.storage.set(LocalName.InfoConnexion, infoConnexion);
         await this.storage.synchroniserAvecFirestore();

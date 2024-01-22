@@ -8,6 +8,4 @@ export interface ConnexionInfo{
     isOnline : boolean;
     isCourseAfficher : boolean;
     isCourseRapide : boolean;
-    budget : number;
-    epargne : number;
     }

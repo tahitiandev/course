@@ -108,10 +108,6 @@ export class BudgetsPage implements OnInit {
             await this.budgetsservice.put(budget);
             await this.refresh();
 
-            const connexionInfo = await this.utility.getConnexionInfo();
-            connexionInfo.budget = budget.budget;
-            await this.utility.putConnexionInfo(connexionInfo);
-
           }
         }
         

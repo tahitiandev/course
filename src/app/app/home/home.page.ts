@@ -4,10 +4,13 @@ import { LocalName } from 'src/app/enums/LocalName';
 import { Apports } from 'src/app/models/Apports';
 import { Courses } from 'src/app/models/Courses';
 import { Depenses } from 'src/app/models/Depenses';
+import { Epargnes } from 'src/app/models/Epargnes';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
 import { ApportsService } from 'src/app/services/apports.service';
+import { BudgetsService } from 'src/app/services/budgets.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { DepensesService } from 'src/app/services/depenses.service';
+import { EpargnesService } from 'src/app/services/epargnes.service';
 import { MagasinsService } from 'src/app/services/magasins.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UtilisateursService } from 'src/app/services/utilisateurs.service';
@@ -34,14 +37,17 @@ export class HomePage implements OnInit {
   totalDepense = 0;
   utilisateurConnecteLibelle = "";
   montantApportUtilisateurConnecte = 0
+  epargneAll : Array<Epargnes> = [];
   epargne = 0;
 
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
               private storageService : StorageService,
               private magasinservice : MagasinsService,
+              private budgetsservice : BudgetsService,
               private navigate : NavController,
               private apportsservice : ApportsService,
+              private epargnesservice : EpargnesService,
               private depensesservice : DepensesService,
               private coursesService : CoursesService) {   }
 
@@ -103,8 +109,28 @@ export class HomePage implements OnInit {
 
     this.getApportUtilisateurConnecte();
     this.setBudget();
+    this.getEpargneDuMoisSelectionne();
+  }
 
-    this.epargne = (await this.getInfoConnexion()).epargne;
+  public async getEpargne(){
+    return await this.epargnesservice.get();
+  }
+
+  private async getEpargneDuMoisSelectionne(){
+
+    const epargnes = await this.getEpargne();
+    const apports = await this.getApports();
+    var epargneRestant = 0;
+
+    epargnes.map(epargne => {
+      epargneRestant += Number(epargne.epargne);
+    })
+
+    apports.map(apport => {
+      epargneRestant -= Number(apport.apport);
+    })
+
+    this.epargne = epargneRestant;
   }
 
   private async getInfoConnexion(){
@@ -230,29 +256,49 @@ export class HomePage implements OnInit {
 
   }
 
+  private getLibelleMoisAndReturnIdMois(libelleMois : string){
+    var mois = [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre",
+    ]
+    return mois.findIndex(s => s === libelleMois) + 1;
+  }
+
+  private async getBudget(){
+    return await this.budgetsservice.get();
+  }
+
   private async setBudget(){
     const infoConnexion = await this.utility.getConnexionInfo();
-    const budget = infoConnexion.budget;
-
+    const budgets = await this.getBudget();
+    const budgetResult = await budgets.find(async(budget) => {
+      this.getLibelleMoisAndReturnIdMois(budget.mois) === this.month
+    })
+    const budget = budgetResult.budget;
+    
     const libelleUtilisateurConnecte = await this.utilisateursService.getLibelleUtilisateurById(infoConnexion.utilisateurId); 
 
     const utilisateurByDepense = this.utilisateurByDepense;
     const depenses = await utilisateurByDepense.find(result => result.utilisateur === libelleUtilisateurConnecte);
 
     const totalDepense = depenses.montantCourse + depenses.montantdepense;
-    const budgetRestant = infoConnexion.budget - totalDepense + this.montantApportUtilisateurConnecte;
+    const budgetRestant = budget - totalDepense + this.montantApportUtilisateurConnecte;
 
     this.budgetRestant = budgetRestant;
     this.budget = budget;
     this.totalDepense = totalDepense;
     this.utilisateurConnecteLibelle =libelleUtilisateurConnecte;
 
-
-    // return {
-    //   budget : budget,
-    //   totalDepense : totalDepense,
-    //   budgetRestant : budgetRestant
-    // };
   }
   
 

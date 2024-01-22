@@ -49,7 +49,6 @@ export class EpargnesPage implements OnInit {
     this.apports = apports;
 
     await this.cumuleEpargneApport();
-    this.setMontantEpargneSurInfoConnexion();
   }
 
   private async cumuleEpargneApport(){
@@ -87,11 +86,6 @@ export class EpargnesPage implements OnInit {
     return total;
   }
 
-  private async setMontantEpargneSurInfoConnexion(){
-    const infoConnexion = await this.utility.getConnexionInfo();
-    infoConnexion.epargne = this.calculeEpargneRestant();
-    this.utility.putConnexionInfo(infoConnexion);
-  }
 
   public async post(){
     const alert = await this.alertController.create({
