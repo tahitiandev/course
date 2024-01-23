@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController, AlertInput } from '@ionic/angular';
 import { Articles } from 'src/app/models/Articles';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { CourseDetails } from 'src/app/models/Course-details';
 import { Courses } from 'src/app/models/Courses';
 import { PlatDetails } from 'src/app/models/Plat-details';
@@ -29,6 +30,7 @@ export class PlatDetailsPage implements OnInit {
   platdetails : Array<PlatDetails> = [];
   totalPlat = 0;
   isRechercheAvancee = false;
+  infoConnexion : ConnexionInfo;
 
   constructor(private route : ActivatedRoute,
               private alertController : AlertController,
@@ -38,6 +40,7 @@ export class PlatDetailsPage implements OnInit {
               private platservice : PlatsService) { }
 
   async ngOnInit() {
+    this.infoConnexion = await this.utility.getConnexionInfo();
     await this.refresh();
   }
 
@@ -216,7 +219,7 @@ private async put(platdetail : PlatDetails){
   }
 
   public async sendToCourse(platdetail : PlatDetails){
-    const course : Array<Courses> = await this.courseservice.getCourseIsFocus();
+    const course : Array<Courses> = await this.courseservice.getCourseIsFocus(this.infoConnexion.groupeId);
     const prix = platdetail.article.prix.find(prix => prix.magasin === course[0].magasinId);
     const coursedetail : CourseDetails = {
       id : Number(new Date()),

@@ -81,7 +81,7 @@ export class CoursesService {
     });
   }
 
-  public async getCourseIsFocus(){
+  public async getCourseIsFocus(groupeid : number){
     const courses : Array<Courses> = await this.getCourse();
     const result = await courses.filter(course => course.isFocus);
     if(result.length > 0){
@@ -99,7 +99,8 @@ export class CoursesService {
         date : new Date(),
         actif : true,
         isFirebase : false,
-        isFocus : true
+        isFocus : true,
+        groupeId : groupeid
       })
 
       return await courses.filter(course => course.isFocus);

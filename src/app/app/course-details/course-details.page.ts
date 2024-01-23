@@ -12,6 +12,7 @@ import { MemoService } from 'src/app/services/memo.service';
 import { Memos } from 'src/app/models/Memos';
 import { HistoriquePrixService } from 'src/app/services/historique-prix.service';
 import { HistoriquePrix } from 'src/app/models/HistoriquePrix';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 
 @Component({
   selector: 'app-course-details',
@@ -20,6 +21,7 @@ import { HistoriquePrix } from 'src/app/models/HistoriquePrix';
 })
 export class CourseDetailsPage implements OnInit {
 
+  infoConnexion : ConnexionInfo;
   courseid : number = 0;
   totalCourse : number = 0;
   course : Courses = {
@@ -31,7 +33,8 @@ export class CourseDetailsPage implements OnInit {
     ecart : 0,
     date : new Date(),
     actif : true,
-    isFirebase : false
+    isFirebase : false,
+    groupeId : 0
   };
   coursedetails : Array<CourseDetails> = [];
   articles : Array<Articles> = [];
@@ -53,6 +56,10 @@ export class CourseDetailsPage implements OnInit {
 
   ngOnInit() {
     this.refresh();
+  }
+
+  private async getInfoConnexion(){
+    return await this.utility.getConnexionInfo();
   }
 
   public async scanne(){
@@ -326,6 +333,9 @@ export class CourseDetailsPage implements OnInit {
 
   public async refresh(){
     this.courseid = this.getId();
+
+    const infoConnexion = await this.getInfoConnexion();
+    this.infoConnexion = infoConnexion;
 
     const course : any = await this.getCourse();
     this.course = course;

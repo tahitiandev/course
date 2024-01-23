@@ -192,7 +192,7 @@ export class AppComponent {
     const infoConnexion : ConnexionInfo = {
       isConnected : false,
       utilisateurId : 0,
-      groupeId : 0,
+      groupeId : -1,
       isOnline : true,
       isCourseAfficher : true,
       isCourseRapide : true,

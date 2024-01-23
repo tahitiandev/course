@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Articles } from 'src/app/models/Articles';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { CourseDetails } from 'src/app/models/Course-details';
 import { Courses } from 'src/app/models/Courses';
 import { Memos } from 'src/app/models/Memos';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { MemoService } from 'src/app/services/memo.service';
+import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-memo',
@@ -15,16 +17,19 @@ import { MemoService } from 'src/app/services/memo.service';
 })
 export class MemoPage implements OnInit {
 
+  infoConnexion : ConnexionInfo;
   memos : Array<Memos> = [];
   isRechercheAvance : boolean = false;
   
 
   constructor(private memoService : MemoService,
               private courseservice : CoursesService,
+              private utility : UtilityService,
               private alertController : AlertController,
               private articleService : ArticlesService) { }
 
   async ngOnInit() {
+    this.infoConnexion = await this.utility.getConnexionInfo();
     await this.refresh();
   }
 
@@ -162,7 +167,7 @@ export class MemoPage implements OnInit {
   }
 
   public async sendToCourse(memo : Memos){
-    const course : Array<Courses> = await this.courseservice.getCourseIsFocus();
+    const course : Array<Courses> = await this.courseservice.getCourseIsFocus(this.infoConnexion.groupeId);
     const prix = memo.article.prix.find(prix => prix.magasin === course[0].magasinId);
     const coursedetail : CourseDetails = {
       id : Number(new Date()),

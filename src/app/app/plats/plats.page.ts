@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, AlertInput } from '@ionic/angular';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { CourseDetails } from 'src/app/models/Course-details';
 import { Courses } from 'src/app/models/Courses';
 import { PlatDetails } from 'src/app/models/Plat-details';
 import { Plats } from 'src/app/models/Plats';
 import { CoursesService } from 'src/app/services/courses.service';
 import { PlatsService } from 'src/app/services/plats.service';
+import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-plats',
@@ -15,17 +17,24 @@ import { PlatsService } from 'src/app/services/plats.service';
 export class PlatsPage implements OnInit {
 
   plats : Array<Plats> = [];
+  infoConnexion : ConnexionInfo;
 
   constructor(private platservice : PlatsService,
+              private utility : UtilityService,
               private courseservice : CoursesService,
               private alertController : AlertController) { }
 
   async ngOnInit() {
+    this.infoConnexion = await this.getInfoConnexion();
     await this.refresh();
   }
 
   public async refresh(){
     this.plats = await this.platservice.get();
+  }
+
+  private async getInfoConnexion(){
+    return await this.utility.getConnexionInfo();
   }
 
   public async post(){
@@ -108,7 +117,7 @@ export class PlatsPage implements OnInit {
           handler: async (result : Array<PlatDetails>) => {
 
             if(result.length > 0){
-              const course : Array<Courses> = await this.courseservice.getCourseIsFocus();
+              const course : Array<Courses> = await this.courseservice.getCourseIsFocus(this.infoConnexion.groupeId);
               await result.map(async (res) => {
 
                 var prix = await res.article.prix.find(prix => prix.magasin === course[0].magasinId);

@@ -9,6 +9,7 @@ import { Storage } from '@ionic/storage';
 import { LocalName } from '../../enums/LocalName';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
 import { StorageService } from 'src/app/services/storage.service';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 
 @Component({
   selector: 'app-courses',
@@ -22,6 +23,7 @@ export class CoursesPage implements OnInit {
   isActif : boolean = true;
   payeurs : Array<Utilisateurs> = [];
   isAfficherCourseCloturer : boolean =  true;
+  infoConnexion : ConnexionInfo;
 
   constructor(private coursesService : CoursesService,
               private magasinsService : MagasinsService,
@@ -47,6 +49,7 @@ export class CoursesPage implements OnInit {
   private async getPayeurs(){
     return await this.storage.get(LocalName.Utilisateurs);
   }
+
 
   public async setPayeur(course : Courses){
     const payeurs : Array<Utilisateurs> = await this.getPayeurs();
@@ -101,17 +104,23 @@ export class CoursesPage implements OnInit {
     }
   }
 
-  public async setIsAfficherCourseMasquer(){
-    this.isAfficherCourseCloturer = !this.isAfficherCourseCloturer;
+  private async getInfoConnexion(){
     const infoConnexion = await this.utility.getConnexionInfo();
-    infoConnexion.isCourseAfficher = this.isAfficherCourseCloturer;
-    await this.utility.putConnexionInfo(infoConnexion);
+    return infoConnexion;
+  }
+
+  public async setIsAfficherCourseMasquer(){
+    this.infoConnexion.isCourseAfficher = this.isAfficherCourseCloturer;
+    await this.utility.putConnexionInfo(this.infoConnexion);
     await this.refresh();
   }
   
   public async refresh(){
-    const infoConnexion = await this.utility.getConnexionInfo();
-    this.isAfficherCourseCloturer = infoConnexion.isCourseAfficher;
+
+    const infoConnexion = await this.getInfoConnexion();
+    this.infoConnexion = infoConnexion;
+
+    this.isAfficherCourseCloturer = this.infoConnexion.isCourseAfficher;
 
     const courses : Array<Courses> = await this.get();
     this.courses = courses.filter(s => s.deletedOn === undefined || s.deletedOn === null);
@@ -196,8 +205,7 @@ export class CoursesPage implements OnInit {
           text: 'Valider',
           handler: async (date : any) => {
 
-            // await this.coursesService.setAllCoursesIsFocusFalse();
-
+            
             var course : Courses = {
               id : Date.now(),
               ordre : await this.generateOrdreCourse(),
@@ -208,7 +216,8 @@ export class CoursesPage implements OnInit {
               date : date[0],
               actif : true,
               isFirebase : false,
-              isFocus : true
+              isFocus : true,
+              groupeId : this.infoConnexion.groupeId
             }
             
             await this.coursesService.postCourse(course);

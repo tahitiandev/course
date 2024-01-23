@@ -13,5 +13,6 @@ export interface Courses{
     payeurId? : number;
     deletedOn? : Date;
     isFocus? : boolean;
+    groupeId : number;
     firebaseMethod? : Methods;
 }

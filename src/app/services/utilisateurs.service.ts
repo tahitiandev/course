@@ -38,5 +38,4 @@ export class UtilisateursService {
   public async getIdUtilisateurByLibelle(libelle : string){
     return (await this.get()).find(utilisateur => utilisateur.libelle == libelle).id;
   }
-
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, AlertInput } from '@ionic/angular';
+import { UtilisateurGroupes } from 'src/app/models/UtilisateurGroupes';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
+import { UtilisateurGroupesService } from 'src/app/services/utilisateur-groupes.service';
 import { UtilisateursService } from 'src/app/services/utilisateurs.service';
 
 @Component({
@@ -13,6 +15,7 @@ export class UtilisateurListePage implements OnInit {
   utilisateurs : Array<Utilisateurs> = [];
 
   constructor(private utilisteursService : UtilisateursService,
+              private groupeservice : UtilisateurGroupesService,
               private alertController : AlertController) { }
 
   ngOnInit() {
@@ -75,6 +78,45 @@ export class UtilisateurListePage implements OnInit {
               actif : true,
               isFirebase : false
             }
+            await this.chooseGroupe(utilisateur);      
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async chooseGroupe(utilisateur : Utilisateurs){
+
+    const groupes : Array<UtilisateurGroupes> = await this.groupeservice.get();
+    const inputs : Array<AlertInput> = [];
+
+    groupes.map(groupe => {
+      inputs.push({
+        type : 'radio',
+        value : groupe.id
+      })
+    })
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Choisir le groupe',
+      inputs: inputs,
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (id) => {
+            utilisateur.groupeId = id;
             await this.utilisteursService.post(utilisateur);
             this.refresh();            
           }

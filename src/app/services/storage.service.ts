@@ -226,8 +226,15 @@ export class StorageService {
         })
       }
 
-      (await this.firestore.getAll(localName)).subscribe(datas => {
-        this.storage.set(localName, datas)
+      (await this.firestore.getAll(localName)).subscribe(async(datas) => {
+
+        if(localName === LocalName.Apports || localName === LocalName.Depenses || localName === LocalName.Epargnes){
+          var dataUserConnecte = await datas.filter((data : any)=> data.userid === connexionInfo.utilisateurId);
+          this.storage.set(localName, dataUserConnecte)
+        }else{
+          this.storage.set(localName, datas)
+        }
+
       })
       
     }else{
