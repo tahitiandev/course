@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { LocalName } from 'src/app/enums/LocalName';
 import { Apports } from 'src/app/models/Apports';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { Courses } from 'src/app/models/Courses';
 import { Depenses } from 'src/app/models/Depenses';
 import { Epargnes } from 'src/app/models/Epargnes';
@@ -39,6 +40,7 @@ export class HomePage implements OnInit {
   montantApportUtilisateurConnecte = 0
   epargneAll : Array<Epargnes> = [];
   epargne = 0;
+  infoConexion : ConnexionInfo;
 
   constructor(private utility : UtilityService,
               private utilisateursService : UtilisateursService,
@@ -52,6 +54,7 @@ export class HomePage implements OnInit {
               private coursesService : CoursesService) {   }
 
   async ngOnInit() {
+    this.infoConexion = await this.utility.getConnexionInfo();
     await this.redirection();
     var today = this.getToday();
     this.year = today.year;
@@ -154,7 +157,10 @@ export class HomePage implements OnInit {
     var result : Array<any> = [];
     var montantCourse = 0
     var montantDepense = 0
+
     this.utilisateurs.map(utilisateur => {
+
+      if(utilisateur.groupeId === this.infoConexion.groupeId){
 
       this.courses.map(course => {
 
@@ -192,6 +198,8 @@ export class HomePage implements OnInit {
 
       montantCourse = 0
       montantDepense = 0
+      
+    }//if(utilisateur.groupeId === this.infoConexion.groupeId){
     })
 
     this.utilisateurByDepense = result;
