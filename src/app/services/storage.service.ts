@@ -229,7 +229,7 @@ export class StorageService {
       (await this.firestore.getAll(localName)).subscribe(async(datas) => {
 
         // Permet de synchroniser les données sensibles uniquement les données concernants l'utilisateur connecté
-        if(localName === LocalName.Apports || localName === LocalName.Depenses || localName === LocalName.Epargnes){
+        if(localName === LocalName.Apports || localName === LocalName.Depenses || localName === LocalName.Epargnes || localName === LocalName.Budget){
           var dataUserConnecte = await datas.filter((data : any)=> data.userid === connexionInfo.utilisateurId);
           this.storage.set(localName, dataUserConnecte)
         }

@@ -96,6 +96,7 @@ export class UtilisateurListePage implements OnInit {
     groupes.map(groupe => {
       inputs.push({
         type : 'radio',
+        label : groupe.libelle,
         value : groupe.id
       })
     })
@@ -129,6 +130,10 @@ export class UtilisateurListePage implements OnInit {
   }
 
   public async put(utilisateur : Utilisateurs){
+
+    const libelleGroupe = await this.groupeservice.getLibelleById(utilisateur.groupeId);
+    console.log(libelleGroupe)
+
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Mise à jour de données utilisateur',
@@ -136,22 +141,27 @@ export class UtilisateurListePage implements OnInit {
         {
           type : 'text',
           name : 'libelle',
-          placeholder : utilisateur.libelle
+          placeholder : 'Libelle: ' + utilisateur.libelle
         },
         {
           type : 'text',
           name : 'username',
-          placeholder : utilisateur.username
+          placeholder : 'login: ' + utilisateur.username
         },
         {
           type : 'password',
           name : 'password',
-          placeholder : utilisateur.password
+          placeholder : 'MDP: ' + utilisateur.password
         },
         {
           type : 'email',
           name : 'email',
-          placeholder : utilisateur.email
+          placeholder : '@: ' + utilisateur.email
+        },
+        {
+          type : 'text',
+          value : 'Groupe: ' + libelleGroupe,
+          disabled : true
         }
       ],
       buttons: [
@@ -161,6 +171,12 @@ export class UtilisateurListePage implements OnInit {
           cssClass: 'secondary',
           handler: () => {
 
+          }
+        },
+        {
+          text: 'Modifier le rôle',
+          handler: async () => {
+            await this.updateRole(utilisateur); 
           }
         }
         ,{
@@ -172,6 +188,46 @@ export class UtilisateurListePage implements OnInit {
             utilisateur.password = data.password === '' ? utilisateur.password : data.password
             utilisateur.email = data.email === '' ? utilisateur.email : data.email
 
+            await this.utilisteursService.put(utilisateur);
+            this.refresh();            
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async updateRole(utilisateur : Utilisateurs){
+    const groupes : Array<UtilisateurGroupes> = await this.groupeservice.get();
+    const inputs : Array<AlertInput> = [];
+
+    groupes.map(groupe => {
+      inputs.push({
+        type : 'radio',
+        label : groupe.libelle,
+        value : groupe.id
+      })
+    })
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Choisir le groupe',
+      inputs: inputs,
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (id) => {
+            utilisateur.groupeId = id;
             await this.utilisteursService.put(utilisateur);
             this.refresh();            
           }

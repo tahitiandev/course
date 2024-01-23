@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { BudgetParMois } from 'src/app/models/BudgetParMois';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { BudgetsService } from 'src/app/services/budgets.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
@@ -11,13 +12,15 @@ import { UtilityService } from 'src/app/services/utility.service';
 })
 export class BudgetsPage implements OnInit {
 
+  infoConnexion : ConnexionInfo;
   budgets : Array<BudgetParMois> = [];
 
   constructor(private alertController : AlertController,
               private utility : UtilityService,
               private budgetsservice : BudgetsService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.infoConnexion = await this.utility.getConnexionInfo();
     this.refresh();
   }
 
@@ -63,7 +66,8 @@ export class BudgetsPage implements OnInit {
               id : 0,
               mois : data.mois,
               budget : data.budget,
-              isFirebase : false
+              isFirebase : false,
+              userId : this.infoConnexion.utilisateurId
             }
 
             await this.budgetsservice.post(budget);

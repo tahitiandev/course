@@ -32,5 +32,10 @@ export class UtilisateurGroupesService {
     public async deleteDefinitivement(groupe : UtilisateurGroupes){
       return await this.storage.deleteDefinitivement(LocalName.Groupes, groupe);
     }
+
+    public async getLibelleById(idGroupe : number){
+      const groupes : Array<UtilisateurGroupes> = await this.get();
+      return groupes.find(groupe => groupe.id === idGroupe)?.libelle;
+    }
     
 }
