@@ -180,7 +180,8 @@ export class MemoPage implements OnInit {
       prixReel : prix === undefined ? memo.article.prix[0].prix : prix.prix,
       total : Number(memo.quantite * (prix === undefined ? memo.article.prix[0].prix : prix.prix)),
       checked : false,
-      isFirebase : false
+      isFirebase : false,
+      groupeId : this.infoConnexion.groupeId
     }
     await this.courseservice.postCourseDetails(coursedetail);
     await this.memoService.delete(memo);

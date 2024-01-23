@@ -14,4 +14,5 @@ export interface CourseDetails{
     isFirebase : false;
     deletedOn? : Date;
     firebaseMethod? : Methods;
+    groupeId : number;
 }

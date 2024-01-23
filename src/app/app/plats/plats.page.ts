@@ -134,7 +134,8 @@ export class PlatsPage implements OnInit {
                   prixReel : Number(prixOk),
                   total : Number(prixOk) * res.quantite,
                   isFirebase : false,
-                  checked : false
+                  checked : false,
+                  groupeId : this.infoConnexion.groupeId
                 }
 
                 await this.courseservice.postCourseDetails(coursedetail);

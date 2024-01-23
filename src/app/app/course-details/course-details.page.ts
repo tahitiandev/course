@@ -54,7 +54,8 @@ export class CourseDetailsPage implements OnInit {
               private memoservice : MemoService,
               private route : ActivatedRoute) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.infoConnexion = await this.getInfoConnexion();
     this.refresh();
   }
 
@@ -126,7 +127,8 @@ export class CourseDetailsPage implements OnInit {
               prixReel : prixRenseigne,
               checked : false,
               total : prixRenseigne * quantiteRenseigne,
-              isFirebase : false
+              isFirebase : false,
+              groupeId : this.infoConnexion.groupeId
             }
 
             await this.coursesService.postCourseDetails(coursedetails);
@@ -334,9 +336,6 @@ export class CourseDetailsPage implements OnInit {
   public async refresh(){
     this.courseid = this.getId();
 
-    const infoConnexion = await this.getInfoConnexion();
-    this.infoConnexion = infoConnexion;
-
     const course : any = await this.getCourse();
     this.course = course;
 
@@ -507,7 +506,8 @@ export class CourseDetailsPage implements OnInit {
                 prixReel : prixGood,
                 checked : false,
                 total : quantiteGood * prixGood,
-                isFirebase : false
+                isFirebase : false,
+                groupeId : this.infoConnexion.groupeId
               }
 
               await this.coursesService.postCourseDetails(coursedetails);
@@ -575,7 +575,8 @@ export class CourseDetailsPage implements OnInit {
               prixReel : prixSaisie,
               checked : false,
               total : quantiteSaisie * prixSaisie,
-              isFirebase : false
+              isFirebase : false,
+              groupeId : this.infoConnexion.groupeId
             }
 
             await this.coursesService.postCourseDetails(coursedetails);
@@ -640,7 +641,8 @@ export class CourseDetailsPage implements OnInit {
                   prixReel : Number(prixSaisie),
                   checked : false,
                   total : quantiteSaisie * Number(prixSaisie),
-                  isFirebase : false
+                  isFirebase : false,
+                  groupeId : this.infoConnexion.groupeId
                 }
   
                 await this.coursesService.postCourseDetails(coursedetails);
@@ -924,7 +926,8 @@ export class CourseDetailsPage implements OnInit {
                 prixReel : prix === undefined ? memo.article.prix[0].prix : prix.prix,
                 total : Number(memo.quantite * (prix === undefined ? memo.article.prix[0].prix : prix.prix)),
                 checked : false,
-                isFirebase : false
+                isFirebase : false,
+                groupeId : this.infoConnexion.groupeId
               }
 
               await this.coursesService.postCourseDetails(coursedetail);
@@ -991,7 +994,8 @@ export class CourseDetailsPage implements OnInit {
                 prixReel : ecart,
                 checked : false,
                 total : ecart,
-                isFirebase : false
+                isFirebase : false,
+                groupeId : this.infoConnexion.groupeId
               }
 
               await this.coursesService.postCourseDetails(coursedetails);
@@ -1009,7 +1013,8 @@ export class CourseDetailsPage implements OnInit {
                 prixReel : ecart,
                 checked : false,
                 total : ecart * -1,
-                isFirebase : false
+                isFirebase : false,
+                groupeId : this.infoConnexion.groupeId
               }
 
               await this.coursesService.postCourseDetails(coursedetails);

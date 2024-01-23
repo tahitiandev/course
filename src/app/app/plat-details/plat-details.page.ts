@@ -232,7 +232,8 @@ private async put(platdetail : PlatDetails){
       prixReel : prix === undefined ? platdetail.article.prix[0].prix : prix.prix,
       total : Number(platdetail.quantite * (prix === undefined ? platdetail.article.prix[0].prix : prix.prix)),
       checked : false,
-      isFirebase : false
+      isFirebase : false,
+      groupeId : this.infoConnexion.groupeId
     }
     await this.courseservice.postCourseDetails(coursedetail);
     this.utility.popUp('Article ajouté au panier')
