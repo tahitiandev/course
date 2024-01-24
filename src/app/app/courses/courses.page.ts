@@ -10,6 +10,7 @@ import { LocalName } from '../../enums/LocalName';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
 import { StorageService } from 'src/app/services/storage.service';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
+import { FirestoreService } from 'src/app/services/firestore.service';
 
 @Component({
   selector: 'app-courses',
@@ -18,6 +19,7 @@ import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 })
 export class CoursesPage implements OnInit {
 
+  coursesall : Array<Courses> = [];
   courses : Array<Courses> = [];
   magasins : Array<Magasins> = [];
   isActif : boolean = true;
@@ -29,6 +31,7 @@ export class CoursesPage implements OnInit {
               private magasinsService : MagasinsService,
               private storageService : StorageService,
               private storage : Storage,
+              private firestore : FirestoreService,
               private utility : UtilityService,
               private alertController : AlertController) { 
               }
@@ -96,11 +99,21 @@ export class CoursesPage implements OnInit {
   }
 
   private async get(){
-    const courses : Array<Courses> = await this.coursesService.getCourse();
-    if(this.isAfficherCourseCloturer){
-      return courses;
+
+    if(this.infoConnexion.isOnline){
+      (await this.firestore.getAll(LocalName.CourseDetails)).subscribe(async(datas) => {
+        var coursesOnline : Array<any> = await datas.filter((data : any) => data.groupeId === this.infoConnexion.groupeId);
+        this.coursesall = coursesOnline
+      })
     }else{
-      return courses.filter(data => data.actif)
+      const courses : Array<Courses> = await this.coursesService.getCourse();
+      this.coursesall = courses
+    }
+
+    if(this.isAfficherCourseCloturer){
+      return this.coursesall;
+    }else{
+      return this.coursesall.filter(data => data.actif)
     }
   }
 
