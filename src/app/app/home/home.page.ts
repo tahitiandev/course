@@ -55,6 +55,11 @@ export class HomePage implements OnInit {
 
   async ngOnInit() {
     this.infoConexion = await this.utility.getConnexionInfo();
+
+    if(this.infoConexion.isConnected){
+      await this.synchroniser();
+    }
+    
     await this.redirection();
     var today = this.getToday();
     this.year = today.year;
@@ -64,12 +69,14 @@ export class HomePage implements OnInit {
     await this.statsUtilisateursByDepense();
   }
 
-  public handleRefresh(event : any) {
-    this.storageService.synchroniserAvecFirestore().then(async()=> {
-      event.target.complete()
-      location.reload();
-      await this.utility.popUp('Synchronisation complète terminée')
-    })
+  public async synchroniser(){
+    await this.storageService.synchroniserAvecFirestore();
+  }
+
+  public async handleRefresh(event : any) {
+    await this.synchroniser();
+    await this.utility.popUp('Synchronisation terminée');
+    event.target.complete();
   }
 
   public changeDate(){

@@ -23,6 +23,7 @@ export class AuthentificationPage implements OnInit {
               private utilisateursService : UtilisateursService) { }
 
   ngOnInit() {
+    this.synchroniser();
     this.authentificationFormInit();
   }
 
@@ -33,9 +34,13 @@ export class AuthentificationPage implements OnInit {
     })
   }
 
+  private async synchroniser(){
+    await this.storage.synchroniser(LocalName.Utilisateurs);
+  }
+
   async handleRefresh(event : any) {
 
-    await this.storage.synchroniser(LocalName.Utilisateurs);
+    await this.synchroniser();
     event.target.complete();
     await this.utility.popUp('Synchronisation des utilisateurs terminée')
     
