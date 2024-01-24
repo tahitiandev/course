@@ -10,4 +10,5 @@ export interface Memos{
     deletedOn? : Date;
     isFirebase : false;
     firebaseMethod? : Methods;
+    groupeId : number;
 }

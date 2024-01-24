@@ -85,7 +85,8 @@ export class MemoPage implements OnInit {
       id : Number(new Date),
       article : article,
       quantite : 1,
-      isFirebase : false
+      isFirebase : false,
+      groupeId : (await this.utility.getConnexionInfo()).groupeId
     }
     await this.memoService.post(memo);
     await this.refresh();
@@ -141,7 +142,7 @@ export class MemoPage implements OnInit {
                 },
               ],
               createdOn : new Date(),
-              groupeId : [0],
+              groupeId : [(await this.utility.getConnexionInfo()).groupeId],
               familleId : 0,
               codeBarre : '',
               isFirebase : false
@@ -151,7 +152,8 @@ export class MemoPage implements OnInit {
               id : Number(new Date()),
               article : article,
               quantite : quantite,
-              isFirebase : false
+              isFirebase : false,
+              groupeId : (await this.utility.getConnexionInfo()).groupeId
             }
 
             await this.articleService.post(article);
