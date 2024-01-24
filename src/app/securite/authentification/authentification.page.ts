@@ -23,7 +23,9 @@ export class AuthentificationPage implements OnInit {
               private utilisateursService : UtilisateursService) { }
 
   ngOnInit() {
-    this.synchroniser();
+    setTimeout(() => {
+      this.synchroniser();
+    }, 2000);
     this.authentificationFormInit();
   }
 

@@ -189,6 +189,8 @@ export class AppComponent {
 
   public async seDeconnecter(){
     this.pages = this.pagesNotConnected;
+    this.storage.clear();
+
     this.isConnected = false;
     const infoConnexion : ConnexionInfo = {
       isConnected : false,
@@ -200,6 +202,8 @@ export class AppComponent {
     }
 
     await this.storage.set(LocalName.InfoConnexion, infoConnexion);
+
+
     this.utility.navigateTo('authentification');
     setTimeout(() => {
       this.actualiser();
