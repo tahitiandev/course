@@ -13,6 +13,8 @@ import { Memos } from 'src/app/models/Memos';
 import { HistoriquePrixService } from 'src/app/services/historique-prix.service';
 import { HistoriquePrix } from 'src/app/models/HistoriquePrix';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
+import { FirestoreService } from 'src/app/services/firestore.service';
+import { LocalName } from 'src/app/enums/LocalName';
 
 @Component({
   selector: 'app-course-details',
@@ -51,6 +53,7 @@ export class CourseDetailsPage implements OnInit {
               private codeBarre : BarreCodeService,
               private articlesService : ArticlesService,
               private historiqueprixservice : HistoriquePrixService,
+              private firestore : FirestoreService,
               private memoservice : MemoService,
               private route : ActivatedRoute) { }
 
@@ -335,12 +338,14 @@ export class CourseDetailsPage implements OnInit {
 
   public async refresh(){
     this.courseid = this.getId();
-
+    
+    
     const course : any = await this.getCourse();
     this.course = course;
-
-    const coursedetails : Array<CourseDetails> = await this.getCourseDetail();
-    this.coursedetails = coursedetails;
+    
+    await this.setCourseDetail();
+    
+    await this.calculeTotalCourse();
 
     const articles = await this.getArticles();
     this.articles = articles;
@@ -348,11 +353,16 @@ export class CourseDetailsPage implements OnInit {
     const connexionInfo = await this.utility.getConnexionInfo();
     this.isModeCourseRapide = connexionInfo.isCourseRapide;
 
-    this.calculeTotalCourse();
   }
 
-  private calculeTotalCourse(){
-    const coursedetail : Array<CourseDetails> = this.coursedetails;
+  private async calculeTotalCourse(coursedetailParam? : Array<CourseDetails>){
+
+    var coursedetail : Array<CourseDetails> = this.coursedetails;
+
+    if(this.infoConnexion.isOnline){
+      coursedetail = coursedetailParam === undefined ? this.coursedetails : coursedetailParam;
+    }
+
     var totalCourse = 0;
     if(coursedetail.length > 0){
       coursedetail.map(coursedetail => totalCourse += coursedetail.total)
@@ -378,9 +388,19 @@ export class CourseDetailsPage implements OnInit {
     return await this.coursesService.getCourseById(this.courseid);
   }
 
-  public async getCourseDetail(){
-    const coursedetails : Array<CourseDetails> = await this.coursesService.getCourseDetails(this.courseid);
-    return coursedetails.filter(data => data.deletedOn === undefined || data.deletedOn === null);
+  private async setCourseDetail(){
+    if(this.infoConnexion.isOnline){
+
+      (await this.firestore.getAll(LocalName.CourseDetails)).subscribe(async(datas) => {
+        
+        var coursedetails : Array<any> = await datas.filter((data : any) => data.courseId === this.courseid && data.groupeId === this.infoConnexion.groupeId);
+        this.coursedetails = coursedetails;
+        this.calculeTotalCourse(coursedetails);
+      })
+    }else{
+      const coursedetails : Array<CourseDetails> = await this.coursesService.getCourseDetails(this.courseid);
+      this.coursedetails = coursedetails;
+    }
   }
 
   private async getArticles(){
