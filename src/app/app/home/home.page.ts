@@ -289,10 +289,15 @@ export class HomePage implements OnInit {
   private async setBudget(){
     const infoConnexion = await this.utility.getConnexionInfo();
     const budgets = await this.getBudget();
-    const budgetResult = await budgets.find(async(budget) => {
-      this.getLibelleMoisAndReturnIdMois(budget.mois) === this.month
-    })
-    const budget = budgetResult.budget;
+    var budget = 0;
+
+    if(budgets.length > 0){
+
+      const budgetResult = await budgets.find(async(budget) => {
+        this.getLibelleMoisAndReturnIdMois(budget.mois) === this.month
+      })
+      budget = budgetResult.budget;
+    }
     
     const libelleUtilisateurConnecte = await this.utilisateursService.getLibelleUtilisateurById(infoConnexion.utilisateurId); 
 

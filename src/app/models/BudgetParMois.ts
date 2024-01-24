@@ -7,5 +7,5 @@ export interface BudgetParMois{
     isFirebase : false;
     deletedOn? : Date;
     firebaseMethod? : Methods;
-    userId : number;
+    userid : number;
 }

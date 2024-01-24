@@ -22,6 +22,7 @@ export class BudgetsPage implements OnInit {
   async ngOnInit() {
     this.infoConnexion = await this.utility.getConnexionInfo();
     this.refresh();
+    this.initBudget();
   }
 
   public async refresh(){
@@ -31,6 +32,26 @@ export class BudgetsPage implements OnInit {
 
   private async get(){
     return await this.budgetsservice.get();
+  }
+
+  private async initBudget(){
+    const budgets : Array<BudgetParMois> = await this.get();
+    const moisall = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]
+    if(budgets.length === 0){
+
+      for(let mois of moisall){
+        console.log()
+        const budget : BudgetParMois = {
+          id : 0,
+          mois : mois,
+          budget : 0,
+          isFirebase : false,
+          userid : this.infoConnexion.utilisateurId
+        }
+        await this.budgetsservice.post(budget)
+      }
+    }
+    await this.refresh();
   }
 
   public async post(){
@@ -67,7 +88,7 @@ export class BudgetsPage implements OnInit {
               mois : data.mois,
               budget : data.budget,
               isFirebase : false,
-              userId : this.infoConnexion.utilisateurId
+              userid : this.infoConnexion.utilisateurId
             }
 
             await this.budgetsservice.post(budget);

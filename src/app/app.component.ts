@@ -3,6 +3,7 @@ import { UtilityService } from './services/utility.service';
 import { LocalName } from './enums/LocalName';
 import { ConnexionInfo } from './models/ConnexionInfo';
 import { Storage } from '@ionic/storage';
+import { Methods } from './enums/Methods';
 
 @Component({
   selector: 'app-root',
