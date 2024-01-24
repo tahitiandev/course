@@ -98,23 +98,27 @@ export class CoursesPage implements OnInit {
     return this.payeurs.find(utilisateurs => utilisateurs.id === payeurId)?.libelle;
   }
 
-  private async get(){
+  private async setCourse(){
 
     if(this.infoConnexion.isOnline){
-      (await this.firestore.getAll(LocalName.CourseDetails)).subscribe(async(datas) => {
-        var coursesOnline : Array<any> = await datas.filter((data : any) => data.groupeId === this.infoConnexion.groupeId);
-        this.coursesall = coursesOnline
+      (await this.firestore.getAll(LocalName.Courses)).subscribe(async(datas : any) => {
+        var coursesOnline : Array<any> = await datas.filter((data : any) => data.groupeId == this.infoConnexion.groupeId && (data.deletedOn === undefined || data.deletedOn === null));
+        if(this.isAfficherCourseCloturer){
+          this.courses = coursesOnline
+        }else{
+          this.courses = coursesOnline.filter(data => data.actif);
+
+        }
       })
     }else{
       const courses : Array<Courses> = await this.coursesService.getCourse();
-      this.coursesall = courses
+      if(this.isAfficherCourseCloturer){
+        this.courses = courses;
+      }else{
+        this.courses = courses.filter(data => data.actif);
+      }
     }
 
-    if(this.isAfficherCourseCloturer){
-      return this.coursesall;
-    }else{
-      return this.coursesall.filter(data => data.actif)
-    }
   }
 
   private async getInfoConnexion(){
@@ -135,8 +139,7 @@ export class CoursesPage implements OnInit {
 
     this.isAfficherCourseCloturer = this.infoConnexion.isCourseAfficher;
 
-    const courses : Array<Courses> = await this.get();
-    this.courses = courses.filter(s => s.deletedOn === undefined || s.deletedOn === null);
+    await this.setCourse();
     
     const magasins = await this.getMagasin();
     this.magasins = magasins;
@@ -268,11 +271,10 @@ export class CoursesPage implements OnInit {
   }
 
   public async setIsFocus(course : Courses){
-    const courses : Array<Courses> = await this.get();
-    courses.map(courses => courses.isFocus = false);
-    const index = await courses.findIndex(courses => course.id === courses.id);
-    courses[index].isFocus = true;
-    await this.storage.set(LocalName.Courses, courses);
+    this.courses.map(courses => courses.isFocus = false);
+    const index = await this.courses.findIndex(courses => course.id === courses.id);
+    this.courses[index].isFocus = true;
+    await this.storage.set(LocalName.Courses, this.courses);
     this.refresh();
   }
 
