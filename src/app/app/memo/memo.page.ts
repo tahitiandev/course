@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { LocalName } from 'src/app/enums/LocalName';
 import { Articles } from 'src/app/models/Articles';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { CourseDetails } from 'src/app/models/Course-details';
@@ -7,6 +8,7 @@ import { Courses } from 'src/app/models/Courses';
 import { Memos } from 'src/app/models/Memos';
 import { ArticlesService } from 'src/app/services/articles.service';
 import { CoursesService } from 'src/app/services/courses.service';
+import { FirestoreService } from 'src/app/services/firestore.service';
 import { MemoService } from 'src/app/services/memo.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
@@ -25,6 +27,7 @@ export class MemoPage implements OnInit {
   constructor(private memoService : MemoService,
               private courseservice : CoursesService,
               private utility : UtilityService,
+              private firestore : FirestoreService,
               private alertController : AlertController,
               private articleService : ArticlesService) { }
 
@@ -34,8 +37,15 @@ export class MemoPage implements OnInit {
   }
 
   public async refresh(){
-    const memos = await (await this.memoService.get()).filter(s => s.deletedOn === undefined || s.deletedOn === null);
-    this.memos = memos;
+    if(this.infoConnexion.isOnline){
+      (await this.firestore.getAll(LocalName.Memos)).subscribe(async(memos : any) => {
+        const memoUserConnecte : Array<any> = await memos.filter((memo : any) => memo.groupeId === this.infoConnexion.groupeId);
+        this.memos = memoUserConnecte;
+      })
+    }else{
+      const memos = await (await this.memoService.get()).filter(s => s.deletedOn === undefined || s.deletedOn === null);
+      this.memos = memos;
+    }
   }
 
   public async put(memo : Memos){
