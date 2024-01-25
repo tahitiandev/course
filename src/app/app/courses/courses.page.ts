@@ -103,10 +103,11 @@ export class CoursesPage implements OnInit {
     if(this.infoConnexion.isOnline){
       (await this.firestore.getAll(LocalName.Courses)).subscribe(async(datas : any) => {
         var coursesOnline : Array<any> = await datas.filter((data : any) => data.groupeId == this.infoConnexion.groupeId && (data.deletedOn === undefined || data.deletedOn === null));
+        var courses = this.coursesService.sortByOrdreAsc(coursesOnline);
         if(this.infoConnexion.isCourseAfficher){
-          this.courses = coursesOnline
+          this.courses = courses;
         }else{
-          this.courses = coursesOnline.filter(data => data.actif);
+          this.courses = courses.filter(data => data.actif);
 
         }
       })
