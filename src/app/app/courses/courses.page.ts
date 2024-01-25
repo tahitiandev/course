@@ -99,11 +99,11 @@ export class CoursesPage implements OnInit {
   }
 
   private async setCourse(){
-
+    
     if(this.infoConnexion.isOnline){
       (await this.firestore.getAll(LocalName.Courses)).subscribe(async(datas : any) => {
         var coursesOnline : Array<any> = await datas.filter((data : any) => data.groupeId == this.infoConnexion.groupeId && (data.deletedOn === undefined || data.deletedOn === null));
-        if(this.isAfficherCourseCloturer){
+        if(this.infoConnexion.isCourseAfficher){
           this.courses = coursesOnline
         }else{
           this.courses = coursesOnline.filter(data => data.actif);
@@ -112,7 +112,7 @@ export class CoursesPage implements OnInit {
       })
     }else{
       const courses : Array<Courses> = await this.coursesService.getCourse();
-      if(this.isAfficherCourseCloturer){
+      if(this.infoConnexion.isCourseAfficher){
         this.courses = courses;
       }else{
         this.courses = courses.filter(data => data.actif);
@@ -127,7 +127,7 @@ export class CoursesPage implements OnInit {
   }
 
   public async setIsAfficherCourseMasquer(){
-    this.infoConnexion.isCourseAfficher = this.isAfficherCourseCloturer;
+    this.infoConnexion.isCourseAfficher = !this.infoConnexion.isCourseAfficher;
     await this.utility.putConnexionInfo(this.infoConnexion);
     await this.refresh();
   }
@@ -136,8 +136,6 @@ export class CoursesPage implements OnInit {
 
     const infoConnexion = await this.getInfoConnexion();
     this.infoConnexion = infoConnexion;
-
-    this.isAfficherCourseCloturer = this.infoConnexion.isCourseAfficher;
 
     await this.setCourse();
     
