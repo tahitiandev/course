@@ -238,6 +238,7 @@ export class StorageService {
         }
         else if(localName === LocalName.Courses 
           || localName === LocalName.CourseDetails
+          || localName === LocalName.Menus
           || localName === LocalName.Memos){
           var dataGroup = await datas.filter((data : any)=> data.groupeId === connexionInfo.groupeId);
           this.storage.set(localName, dataGroup)
