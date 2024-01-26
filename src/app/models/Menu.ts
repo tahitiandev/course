@@ -4,6 +4,7 @@ import { Plats } from "./Plats";
 export interface Menu{
     id : number;
     jour : string;
+    libelle? : string;
     plat? : Plats;
     createdOn? : Date;
     modifiedOn? :  Date;

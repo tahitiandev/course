@@ -14,8 +14,10 @@
   <ion-list style="margin: 15px;">
     <ion-item *ngFor="let menu of menus">
       <ion-icon aria-hidden="true" name="calendar" slot="start"></ion-icon>
-      <ion-label style="cursor: pointer;" (click)="put(menu)">{{ menu.jour }} - {{ menu.plat.libelle }}</ion-label>
+      <ion-label style="cursor: pointer;" (click)="put(menu)">{{ menu.jour }} - {{ menu.libelle }}</ion-label>
     </ion-item>
   </ion-list>
+
+  <!-- <button (click)="post()">POST</button> -->
 
 </ion-content>
