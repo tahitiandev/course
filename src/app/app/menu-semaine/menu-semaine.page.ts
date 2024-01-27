@@ -31,6 +31,41 @@ export class MenuSemainePage implements OnInit {
     this.refresh();
   }
 
+  public async sendToCourse(plat : Plats){
+    const platdetail = await this.platsservice.getPlatDetails(+plat.id);
+    const inputs : Array<AlertInput> = [];
+    await platdetail.map(ingredient => {
+      inputs.push({
+        type : 'checkbox',
+        value : ingredient,
+        label : ingredient.article.libelle
+      })
+    })
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Choisir les ingéridients',
+      inputs: inputs,
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+
+          }
+        }
+        ,{
+          text: 'Valider',
+          handler: async (data : any) => {
+            this.utiilty.popUp('ne fait rien pour l\'instant')
+          }
+        }
+        
+      ]
+    });
+    await alert.present();
+  }
+
   private async initMenu(){
     const menus : Array<Menu> = await this.get();
     const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]

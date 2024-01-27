@@ -15,6 +15,7 @@
     <ion-item *ngFor="let menu of menus">
       <ion-icon aria-hidden="true" name="calendar" slot="start"></ion-icon>
       <ion-label style="cursor: pointer;" (click)="put(menu)">{{ menu.jour }} - {{ menu.libelle }}</ion-label>
+      <button (click)="sendToCourse(menu)">SEND</button>
     </ion-item>
   </ion-list>
 
