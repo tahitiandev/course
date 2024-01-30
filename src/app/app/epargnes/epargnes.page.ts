@@ -75,6 +75,8 @@ export class EpargnesPage implements OnInit {
       })
     })
 
+    console.log(this.epargneEtApport)
+
   }
 
   public calculeEpargneRestant(){
@@ -138,8 +140,8 @@ export class EpargnesPage implements OnInit {
 
   orderByDate(epargneapport : Array<any>){
     return epargneapport.sort((a,b) => {
-    let x  = a.date.nanoseconds;
-    let y  = b.date.nanoseconds;
+    let x  = a.date.seconds;
+    let y  = b.date.seconds;
     if(x < y){
     return -1;
     }else{

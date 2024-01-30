@@ -182,6 +182,7 @@ export class StorageService {
       await this.synchroniser(LocalName.Groupes);
       await this.synchroniser(LocalName.Menus);
       await this.synchroniser(LocalName.Budget);
+      await this.synchroniser(LocalName.Finances);
     }else{
       alert('Le mode onLine est désactivé')
     }

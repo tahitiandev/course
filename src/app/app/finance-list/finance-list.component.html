@@ -1,0 +1,24 @@
+<ion-list>
+  <!-- <ion-item-sliding *ngFor="let epargne of orderByDate(epargneEtApport)"> -->
+  <ion-item-sliding *ngFor="let finance of finances">
+  <!-- <ion-item button detail="true" (click)="put(epargne)" [disabled]="epargne.type == 'Retrait'"> -->
+  <ion-item button detail="true">
+    <ion-label>
+      <h3>
+        {{ finance.type }} : 
+        {{ finance.commentaire }}
+        <!-- <span class="masquer-mode-mobile">test</span> -->
+        <ion-chip color="success" 
+                  slot="end">{{ finance.montant }} xpf</ion-chip>
+      </h3>
+    </ion-label>
+  </ion-item>
+  <ion-item-options side="start">
+    <ion-item-option style="background: rgb(156, 46, 46);">
+    <!-- <ion-item-option (click)="this.delete(epargne)" style="background: rgb(156, 46, 46);"> -->
+      Supprimer    
+    </ion-item-option>
+  </ion-item-options>
+
+</ion-item-sliding>
+</ion-list>

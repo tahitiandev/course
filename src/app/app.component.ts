@@ -26,6 +26,7 @@ export class AppComponent {
   ];
 
   public pagesfinancier : Array<any> = [
+    { title: 'Flux financier', url: 'finances', icon: 'paper-plane' },
     { title: 'Dépenses', url: 'depenses', icon: 'paper-plane' },
     { title: 'Apports', url: 'apports', icon: 'paper-plane' },
     { title: 'Epargnes', url: 'epargnes', icon: 'paper-plane' },
@@ -169,6 +170,11 @@ export class AppComponent {
     const budget = await this.storage.get(LocalName.Budget);
     if(budget === null){
       await this.storage.set(LocalName.Budget, []);
+    }
+
+    const finances = await this.storage.get(LocalName.Finances);
+    if(finances === null){
+      await this.storage.set(LocalName.Finances, []);
     }
 
   } //setLocalStorage

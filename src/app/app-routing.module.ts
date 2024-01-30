@@ -89,6 +89,10 @@ const routes: Routes = [
   {
     path: 'budgets',
     loadChildren: () => import('./app/budgets/budgets.module').then( m => m.BudgetsPageModule)
+  },
+  {
+    path: 'finances',
+    loadChildren: () => import('./app/finances/finances.module').then( m => m.FinancesPageModule)
   }
 
 

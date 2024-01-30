@@ -6,6 +6,7 @@ export enum LocalName {
     CourseDetails = "CourseDetails",
     Depenses = "Depenses",
     Epargnes = "Epargnes",
+    Finances = "Finances",
     InfoConnexion = "InfoConnexion",
     Familles = "Familles",
     Groupes = "Groupes",
