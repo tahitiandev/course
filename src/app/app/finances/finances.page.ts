@@ -3,7 +3,11 @@ import { AlertController } from '@ionic/angular';
 import { Flux } from 'src/app/enums/Flux';
 import { Methods } from 'src/app/enums/Methods';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
+import { Depenses } from 'src/app/models/Depenses';
+import { Epargnes } from 'src/app/models/Epargnes';
 import { Finances } from 'src/app/models/Finances';
+import { DepensesService } from 'src/app/services/depenses.service';
+import { EpargnesService } from 'src/app/services/epargnes.service';
 import { FinancesService } from 'src/app/services/finances.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
@@ -20,6 +24,8 @@ export class FinancesPage implements OnInit {
 
   constructor(private alertController : AlertController,
               private utility : UtilityService,
+              private epargneservice : EpargnesService,
+              private depenseservice : DepensesService,
               private financesservice : FinancesService) { }
 
   async ngOnInit() {
@@ -78,7 +84,8 @@ export class FinancesPage implements OnInit {
         },
         {
           type : 'checkbox',
-          label
+          label : 'Epargne',
+          name : 'isepargne'
         }
       ],
       buttons: [
@@ -96,20 +103,46 @@ export class FinancesPage implements OnInit {
             var finances : Finances = {
               id : 0,
               userid : this.infoConnexion.utilisateurId,
-              montant : data.montant *-1,
+              montant : data.montant * -1,
               type : Flux.Debit,
               commentaire : data.description,
               check : false,
               createdOn : new Date(),
               isFirebase : false,
-              firebaseMethod : Methods.POST
+              firebaseMethod : Methods.POST,
+              isEpargne : data.isEpagne
+            }
 
+            if(data.isepargne){
+
+              var epargne : Epargnes = {
+                id : 0,
+                userid : this.infoConnexion.utilisateurId,
+                epargne : data.montant,
+                commentaire : data.description,
+                check :  false,
+                createdOn : new Date(),
+                isFirebase : false,
+                firebaseMethod : Methods.POST
+              }
+              await this.epargneservice.post(epargne);
             }
 
             await this.financesservice.post(finances);
             await this.refresh();
             this.setIsVisible();
 
+            var depense : Depenses = {
+              id : 0,
+              userid : this.infoConnexion.utilisateurId,
+              depense : data.montant,
+              commentaire : data.description,
+              check : false,
+              createdOn : new Date(),
+              isFirebase : false,
+              firebaseMethod : Methods.POST
+            }
+            await this.depenseservice.post(depense);
           }
         }
       ]
@@ -154,7 +187,8 @@ export class FinancesPage implements OnInit {
               check : false,
               createdOn : new Date(),
               isFirebase : false,
-              firebaseMethod : Methods.POST
+              firebaseMethod : Methods.POST,
+              isEpargne : false
 
             }
 

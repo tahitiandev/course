@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { Flux } from 'src/app/enums/Flux';
 import { LocalName } from 'src/app/enums/LocalName';
 import { Methods } from 'src/app/enums/Methods';
 import { Apports } from 'src/app/models/Apports';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
+import { Finances } from 'src/app/models/Finances';
 import { ApportsService } from 'src/app/services/apports.service';
+import { FinancesService } from 'src/app/services/finances.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
@@ -14,18 +18,21 @@ import { UtilityService } from 'src/app/services/utility.service';
 })
 export class ApportsPage implements OnInit {
 
+  infoConnexion : ConnexionInfo;
   apports : Array<Apports> = [];
   listeOn : boolean = false;
 
   constructor(private apportsservice : ApportsService,
               private utility : UtilityService,
               private storageService : StorageService,
+              private financeservice : FinancesService,
               private alertController : AlertController) { 
                 this.refresh();
               }
 
   async ngOnInit() {
     await this.refresh();
+    this.infoConnexion = await this.utility.getConnexionInfo();
   }
 
   private async get(){
@@ -77,6 +84,21 @@ export class ApportsPage implements OnInit {
             await this.apportsservice.post(apports);
             await this.refresh();
             this.setListeOn();
+
+            var finances : Finances = {
+              id : 0,
+              userid : this.infoConnexion.utilisateurId,
+              type : Flux.Credit,
+              montant : Number(apports.apport),
+              commentaire : apports.commentaire,
+              check : false,
+              createdOn : apports.createdOn,
+              isEpargne : false,
+              firebaseMethod : Methods.POST,
+              isFirebase : false
+            }
+
+            await this.financeservice.post(finances);
 
           }
         }

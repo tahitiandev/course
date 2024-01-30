@@ -13,4 +13,5 @@ export interface Finances{
     deletedOn? : Date;
     isFirebase : false;
     firebaseMethod? : Methods;
+    isEpargne : boolean;
 }

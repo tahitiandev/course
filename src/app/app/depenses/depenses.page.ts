@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { Flux } from 'src/app/enums/Flux';
 import { LocalName } from 'src/app/enums/LocalName';
 import { Methods } from 'src/app/enums/Methods';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { Depenses } from 'src/app/models/Depenses';
+import { Finances } from 'src/app/models/Finances';
 import { DepensesService } from 'src/app/services/depenses.service';
+import { FinancesService } from 'src/app/services/finances.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
@@ -14,11 +18,13 @@ import { UtilityService } from 'src/app/services/utility.service';
 })
 export class DepensesPage implements OnInit {
 
+  infoConnexion : ConnexionInfo;
   depenses : Array<Depenses> = [];
   listeOn : boolean = false;
 
   constructor(private depensesservice : DepensesService,
               private utility : UtilityService,
+              private financeservice : FinancesService,
               private storageService : StorageService,
               private alertController : AlertController) { 
                 this.refresh();
@@ -26,6 +32,7 @@ export class DepensesPage implements OnInit {
 
   async ngOnInit() {
     await this.refresh();
+    this.infoConnexion = await this.utility.getConnexionInfo();
   }
 
   private async get(){
@@ -77,6 +84,21 @@ export class DepensesPage implements OnInit {
             await this.depensesservice.post(depenses);
             await this.refresh();
             this.setListeOn();
+
+            var finances : Finances = {
+              id : 0,
+              userid : this.infoConnexion.utilisateurId,
+              type : Flux.Debit,
+              montant : Number(depenses.depense) * -1,
+              commentaire : depenses.commentaire,
+              check : false,
+              createdOn : depenses.createdOn,
+              isEpargne : false,
+              firebaseMethod : Methods.POST,
+              isFirebase : false
+            }
+
+            await this.financeservice.post(finances);
 
           }
         }
