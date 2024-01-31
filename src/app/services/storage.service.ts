@@ -232,6 +232,7 @@ export class StorageService {
         // Permet de synchroniser les données sensibles uniquement les données concernants l'utilisateur connecté
         if(localName === LocalName.Apports
           || localName === LocalName.Depenses 
+          || localName === LocalName.Finances 
           || localName === LocalName.Epargnes 
           || localName === LocalName.Budget){
           var dataUserConnecte = await datas.filter((data : any)=> data.userid === connexionInfo.utilisateurId);

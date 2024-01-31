@@ -32,4 +32,5 @@ export class FinancesService {
     var finance : Finances = await finances.find((finance : Finances) => finance.key === key);
     await this.delete(finance);
   }
+
 }
