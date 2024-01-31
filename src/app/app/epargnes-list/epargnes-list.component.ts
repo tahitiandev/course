@@ -122,6 +122,9 @@ export class EpargnesListComponent  implements OnInit {
             epargne.commentaire = result.description === undefined ? "" : result.description;
 
             await this.epargnesservice.put(epargne);
+
+            await this.financeservice.putByKey(epargne.key, epargne.epargne, epargne.commentaire)
+
             await this.refresh();
 
           }

@@ -80,6 +80,9 @@ export class DepensesListComponent  implements OnInit {
             depense.commentaire = result.commentaire === undefined ? "" : result.commentaire;
 
             await this.depensesservice.put(depense);
+
+            await this.financeservice.putByKey(depense.key, depense.depense, depense.commentaire);
+
             await this.refresh();
 
           }

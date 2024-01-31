@@ -74,6 +74,9 @@ export class ApportsListComponent  implements OnInit {
             apports.commentaire = result.commentaire === undefined ? "" : result.commentaire;
 
             await this.apportsservice.put(apports);
+
+            await this.financeservice.putByKey(apports.key, apports.apport, apports.commentaire);
+
             await this.refresh();
 
           }

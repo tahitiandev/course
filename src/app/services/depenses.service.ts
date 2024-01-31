@@ -33,4 +33,12 @@ export class DepensesService {
     await this.delete(depense);
   }
 
+  public async putByKey(key : any, montant : number, description : string){
+    var depenses = await this.get();
+    var depense : Depenses = await depenses.find((depense : Depenses) => depense.key === key);
+    depense.commentaire = description;
+    depense.depense = montant;
+    await this.put(depense);
+  }
+
 }

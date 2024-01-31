@@ -84,6 +84,12 @@ export class FinanceListComponent  implements OnInit {
             finance.montant = result.montant;
             finance.commentaire = result.commentaire === undefined ? "" : result.commentaire;
 
+            if(finance.isEpargne){
+              await this.epargneservice.putByKey(finance.key, finance.montant, finance.commentaire);
+            }else{
+              await this.depenseservice.putByKey(finance.key, finance.montant, finance.commentaire);
+            }
+
             await this.financeservice.put(finance);
             await this.refresh();
 
