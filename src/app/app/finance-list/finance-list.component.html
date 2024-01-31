@@ -21,7 +21,7 @@ table{
             <h3 *ngIf="finance.type === 'Débit'">
               <ion-chip color="success" 
                         slot="end">{{ finance.montant * -1 }}</ion-chip>
-              {{ finance.commentaire }}
+                        <span class="masquer-mode-mobile">{{ finance.commentaire }}</span>
             </h3>
             <h3 *ngIf="finance.type === 'Crédit'">
               <ion-chip color="success" 
@@ -46,7 +46,7 @@ table{
             <h3 *ngIf="finance.type === 'Crédit'">
               <ion-chip color="success" 
                         slot="end">{{ finance.montant }}</ion-chip>
-              {{ finance.commentaire }}
+                        <span class="masquer-mode-mobile">{{ finance.commentaire }}</span>
             </h3>
             <h3 *ngIf="finance.type === 'Débit'">
               <ion-chip color="success" 
