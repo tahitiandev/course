@@ -73,6 +73,7 @@ export class DepensesPage implements OnInit {
           text: 'Valider',
           handler: async (depenses : Depenses) => {
 
+            var key = this.utility.generateKey();
             
             depenses.id = Date.now();
             depenses.createdOn = new Date();
@@ -80,6 +81,7 @@ export class DepensesPage implements OnInit {
             depenses.isFirebase = false;
             depenses.firebaseMethod = Methods.POST;
             depenses.userid = (await this.utility.getConnexionInfo()).utilisateurId;
+            depenses.key = key;
 
             await this.depensesservice.post(depenses);
             await this.refresh();
@@ -95,7 +97,8 @@ export class DepensesPage implements OnInit {
               createdOn : depenses.createdOn,
               isEpargne : false,
               firebaseMethod : Methods.POST,
-              isFirebase : false
+              isFirebase : false,
+              key : key
             }
 
             await this.financeservice.post(finances);

@@ -11,4 +11,5 @@ export interface Apports{
     deletedOn? : Date;
     isFirebase : false;
     firebaseMethod? : Methods;
+    key : string;
 }

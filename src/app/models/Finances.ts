@@ -14,4 +14,5 @@ export interface Finances{
     isFirebase : false;
     firebaseMethod? : Methods;
     isEpargne : boolean;
+    key : string;
 }

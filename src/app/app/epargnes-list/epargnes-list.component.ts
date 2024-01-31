@@ -5,6 +5,7 @@ import { EpargneEtApport } from 'src/app/models/EpargneEtApport';
 import { Epargnes } from 'src/app/models/Epargnes';
 import { ApportsService } from 'src/app/services/apports.service';
 import { EpargnesService } from 'src/app/services/epargnes.service';
+import { FinancesService } from 'src/app/services/finances.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
@@ -22,6 +23,7 @@ export class EpargnesListComponent  implements OnInit {
   constructor(private epargnesservice : EpargnesService,
               private utility : UtilityService,
               private apportsservice : ApportsService,
+              private financeservice : FinancesService,
               private alertController : AlertController) { }
 
   ngOnInit() {}
@@ -100,12 +102,6 @@ export class EpargnesListComponent  implements OnInit {
         }
       ],
       buttons: [
-        // {
-        //   text: 'Modifier la date',
-        //   handler: async() => {
-        //     await this.modifierDate(epargneEtApport);
-        //   }
-        // },
         {
           text: 'Annuler',
           role: 'cancel',
@@ -144,6 +140,9 @@ export class EpargnesListComponent  implements OnInit {
     const epargne = await this.epargnesservice.getById(epargneEtApport.EpargneApportid);
     await this.epargnesservice.delete(epargne);
     this.refresh();
+
+    await this.financeservice.deleteByKey(epargne.key);
+
   }
 
   private async modifierDate(epargne : Epargnes){

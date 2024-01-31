@@ -85,7 +85,7 @@ export class FinancesPage implements OnInit {
         {
           type : 'checkbox',
           label : 'Epargne',
-          name : 'isepargne'
+          name : 'isEpargne'
         }
       ],
       buttons: [
@@ -100,6 +100,9 @@ export class FinancesPage implements OnInit {
         {
           text: 'Valider',
           handler: async (data : any) => {
+
+            var key = this.utility.generateKey();
+
             var finances : Finances = {
               id : 0,
               userid : this.infoConnexion.utilisateurId,
@@ -110,10 +113,11 @@ export class FinancesPage implements OnInit {
               createdOn : new Date(),
               isFirebase : false,
               firebaseMethod : Methods.POST,
-              isEpargne : data.isEpagne
+              isEpargne : data.isEpargne,
+              key : key
             }
 
-            if(data.isepargne){
+            if(data.isEpargne){
 
               var epargne : Epargnes = {
                 id : 0,
@@ -121,9 +125,10 @@ export class FinancesPage implements OnInit {
                 epargne : data.montant,
                 commentaire : data.description,
                 check :  false,
-                createdOn : new Date(),
+                createdOn : finances.createdOn,
                 isFirebase : false,
-                firebaseMethod : Methods.POST
+                firebaseMethod : Methods.POST,
+                key : key
               }
               await this.epargneservice.post(epargne);
             }
@@ -132,18 +137,24 @@ export class FinancesPage implements OnInit {
             await this.refresh();
             this.setIsVisible();
 
-            var depense : Depenses = {
-              id : 0,
-              userid : this.infoConnexion.utilisateurId,
-              depense : data.montant,
-              commentaire : data.description,
-              check : false,
-              createdOn : new Date(),
-              isFirebase : false,
-              firebaseMethod : Methods.POST
+            if(!finances.isEpargne){
+
+              var depense : Depenses = {
+                id : 0,
+                userid : this.infoConnexion.utilisateurId,
+                depense : data.montant,
+                commentaire : data.description,
+                check : false,
+                createdOn : finances.createdOn,
+                isFirebase : false,
+              firebaseMethod : Methods.POST,
+              key : key
             }
             await this.depenseservice.post(depense);
           }
+          
+          }
+
         }
       ]
     });
@@ -188,7 +199,8 @@ export class FinancesPage implements OnInit {
               createdOn : new Date(),
               isFirebase : false,
               firebaseMethod : Methods.POST,
-              isEpargne : false
+              isEpargne : false,
+              key : this.utility.generateKey()
 
             }
 

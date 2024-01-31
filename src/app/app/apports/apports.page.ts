@@ -73,6 +73,7 @@ export class ApportsPage implements OnInit {
           text: 'Valider',
           handler: async (apports : Apports) => {
 
+            var key = this.utility.generateKey();
             
             apports.id = Date.now();
             apports.createdOn = new Date();
@@ -80,6 +81,7 @@ export class ApportsPage implements OnInit {
             apports.isFirebase = false;
             apports.firebaseMethod = Methods.POST;
             apports.userid = (await this.utility.getConnexionInfo()).utilisateurId;
+            apports.key = key;
 
             await this.apportsservice.post(apports);
             await this.refresh();
@@ -95,7 +97,8 @@ export class ApportsPage implements OnInit {
               createdOn : apports.createdOn,
               isEpargne : false,
               firebaseMethod : Methods.POST,
-              isFirebase : false
+              isFirebase : false,
+              key : key
             }
 
             await this.financeservice.post(finances);

@@ -26,4 +26,11 @@ export class ApportsService {
   public async put(apports : Apports){
     await this.storage.put(LocalName.Apports, apports)
   }
+
+  public async deleteByCreatedOn(createdOn : Date){
+    var apports = await this.get();
+    var apport : Apports = await apports.find((apport : Apports) => apport.createdOn === createdOn);
+    await this.delete(apport);
+  }
+  
 }

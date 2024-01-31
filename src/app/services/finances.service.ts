@@ -26,4 +26,10 @@ export class FinancesService {
   public async put(finances : Finances){
     await this.storage.put(LocalName.Finances, finances)
   }
+
+  public async deleteByKey(key : any){
+    var finances = await this.get();
+    var finance : Finances = await finances.find((finance : Finances) => finance.key === key);
+    await this.delete(finance);
+  }
 }

@@ -11,4 +11,5 @@ export interface Epargnes{
     deletedOn? : Date;
     isFirebase : false;
     firebaseMethod? : Methods;
+    key : string;
 }

@@ -11,4 +11,5 @@ export interface Depenses{
     deletedOn? : Date;
     isFirebase : false;
     firebaseMethod? : Methods;
+    key : string;
 }

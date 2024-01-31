@@ -132,7 +132,6 @@ export class UtilisateurListePage implements OnInit {
   public async put(utilisateur : Utilisateurs){
 
     const libelleGroupe = await this.groupeservice.getLibelleById(utilisateur.groupeId);
-    console.log(libelleGroupe)
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',

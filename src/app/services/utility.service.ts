@@ -30,6 +30,10 @@ export class UtilityService {
       return Date.now();
     }
 
+    public generateKey(){
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
     public async popUp(Message : string){
       const alert = await this.alertController.create({
         cssClass: 'my-custom-class',

@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Apports } from 'src/app/models/Apports';
 import { ApportsService } from 'src/app/services/apports.service';
+import { FinancesService } from 'src/app/services/finances.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
@@ -17,6 +18,7 @@ export class ApportsListComponent  implements OnInit {
 
   constructor(private apportsservice : ApportsService,
               private utility : UtilityService,
+              private financeservice : FinancesService,
               private alertController : AlertController) { }
 
   ngOnInit() {}
@@ -83,6 +85,7 @@ export class ApportsListComponent  implements OnInit {
   }
 
   public async delete(apport : Apports){
+    await this.financeservice.deleteByKey(apport.key);
     await this.apportsservice.delete(apport);
     this.refresh();
   }

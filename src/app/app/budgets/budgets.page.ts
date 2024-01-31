@@ -40,7 +40,6 @@ export class BudgetsPage implements OnInit {
     if(budgets.length === 0){
 
       for(let mois of moisall){
-        console.log()
         const budget : BudgetParMois = {
           id : 0,
           mois : mois,
