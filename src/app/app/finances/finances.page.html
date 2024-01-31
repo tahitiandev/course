@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
+  <h3 style="text-align: center;">Total : {{ total }} xpf</h3>
   <ion-fab *ngIf="!isVisible" slot="fixed" horizontal="center" vertical="center" class="masquer-mode-web" >
     <ion-fab-button size="large" (click)="post()">
       <ion-icon name="add"></ion-icon>

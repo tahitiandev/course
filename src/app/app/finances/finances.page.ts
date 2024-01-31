@@ -21,6 +21,7 @@ export class FinancesPage implements OnInit {
   infoConnexion : ConnexionInfo;
   finances : Array<Finances> = [];
   isVisible : boolean = false;
+  total = 0;
 
   constructor(private alertController : AlertController,
               private utility : UtilityService,
@@ -39,10 +40,20 @@ export class FinancesPage implements OnInit {
 
   private async refresh(){
     this.finances = await this.get();
+    await this.calculeTotal();
   }
 
   private async get(){
     return await this.financesservice.get();
+  }
+
+  public async calculeTotal(){
+    var finance = await this.get();
+    var total = 0;
+    finance.map(f => {
+      total += Number(f.montant)
+    })
+    this.total = total;
   }
 
   public async post(){
