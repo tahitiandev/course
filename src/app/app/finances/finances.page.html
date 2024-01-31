@@ -8,9 +8,20 @@
     <ion-title>Gestion des finances</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [fullscreen]="true">
+
   <h3 style="text-align: center;">Total : {{ total }} xpf</h3>
+
+  <!-- MODE WEB -->
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="post()" class="masquer-mode-mobile">
+    <ion-fab-button size="large">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <app-finance-list class="masquer-mode-mobile" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
+
+  <!-- PARTIE MOBILE -->
   <ion-fab *ngIf="!isVisible" slot="fixed" horizontal="center" vertical="center" class="masquer-mode-web" >
     <ion-fab-button size="large" (click)="post()">
       <ion-icon name="add"></ion-icon>

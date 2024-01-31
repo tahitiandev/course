@@ -1,0 +1,11 @@
+@media screen and (max-width: 500px){
+    .masquer-mode-mobile{
+        display: none;
+    }
+}
+
+@media screen and (min-width: 500px){
+    .masquer-mode-web{
+        display: none;
+    }
+}
