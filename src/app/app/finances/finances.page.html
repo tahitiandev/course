@@ -19,7 +19,7 @@
     </ion-fab-button>
   </ion-fab>
 
-  <app-finance-list class="masquer-mode-mobile" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
+  <app-finance-list (checkOutput)="getCheck($event)" class="masquer-mode-mobile" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
 
   <!-- PARTIE MOBILE -->
   <ion-fab *ngIf="!isVisible" slot="fixed" horizontal="center" vertical="center" class="masquer-mode-web" >
@@ -35,7 +35,7 @@
   </ion-fab>
 
 
-  <app-finance-list *ngIf="isVisible" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
+  <app-finance-list (checkOutput)="getCheck($event)" *ngIf="isVisible" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
 
 
 </ion-content>

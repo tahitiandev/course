@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Flux } from 'src/app/enums/Flux';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
@@ -17,6 +17,7 @@ export class FinanceListComponent  implements OnInit {
 
   @Input() finances : Array<Finances> = [];
   infoConnexion : ConnexionInfo;
+  @Output()checkOutput = new EventEmitter<Finances>()
 
   constructor(private financeservice : FinancesService,
               private alertController : AlertController,
@@ -48,6 +49,11 @@ export class FinanceListComponent  implements OnInit {
 
   public async get(){
     return await this.financeservice.get();
+  }
+  
+
+  public async check(finance : Finances){
+    this.checkOutput.emit(finance)
   }
 
   public async put(finance : Finances){

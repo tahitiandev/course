@@ -18,8 +18,8 @@ table{
         <ion-item-sliding *ngFor="let finance of finances">
         <ion-item button detail="true" (click)="put(finance)">
           <ion-label>
-            <h3 *ngIf="finance.type === 'Débit'">
-              <ion-chip color="success" 
+            <h3 *ngIf="finance.type === 'Débit'" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}">
+              <ion-chip color="success" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}"
                         slot="end">{{ finance.montant * -1 }}</ion-chip>
                         <span class="masquer-mode-mobile">{{ finance.commentaire }}</span>
             </h3>
@@ -34,6 +34,11 @@ table{
             Supprimer    
           </ion-item-option>
         </ion-item-options>
+        <ion-item-options side="end">
+          <ion-item-option (click)="check(finance)" style="background: rgb(65, 77, 255);">
+            Check    
+          </ion-item-option>
+        </ion-item-options>
       
       </ion-item-sliding>
       </ion-list>
@@ -43,8 +48,8 @@ table{
         <ion-item-sliding *ngFor="let finance of finances">
         <ion-item button detail="true" (click)="put(finance)">
           <ion-label>
-            <h3 *ngIf="finance.type === 'Crédit'">
-              <ion-chip color="success" 
+            <h3 *ngIf="finance.type === 'Crédit'" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}">
+              <ion-chip color="success" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}"
                         slot="end">{{ finance.montant }}</ion-chip>
                         <span class="masquer-mode-mobile">{{ finance.commentaire }}</span>
             </h3>
@@ -57,6 +62,11 @@ table{
         <ion-item-options side="start">
           <ion-item-option (click)="delete(finance)" style="background: rgb(156, 46, 46);">
             Supprimer    
+          </ion-item-option>
+        </ion-item-options>
+        <ion-item-options side="end">
+          <ion-item-option (click)="check(finance)" style="background: rgb(65, 77, 255);">
+            Check    
           </ion-item-option>
         </ion-item-options>
       

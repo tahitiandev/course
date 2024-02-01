@@ -38,6 +38,12 @@ export class FinancesPage implements OnInit {
     this.isVisible = !this.isVisible;
   }
 
+  public async getCheck(finance:Finances){
+    finance.check = !finance.check;
+    await this.financesservice.put(finance);
+    this.refresh();
+  }
+
   private async refresh(){
     this.finances = await this.get();
     await this.calculeTotal();
