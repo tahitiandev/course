@@ -3,6 +3,7 @@ import { AlertController } from '@ionic/angular';
 import { Flux } from 'src/app/enums/Flux';
 import { LocalName } from 'src/app/enums/LocalName';
 import { Methods } from 'src/app/enums/Methods';
+import { TypeOperation } from 'src/app/enums/TypeOperation';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { Depenses } from 'src/app/models/Depenses';
 import { Epargnes } from 'src/app/models/Epargnes';
@@ -24,6 +25,7 @@ export class FinancesPage implements OnInit {
   finances : Array<Finances> = [];
   isVisible : boolean = false;
   total = 0;
+  isFormVisible = false;
 
   constructor(private alertController : AlertController,
               private utility : UtilityService,
@@ -97,7 +99,8 @@ export class FinancesPage implements OnInit {
         {
           text: 'Débit',
           handler: async () => {
-            await this.postDebit();
+            // await this.postDebit();
+            this.isFormVisible = !this.isFormVisible;
           }
         },
         {
@@ -111,100 +114,150 @@ export class FinancesPage implements OnInit {
     await alert.present();
   }
 
-  private async postDebit(){
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Type d\'opération',
-      inputs : [
-        {
-          type : 'number',
-          name : 'montant',
-          placeholder : 'Montant'
-        },
-        {
-          type : 'text',
-          name : 'description',
-          placeholder : 'Description'
-        },
-        {
-          type : 'checkbox',
-          label : 'Epargne',
-          name : 'isEpargne'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Annuler',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
+  public setIsFormVisible(){
+    this.isFormVisible = !this.isFormVisible;
+  }
 
-          }
-        },
-        {
-          text: 'Valider',
-          handler: async (data : any) => {
+  // private async postDebit(){
+  //   const alert = await this.alertController.create({
+  //     cssClass: 'my-custom-class',
+  //     header: 'Type d\'opération',
+  //     inputs : [
+  //       {
+  //         type : 'number',
+  //         name : 'montant',
+  //         placeholder : 'Montant'
+  //       },
+  //       {
+  //         type : 'text',
+  //         name : 'description',
+  //         placeholder : 'Description'
+  //       },
+  //       {
+  //         label : 'Epargne',
+  //         type : 'radio',
+  //         name : 'isEpargne'
+  //       }
+  //     ],
+  //     buttons: [
+  //       {
+  //         text: 'Annuler',
+  //         role: 'cancel',
+  //         cssClass: 'secondary',
+  //         handler: () => {
 
-            var key = this.utility.generateKey();
+  //         }
+  //       },
+  //       {
+  //         text: 'Valider',
+  //         handler: async (data : any) => {
 
-            var finances : Finances = {
-              id : 0,
-              userid : this.infoConnexion.utilisateurId,
-              montant : data.montant * -1,
-              type : Flux.Debit,
-              commentaire : data.description,
-              check : false,
-              createdOn : new Date(),
-              isFirebase : false,
-              firebaseMethod : Methods.POST,
-              isEpargne : data.isEpargne,
-              key : key
-            }
+  //           var key = this.utility.generateKey();
 
-            if(data.isEpargne){
+  //           var finances : Finances = {
+  //             id : 0,
+  //             userid : this.infoConnexion.utilisateurId,
+  //             montant : data.montant * -1,
+  //             flux : Flux.Debit,
+  //             commentaire : data.description,
+  //             check : false,
+  //             createdOn : new Date(),
+  //             isFirebase : false,
+  //             firebaseMethod : Methods.POST,
+  //             isEpargne : data.isEpargne,
+  //             key : key,
+  //             type : TypeOperation.Divers
+  //           }
 
-              var epargne : Epargnes = {
-                id : 0,
-                userid : this.infoConnexion.utilisateurId,
-                epargne : data.montant,
-                commentaire : data.description,
-                check :  false,
-                createdOn : finances.createdOn,
-                isFirebase : false,
-                firebaseMethod : Methods.POST,
-                key : key
-              }
-              await this.epargneservice.post(epargne);
-            }
+  //           if(data.isEpargne){
 
-            await this.financesservice.post(finances);
-            await this.refresh();
-            this.setIsVisible();
+  //             var epargne : Epargnes = {
+  //               id : 0,
+  //               userid : this.infoConnexion.utilisateurId,
+  //               epargne : data.montant,
+  //               commentaire : data.description,
+  //               check :  false,
+  //               createdOn : finances.createdOn,
+  //               isFirebase : false,
+  //               firebaseMethod : Methods.POST,
+  //               key : key
+  //             }
+  //             await this.epargneservice.post(epargne);
+  //           }
 
-            if(!finances.isEpargne){
+  //           await this.financesservice.post(finances);
+  //           await this.refresh();
+  //           this.setIsVisible();
 
-              var depense : Depenses = {
-                id : 0,
-                userid : this.infoConnexion.utilisateurId,
-                depense : data.montant,
-                commentaire : data.description,
-                check : false,
-                createdOn : finances.createdOn,
-                isFirebase : false,
-              firebaseMethod : Methods.POST,
-              key : key
-            }
-            await this.depenseservice.post(depense);
-          }
+  //           if(!finances.isEpargne){
+
+  //             var depense : Depenses = {
+  //               id : 0,
+  //               userid : this.infoConnexion.utilisateurId,
+  //               depense : data.montant,
+  //               commentaire : data.description,
+  //               check : false,
+  //               createdOn : finances.createdOn,
+  //               isFirebase : false,
+  //             firebaseMethod : Methods.POST,
+  //             key : key
+  //           }
+  //           await this.depenseservice.post(depense);
+  //         }
           
-          await this.calculeTotal();
+  //         await this.calculeTotal();
 
-          }
+  //         }
 
-        }
-      ]
-    });
-    await alert.present();
+  //       }
+  //     ]
+  //   });
+  //   await alert.present();
+  // }
+
+  async postDebitForm(finance : Finances){
+
+    var key = this.utility.generateKey();
+    
+    finance.key = key;
+    finance.montant = finance.montant * -1;
+
+    if(finance.type === TypeOperation.Epargne){
+
+      var epargne : Epargnes = {
+        id : 0,
+        userid : this.infoConnexion.utilisateurId,
+        epargne : finance.montant,
+        commentaire : finance.commentaire,
+        check :  false,
+        createdOn : finance.createdOn,
+        isFirebase : false,
+        firebaseMethod : Methods.POST,
+        key : key
+      }
+      await this.epargneservice.post(epargne);
+    }
+
+    await this.financesservice.post(finance);
+    await this.refresh();
+    this.setIsVisible();
+
+    if(finance.type === TypeOperation.ChargeFixe
+    || finance.type === TypeOperation.Divers){
+       var depense : Depenses = {
+         id : 0,
+         userid : this.infoConnexion.utilisateurId,
+         depense : finance.montant,
+         commentaire : finance.commentaire,
+         check : false,
+         createdOn : finance.createdOn,
+         isFirebase : false,
+         firebaseMethod : Methods.POST,
+         key : key
+      }
+      await this.depenseservice.post(depense);
+    }
+
   }
 
   public async postCredit(){
@@ -239,14 +292,15 @@ export class FinancesPage implements OnInit {
               id : 0,
               userid : this.infoConnexion.utilisateurId,
               montant : data.montant,
-              type : Flux.Credit,
+              flux : Flux.Credit,
               commentaire : data.description,
               check : false,
               createdOn : new Date(),
               isFirebase : false,
               firebaseMethod : Methods.POST,
               isEpargne : false,
-              key : this.utility.generateKey()
+              key : this.utility.generateKey(),
+              type : TypeOperation.Salaire
 
             }
 

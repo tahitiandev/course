@@ -1,11 +1,12 @@
 import { Flux } from "../enums/Flux";
 import { Methods } from "../enums/Methods";
+import { TypeOperation } from "../enums/TypeOperation";
 
 export interface Finances{
     id : number;
     userid : number;
     montant : number;
-    type : Flux;
+    flux : Flux;
     commentaire? : string;
     check : boolean;
     createdOn : Date;
@@ -15,4 +16,5 @@ export interface Finances{
     firebaseMethod? : Methods;
     isEpargne : boolean;
     key : string;
+    type : TypeOperation
 }

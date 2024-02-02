@@ -3,6 +3,7 @@ import { AlertController } from '@ionic/angular';
 import { Flux } from 'src/app/enums/Flux';
 import { LocalName } from 'src/app/enums/LocalName';
 import { Methods } from 'src/app/enums/Methods';
+import { TypeOperation } from 'src/app/enums/TypeOperation';
 import { Apports } from 'src/app/models/Apports';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { EpargneEtApport } from 'src/app/models/EpargneEtApport';
@@ -151,7 +152,7 @@ export class EpargnesPage implements OnInit {
             var finances : Finances = {
               id : 0,
               userid : this.infoConnexion.utilisateurId,
-              type : Flux.Debit,
+              flux : Flux.Debit,
               montant : Number(epargnes.epargne) * -1,
               commentaire : epargnes.commentaire,
               check : false,
@@ -159,7 +160,8 @@ export class EpargnesPage implements OnInit {
               isEpargne : true,
               firebaseMethod : Methods.POST,
               isFirebase : false,
-              key : key
+              key : key,
+              type : TypeOperation.Epargne
             }
 
             await this.financeservice.post(finances);

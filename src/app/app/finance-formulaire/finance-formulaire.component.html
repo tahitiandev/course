@@ -1,0 +1,41 @@
+<style>
+  form{
+    width: 50%;
+    margin: auto;
+    margin-top: 5%;
+    border: 0px;
+    padding: 20px;
+    background: rgb(42, 42, 46);
+    color: antiquewhite;
+  }
+  h3{
+    text-align: center;
+  }
+  .button{
+    text-align: right;
+  }
+</style>
+
+<form [formGroup]="formgroup" (ngSubmit)="onValide()">
+  <h3>Opération de dépense</h3>
+
+  <ion-input label="Montant" formControlName="montant" label-placement="floating" fill="outline" placeholder="Montant" type="number"></ion-input>
+  <br>
+  <ion-input label="Description" formControlName="description" label-placement="floating" fill="outline" placeholder="Description" type="text"></ion-input>
+  <br>
+  <ion-list>
+    <ion-item>
+      <ion-select formControlName="type" aria-label="Fruit" interface="action-sheet" placeholder="Type de dépense">
+        <ion-select-option value="Divers">Divers</ion-select-option>
+        <ion-select-option value="Epargne">Epargne</ion-select-option>
+        <ion-select-option value="ChargeFixe">Charges fixes</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <br>
+  <div class="button">
+    <ion-button color="medium" (click)="close()">Annuler</ion-button> <ion-button type="submit">Valider</ion-button>
+  </div>
+
+</form>

@@ -16,6 +16,8 @@
 
   <h3 style="text-align: center;">Total : {{ total }} xpf</h3>
 
+  <app-finance-formulaire (annulerOuput)="setIsFormVisible()" (formOutput)="postDebitForm($event)" *ngIf="isFormVisible"></app-finance-formulaire>
+
   <!-- MODE WEB -->
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" (click)="post()" class="masquer-mode-mobile">
     <ion-fab-button size="small">
@@ -23,7 +25,7 @@
     </ion-fab-button>
   </ion-fab>
 
-  <app-finance-list (checkOutput)="getCheck($event)" (recalculeTotal)="calculeTotal()" class="masquer-mode-mobile" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
+  <app-finance-list *ngIf="!isFormVisible" (checkOutput)="getCheck($event)" (recalculeTotal)="calculeTotal()" class="masquer-mode-mobile" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
 
   <!-- PARTIE MOBILE -->
   <ion-fab *ngIf="!isVisible" slot="fixed" horizontal="center" vertical="center" class="masquer-mode-web" >

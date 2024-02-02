@@ -36,7 +36,7 @@ export class FinanceListComponent  implements OnInit {
 
   public async delete(finance : Finances){
     
-    if(finance.type === Flux.Debit){
+    if(finance.flux === Flux.Debit){
       await this.depenseservice.deleteByKey(finance.key);
 
       if(finance.isEpargne){
