@@ -78,7 +78,7 @@ export class FinanceListComponent  implements OnInit {
         {
           type : 'number',
           name : 'montant',
-          value : finance.montant
+          value : finance.montant * -1
         },
         {
           type : 'textarea',
@@ -101,13 +101,13 @@ export class FinanceListComponent  implements OnInit {
 
             finance.modifiedOn = new Date();
             finance.userid = (await this.utility.getConnexionInfo()).utilisateurId;
-            finance.montant = result.montant;
+            finance.montant = result.montant * -1;
             finance.commentaire = result.commentaire === undefined ? "" : result.commentaire;
 
             if(finance.isEpargne){
-              await this.epargneservice.putByKey(finance.key, finance.montant, finance.commentaire);
+              await this.epargneservice.putByKey(finance.key, finance.montant * -1, finance.commentaire);
             }else{
-              await this.depenseservice.putByKey(finance.key, finance.montant, finance.commentaire);
+              await this.depenseservice.putByKey(finance.key, finance.montant * -1, finance.commentaire);
             }
 
             await this.financeservice.put(finance);

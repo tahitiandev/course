@@ -21,6 +21,7 @@ export class DepensesPage implements OnInit {
   infoConnexion : ConnexionInfo;
   depenses : Array<Depenses> = [];
   listeOn : boolean = false;
+  total = 0;
 
   constructor(private depensesservice : DepensesService,
               private utility : UtilityService,
@@ -42,6 +43,16 @@ export class DepensesPage implements OnInit {
   private async refresh(){
     const depenses = await this.get();
     this.depenses = depenses;
+    await this.calculeTotal();
+  }
+
+  async calculeTotal(){
+    var total = 0;
+    var depenses = await this.get();
+    depenses.map(depense => {
+      total += Number(depense.depense);
+    })
+    this.total = total;
   }
 
   public async post(){
