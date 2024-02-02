@@ -1,0 +1,35 @@
+@media screen and (max-width: 500px){
+    form{
+        width: 80%;
+        margin: auto;
+        margin-top: 5%;
+        border: 0px;
+        padding: 20px;
+        background: rgb(42, 42, 46);
+        color: antiquewhite;
+      }
+      h3{
+        text-align: center;
+      }
+      .button{
+        text-align: right;
+      }
+}
+
+@media screen and (min-width: 500px){
+    form{
+        width: 50%;
+        margin: auto;
+        margin-top: 5%;
+        border: 0px;
+        padding: 20px;
+        background: rgb(42, 42, 46);
+        color: antiquewhite;
+      }
+      h3{
+        text-align: center;
+      }
+      .button{
+        text-align: right;
+      }
+}

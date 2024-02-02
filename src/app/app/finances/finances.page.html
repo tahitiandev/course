@@ -28,12 +28,14 @@
   <app-finance-list *ngIf="!isFormVisible" (checkOutput)="getCheck($event)" (recalculeTotal)="calculeTotal()" class="masquer-mode-mobile" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
 
   <!-- PARTIE MOBILE -->
+  <span *ngIf="!isFormVisible">
   <ion-fab *ngIf="!isVisible" slot="fixed" horizontal="center" vertical="center" class="masquer-mode-web" >
     <ion-fab-button size="large" (click)="post()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
+  </span>
+  
   <ion-fab slot="fixed" horizontal="end" vertical="bottom"  class="masquer-mode-web">
     <ion-fab-button size="small" (click)="setIsVisible()">
       <ion-icon name="list-circle-outline"></ion-icon>
