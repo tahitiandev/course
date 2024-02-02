@@ -35,7 +35,7 @@
   </ion-fab>
 
 
-  <app-finance-list (checkOutput)="getCheck($event)" *ngIf="isVisible" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
+  <app-finance-list class="masquer-mode-web"  (checkOutput)="getCheck($event)" *ngIf="isVisible" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
 
 
 </ion-content>
