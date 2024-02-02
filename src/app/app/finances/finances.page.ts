@@ -37,7 +37,25 @@ export class FinancesPage implements OnInit {
   async ngOnInit() {
     this.infoConnexion = await this.utility.getConnexionInfo();
     await this.refresh()
+    // await this.t();
   }
+
+  // async t(){
+  //   var t = await this.get();
+  //   for(let s of t){
+  //     s.flux = s.type;
+  //     if(s.type === Flux.Debit){
+  //       s.type = TypeOperation.Divers;
+  //     }
+  //     if(s.isEpargne){
+  //       s.type = TypeOperation.Epargne;
+  //     }
+  //     if(s.type === Flux.Credit){
+  //       s.type = TypeOperation.Salaire;
+  //     }
+  //     await this.financesservice.put(s);
+  //   }
+  // }
 
   async handleRefresh(event : any) {
 
@@ -117,112 +135,17 @@ export class FinancesPage implements OnInit {
   public setIsFormVisible(){
     this.isFormVisible = !this.isFormVisible;
   }
-
-  // private async postDebit(){
-  //   const alert = await this.alertController.create({
-  //     cssClass: 'my-custom-class',
-  //     header: 'Type d\'opération',
-  //     inputs : [
-  //       {
-  //         type : 'number',
-  //         name : 'montant',
-  //         placeholder : 'Montant'
-  //       },
-  //       {
-  //         type : 'text',
-  //         name : 'description',
-  //         placeholder : 'Description'
-  //       },
-  //       {
-  //         label : 'Epargne',
-  //         type : 'radio',
-  //         name : 'isEpargne'
-  //       }
-  //     ],
-  //     buttons: [
-  //       {
-  //         text: 'Annuler',
-  //         role: 'cancel',
-  //         cssClass: 'secondary',
-  //         handler: () => {
-
-  //         }
-  //       },
-  //       {
-  //         text: 'Valider',
-  //         handler: async (data : any) => {
-
-  //           var key = this.utility.generateKey();
-
-  //           var finances : Finances = {
-  //             id : 0,
-  //             userid : this.infoConnexion.utilisateurId,
-  //             montant : data.montant * -1,
-  //             flux : Flux.Debit,
-  //             commentaire : data.description,
-  //             check : false,
-  //             createdOn : new Date(),
-  //             isFirebase : false,
-  //             firebaseMethod : Methods.POST,
-  //             isEpargne : data.isEpargne,
-  //             key : key,
-  //             type : TypeOperation.Divers
-  //           }
-
-  //           if(data.isEpargne){
-
-  //             var epargne : Epargnes = {
-  //               id : 0,
-  //               userid : this.infoConnexion.utilisateurId,
-  //               epargne : data.montant,
-  //               commentaire : data.description,
-  //               check :  false,
-  //               createdOn : finances.createdOn,
-  //               isFirebase : false,
-  //               firebaseMethod : Methods.POST,
-  //               key : key
-  //             }
-  //             await this.epargneservice.post(epargne);
-  //           }
-
-  //           await this.financesservice.post(finances);
-  //           await this.refresh();
-  //           this.setIsVisible();
-
-  //           if(!finances.isEpargne){
-
-  //             var depense : Depenses = {
-  //               id : 0,
-  //               userid : this.infoConnexion.utilisateurId,
-  //               depense : data.montant,
-  //               commentaire : data.description,
-  //               check : false,
-  //               createdOn : finances.createdOn,
-  //               isFirebase : false,
-  //             firebaseMethod : Methods.POST,
-  //             key : key
-  //           }
-  //           await this.depenseservice.post(depense);
-  //         }
-          
-  //         await this.calculeTotal();
-
-  //         }
-
-  //       }
-  //     ]
-  //   });
-  //   await alert.present();
-  // }
-
   async postDebitForm(finance : Finances){
 
     var key = this.utility.generateKey();
     
     finance.key = key;
     finance.montant = finance.montant * -1;
+    finance.isEpargne = false;
 
     if(finance.type === TypeOperation.Epargne){
+
+      finance.isEpargne = true;
 
       var epargne : Epargnes = {
         id : 0,

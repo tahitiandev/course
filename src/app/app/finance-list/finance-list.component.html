@@ -18,12 +18,12 @@ table{
         <ion-item-sliding *ngFor="let finance of sortByOrdreAsc(finances)">
         <ion-item button detail="true" (click)="put(finance)">
           <ion-label>
-            <h3 *ngIf="finance.type === 'Débit'" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}">
+            <h3 *ngIf="finance.flux === 'Débit'" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}">
               <ion-chip color="success" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}"
                         slot="end">{{ finance.montant * -1 }}</ion-chip>
                         <span class="masquer-mode-mobile">{{ finance.commentaire }}</span>
             </h3>
-            <h3 *ngIf="finance.type === 'Crédit'">
+            <h3 *ngIf="finance.flux === 'Crédit'">
               <ion-chip color="success" 
                         slot="end">0</ion-chip>
             </h3>
@@ -48,12 +48,12 @@ table{
         <ion-item-sliding *ngFor="let finance of sortByOrdreAsc(finances)">
         <ion-item button detail="true" (click)="put(finance)">
           <ion-label>
-            <h3 *ngIf="finance.type === 'Crédit'" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}">
+            <h3 *ngIf="finance.flux === 'Crédit'" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}">
               <ion-chip color="success" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}"
                         slot="end">{{ finance.montant }}</ion-chip>
                         <span class="masquer-mode-mobile">{{ finance.commentaire }}</span>
             </h3>
-            <h3 *ngIf="finance.type === 'Débit'">
+            <h3 *ngIf="finance.flux === 'Débit'">
               <ion-chip color="success" 
                         slot="end">0</ion-chip>
             </h3>
