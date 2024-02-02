@@ -25,7 +25,7 @@ export class FinanceFormulaireComponent  implements OnInit {
 
   initform(){
     this.formgroup = this.formbuilder.group({
-      montant : 0,
+      montant : '',
       description : '',
       type : TypeOperation.Divers
     })
@@ -56,7 +56,7 @@ export class FinanceFormulaireComponent  implements OnInit {
     await this.formOutput.emit(finances);
 
     this.formgroup.patchValue({
-      montant : 0,
+      montant : '',
       description : '',
       type : TypeOperation.Divers
     })
