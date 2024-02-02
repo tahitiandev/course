@@ -44,6 +44,17 @@ export class EpargnesPage implements OnInit {
     return await this.epargnessservice.get();
   }
 
+  async handleRefresh(event : any) {
+
+    await this.storageService.synchroniser(LocalName.Finances);
+    await this.storageService.synchroniser(LocalName.Depenses);
+    await this.storageService.synchroniser(LocalName.Apports);
+    await this.storageService.synchroniser(LocalName.Epargnes);
+    await this.utility.popUp('Synchronisation des données financières terminées');
+    event.target.complete();
+    
+  }
+
   private async getApport(){
     return await this.apportsservice.get();
   }
@@ -172,15 +183,6 @@ export class EpargnesPage implements OnInit {
     }
     return 0;
     })
-  }
-
-  handleRefresh(event : any) {
-
-    this.storageService.synchroniser(LocalName.Epargnes).then(() => {
-      event.target.complete();
-      this.utility.popUp('Synchronisation des epargnes terminées')
-    })
-    
   }
 
   public setListeOn(){

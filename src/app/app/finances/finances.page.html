@@ -10,6 +10,10 @@
 </ion-header>
 <ion-content [fullscreen]="true">
 
+  <ion-refresher slot="fixed" [pullFactor]="0.5" [pullMin]="100" [pullMax]="200" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <h3 style="text-align: center;">Total : {{ total }} xpf</h3>
 
   <!-- MODE WEB -->
@@ -19,7 +23,7 @@
     </ion-fab-button>
   </ion-fab>
 
-  <app-finance-list (checkOutput)="getCheck($event)" class="masquer-mode-mobile" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
+  <app-finance-list (checkOutput)="getCheck($event)" (recalculeTotal)="calculeTotal()" class="masquer-mode-mobile" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
 
   <!-- PARTIE MOBILE -->
   <ion-fab *ngIf="!isVisible" slot="fixed" horizontal="center" vertical="center" class="masquer-mode-web" >
@@ -35,7 +39,7 @@
   </ion-fab>
 
 
-  <app-finance-list class="masquer-mode-web"  (checkOutput)="getCheck($event)" *ngIf="isVisible" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
+  <app-finance-list class="masquer-mode-web"  (checkOutput)="getCheck($event)" (recalculeTotal)="calculeTotal()" *ngIf="isVisible" [finances]="sortByOrdreAsc(finances)"></app-finance-list>
 
 
 </ion-content>

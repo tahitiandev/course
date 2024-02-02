@@ -111,12 +111,14 @@ export class DepensesPage implements OnInit {
     await alert.present();
   }
 
-  handleRefresh(event : any) {
+  async handleRefresh(event : any) {
 
-    this.storageService.synchroniser(LocalName.Depenses).then(() => {
-      event.target.complete();
-      this.utility.popUp('Synchronisation des dépenses terminées')
-    })
+    await this.storageService.synchroniser(LocalName.Finances);
+    await this.storageService.synchroniser(LocalName.Depenses);
+    await this.storageService.synchroniser(LocalName.Apports);
+    await this.storageService.synchroniser(LocalName.Epargnes);
+    await this.utility.popUp('Synchronisation des données financières terminées');
+    event.target.complete();
     
   }
 

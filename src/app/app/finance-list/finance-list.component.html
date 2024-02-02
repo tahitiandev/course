@@ -15,7 +15,7 @@ table{
   <tr>
     <td>
       <ion-list>
-        <ion-item-sliding *ngFor="let finance of finances">
+        <ion-item-sliding *ngFor="let finance of sortByOrdreAsc(finances)">
         <ion-item button detail="true" (click)="put(finance)">
           <ion-label>
             <h3 *ngIf="finance.type === 'Débit'" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}">
@@ -45,7 +45,7 @@ table{
     </td>
     <td>
       <ion-list>
-        <ion-item-sliding *ngFor="let finance of finances">
+        <ion-item-sliding *ngFor="let finance of sortByOrdreAsc(finances)">
         <ion-item button detail="true" (click)="put(finance)">
           <ion-label>
             <h3 *ngIf="finance.type === 'Crédit'" [ngStyle]="{'text-decoration': finance.check === true ? 'line-through' : 'none'}">

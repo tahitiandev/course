@@ -17,7 +17,8 @@ export class FinanceListComponent  implements OnInit {
 
   @Input() finances : Array<Finances> = [];
   infoConnexion : ConnexionInfo;
-  @Output()checkOutput = new EventEmitter<Finances>()
+  @Output() checkOutput = new EventEmitter<Finances>();
+  @Output() recalculeTotal = new EventEmitter<any>();
 
   constructor(private financeservice : FinancesService,
               private alertController : AlertController,
@@ -45,15 +46,28 @@ export class FinanceListComponent  implements OnInit {
     
     await this.financeservice.delete(finance);
     await this.refresh();
+    this.recalculeTotal.emit();
   }
 
   public async get(){
     return await this.financeservice.get();
   }
-  
+
+  sortByOrdreAsc(finances : Array<Finances>){
+    return finances.sort((a,b) => {
+      let x  = a.id;
+      let y  = b.id;
+      if(x > y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
+  }  
 
   public async check(finance : Finances){
-    this.checkOutput.emit(finance)
+    this.checkOutput.emit(finance);
   }
 
   public async put(finance : Finances){
@@ -98,6 +112,8 @@ export class FinanceListComponent  implements OnInit {
 
             await this.financeservice.put(finance);
             await this.refresh();
+
+            this.recalculeTotal.emit();
 
           }
         }

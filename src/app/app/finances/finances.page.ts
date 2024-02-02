@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Flux } from 'src/app/enums/Flux';
+import { LocalName } from 'src/app/enums/LocalName';
 import { Methods } from 'src/app/enums/Methods';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { Depenses } from 'src/app/models/Depenses';
@@ -9,6 +10,7 @@ import { Finances } from 'src/app/models/Finances';
 import { DepensesService } from 'src/app/services/depenses.service';
 import { EpargnesService } from 'src/app/services/epargnes.service';
 import { FinancesService } from 'src/app/services/finances.service';
+import { StorageService } from 'src/app/services/storage.service';
 import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
@@ -27,11 +29,23 @@ export class FinancesPage implements OnInit {
               private utility : UtilityService,
               private epargneservice : EpargnesService,
               private depenseservice : DepensesService,
+              private storageService : StorageService,
               private financesservice : FinancesService) { }
 
   async ngOnInit() {
     this.infoConnexion = await this.utility.getConnexionInfo();
     await this.refresh()
+  }
+
+  async handleRefresh(event : any) {
+
+    await this.storageService.synchroniser(LocalName.Finances);
+    await this.storageService.synchroniser(LocalName.Depenses);
+    await this.storageService.synchroniser(LocalName.Apports);
+    await this.storageService.synchroniser(LocalName.Epargnes);
+    await this.utility.popUp('Synchronisation des données financières terminées');
+    event.target.complete();
+    
   }
 
   public setIsVisible(){
@@ -183,6 +197,8 @@ export class FinancesPage implements OnInit {
             await this.depenseservice.post(depense);
           }
           
+          await this.calculeTotal();
+
           }
 
         }
@@ -237,6 +253,9 @@ export class FinancesPage implements OnInit {
             await this.financesservice.post(finances);
             await this.refresh();
             this.setIsVisible();
+            
+            await this.calculeTotal();
+          
           }
         }
       ]
