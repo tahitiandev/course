@@ -37,25 +37,7 @@ export class FinancesPage implements OnInit {
   async ngOnInit() {
     this.infoConnexion = await this.utility.getConnexionInfo();
     await this.refresh()
-    // await this.t();
   }
-
-  // async t(){
-  //   var t = await this.get();
-  //   for(let s of t){
-  //     s.flux = s.type;
-  //     if(s.type === Flux.Debit){
-  //       s.type = TypeOperation.Divers;
-  //     }
-  //     if(s.isEpargne){
-  //       s.type = TypeOperation.Epargne;
-  //     }
-  //     if(s.type === Flux.Credit){
-  //       s.type = TypeOperation.Salaire;
-  //     }
-  //     await this.financesservice.put(s);
-  //   }
-  // }
 
   async handleRefresh(event : any) {
 
@@ -140,8 +122,8 @@ export class FinancesPage implements OnInit {
     var key = this.utility.generateKey();
     
     finance.key = key;
-    finance.montant = finance.montant * -1;
-    finance.isEpargne = false;
+    finance.montant = finance.montant;
+    await this.financesservice.post(finance);
 
     if(finance.type === TypeOperation.Epargne){
 
@@ -161,16 +143,16 @@ export class FinancesPage implements OnInit {
       await this.epargneservice.post(epargne);
     }
 
-    await this.financesservice.post(finance);
     await this.refresh();
     this.setIsVisible();
 
+    // DEPENSE
     if(finance.type === TypeOperation.ChargeFixe
     || finance.type === TypeOperation.Divers){
        var depense : Depenses = {
          id : 0,
          userid : this.infoConnexion.utilisateurId,
-         depense : finance.montant,
+         depense : finance.montant * -1,
          commentaire : finance.commentaire,
          check : false,
          createdOn : finance.createdOn,
@@ -178,8 +160,10 @@ export class FinancesPage implements OnInit {
          firebaseMethod : Methods.POST,
          key : key
       }
+
       await this.depenseservice.post(depense);
-    }
+
+    }//if
 
   }
 

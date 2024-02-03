@@ -13,6 +13,7 @@ export class FirestoreService {
   constructor(private firestore: Firestore) { }
 
   public async post(collectionName : string, data : Array<any>, id : string){
+    console.log(collectionName)
 
     const firebaseApp = initializeApp(environment.firebaseConfig);
     const db = getFirestore(firebaseApp)

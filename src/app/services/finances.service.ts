@@ -16,6 +16,7 @@ export class FinancesService {
 
   public async post(finances : Finances){
     await this.storage.post(LocalName.Finances, finances)
+    console.log('1')
   
   }
 
@@ -39,6 +40,16 @@ export class FinancesService {
     finance.commentaire = description;
     finance.montant = montant;
     await this.put(finance);
+  }
+
+  public async getTotal(){
+    var finances = await this.get();
+    var total = 0;
+    finances.map(finance => {
+      total += Number(finance.montant)
+    });
+
+    return total;
   }
 
 }

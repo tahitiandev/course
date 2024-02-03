@@ -15,6 +15,7 @@ export class StorageService {
 
   public async postAll(localName : string, datas : Array<any>){
 
+    console.log('3')
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
     if(connexionInfo.isOnline){
 
@@ -65,6 +66,7 @@ export class StorageService {
     data.deletedOn = null;
     data.isFirebase = false;
     datas.push(data);
+    console.log('2')
     await this.postAll(localName, datas);
 
   }

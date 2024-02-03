@@ -12,6 +12,7 @@ import { BudgetsService } from 'src/app/services/budgets.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { DepensesService } from 'src/app/services/depenses.service';
 import { EpargnesService } from 'src/app/services/epargnes.service';
+import { FinancesService } from 'src/app/services/finances.service';
 import { MagasinsService } from 'src/app/services/magasins.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UtilisateursService } from 'src/app/services/utilisateurs.service';
@@ -51,6 +52,7 @@ export class HomePage implements OnInit {
               private apportsservice : ApportsService,
               private epargnesservice : EpargnesService,
               private depensesservice : DepensesService,
+              private financeservice : FinancesService,
               private coursesService : CoursesService) {   }
 
   async ngOnInit() {
@@ -294,32 +296,47 @@ export class HomePage implements OnInit {
   }
 
   private async setBudget(){
-    const infoConnexion = await this.utility.getConnexionInfo();
-    const budgets = await this.getBudget();
-    var budget = 0;
+    var budget = await this.financeservice.getTotal();
+    this.budgetRestant = budget;
 
-    if(budgets.length > 0){
-
-      const budgetResult = await budgets.find(async(budget) => {
-        this.getLibelleMoisAndReturnIdMois(budget.mois) === this.month
-      })
-      budget = budgetResult.budget;
-    }
-    
-    const libelleUtilisateurConnecte = await this.utilisateursService.getLibelleUtilisateurById(infoConnexion.utilisateurId); 
-
+    const libelleUtilisateurConnecte = await this.utilisateursService.getLibelleUtilisateurById(this.infoConexion.utilisateurId); 
     const utilisateurByDepense = this.utilisateurByDepense;
     const depenses = await utilisateurByDepense.find(result => result.utilisateur === libelleUtilisateurConnecte);
-
     const totalDepense = depenses.montantCourse + depenses.montantdepense;
-    const budgetRestant = budget - totalDepense + this.montantApportUtilisateurConnecte;
-
-    this.budgetRestant = budgetRestant;
-    this.budget = budget;
     this.totalDepense = totalDepense;
-    this.utilisateurConnecteLibelle =libelleUtilisateurConnecte;
+  }
+
+  private async setDepense(){
 
   }
+
+  // private async setBudget(){
+  //   const infoConnexion = await this.utility.getConnexionInfo();
+  //   const budgets = await this.getBudget();
+  //   var budget = 0;
+
+  //   if(budgets.length > 0){
+
+  //     const budgetResult = await budgets.find(async(budget) => {
+  //       this.getLibelleMoisAndReturnIdMois(budget.mois) === this.month
+  //     })
+  //     budget = budgetResult.budget;
+  //   }
+    
+  //   const libelleUtilisateurConnecte = await this.utilisateursService.getLibelleUtilisateurById(infoConnexion.utilisateurId); 
+
+  //   const utilisateurByDepense = this.utilisateurByDepense;
+  //   const depenses = await utilisateurByDepense.find(result => result.utilisateur === libelleUtilisateurConnecte);
+
+  //   const totalDepense = depenses.montantCourse + depenses.montantdepense;
+  //   const budgetRestant = budget - totalDepense + this.montantApportUtilisateurConnecte;
+
+  //   this.budgetRestant = budgetRestant;
+  //   this.budget = budget;
+  //   this.totalDepense = totalDepense;
+  //   this.utilisateurConnecteLibelle =libelleUtilisateurConnecte;
+
+  // }
   
 
 }
