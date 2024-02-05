@@ -55,7 +55,8 @@ export class CoursesPage implements OnInit {
 
 
   public async setPayeur(course : Courses){
-    const payeurs : Array<Utilisateurs> = await this.getPayeurs();
+    const payeursall : Array<Utilisateurs> = await this.getPayeurs();
+    const payeurs : Array<Utilisateurs> = await payeursall.filter(payeur => payeur.groupeId === this.infoConnexion.groupeId);
     const inputs : Array<AlertInput> = [];
 
     payeurs.map(data => inputs.push({

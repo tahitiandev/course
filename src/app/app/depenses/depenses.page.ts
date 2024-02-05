@@ -38,7 +38,20 @@ export class DepensesPage implements OnInit {
   }
 
   private async get(){
-    return await this.depensesservice.get();
+    return this.sortByOrdreAsc(await this.depensesservice.get());
+  }
+
+  sortByOrdreAsc(depense : Array<Depenses>){
+    return depense.sort((a,b) => {
+      let x  = a.id;
+      let y  = b.id;
+      if(x > y){
+        return -1;
+      }else{
+        return 1;
+      }
+      return 0;
+    })
   }
 
   private async refresh(){

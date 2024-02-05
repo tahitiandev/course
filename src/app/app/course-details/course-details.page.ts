@@ -1020,7 +1020,7 @@ export class CourseDetailsPage implements OnInit {
 
               await this.coursesService.postCourseDetails(coursedetails);
             }
-            else{
+            if(totalTheorique > result.reglement){
               var ecart = totalTheorique - result.reglement
               var coursedetails : CourseDetails = {
                 id : Date.now(),
@@ -1038,6 +1038,32 @@ export class CourseDetailsPage implements OnInit {
               }
 
               await this.coursesService.postCourseDetails(coursedetails);
+            }
+
+            if(totalTheorique === result.reglement){
+
+              if(totalTheorique === 0){
+
+                var coursedetails : CourseDetails = {
+                  id : Date.now(),
+                  ordre : 1,
+                  courseId : this.courseid,
+                  libelle : 'REGLEMENT',
+                  quantite : 1,
+                  articleId : 0,
+                  prixArticle : result.reglement,
+                  prixReel : result.reglement,
+                  checked : false,
+                  total : result.reglement,
+                  isFirebase : false,
+                  groupeId : this.infoConnexion.groupeId
+                }
+  
+                await this.coursesService.postCourseDetails(coursedetails);
+              }else{
+                this.utility.popUp('Le montant du règlement correspond au montant de vos courses')
+              }
+              
             }
 
             await this.refresh();
