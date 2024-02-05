@@ -7,6 +7,7 @@ import { ConnexionInfo } from '../../models/ConnexionInfo';
 import { Utilisateurs } from '../../models/Utilisateurs';
 import { Storage } from '@ionic/storage';
 import { StorageService } from 'src/app/services/storage.service';
+import { FirestoreService } from 'src/app/services/firestore.service';
 
 @Component({
   selector: 'app-authentification',
@@ -16,17 +17,22 @@ import { StorageService } from 'src/app/services/storage.service';
 export class AuthentificationPage implements OnInit {
 
   authentificationForm : FormGroup = new FormGroup([]);
+  utilisateurs : Array<any> = [];
 
   constructor(private formbuilder : FormBuilder,
               private utility : UtilityService,
               private storage : StorageService,
+              private firestore : FirestoreService,
               private utilisateursService : UtilisateursService) { }
 
-  ngOnInit() {
-    setTimeout(() => {
-      this.synchroniser();
-    }, 2000);
+  async ngOnInit() {
+    // setTimeout(() => {
+    //   this.synchroniser();
+    // }, 2000);
     this.authentificationFormInit();
+    (await this.firestore.getAll(LocalName.Utilisateurs)).subscribe(utilisateurs => {
+      this.utilisateurs = utilisateurs;
+    })
   }
 
   private authentificationFormInit(){
@@ -51,8 +57,7 @@ export class AuthentificationPage implements OnInit {
   public async onValide(){
     const data = this.authentificationForm.value;
     
-    const utilisateurs : Array<Utilisateurs> = await this.utilisateursService.get();
-    const utilisateur = await utilisateurs.filter(utilisateur => utilisateur.username === data.username);
+    const utilisateur = await this.utilisateurs.filter(utilisateur => utilisateur.username === data.username);
 
     if(utilisateur.length > 0){
       if(utilisateur[0].password === data.password){
@@ -64,6 +69,7 @@ export class AuthentificationPage implements OnInit {
           isOnline : true,
           isCourseAfficher : true,
           isCourseRapide : true,
+          isRoot : utilisateur[0].isRoot === undefined ? false : utilisateur[0].isRoot
         }
 
         await this.storage.set(LocalName.InfoConnexion, infoConnexion);

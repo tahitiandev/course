@@ -247,6 +247,15 @@ export class StorageService {
           var dataGroup = await datas.filter((data : any)=> data.groupeId === connexionInfo.groupeId);
           this.storage.set(localName, dataGroup)
         }
+        else if(localName === LocalName.Utilisateurs 
+          || localName === LocalName.Groupes){
+            if(connexionInfo.isRoot){
+              this.storage.set(localName, datas)
+            }else{
+              var dataGroup = await datas.filter((data : any)=> data.groupeId === connexionInfo.groupeId);
+              this.storage.set(localName, dataGroup)
+            }
+        }
         else{
           this.storage.set(localName, datas)
         }
