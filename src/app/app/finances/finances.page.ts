@@ -122,7 +122,8 @@ export class FinancesPage implements OnInit {
     var key = this.utility.generateKey();
     
     finance.key = key;
-    finance.montant = finance.montant;
+    finance.montant = finance.montant * -1;
+    finance.userid = this.infoConnexion.utilisateurId;
     await this.financesservice.post(finance);
 
     if(finance.type === TypeOperation.Epargne){
