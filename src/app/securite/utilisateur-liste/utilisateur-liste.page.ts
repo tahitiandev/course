@@ -76,7 +76,8 @@ export class UtilisateurListePage implements OnInit {
               email : data.email,
               groupeId : 0,
               actif : true,
-              isFirebase : false
+              isFirebase : false,
+              isRoot : false
             }
             await this.chooseGroupe(utilisateur);      
           }

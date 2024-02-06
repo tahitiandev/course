@@ -15,7 +15,6 @@ export class StorageService {
 
   public async postAll(localName : string, datas : Array<any>){
 
-    console.log('3')
     const connexionInfo : ConnexionInfo = await this.getConnexionInfo();
     if(connexionInfo.isOnline){
 
@@ -66,7 +65,6 @@ export class StorageService {
     data.deletedOn = null;
     data.isFirebase = false;
     datas.push(data);
-    console.log('2')
     await this.postAll(localName, datas);
 
   }
@@ -249,11 +247,12 @@ export class StorageService {
         }
         else if(localName === LocalName.Utilisateurs 
           || localName === LocalName.Groupes){
+
             if(connexionInfo.isRoot){
-              this.storage.set(localName, datas)
+              this.storage.set(localName, datas);
             }else{
               var dataGroup = await datas.filter((data : any)=> data.groupeId === connexionInfo.groupeId);
-              this.storage.set(localName, dataGroup)
+              this.storage.set(localName, dataGroup);
             }
         }
         else{

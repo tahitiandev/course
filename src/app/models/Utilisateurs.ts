@@ -7,5 +7,5 @@ export interface Utilisateurs{
     groupeId : number;
     actif : boolean;
     isFirebase : false;
-    isRoot?:boolean;
+    isRoot:boolean;
 }

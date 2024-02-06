@@ -71,18 +71,7 @@ export class AppComponent {
 
     const utilisateurs = await this.storage.get(LocalName.Utilisateurs);
     if(utilisateurs === null){
-      await this.storage.set(LocalName.Utilisateurs, [
-        {
-          id : 0,
-          libelle : 'Administrateur',
-          username : 'toto',
-          password : 'toto',
-          email : 'heitaa.gilles1@gmail.com',
-          groupeId : 0,
-          actif : 1,
-          isFirebase : true
-        }
-      ]);
+      await this.storage.set(LocalName.Utilisateurs, []);
     }
     
     const courses = await this.storage.get(LocalName.Courses);
@@ -142,7 +131,7 @@ export class AppComponent {
         isOnline :  true,
         isCourseAfficher : true,
         isCourseRapide : true,
-        isRoot : (await this.utility.getConnexionInfo()).isRoot
+        isRoot : false
       }
 
       await this.storage.set(LocalName.InfoConnexion, infoConnexion);
@@ -206,7 +195,7 @@ export class AppComponent {
       isOnline : true,
       isCourseAfficher : true,
       isCourseRapide : true,
-      isRoot : (await this.utility.getConnexionInfo()).isRoot
+      isRoot : false
     }
 
     await this.storage.set(LocalName.InfoConnexion, infoConnexion);

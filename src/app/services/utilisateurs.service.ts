@@ -32,7 +32,8 @@ export class UtilisateursService {
   }
 
   public async getLibelleUtilisateurById(id : number){
-    return (await this.get()).find(utilisateur => utilisateur.id === id).libelle;
+    const utilisateurs = await this.get();
+    return await utilisateurs.find(utilisateur => utilisateur.id === id).libelle;
   }
 
   public async getIdUtilisateurByLibelle(libelle : string){
