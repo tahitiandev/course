@@ -133,7 +133,7 @@ export class FinancesPage implements OnInit {
       var epargne : Epargnes = {
         id : 0,
         userid : this.infoConnexion.utilisateurId,
-        epargne : finance.montant,
+        epargne : finance.montant * -1,
         commentaire : finance.commentaire,
         check :  false,
         createdOn : finance.createdOn,

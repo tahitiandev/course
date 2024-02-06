@@ -120,10 +120,9 @@ export class EpargnesListComponent  implements OnInit {
             epargne.userid = (await this.utility.getConnexionInfo()).utilisateurId;
             epargne.epargne = result.montant;
             epargne.commentaire = result.description === undefined ? "" : result.description;
-
             await this.epargnesservice.put(epargne);
 
-            await this.financeservice.putByKey(epargne.key, epargne.epargne, epargne.commentaire)
+            await this.financeservice.putByKey(epargne.key, epargne.epargne * -1, epargne.commentaire)
 
             await this.refresh();
 
