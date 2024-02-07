@@ -10,7 +10,8 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <form [formGroup]="createUserForm" (ngSubmit)="onValide()">
+  
+  <form [formGroup]="createUserForm" (ngSubmit)="onValide()" *ngIf="isCreerFormUserVisible">
     <ion-list>
       <br>
       <ion-list>
@@ -47,6 +48,18 @@
     <ion-button type="submit" expand="full">VALIDER</ion-button>
   </form>
 
-  <p (click)="this.navigateToAuthentification()" style="cursor: pointer;">Se connecter</p>
+  <p *ngIf="isCreerFormUserVisible" (click)="this.navigateToAuthentification()" style="cursor: pointer;">Se connecter</p>
+
+  <div *ngIf="isQuestionActif">
+    <h3 style="text-align: center; margin-top: 10%;">Possédez-vous un code vous permettant de rejoindre un groupe ?</h3>
+
+    <div style="text-align: center; padding: 2%;">
+      <ion-button color="medium" (click)="clickQuestion('non')">Non</ion-button> <ion-button (click)="clickQuestion('oui')">Oui</ion-button>
+    </div>
+  </div>
+
+  <app-affecte-utilisateur-groupe *ngIf="isAffecteUtilisateurComponent"></app-affecte-utilisateur-groupe>
+
+  <app-creer-groupe (groupeNameOutput)="postUser($event)" *ngIf="isCreerGroupeComponent"></app-creer-groupe>
 
 </ion-content>

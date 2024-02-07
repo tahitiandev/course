@@ -1,0 +1,28 @@
+<style>
+  form{
+    width: 80%;
+    margin: auto;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    padding: 3%;
+    background: rgb(94, 129, 138);
+  }
+  h3{
+    text-align: center;
+  }
+</style>
+
+<form [formGroup]="formgroup" (ngSubmit)="onValide()">
+  <h3>Créer un groupe</h3>
+
+  <ion-list>  
+    <ion-item>
+      <ion-input formControlName="libelle"  label="Nom du groupe"  labelPlacement="floating" placeholder="Renseigner le nom du groupe"></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <br>
+  
+  <ion-button type="submit" expand="full">VALIDER</ion-button>
+
+</form>

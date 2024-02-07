@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { UtilisateursPageRoutingModule } from './utilisateurs-routing.module';
 
 import { UtilisateursPage } from './utilisateurs.page';
+import { AffecteUtilisateurGroupeComponent } from '../affecte-utilisateur-groupe/affecte-utilisateur-groupe.component';
+import { CreerGroupeComponent } from '../creer-groupe/creer-groupe.component';
 
 @NgModule({
   imports: [
@@ -17,6 +19,6 @@ import { UtilisateursPage } from './utilisateurs.page';
     FormsModule,
     ReactiveFormsModule
   ],
-  declarations: [UtilisateursPage]
+  declarations: [UtilisateursPage, AffecteUtilisateurGroupeComponent, CreerGroupeComponent]
 })
 export class UtilisateursPageModule {}
