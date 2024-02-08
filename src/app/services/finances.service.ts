@@ -15,9 +15,7 @@ export class FinancesService {
   }
 
   public async post(finances : Finances){
-    await this.storage.post(LocalName.Finances, finances)
-    console.log('1')
-  
+    await this.storage.post(LocalName.Finances, finances);  
   }
 
   public async delete(finances : Finances){

@@ -251,7 +251,7 @@ export class StorageService {
             if(connexionInfo.isRoot){
               this.storage.set(localName, datas);
             }else{
-              var dataGroup = await datas.filter((data : any)=> data.groupeId === connexionInfo.groupeId);
+              var dataGroup = await datas.filter((data : any)=> data.groupeId == connexionInfo.groupeId);
               this.storage.set(localName, dataGroup);
             }
         }

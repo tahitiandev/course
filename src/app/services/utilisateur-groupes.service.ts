@@ -37,5 +37,10 @@ export class UtilisateurGroupesService {
       const groupes : Array<UtilisateurGroupes> = await this.get();
       return groupes.find(groupe => groupe.id === idGroupe)?.libelle;
     }
+
+    public async getByKey(key : any){
+      var groupes = await this.get();
+      return await groupes.find(groupe => groupe.key === key);
+    }
     
 }

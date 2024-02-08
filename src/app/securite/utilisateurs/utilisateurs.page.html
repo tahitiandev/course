@@ -33,13 +33,6 @@
         <ion-item>
           <ion-input formControlName="email" label="Votre email" type="email" label-placement="floating" fill="outline" placeholder="Votre email"></ion-input>
         </ion-item>
-        <br>
-  
-        <ion-item>
-          <ion-select *ngFor="let groupe of utilisateurGroupes" formControlName="groupeId" aria-label="Famille" placeholder="Sélectionner votre famille">
-            <ion-select-option value="{{ groupe.id }}">{{ groupe.libelle }}</ion-select-option>
-          </ion-select>
-        </ion-item>
               
       </ion-list>
       

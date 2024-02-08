@@ -5,6 +5,8 @@ import { UtilisateursService } from '../../services/utilisateurs.service';
 import { UtilityService } from '../../services/utility.service';
 import { UtilisateurGroupesService } from '../../services/utilisateur-groupes.service';
 import { UtilisateurGroupes } from '../../models/UtilisateurGroupes';
+import { FirestoreService } from 'src/app/services/firestore.service';
+import { LocalName } from '../../enums/LocalName';
 @Component({
   selector: 'app-utilisateurs',
   templateUrl: './utilisateurs.page.html',
@@ -19,11 +21,13 @@ export class UtilisateursPage implements OnInit {
   isQuestionActif = false;
   isAffecteUtilisateurComponent = false;
   isCreerGroupeComponent = false;
+  groupe : any;
 
   constructor(private formbuilder : FormBuilder,
               private utility : UtilityService,
               private navigate : NavController,
-              private groupes : UtilisateurGroupesService,
+              private firestore : FirestoreService,
+              private groupeservice : UtilisateurGroupesService,
               private utilisateurService : UtilisateursService) {
                 this.refresh();
                }
@@ -44,18 +48,21 @@ export class UtilisateursPage implements OnInit {
       username : '',
       password : '',
       email : '',
-      groupeId : 0,
       actif : true
     })
   }
 
-  public async postUser(groupe : any){
-    console.log(this.createUserForm.value)
-    console.log(groupe)
+  public async postUser(groupetemp : UtilisateurGroupes){
+
     const utilisateur = this.createUserForm.value;
-    utilisateur.groupeId = Number(utilisateur.groupeId);
     
+    (await this.firestore.getAll(LocalName.Groupes)).subscribe(async (groupes)=>{
+      var groupe : any = await groupes.find((groupe:any) => groupe.key === groupetemp.key);
+      utilisateur.groupeId = groupe.id;
+    })
     await this.utilisateurService.post(utilisateur);
+    this.isCreerGroupeComponent = false;
+    this.isCreerFormUserVisible = true;
     
     this.createUserForm.patchValue({
       id : new Date(),
@@ -63,14 +70,14 @@ export class UtilisateursPage implements OnInit {
       username : '',
       password : '',
       email : '',
-      groupeId : 0,
       actif : true
     })
+
+    this.utility.popUp('Compte ' + utilisateur.libelle + ' a bien été créé');
     this.utility.navigateTo('authentification');
   }
 
   public async onValide(){
-
     this.isCreerFormUserVisible = !this.isCreerFormUserVisible
     this.isQuestionActif = !this.isQuestionActif
   }
@@ -89,7 +96,7 @@ export class UtilisateursPage implements OnInit {
   }
 
   public async getGroupe(){
-    const groupes : Array<UtilisateurGroupes> = await await this.groupes.get();
+    const groupes : Array<UtilisateurGroupes> = await await this.groupeservice.get();
     return groupes.filter(groupe => groupe.id !== 0);
   }
 

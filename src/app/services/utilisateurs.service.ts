@@ -11,6 +11,7 @@ export class UtilisateursService {
   constructor(private storage : StorageService) { }
 
   public async post(utilisateur : Utilisateurs){
+    console.log('2')
     utilisateur.id = Date.now();
     await this.storage.post(LocalName.Utilisateurs, utilisateur);
   }
