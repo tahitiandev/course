@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Utilisateurs } from '../models/Utilisateurs';
 import { StorageService } from './storage.service';
 import { LocalName } from '../enums/LocalName';
+import { UtilisateurGroupeActivation } from '../models/UtilisateurGroupeActivation';
 
 @Injectable({
   providedIn: 'root'
@@ -39,5 +40,9 @@ export class UtilisateursService {
 
   public async getIdUtilisateurByLibelle(libelle : string){
     return (await this.get()).find(utilisateur => utilisateur.libelle == libelle).id;
+  }
+
+  public async postInvitationAuGroupe(invitation : UtilisateurGroupeActivation){
+    await this.storage.post(LocalName.Invitation, invitation);
   }
 }

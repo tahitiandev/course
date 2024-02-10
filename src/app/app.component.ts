@@ -167,6 +167,11 @@ export class AppComponent {
       await this.storage.set(LocalName.Finances, []);
     }
 
+    const invitations = await this.storage.get(LocalName.Invitation);
+    if(invitations === null){
+      await this.storage.set(LocalName.Invitation, []);
+    }
+
   } //setLocalStorage
 
   private async IsConnected(){

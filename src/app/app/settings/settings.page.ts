@@ -8,6 +8,8 @@ import { Storage } from '@ionic/storage';
 import { LocalName } from 'src/app/enums/LocalName';
 import { FirestoreService } from 'src/app/services/firestore.service';
 import { StorageService } from 'src/app/services/storage.service';
+import { UtilisateurGroupeActivation } from 'src/app/models/UtilisateurGroupeActivation';
+import { UtilisateursService } from 'src/app/services/utilisateurs.service';
 
 @Component({
   selector: 'app-settings',
@@ -25,6 +27,7 @@ export class SettingsPage implements OnInit {
   constructor(private alertController : AlertController,
               private utility : UtilityService,
               private storage : StorageService,
+              private utilisateurservice : UtilisateursService,
               private magasinService : MagasinsService) { }
 
   async ngOnInit() {
@@ -37,6 +40,45 @@ export class SettingsPage implements OnInit {
     this.isOnline = connexionInfo.isOnline;
     this.isCourseRapide = connexionInfo.isCourseRapide;
     this.magasinParDefaut = connexionInfo.magasinParDefaut?.libelle === undefined ? "1" : connexionInfo.magasinParDefaut.libelle
+  }
+
+  public async inviteAuGroupe(){
+    var key = await this.utility.generateKey();
+    var invitation : UtilisateurGroupeActivation = {
+      userId : this.connexionInfo.utilisateurId,
+      groupeId : this.connexionInfo.groupeId,
+      code : key,
+      isActif : true,
+      dateExpiration : new Date()
+    }
+
+    await this.utilisateurservice.postInvitationAuGroupe(invitation);
+
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Votre code d\'invitation',
+      inputs: [
+        {
+          type : 'text',
+          value : key
+        }
+      ],
+        buttons: [
+          {
+          text: 'Ok',
+          handler: () => {
+          }
+        }
+        
+      ]
+    });
+
+    await alert.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
+
   }
 
   public async setmagasinParDefaut(){
