@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalName } from 'src/app/enums/LocalName';
+import { FirestoreService } from 'src/app/services/firestore.service';
+import { UtilisateursService } from 'src/app/services/utilisateurs.service';
 
 @Component({
   selector: 'app-affecte-utilisateur-groupe',
@@ -7,8 +10,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AffecteUtilisateurGroupeComponent  implements OnInit {
 
-  constructor() { }
+  constructor(private firestore : FirestoreService,
+              private utiliasteurservice : UtilisateursService) { }
 
   ngOnInit() {}
+
+  async checkInvitation(codeInvitation : any){
+    (await this.firestore.getAll(LocalName.Invitation)).subscribe(async(invit:any) => {
+      if(invit.key === codeInvitation){
+        invit.isActif = false;
+        await this.utiliasteurservice.putInvitationAuGroupe(invit);
+        
+      }
+    })
+  }
 
 }

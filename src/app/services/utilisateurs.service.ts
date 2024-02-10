@@ -45,4 +45,8 @@ export class UtilisateursService {
   public async postInvitationAuGroupe(invitation : UtilisateurGroupeActivation){
     await this.storage.post(LocalName.Invitation, invitation);
   }
+
+  public async putInvitationAuGroupe(invitation : UtilisateurGroupeActivation){
+    await this.storage.put(LocalName.Invitation, invitation);
+  }
 }

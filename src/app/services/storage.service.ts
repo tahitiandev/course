@@ -255,6 +255,9 @@ export class StorageService {
               this.storage.set(localName, dataGroup);
             }
         }
+        else if(localName === LocalName.Invitation){
+          // ne jamais synchroniser
+        }
         else{
           this.storage.set(localName, datas)
         }

@@ -10,6 +10,7 @@ import { FirestoreService } from 'src/app/services/firestore.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UtilisateurGroupeActivation } from 'src/app/models/UtilisateurGroupeActivation';
 import { UtilisateursService } from 'src/app/services/utilisateurs.service';
+import { Methods } from 'src/app/enums/Methods';
 
 @Component({
   selector: 'app-settings',
@@ -49,7 +50,9 @@ export class SettingsPage implements OnInit {
       groupeId : this.connexionInfo.groupeId,
       code : key,
       isActif : true,
-      dateExpiration : new Date()
+      dateExpiration : new Date(),
+      isFirebase : false,
+      firebaseMethod : Methods.POST
     }
 
     await this.utilisateurservice.postInvitationAuGroupe(invitation);
