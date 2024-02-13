@@ -41,6 +41,7 @@ export class UtilisateursPage implements OnInit {
     this.utilisateurGroupes = await this.getGroupe();
   }
 
+  
   private createUserFormInit(){
     this.createUserForm = this.formbuilder.group({
       id : 0,
@@ -51,7 +52,27 @@ export class UtilisateursPage implements OnInit {
       actif : true
     })
   }
+  
+  async postUserByCodeActivation(groupeid : any){
 
+    const utilisateur = this.createUserForm.value;
+    utilisateur.groupeId = groupeid;
+    await this.utilisateurService.post(utilisateur);
+    this.isCreerGroupeComponent = false;
+    this.isCreerFormUserVisible = true;
+    
+    this.createUserForm.patchValue({
+      id : new Date(),
+      libelle : '',
+      username : '',
+      password : '',
+      email : '',
+      actif : true
+    })
+
+    this.utility.popUp('Compte ' + utilisateur.libelle + ' a bien été créé');
+    this.utility.navigateTo('authentification');
+  }
   public async postUser(groupetemp : UtilisateurGroupes){
 
     const utilisateur = this.createUserForm.value;

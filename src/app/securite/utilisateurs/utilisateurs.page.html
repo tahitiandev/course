@@ -51,7 +51,7 @@
     </div>
   </div>
 
-  <app-affecte-utilisateur-groupe *ngIf="isAffecteUtilisateurComponent"></app-affecte-utilisateur-groupe>
+  <app-affecte-utilisateur-groupe (groupeIdOutput)="postUserByCodeActivation($event)" *ngIf="isAffecteUtilisateurComponent"></app-affecte-utilisateur-groupe>
 
   <app-creer-groupe (groupeNameOutput)="postUser($event)" *ngIf="isCreerGroupeComponent"></app-creer-groupe>
 

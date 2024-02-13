@@ -12,12 +12,12 @@
   }
 </style>
 
-<form>
+<form [formGroup]="formgroup" (ngSubmit)="onValide()">
   <h3>Renseigner votre code d'activation</h3>
 
   <ion-list>  
     <ion-item>
-      <ion-input label="Code d'activation" labelPlacement="floating" placeholder="Renseigner votre code"></ion-input>
+      <ion-input formControlName="codeActivation" label="Code d'activation" labelPlacement="floating" placeholder="Renseigner votre code"></ion-input>
     </ion-item>
   </ion-list>
 
