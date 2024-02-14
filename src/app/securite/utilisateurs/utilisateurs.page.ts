@@ -70,7 +70,9 @@ export class UtilisateursPage implements OnInit {
       actif : true
     })
 
-    this.utility.popUp('Compte ' + utilisateur.libelle + ' a bien été créé');
+    var libellegroupe = await this.groupeservice.getLibelleById(groupeid);
+
+    this.utility.popUp('Compte ' + utilisateur.libelle + ' a bien été créé, et intégré au groupe : ' + libellegroupe);
     this.utility.navigateTo('authentification');
   }
   public async postUser(groupetemp : UtilisateurGroupes){

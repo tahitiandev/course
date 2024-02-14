@@ -49,4 +49,8 @@ export class UtilisateursService {
   public async putInvitationAuGroupe(invitation : UtilisateurGroupeActivation){
     await this.storage.put(LocalName.Invitation, invitation);
   }
+
+  public async deleteInvitation(invitation : UtilisateurGroupeActivation){
+    await this.storage.deleteDefinitivement(LocalName.Invitation, invitation);
+  }
 }

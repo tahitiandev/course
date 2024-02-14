@@ -1,40 +1,34 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/settings"></ion-back-button>
     </ion-buttons>
-
-    <ion-title>Liste des utilisateurs</ion-title>
+    <ion-title>Gestion des codes accès aux groupes</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
   <ion-list >
   
-    <ion-item-sliding *ngFor="let utilisateur of utilisateurs">
-      <ion-item button detail="true" (click)="put(utilisateur)" [disabled]="utilisateur.firebaseMethod === 'DELETE'">
+    <ion-item-sliding *ngFor="let invitation of invitations">
+      <ion-item button detail="true" (click)="getCode(invitation.code)">
         <ion-label>
-          <h3>{{ utilisateur.libelle }}
-            <ion-icon *ngIf="utilisateur.groupeId == infoConnexion.groupeId && infoConnexion.isRoot" name="arrow-back-outline"></ion-icon>
-          </h3>
+          <h3>{{ invitation.code }} <span style="float:right"><ion-checkbox disabled="true" checked="{{ invitation.isActif }}"></ion-checkbox></span></h3>
         </ion-label>
       </ion-item>
 
       <ion-item-options side="start">
-        <ion-item-option style="background: red;" (click)="deleteDefinitivement(utilisateur)">
+        <ion-item-option style="background: red;" (click)="delete(invitation)">
           Supprimer   
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
-  
+
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" >
-    <ion-fab-button size="small" (click)="post()">
+    <ion-fab-button size="small" (click)="inviteAuGroupe()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
 
 </ion-content>

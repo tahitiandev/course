@@ -93,6 +93,10 @@ const routes: Routes = [
   {
     path: 'finances',
     loadChildren: () => import('./app/finances/finances.module').then( m => m.FinancesPageModule)
+  },
+  {
+    path: 'invitations',
+    loadChildren: () => import('./app/invitations/invitations.module').then( m => m.InvitationsPageModule)
   }
 
 

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, AlertInput } from '@ionic/angular';
+import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { UtilisateurGroupes } from 'src/app/models/UtilisateurGroupes';
 import { Utilisateurs } from 'src/app/models/Utilisateurs';
 import { UtilisateurGroupesService } from 'src/app/services/utilisateur-groupes.service';
 import { UtilisateursService } from 'src/app/services/utilisateurs.service';
+import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-utilisateur-liste',
@@ -13,12 +15,15 @@ import { UtilisateursService } from 'src/app/services/utilisateurs.service';
 export class UtilisateurListePage implements OnInit {
 
   utilisateurs : Array<Utilisateurs> = [];
+  infoConnexion : ConnexionInfo;
 
   constructor(private utilisteursService : UtilisateursService,
               private groupeservice : UtilisateurGroupesService,
+              private utility : UtilityService,
               private alertController : AlertController) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.infoConnexion = await this.utility.getConnexionInfo();
     this.refresh();
   }
 
