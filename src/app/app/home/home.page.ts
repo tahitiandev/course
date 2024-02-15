@@ -302,7 +302,8 @@ export class HomePage implements OnInit {
     const libelleUtilisateurConnecte = await this.utilisateursService.getLibelleUtilisateurById(this.infoConexion.utilisateurId); 
     const utilisateurByDepense = this.utilisateurByDepense;
     const depenses = await utilisateurByDepense.find(result => result.utilisateur === libelleUtilisateurConnecte);
-    const totalDepense = depenses.montantCourse + depenses.montantdepense;
+    // const totalDepense = depenses.montantCourse + depenses.montantdepense;
+    const totalDepense = depenses.montantdepense;
     this.totalDepense = totalDepense;
   }
 

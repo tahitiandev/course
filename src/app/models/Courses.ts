@@ -15,4 +15,5 @@ export interface Courses{
     isFocus? : boolean;
     groupeId : number;
     firebaseMethod? : Methods;
+    key? : string;
 }

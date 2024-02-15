@@ -29,9 +29,9 @@
   <ion-list *ngIf="!isModeCourseRapide">
     <ion-item-sliding *ngFor="let coursedetail of coursedetails">
       <ion-item button (click)="put(coursedetail)" [disabled]="coursedetail.checked || coursedetail.firebaseMethod === 'DELETE'">
-        <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">{{ coursedetail.libelle }}</ion-label>
-        <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">x {{ coursedetail.quantite }}</ion-label>
-        <ion-label  [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">{{ coursedetail.total }} xpf</ion-label>
+        <ion-label>{{ coursedetail.libelle }}</ion-label>
+        <ion-label>x {{ coursedetail.quantite }}</ion-label>
+        <ion-label>{{ coursedetail.total }} xpf</ion-label>
         <ion-icon *ngIf="coursedetail.checked" name="lock-closed-outline"></ion-icon>
       </ion-item>
 
@@ -91,9 +91,12 @@
   <ion-list *ngIf="isModeCourseRapide && isAfficherListe">
     <ion-item-sliding *ngFor="let coursedetail of coursedetails">
       <ion-item button (click)="put(coursedetail)" [disabled]="coursedetail.checked || coursedetail.firebaseMethod === 'DELETE'">
-        <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">{{ coursedetail.libelle }}</ion-label>
-        <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">x {{ coursedetail.quantite }}</ion-label>
-        <ion-label  [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'white' }">{{ coursedetail.total }} xpf</ion-label>
+        <ion-label>{{ coursedetail.libelle }}</ion-label>
+        <ion-label>x {{ coursedetail.quantite }}</ion-label>
+        <ion-label>{{ coursedetail.total }} xpf</ion-label>
+        <!-- <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'black' }">{{ coursedetail.libelle }}</ion-label>
+        <ion-label [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'black' }"> {{ coursedetail.quantite }}</ion-label>
+        <ion-label  [ngStyle]="{'color':coursedetail.checked ? 'brown' : 'black' }">{{ coursedetail.total }} xpf</ion-label> -->
         <ion-icon *ngIf="coursedetail.checked" name="lock-closed-outline"></ion-icon>
       </ion-item>
 

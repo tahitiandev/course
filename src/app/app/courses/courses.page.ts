@@ -11,6 +11,13 @@ import { Utilisateurs } from 'src/app/models/Utilisateurs';
 import { StorageService } from 'src/app/services/storage.service';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { FirestoreService } from 'src/app/services/firestore.service';
+import { DepensesService } from 'src/app/services/depenses.service';
+import { FinancesService } from 'src/app/services/finances.service';
+import { Finances } from 'src/app/models/Finances';
+import { Flux } from 'src/app/enums/Flux';
+import { Methods } from 'src/app/enums/Methods';
+import { TypeOperation } from 'src/app/enums/TypeOperation';
+import { Depenses } from 'src/app/models/Depenses';
 
 @Component({
   selector: 'app-courses',
@@ -32,6 +39,8 @@ export class CoursesPage implements OnInit {
               private storageService : StorageService,
               private storage : Storage,
               private firestore : FirestoreService,
+              private depenseservice : DepensesService,
+              private financeservice : FinancesService,
               private utility : UtilityService,
               private alertController : AlertController) { 
               }
@@ -51,6 +60,41 @@ export class CoursesPage implements OnInit {
 
   private async getPayeurs(){
     return await this.storage.get(LocalName.Utilisateurs);
+  }
+
+  public async ajouterAuxDepenses(course : Courses){
+    var key = await this.utility.generateKey();
+    var finance : Finances = {
+      id : 0,
+      userid : this.infoConnexion.utilisateurId,
+      montant : course.montantReel * -1,
+      flux : Flux.Debit,
+      commentaire : 'Dépense de course du ' + course.date,
+      check : false,
+      createdOn : course.date,
+      isFirebase : false,
+      firebaseMethod : Methods.POST,
+      isEpargne : false,
+      key : key,
+      type : TypeOperation.Divers
+    }
+    var depenses : Depenses = {
+      id : 0,
+      userid : this.infoConnexion.utilisateurId,
+      depense : course.montantReel,
+      commentaire : 'Dépense de course du ' + course.date,
+      check : false,
+      createdOn : course.date,
+      isFirebase : false,
+      firebaseMethod : Methods.POST,
+      key : key
+    }
+    course.key = key;
+
+    await this.financeservice.post(finance);
+    await this.depenseservice.post(depenses);
+    await this.coursesService.putCourse(course);
+    await this.refresh();
   }
 
 
@@ -262,6 +306,9 @@ export class CoursesPage implements OnInit {
     course.actif = !course.actif
     course.isFocus = false;
     await this.coursesService.putCourse(course);
+
+    await this.ajouterAuxDepenses(course);
+
     await this.refresh();
   }
 
