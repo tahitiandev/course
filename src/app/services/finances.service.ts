@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 import { LocalName } from '../enums/LocalName';
 import { Finances } from '../models/Finances';
+import { TypeOperation } from '../enums/TypeOperation';
 
 @Injectable({
   providedIn: 'root'

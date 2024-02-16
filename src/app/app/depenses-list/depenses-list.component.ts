@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Depenses } from 'src/app/models/Depenses';
+import { CoursesService } from 'src/app/services/courses.service';
 import { DepensesService } from 'src/app/services/depenses.service';
 import { FinancesService } from 'src/app/services/finances.service';
 import { StorageService } from 'src/app/services/storage.service';
@@ -19,6 +20,7 @@ export class DepensesListComponent  implements OnInit {
   constructor(private depensesservice : DepensesService,
               private utility : UtilityService,
               private financeservice : FinancesService,
+              private courseservice : CoursesService,
               private alertController : AlertController) { }
 
   async ngOnInit() {

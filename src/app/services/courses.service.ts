@@ -3,6 +3,7 @@ import { StorageService } from './storage.service';
 import { LocalName } from '../enums/LocalName';
 import { Courses } from '../models/Courses';
 import { CourseDetails } from '../models/Course-details';
+import { TypeOperation } from '../enums/TypeOperation';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,14 @@ export class CoursesService {
 
   public async putCourse(course : Courses){
     await this.storage.put(LocalName.Courses, course);
+  }
+
+  public async putCourseByKey(key : any, montant : number, description : string){
+    var courses = await this.getCourse();
+    var course : any = await courses.find((course : Courses) => course.key === key);
+    course.commentaire = description;
+    course.montant = montant;
+    await this.putCourse(course);
   }
 
   public async deleteCourse(course : Courses){

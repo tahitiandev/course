@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Flux } from 'src/app/enums/Flux';
+import { TypeOperation } from 'src/app/enums/TypeOperation';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { Finances } from 'src/app/models/Finances';
+import { CoursesService } from 'src/app/services/courses.service';
 import { DepensesService } from 'src/app/services/depenses.service';
 import { EpargnesService } from 'src/app/services/epargnes.service';
 import { FinancesService } from 'src/app/services/finances.service';
@@ -24,6 +26,7 @@ export class FinanceListComponent  implements OnInit {
               private alertController : AlertController,
               private depenseservice : DepensesService,
               private epargneservice : EpargnesService,
+              private courseservice : CoursesService,
               private utility : UtilityService) { }
 
   async ngOnInit() {
@@ -106,7 +109,11 @@ export class FinanceListComponent  implements OnInit {
 
             if(finance.isEpargne){
               await this.epargneservice.putByKey(finance.key, finance.montant * -1, finance.commentaire);
-            }else{
+            }
+            else{
+              if(finance.type === TypeOperation.Course){
+                await this.courseservice.putCourseByKey(finance.key, finance.montant * -1, finance.commentaire);
+              }
               await this.depenseservice.putByKey(finance.key, finance.montant * -1, finance.commentaire);
             }
 

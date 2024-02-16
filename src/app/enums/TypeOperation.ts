@@ -4,4 +4,5 @@ export enum TypeOperation{
     ChargeFixe = "ChargeFixe",
     Salaire = "Salaire",
     Apport = "Apport",
+    Course = "Course",
 }

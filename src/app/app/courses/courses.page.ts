@@ -63,40 +63,54 @@ export class CoursesPage implements OnInit {
   }
 
   public async ajouterAuxDepenses(course : Courses){
-    var key = await this.utility.generateKey();
-    var finance : Finances = {
-      id : 0,
-      userid : this.infoConnexion.utilisateurId,
-      montant : course.montantReel * -1,
-      flux : Flux.Debit,
-      commentaire : 'Dépense de course du ' + course.date,
-      check : false,
-      createdOn : course.date,
-      isFirebase : false,
-      firebaseMethod : Methods.POST,
-      isEpargne : false,
-      key : key,
-      type : TypeOperation.Divers
-    }
-    var depenses : Depenses = {
-      id : 0,
-      userid : this.infoConnexion.utilisateurId,
-      depense : course.montantReel,
-      commentaire : 'Dépense de course du ' + course.date,
-      check : false,
-      createdOn : course.date,
-      isFirebase : false,
-      firebaseMethod : Methods.POST,
-      key : key
-    }
-    course.key = key;
 
-    await this.financeservice.post(finance);
-    await this.depenseservice.post(depenses);
+    var commentaire = 'Course du ' + course.date;
+
+    // Si le montant de la course a déjà été envoyé sur finances
+    if(course.key === undefined){
+
+      var key = await this.utility.generateKey();
+      var finance : Finances = {
+        id : 0,
+        userid : this.infoConnexion.utilisateurId,
+        montant : course.montantReel * -1,
+        flux : Flux.Debit,
+        commentaire : commentaire,
+        check : false,
+        createdOn : course.date,
+        isFirebase : false,
+        firebaseMethod : Methods.POST,
+        isEpargne : false,
+        key : key,
+        type : TypeOperation.Course
+      }
+      var depenses : Depenses = {
+        id : 0,
+        userid : this.infoConnexion.utilisateurId,
+        depense : course.montantReel,
+        commentaire : commentaire,
+        check : false,
+        createdOn : course.date,
+        isFirebase : false,
+        firebaseMethod : Methods.POST,
+        key : key
+      }
+      course.key = key;
+  
+      await this.financeservice.post(finance);
+      await this.depenseservice.post(depenses);
+
+    } // if(course.key === undefined)
+
+    if(course.key !== undefined){
+      await this.financeservice.putByKey(course.key, course.montantReel * -1, commentaire);
+      await this.depenseservice.putByKey(course.key, course.montantReel, commentaire);
+
+    }//else
+
     await this.coursesService.putCourse(course);
-    await this.refresh();
-  }
 
+  }
 
   public async setPayeur(course : Courses){
     const payeursall : Array<Utilisateurs> = await this.getPayeurs();
@@ -304,8 +318,11 @@ export class CoursesPage implements OnInit {
 
   public async activer(course : Courses){
     course.actif = !course.actif
-    course.isFocus = false;
-    await this.coursesService.putCourse(course);
+
+    if(course.isFocus){
+      course.isFocus = false;
+    }
+    // await this.coursesService.putCourse(course); <== déjà appelé dans la fonction ajouterAuxDepenses
 
     await this.ajouterAuxDepenses(course);
 
