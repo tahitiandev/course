@@ -1,7 +1,7 @@
 <ion-list>
   <ion-item-sliding *ngFor="let depense of depenses">
   <ion-item button detail="true" (click)="put(depense)"
-            [disabled]="depense.firebaseMethod === 'DELETE'"
+            [disabled]="depense.firebaseMethod === 'DELETE' || depense.commentaire.includes('Course')"
             [ngStyle]="{'text-decoration': depense.check === true ? 'line-through' : 'none'}">
     <ion-label>
       <h3>
