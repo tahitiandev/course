@@ -72,7 +72,7 @@ export class CoursesPage implements OnInit {
       var key = await this.utility.generateKey();
       var finance : Finances = {
         id : 0,
-        userid : this.infoConnexion.utilisateurId,
+        userid : course.payeurId === undefined ? this.infoConnexion.utilisateurId : course.payeurId,
         montant : course.montantReel * -1,
         flux : Flux.Debit,
         commentaire : commentaire,
@@ -86,7 +86,7 @@ export class CoursesPage implements OnInit {
       }
       var depenses : Depenses = {
         id : 0,
-        userid : this.infoConnexion.utilisateurId,
+        userid : course.payeurId === undefined ? this.infoConnexion.utilisateurId : course.payeurId,
         depense : course.montantReel,
         commentaire : commentaire,
         check : false,
@@ -322,9 +322,11 @@ export class CoursesPage implements OnInit {
     if(course.isFocus){
       course.isFocus = false;
     }
-    // await this.coursesService.putCourse(course); <== déjà appelé dans la fonction ajouterAuxDepenses
+    await this.coursesService.putCourse(course);
 
-    await this.ajouterAuxDepenses(course);
+    if(!course.actif){
+      await this.ajouterAuxDepenses(course);
+    }
 
     await this.refresh();
   }

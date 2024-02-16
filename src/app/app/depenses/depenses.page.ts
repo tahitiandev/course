@@ -38,7 +38,7 @@ export class DepensesPage implements OnInit {
   }
 
   private async get(){
-    return this.sortByOrdreAsc(await this.depensesservice.get());
+    return this.sortByOrdreAsc(await this.depensesservice.get()).filter(depense => depense.userid === this.infoConnexion.utilisateurId);
   }
 
   sortByOrdreAsc(depense : Array<Depenses>){
