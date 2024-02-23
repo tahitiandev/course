@@ -20,6 +20,8 @@ export class MenuSemainePage implements OnInit {
   menus : Array<Menu> = [];
   selectedWeek: number;
   selectedYear: number;
+  isSeachPlat : boolean = false;
+  selectedMenu : Menu;
 
   constructor(private alertController : AlertController,
               private menuservice : MenuService,
@@ -56,7 +58,7 @@ export class MenuSemainePage implements OnInit {
     })
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Choisir les ingéridients',
+      header: 'Envoyer dans votre liste de course',
       inputs: inputs,
       buttons: [
         {
@@ -78,6 +80,28 @@ export class MenuSemainePage implements OnInit {
     });
     await alert.present();
   }
+
+  public async putMenu(menu : Menu){
+      this.isSeachPlat = !this.isSeachPlat;
+      this.selectedMenu = menu;
+  }
+
+  public async updateMenu(plat : Plats){
+    this.selectedMenu.plat = plat;
+    this.selectedMenu.libelle = plat.libelle;
+
+    await this.menuservice.put(this.selectedMenu);
+    await this.refresh();
+  }
+  
+  public async closeSeachPlatComponent(){
+    this.isSeachPlat = !this.isSeachPlat;
+  }
+
+  closeSearchPlatComponent(){
+    this.isSeachPlat = false;
+  }
+
 
   private async initMenu(){
     const menus : Array<Menu> = await this.get();

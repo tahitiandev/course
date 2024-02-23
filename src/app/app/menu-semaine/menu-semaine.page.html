@@ -11,6 +11,7 @@
 
 <ion-content [fullscreen]="true">
 
+  <span *ngIf="!isSeachPlat">
   <table>
     <tr>
       <td>Année : </td>
@@ -31,11 +32,19 @@
   <ion-list style="margin: 15px;">
     <ion-item *ngFor="let menu of menus">
       <ion-icon aria-hidden="true" name="calendar" slot="start"></ion-icon>
-      <ion-label style="cursor: pointer;" (click)="put(menu)">{{ menu.jour }} - {{ menu.libelle }}</ion-label>
-      <button (click)="sendToCourse(menu)">SEND</button>
+      <!-- <ion-label style="cursor: pointer;" (click)="put(menu)">{{ menu.jour }} - {{ menu.libelle }}</ion-label> -->
+      <ion-label style="cursor: pointer;" (click)="putMenu(menu)">{{ menu.jour }} - {{ menu.libelle }}</ion-label>
+      <ion-icon name="paper-plane-outline" (click)="sendToCourse(menu)" style="cursor: PO;"></ion-icon>
+      <!-- <button (click)="sendToCourse(menu)">SEND</button> -->
     </ion-item>
   </ion-list>
 
   <!-- <button (click)="post()">POST</button> -->
+
+  </span>
+
+<app-menu-semaine-recherche-plat (closeSearchPlat)="closeSearchPlatComponent()"
+                                  (platSelected)="updateMenu($event)"
+                                 *ngIf="isSeachPlat"></app-menu-semaine-recherche-plat>
 
 </ion-content>

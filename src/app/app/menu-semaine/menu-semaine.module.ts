@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { MenuSemainePageRoutingModule } from './menu-semaine-routing.module';
 
 import { MenuSemainePage } from './menu-semaine.page';
+import { MenuSemaineRecherchePlatComponent } from '../menu-semaine-recherche-plat/menu-semaine-recherche-plat.component';
+import { ArticleFiltrePlatMenuPipe } from 'src/app/pipes/article-filtre-plat-menu.pipe';
 
 @NgModule({
   imports: [
@@ -15,6 +17,6 @@ import { MenuSemainePage } from './menu-semaine.page';
     IonicModule,
     MenuSemainePageRoutingModule
   ],
-  declarations: [MenuSemainePage]
+  declarations: [MenuSemainePage, MenuSemaineRecherchePlatComponent, ArticleFiltrePlatMenuPipe]
 })
 export class MenuSemainePageModule {}
