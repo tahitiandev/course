@@ -18,6 +18,8 @@ export class MenuSemainePage implements OnInit {
 
   infoConnexion : ConnexionInfo;
   menus : Array<Menu> = [];
+  selectedWeek: number;
+  selectedYear: number;
 
   constructor(private alertController : AlertController,
               private menuservice : MenuService,
@@ -26,10 +28,21 @@ export class MenuSemainePage implements OnInit {
               private utiilty : UtilityService) { }
 
   async ngOnInit() {
+    this.selectedWeek = this.getCurrentWeekNumber(); 
+    this.selectedYear = new Date().getFullYear();
     this.infoConnexion = await this.getInfoConnexion();
     this.initMenu();
     this.refresh();
   }
+
+  private getNumeroSemaineEtAnnee(date: Date): { weekNumber: number, year: number } {
+    const onejan: Date = new Date(date.getFullYear(), 0, 1);
+    const millisecsInDay: number = 86400000; // 24 * 60 * 60 * 1000
+    const dayOfYear: number = (date.getTime() - onejan.getTime()) / millisecsInDay;
+    const weekNumber: number = Math.ceil((dayOfYear + onejan.getDay() + 1) / 7);
+    const year: number = date.getFullYear();
+    return { weekNumber, year };
+}
 
   public async sendToCourse(plat : Plats){
     const platdetail = await this.platsservice.getPlatDetails(+plat.id);
@@ -76,7 +89,10 @@ export class MenuSemainePage implements OnInit {
           id : 0,
           jour : jour,
           isFirebase : false,
-          groupeId : this.infoConnexion.groupeId
+          groupeId : this.infoConnexion.groupeId,
+          annee : this.selectedYear,
+          numeroSemaine : this.selectedWeek
+
         }
         await this.menuservice.post(menu)
       }
@@ -84,14 +100,39 @@ export class MenuSemainePage implements OnInit {
   }
 
   private async refresh(){
-    if((await this.utiilty.getConnexionInfo()).isOnline){
+    if(this.infoConnexion.isOnline){
+
       (await this.firestore.getAll(LocalName.Menus)).subscribe(async(datas : any) => {
         const menus : Array<any> = await datas.filter((data:any) => data.groupeId == this.infoConnexion.groupeId);
-        this.menus = menus;
+        this.menus = menus.filter(menu => menu.annee == this.selectedYear && menu.numeroSemaine == this.selectedWeek && menu.groupeId === this.infoConnexion.groupeId);
       })
+
+      setTimeout(async()=>{
+        if(this.menus.length === 0){
+          const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
+          for(let jour of jours){
+            const menu : Menu = {
+              id : 0,
+              jour : jour,
+              isFirebase : false,
+              groupeId : this.infoConnexion.groupeId,
+              annee : this.selectedYear,
+              numeroSemaine : this.selectedWeek
+    
+            }
+            await this.menuservice.post(menu)
+          }
+        }
+      },1000)
+
     }else{
       this.menus = await this.get();
     }
+
+  }
+
+  onSelectionChange() {
+    this.refresh();
   }
 
   private async getInfoConnexion(){
@@ -99,14 +140,38 @@ export class MenuSemainePage implements OnInit {
   }
 
   private async get(){
-    return await this.menuservice.get();
+    return (await this.menuservice.get()).filter(menu => menu.annee == this.selectedYear && menu.numeroSemaine == this.selectedWeek && menu.groupeId === this.infoConnexion.groupeId);
+  }
+
+  generateNumbers(count: number): number[] {
+    return Array(count).fill(0).map((x, i) => i + 1);
+  }
+
+  getLastFourYears(): number[] {
+    const currentYear = new Date().getFullYear();
+    const lastFourYears = [];
+    
+    for (let i = 0; i < 4; i++) {
+      lastFourYears.push(currentYear - i);
+    }
+    
+    return lastFourYears;
+  }
+
+  getCurrentWeekNumber(): number {
+    const now = new Date();
+    const onejan = new Date(now.getFullYear(), 0, 1);
+    const millisecsInDay = 86400000; // 1000 * 60 * 60 * 24
+  
+    var semaineEnCours =  Math.ceil(((now.getTime() - onejan.getTime()) / millisecsInDay + onejan.getDay() + 1) / 7);
+    return semaineEnCours;
   }
 
   public async post(){
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
-      header: 'Faite une epargne',
+      header: 'Menu de la semaine',
       inputs: [
         {
           type : 'text',
@@ -130,7 +195,9 @@ export class MenuSemainePage implements OnInit {
               id : 0,
               jour : data.jour,
               isFirebase : false,
-              groupeId : this.infoConnexion.groupeId
+              groupeId : this.infoConnexion.groupeId,
+              annee : this.selectedYear,
+              numeroSemaine : this.selectedWeek
             }
 
             await this.menuservice.post(menu);

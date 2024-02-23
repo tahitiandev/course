@@ -10,6 +10,23 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+
+  <table>
+    <tr>
+      <td>Année : </td>
+      <td>
+        <ion-select aria-label="Année" interface="popover" placeholder="Sélection" [(ngModel)]="selectedYear" (ionChange)="onSelectionChange()">
+          <ion-select-option *ngFor="let annee of getLastFourYears()" [value]="annee">{{ annee }}</ion-select-option>
+        </ion-select>
+      </td>
+      <td>Numéro de semaine : </td>
+      <td>
+        <ion-select aria-label="Fruit" interface="popover" placeholder="Selection" [(ngModel)]="selectedWeek" (ionChange)="onSelectionChange()">
+          <ion-select-option *ngFor="let i of generateNumbers(52)" [value]="i">{{ i }}</ion-select-option>
+        </ion-select>
+      </td>
+    </tr>
+  </table>
   
   <ion-list style="margin: 15px;">
     <ion-item *ngFor="let menu of menus">

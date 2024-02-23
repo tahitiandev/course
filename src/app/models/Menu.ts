@@ -12,4 +12,6 @@ export interface Menu{
     isFirebase : false;
     firebaseMethod? : Methods;
     groupeId : number;
+    annee : number;
+    numeroSemaine : number;
 }
