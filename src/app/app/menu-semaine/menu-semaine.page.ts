@@ -34,7 +34,7 @@ export class MenuSemainePage implements OnInit {
     this.selectedWeek = this.getCurrentWeekNumber(); 
     this.selectedYear = new Date().getFullYear();
     this.infoConnexion = await this.getInfoConnexion();
-    this.initMenu();
+    // this.initMenu();
     this.refresh();
   }
 
@@ -120,23 +120,32 @@ export class MenuSemainePage implements OnInit {
 
 
   private async initMenu(){
-    const menus : Array<Menu> = await this.get();
-    const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
-    if(menus.length === 0){
+    (await this.firestore.getAll(LocalName.Menus)).subscribe(async(datas : any) => {
+      const menus : Array<any> = await datas.filter((data:any) => data.groupeId == this.infoConnexion.groupeId);
+      this.menus = menus.filter(menu => menu.annee == this.selectedYear && menu.numeroSemaine == this.selectedWeek && menu.groupeId === this.infoConnexion.groupeId);
+    })
 
-      for(let jour of jours){
-        const menu : Menu = {
-          id : 0,
-          jour : jour,
-          isFirebase : false,
-          groupeId : this.infoConnexion.groupeId,
-          annee : this.selectedYear,
-          numeroSemaine : this.selectedWeek
+    setTimeout(async() => {
+      console.log(this.menus)
 
+      const jours = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
+      if(this.menus.length === 0){
+
+        for(let jour of jours){
+          const menu : Menu = {
+            id : 0,
+            jour : jour,
+            isFirebase : false,
+            groupeId : this.infoConnexion.groupeId,
+            annee : this.selectedYear,
+            numeroSemaine : this.selectedWeek
+  
+          }
+          await this.menuservice.post(menu)
         }
-        await this.menuservice.post(menu)
       }
-    }
+
+    }, 1000);
   }
 
   private async refresh(){
