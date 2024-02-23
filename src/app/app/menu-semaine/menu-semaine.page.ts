@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, AlertInput } from '@ionic/angular';
 import { LocalName } from 'src/app/enums/LocalName';
+import { Methods } from 'src/app/enums/Methods';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { Menu } from 'src/app/models/Menu';
 import { Plats } from 'src/app/models/Plats';
@@ -43,8 +44,23 @@ export class MenuSemainePage implements OnInit {
     const dayOfYear: number = (date.getTime() - onejan.getTime()) / millisecsInDay;
     const weekNumber: number = Math.ceil((dayOfYear + onejan.getDay() + 1) / 7);
     const year: number = date.getFullYear();
-    return { weekNumber, year };
-}
+    return { weekNumber, year };  
+  }
+
+  public async effacer(menu : Menu){
+    var plat : Plats = {
+      id : 0,
+      libelle : "",
+      total : 0,
+      createdOn : new Date(),
+      isFirebase : true,
+      firebaseMethod : Methods.DELETE
+    }
+    menu.plat = plat;
+    menu.libelle = "";
+    await this.menuservice.put(menu);
+    this.refresh();
+  }
 
   public async sendToCourse(plat : Plats){
     const platdetail = await this.platsservice.getPlatDetails(+plat.id);
