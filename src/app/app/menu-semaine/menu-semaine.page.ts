@@ -21,6 +21,7 @@ export class MenuSemainePage implements OnInit {
   menus : Array<Menu> = [];
   selectedWeek: number;
   selectedYear: number;
+  weekReference: number;
   isSeachPlat : boolean = false;
   selectedMenu : Menu;
 
@@ -34,7 +35,6 @@ export class MenuSemainePage implements OnInit {
     this.selectedWeek = this.getCurrentWeekNumber(); 
     this.selectedYear = new Date().getFullYear();
     this.infoConnexion = await this.getInfoConnexion();
-    // this.initMenu();
     this.refresh();
   }
 
@@ -213,6 +213,7 @@ export class MenuSemainePage implements OnInit {
     const millisecsInDay = 86400000; // 1000 * 60 * 60 * 24
   
     var semaineEnCours =  Math.ceil(((now.getTime() - onejan.getTime()) / millisecsInDay + onejan.getDay() + 1) / 7);
+    this.weekReference = semaineEnCours;
     return semaineEnCours;
   }
 

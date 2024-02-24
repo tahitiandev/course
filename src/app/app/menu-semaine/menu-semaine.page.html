@@ -23,7 +23,7 @@
       <td>Numéro de semaine : </td>
       <td>
         <ion-select aria-label="Fruit" interface="popover" placeholder="Selection" [(ngModel)]="selectedWeek" (ionChange)="onSelectionChange()">
-          <ion-select-option *ngFor="let i of generateNumbers(52)" [value]="i">{{ i }}</ion-select-option>
+          <ion-select-option *ngFor="let i of generateNumbers(52)" [value]="i">{{ i }} <span *ngIf="i === weekReference">*</span></ion-select-option>
         </ion-select>
       </td>
     </tr>
