@@ -4,6 +4,7 @@ import { LocalName } from './enums/LocalName';
 import { ConnexionInfo } from './models/ConnexionInfo';
 import { Storage } from '@ionic/storage';
 import { Methods } from './enums/Methods';
+import { UtilisateursService } from './services/utilisateurs.service';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +44,11 @@ export class AppComponent {
 
   isConnected : boolean =  false;
 
+  infoConnexion : ConnexionInfo;
+  utilisateurConnecte : string= "";
+
   constructor(private storage : Storage,
+              private utilisateurservice : UtilisateursService,
               private utility : UtilityService
     ) {
     this.storage.create();
@@ -53,6 +58,8 @@ export class AppComponent {
   async ngOnInit() {
     await this.IsConnected();
     await this.setLocalStorage();
+    this.infoConnexion = await this.utility.getConnexionInfo();
+    this.utilisateurConnecte = await this.utilisateurservice.getLibelleUtilisateurById(this.infoConnexion.utilisateurId);
   }
 
 
