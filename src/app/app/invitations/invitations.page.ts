@@ -66,7 +66,9 @@ export class InvitationsPage implements OnInit {
       firstInput.focus();
       return;
     });
-  }
+}
+
+
 
 public async inviteAuGroupe(){
     var key = await this.utility.generateKey();
@@ -81,6 +83,8 @@ public async inviteAuGroupe(){
     }
 
     await this.utilisateurservice.postInvitationAuGroupe(invitation);
+
+    await this.utility.copierDansPressePapier(key);
 
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -108,5 +112,7 @@ public async inviteAuGroupe(){
     });
 
   }
+
+  
 
 }

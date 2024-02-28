@@ -3,8 +3,10 @@ import { AlertController, AlertInput } from '@ionic/angular';
 import { LocalName } from 'src/app/enums/LocalName';
 import { Methods } from 'src/app/enums/Methods';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
+import { CourseDetails } from 'src/app/models/Course-details';
 import { Menu } from 'src/app/models/Menu';
 import { Plats } from 'src/app/models/Plats';
+import { CoursesService } from 'src/app/services/courses.service';
 import { FirestoreService } from 'src/app/services/firestore.service';
 import { MenuService } from 'src/app/services/menu.service';
 import { PlatsService } from 'src/app/services/plats.service';
@@ -29,13 +31,14 @@ export class MenuSemainePage implements OnInit {
               private menuservice : MenuService,
               private platsservice : PlatsService,
               private firestore : FirestoreService,
+              private courseservice : CoursesService,
               private utiilty : UtilityService) { }
 
   async ngOnInit() {
     this.selectedWeek = this.getCurrentWeekNumber(); 
     this.selectedYear = new Date().getFullYear();
     this.infoConnexion = await this.getInfoConnexion();
-    this.refresh();
+    await this.refresh();
   }
 
   private getNumeroSemaineEtAnnee(date: Date): { weekNumber: number, year: number } {
@@ -63,9 +66,10 @@ export class MenuSemainePage implements OnInit {
   }
 
   public async sendToCourse(plat : Plats){
+    console.log(plat)
     const platdetail = await this.platsservice.getPlatDetails(+plat.id);
     const inputs : Array<AlertInput> = [];
-    await platdetail.map(ingredient => {
+    platdetail.map(ingredient => {
       inputs.push({
         type : 'checkbox',
         value : ingredient,
@@ -88,7 +92,24 @@ export class MenuSemainePage implements OnInit {
         ,{
           text: 'Valider',
           handler: async (data : any) => {
-            this.utiilty.popUp('ne fait rien pour l\'instant')
+            for(let result of data){
+              var course = await this.courseservice.getCourseIsFocus(this.infoConnexion.groupeId);
+              var coursedetail : CourseDetails = {
+                id : 0,
+                ordre: 0,
+                courseId : course[0].id,
+                quantite : result.quantite,
+                libelle : result.article.libelle,
+                articleId : result.article.id,
+                prixArticle : result.article.prix[0].prix,
+                prixReel : result.article.prix[0].prix,
+                total : Number(result.quantite) * Number(result.article.prix[0].prix),
+                checked : false,
+                isFirebase : false,
+                groupeId : this.infoConnexion.groupeId
+              }
+              await this.courseservice.postCourseDetails(coursedetail)
+            }
           }
         }
         
@@ -153,7 +174,7 @@ export class MenuSemainePage implements OnInit {
 
       (await this.firestore.getAll(LocalName.Menus)).subscribe(async(datas : any) => {
         const menus : Array<any> = await datas.filter((data:any) => data.groupeId == this.infoConnexion.groupeId);
-        this.menus = menus.filter(menu => menu.annee == this.selectedYear && menu.numeroSemaine == this.selectedWeek && menu.groupeId === this.infoConnexion.groupeId);
+        this.menus = await menus.filter(menu => menu.annee == this.selectedYear && menu.numeroSemaine == this.selectedWeek && menu.groupeId === this.infoConnexion.groupeId);
       })
 
       setTimeout(async()=>{
@@ -169,7 +190,7 @@ export class MenuSemainePage implements OnInit {
               numeroSemaine : this.selectedWeek
     
             }
-            await this.menuservice.post(menu)
+            await this.menuservice.post(menu);
           }
         }
       },1000)
@@ -294,7 +315,15 @@ export class MenuSemainePage implements OnInit {
             menu.plat = plat;
             menu.libelle = plat.libelle;
 
-            await this.menuservice.put(menu);
+            if(this.infoConnexion.isOnline){
+              await this.firestore.put(
+                LocalName.Menus,
+                menu.id.toString(),
+                menu
+              )
+            }else{
+              await this.menuservice.put(menu);
+            }
             await this.refresh();
 
           }

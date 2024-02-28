@@ -34,7 +34,7 @@
     <ion-item>
       <ion-icon aria-hidden="true" name="calendar" slot="start"></ion-icon>
       <ion-label style="cursor: pointer;" (click)="putMenu(menu)">{{ menu.jour }} - {{ menu.libelle }}</ion-label>
-      <ion-icon name="paper-plane-outline" (click)="sendToCourse(menu)" style="cursor: PO;"></ion-icon>
+      <ion-icon name="paper-plane-outline" (click)="sendToCourse(menu.plat)" style="cursor: PO;"></ion-icon>
     </ion-item>
     <ion-item-options side="end">
       <ion-item-option (click)="effacer(menu)">Effacer</ion-item-option>

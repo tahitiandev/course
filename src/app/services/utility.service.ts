@@ -62,4 +62,13 @@ export class UtilityService {
 
     }
 
+    public async copierDansPressePapier(texte : string) {
+      try {
+        await navigator.clipboard.writeText(texte);
+        console.log('Texte copié dans le presse-papiers :', texte);
+      } catch (err) {
+        console.error('Impossible de copier le texte dans le presse-papiers :', err);
+      }
+    }
+
 }

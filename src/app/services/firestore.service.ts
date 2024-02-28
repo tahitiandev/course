@@ -21,6 +21,13 @@ export class FirestoreService {
     
   }
 
+  public async postSingle(collectionName: string, data: any, id : string) {
+    const firebaseApp = initializeApp(environment.firebaseConfig);
+    const db = getFirestore(firebaseApp);
+
+    await addDoc(collection(db, collectionName, id), data);
+}
+
   public async getAll (collectionName : string) {
     const firestoredata = await collection(this.firestore, collectionName);
     return collectionData(firestoredata);
@@ -35,7 +42,5 @@ export class FirestoreService {
     const firestoredata = doc(this.firestore, collectionName + '/' + id);
     return deleteDoc(firestoredata);
   }
-
-
 
 }
