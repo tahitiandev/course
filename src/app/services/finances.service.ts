@@ -33,11 +33,14 @@ export class FinancesService {
     await this.delete(finance);
   }
 
-  public async putByKey(key : any, montant : number, description : string){
+  public async putByKey(key : any, montant : number, description : string, check?:boolean){
     var finances = await this.get();
     var finance : Finances = await finances.find((finance : Finances) => finance.key === key);
     finance.commentaire = description;
     finance.montant = montant;
+    if(check !== undefined){
+      finance.check = check;
+    }
     await this.put(finance);
   }
 

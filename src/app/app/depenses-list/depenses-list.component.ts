@@ -152,6 +152,8 @@ export class DepensesListComponent  implements OnInit {
   public async closeDepense(depense : Depenses){
     depense.check = !depense.check ;
     await this.depensesservice.put(depense);
+    var commentaire = depense.commentaire === undefined ? "" : depense.commentaire;
+    await this.financeservice.putByKey(depense.key, depense.depense, commentaire, depense.check);
     await this.refresh();
   }
 

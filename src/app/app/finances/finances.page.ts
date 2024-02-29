@@ -57,6 +57,16 @@ export class FinancesPage implements OnInit {
   public async getCheck(finance:Finances){
     finance.check = !finance.check;
     await this.financesservice.put(finance);
+
+    var commentaire = finance.commentaire === undefined ? "" : finance.commentaire;
+    
+    if(finance.type === TypeOperation.ChargeFixe
+      || finance.type === TypeOperation.Divers){
+        await this.depenseservice.putByKey(finance.key, finance.montant * -1, commentaire, finance.check);
+      }
+    if(finance.type === TypeOperation.Epargne){
+      await this.epargneservice.putByKey(finance.key, finance.montant * -1, commentaire, finance.check);
+    }
     this.refresh();
   }
 

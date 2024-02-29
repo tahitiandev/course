@@ -38,12 +38,15 @@ export class EpargnesService {
     await this.delete(epargne);
   }
 
-  public async putByKey(key : any, montant : number, description : string){
+  public async putByKey(key : any, montant : number, description : string, check?:boolean){
     var epargnes = await this.get();
     var epargne : Epargnes = await epargnes.find((epargne : Epargnes) => epargne.key === key);
     epargne.commentaire = description;
     epargne.epargne = montant;
-    await this.delete(epargne);
+    if(check !== undefined){
+      epargne.check = check;
+    }
+    await this.put(epargne);
   }
 
   
