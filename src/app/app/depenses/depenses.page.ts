@@ -33,8 +33,8 @@ export class DepensesPage implements OnInit {
               }
 
   async ngOnInit() {
-    await this.refresh();
     this.infoConnexion = await this.utility.getConnexionInfo();
+    await this.refresh();
   }
 
   private async get(){
