@@ -7,13 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { InvitationsPageRoutingModule } from './invitations-routing.module';
 
 import { InvitationsPage } from './invitations.page';
-
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    InvitationsPageRoutingModule
+    InvitationsPageRoutingModule,
+    HttpClientModule
   ],
   declarations: [InvitationsPage]
 })

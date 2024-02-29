@@ -17,7 +17,7 @@ import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { environment } from '../environments/environment';
-
+import { HttpClientModule } from '@angular/common/http';
 // firestore
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
@@ -33,6 +33,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
     IonicStorageModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
     // REALTIME
     // AngularFireModule.initializeApp(environment.firebaseConfig),
     // AngularFireAuthModule,

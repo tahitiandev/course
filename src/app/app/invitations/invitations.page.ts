@@ -4,6 +4,7 @@ import { LocalName } from 'src/app/enums/LocalName';
 import { Methods } from 'src/app/enums/Methods';
 import { ConnexionInfo } from 'src/app/models/ConnexionInfo';
 import { UtilisateurGroupeActivation } from 'src/app/models/UtilisateurGroupeActivation';
+import { EmailService } from 'src/app/services/email.service';
 import { FirestoreService } from 'src/app/services/firestore.service';
 import { UtilisateursService } from 'src/app/services/utilisateurs.service';
 import { UtilityService } from 'src/app/services/utility.service';
@@ -20,12 +21,19 @@ export class InvitationsPage implements OnInit {
 
   constructor(private firestore : FirestoreService,
               private utilisateurservice : UtilisateursService,
+              private emailservice : EmailService,
               private alertController : AlertController,
               private utility : UtilityService) { }
 
   async ngOnInit() {
     this.infoConnexion = await this.utility.getConnexionInfo();
     await this.getInvitations();
+    // this.envoyerEmail();
+  }
+
+  envoyerEmail(){
+    console.log('test')
+    this.emailservice.sendEmail()
   }
 
   private async getInvitations(){
